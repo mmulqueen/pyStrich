@@ -7,16 +7,17 @@ from shutil import which
 import subprocess
 
 from pystrich.datamatrix import DataMatrixEncoder
+from pystrich.datamatrix.renderer import DATAMATRIX_DEFAULT_QUIET_ZONE
 
 dmtxread_path = which("dmtxread")
-dmtxwrite_path = which("dmtxwrite")
 
 
 def dmtxread(datamatrix_path: str) -> str:
     """Read a datamatrix barcode from an image file"""
     if not dmtxread_path:
         raise RuntimeError("dmtxread not found")
-    return subprocess.check_output([dmtxread_path, datamatrix_path]).decode()
+    # The arg -C 0 means no error correction, for some reason dmtxread won't accept --corrections-max=0
+    return subprocess.check_output([dmtxread_path, "-C", "0", datamatrix_path]).decode()
 
 
 class MatrixTest(unittest.TestCase):
@@ -75,6 +76,55 @@ class MatrixTest(unittest.TestCase):
         enc = TextEncoder()
         for key, value in correct_encodings.items():
             self.assertEqual([ord(char) for char in enc.encode(key)], value)
+
+    def test_quiet_zone_configuration(self):
+        """Test that quiet_zone can be configured and affects output dimensions"""
+
+        test_string = "test"
+
+        # Test default quiet zone (2)
+        encoder_default = DataMatrixEncoder(test_string)
+        encoder_default.save("datamatrix-test-default.png")
+
+        # Test quiet zoned of 0 and 10
+        encoder_zero = DataMatrixEncoder(test_string, quiet_zone=0)
+        encoder_zero.save("datamatrix-test-zero.png")
+
+        encoder_ten = DataMatrixEncoder(test_string, quiet_zone=10)
+        encoder_ten.save("datamatrix-test-ten.png")
+
+        # Verify different quiet zones produce different sized outputs
+        self.assertNotEqual(encoder_default.width, encoder_zero.width)
+        self.assertNotEqual(encoder_default.width, encoder_ten.width)
+        self.assertNotEqual(encoder_zero.width, encoder_ten.width)
+
+        # Verify the quiet zone affects dimensions as expected
+        # Quiet zone affects both width and height by 2 * quiet_zone
+        # (quiet zone on each side)
+        expected_width_diff_zero = (DATAMATRIX_DEFAULT_QUIET_ZONE - 0) * 2  # 4 pixels smaller
+        expected_width_diff_ten = (10 - DATAMATRIX_DEFAULT_QUIET_ZONE) * 2  # 16 pixels larger
+
+        self.assertEqual(encoder_default.width - encoder_zero.width, expected_width_diff_zero)
+        self.assertEqual(encoder_ten.width - encoder_default.width, expected_width_diff_ten)
+
+        # Test that decoding still works with different quiet zones
+        if dmtxread_path:
+            # We don't try 0 because dmtxread fails to read it.
+            self.assertEqual(dmtxread("datamatrix-test-ten.png"), test_string)
+
+    def test_get_imagedata_consistency(self):
+        """Test that get_imagedata works and produces the same output as save"""
+
+        encoder = DataMatrixEncoder("Hello world")
+
+        encoder.save("datamatrix-test.png")
+
+        image_data = encoder.get_imagedata()
+
+        with open("datamatrix-test.png", "rb") as f:
+            saved_data = f.read()
+
+        self.assertEqual(saved_data, image_data)
 
 
 if __name__ == '__main__':

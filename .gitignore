@@ -7,7 +7,7 @@ huBarcode.egg-info
 *.egg-info
 MANIFEST
 .coverage
-datamatrix-test.png
+datamatrix-test*.png
 pip-log.txt
 test.png
 test.dxf

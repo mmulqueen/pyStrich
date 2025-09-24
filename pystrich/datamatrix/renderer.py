@@ -6,6 +6,8 @@ from io import BytesIO
 
 from PIL import Image
 
+DATAMATRIX_DEFAULT_QUIET_ZONE = 2
+
 
 def repr_matrix(matrix):
     return "\n".join(repr(x) for x in matrix)
@@ -16,12 +18,14 @@ class DataMatrixRenderer:
     it will add edge handles and render to either to an image
     (including quiet zone) or ascii printout"""
 
-    def __init__(self, matrix, regions):
+    def __init__(self, matrix, regions, *, quiet_zone=DATAMATRIX_DEFAULT_QUIET_ZONE):
         self.width = len(matrix)
         self.height = len(matrix[0])
         self.regions = regions
         self.region_size = self.width//regions
-        self.quiet_zone = 2
+        if quiet_zone < 0:
+            raise ValueError("Quiet zone must be non-negative")
+        self.quiet_zone = quiet_zone
 
         self.matrix = matrix
 

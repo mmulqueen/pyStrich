@@ -37,7 +37,7 @@ __revision__ = "$Rev$"
 
 from .textencoder import TextEncoder
 from .placement import DataMatrixPlacer
-from .renderer import DataMatrixRenderer
+from .renderer import DataMatrixRenderer, DATAMATRIX_DEFAULT_QUIET_ZONE
 
 
 class DataMatrixEncoder:
@@ -45,7 +45,7 @@ class DataMatrixEncoder:
     encoding input data, placing it in the matrix and
     outputting the result"""
 
-    def __init__(self, text):
+    def __init__(self, text, *, quiet_zone=DATAMATRIX_DEFAULT_QUIET_ZONE):
         """Set up the encoder with the input text.
         This will encode the text,
         and create a matrix with the resulting codewords"""
@@ -56,31 +56,36 @@ class DataMatrixEncoder:
         self.height = 0
         matrix_size = enc.mtx_size*enc.regions
         self.regions = enc.regions
+        self.quiet_zone = quiet_zone
 
         self.matrix = [[None] * matrix_size for _ in range(0, matrix_size)]
 
         placer = DataMatrixPlacer()
         placer.place(codewords, self.matrix)
 
+    def init_renderer(self):
+        dmtx = DataMatrixRenderer(self.matrix, self.regions, quiet_zone=self.quiet_zone)
+        self.width = dmtx.width
+        self.height = dmtx.height
+        return dmtx
+
     def save(self, filename, cellsize=5):
         """Write the matrix out to an image file"""
-        dmtx = DataMatrixRenderer(self.matrix, self.regions)
+        dmtx = self.init_renderer()
         dmtx.write_file(cellsize, filename)
 
     def get_imagedata(self, cellsize=5):
         """Write the matrix out to an PNG bytestream"""
-        dmtx = DataMatrixRenderer(self.matrix, self.regions)
-        self.width = dmtx.width
-        self.height = dmtx.height
+        dmtx = self.init_renderer()
         return dmtx.get_imagedata(cellsize)
 
     def get_ascii(self):
         """Return an ascii representation of the matrix"""
-        dmtx = DataMatrixRenderer(self.matrix, self.regions)
+        dmtx = self.init_renderer()
         return dmtx.get_ascii()
 
     def get_dxf(self, cellsize=1.0, inverse=True, units="mm"):
         """Return a DXF representation of the matrix"""
-        dmtx = DataMatrixRenderer(self.matrix, self.regions)
+        dmtx = self.init_renderer()
         return dmtx.get_dxf(cellsize, inverse, units)
         
