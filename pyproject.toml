@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyStrich"
-version = "0.9"
+version = "0.10"
 description = "PyStrich is a Python module to generate 1D and 2D barcodes (Code 39, Code 128, DataMatrix, QRCode and EAN13). Forked from huBarcode."
 authors = [
     "Michael Mulqueen <mike@method-b.uk>"
