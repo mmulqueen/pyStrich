@@ -10,8 +10,13 @@ supports
  * qrcode - see [known issues](#known-issues)
 
 Available from PyPI: https://pypi.python.org/pypi/pyStrich
- 
-[![Build Status](https://travis-ci.org/mmulqueen/pyStrich.svg)](https://travis-ci.org/mmulqueen/pyStrich)
+
+<a href="https://github.com/mmulqueen/pyStrich/actions/workflows/python-qa.yml"><img
+                alt="Python QA workflow status"
+                src="https://github.com/mmulqueen/pyStrich/workflows/Python%20QA/badge.svg"></a>
+<a href="https://pypi.org/project/pyStrich/"><img
+alt="Newest PyPI version"
+src="https://img.shields.io/pypi/v/pyStrich.svg"></a>
 
 Usage
 -----
