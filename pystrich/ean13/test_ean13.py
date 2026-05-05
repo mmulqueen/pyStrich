@@ -52,3 +52,15 @@ def test_against_generated(string, reference, tmp_path):
     generated = tmp_path / "barcode.png"
     EAN13Encoder(string).save(str(generated))
     assert filecmp.cmp(str(generated), str(TEST_IMG_DIR / reference), shallow=False)
+
+
+@pytest.mark.parametrize("string, decoded", [
+    ("012345678901", "0123456789012"),
+    ("007567816412", "0075678164125"),
+    ("750103131130", "7501031311309"),
+])
+def test_zbarimg_round_trip(string, decoded, tmp_path, zbarimg):
+    """zbarimg decodes the saved image to the input plus its check digit."""
+    img = tmp_path / "ean13.png"
+    EAN13Encoder(string).save(str(img))
+    assert zbarimg(img) == decoded

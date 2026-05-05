@@ -1,3 +1,4 @@
+import os
 import subprocess
 from shutil import which
 
@@ -10,9 +11,9 @@ def zbarimg():
     if not path:
         pytest.skip("zbarimg not installed")
 
-    def _read(image_path: str) -> str:
+    def _read(image_path: "str | os.PathLike[str]") -> str:
         output = subprocess.check_output(
-            [path, "--quiet", "--raw", image_path]
+            [path, "--quiet", "--raw", os.fspath(image_path)]
         ).decode()
         return output.rstrip("\n")
 

@@ -53,3 +53,19 @@ def test_against_generated(string, reference, tmp_path):
     generated = tmp_path / "barcode.png"
     Code128Encoder(string).save(str(generated))
     assert filecmp.cmp(str(generated), str(TEST_IMG_DIR / reference), shallow=False)
+
+
+@pytest.mark.parametrize("string", [
+    pytest.param("1234", id="dense-C"),
+    pytest.param("hello", id="B-only"),
+    pytest.param("HI345678", id="B-to-C"),
+    pytest.param("BarCode 1", id="B-mixed"),
+    pytest.param("HI34567A", id="B-C-B-leftover"),
+    # https://github.com/hudora/huBarcode/issues/issue/11
+    pytest.param("12345", id="C-leftover-digit"),
+])
+def test_zbarimg_round_trip(string, tmp_path, zbarimg):
+    """zbarimg can decode this library's output back to the original string."""
+    img = tmp_path / "code128.png"
+    Code128Encoder(string).save(str(img))
+    assert zbarimg(img) == string

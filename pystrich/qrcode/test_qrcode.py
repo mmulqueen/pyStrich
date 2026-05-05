@@ -69,7 +69,7 @@ def test_encode_decode(string, ecl, tmp_path, zbarimg):
     """zbarimg can decode this library's output back to the original string"""
     img = tmp_path / "qrcode-test.png"
     QRCodeEncoder(string, ecl).save(str(img), 3)
-    assert zbarimg(str(img)) == string
+    assert zbarimg(img) == string
 
 
 @pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])

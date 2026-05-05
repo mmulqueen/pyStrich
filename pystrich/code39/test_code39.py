@@ -20,3 +20,17 @@ def test_against_generated(string, reference, tmp_path):
     generated = tmp_path / "barcode.png"
     Code39Encoder(string).save(str(generated))
     assert filecmp.cmp(str(generated), str(TEST_IMG_DIR / reference), shallow=False)
+
+
+@pytest.mark.parametrize("string", [
+    "1234567890",
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+    # Exercises the Code 39 special symbols ($ . / + - %).
+    "INVOICE-5/2024 $A+B%",
+])
+def test_zbarimg_round_trip(string, tmp_path, zbarimg):
+    """zbarimg can decode this library's output back to the original string."""
+    img = tmp_path / "code39.png"
+    Code39Encoder(string).save(str(img))
+    assert zbarimg(img) == string
