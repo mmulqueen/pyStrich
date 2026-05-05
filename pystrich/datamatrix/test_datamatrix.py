@@ -159,6 +159,11 @@ def test_gs1_fnc1(payload, expected, tmp_path, dmtxread):
         "ascii",
         id="ascii-data-then-ascii-data",
     ),
+    pytest.param(
+        DataMatrixData("a", encoding="iso-8859-1") + DataMatrixData("b", encoding="iso-8859-1"),
+        "iso-8859-1",
+        id="latin1-data-then-latin1-data",
+    ),
 ])
 def test_concat_returns_datamatrix_data(data, expected_encoding):
     assert isinstance(data, DataMatrixData)
@@ -189,6 +194,17 @@ def test_datamatrix_data_raises_on_non_ascii_in_ascii(text):
 def test_datamatrix_data_unknown_encoding_raises():
     with pytest.raises(PyStrichInvalidOption):
         DataMatrixData("abc", encoding="bogus")
+
+
+@pytest.mark.parametrize("encoding, text, expected_suggestion", [
+    pytest.param("ascii", "café", "iso-8859-1", id="ascii-fits-latin1"),
+    pytest.param("ascii", "中文", "utf-8", id="ascii-needs-utf8"),
+    pytest.param("iso-8859-1", "中文", "utf-8", id="latin1-needs-utf8"),
+])
+def test_validation_error_suggests_encoding(encoding, text, expected_suggestion):
+    with pytest.raises(PyStrichInvalidInput) as exc_info:
+        DataMatrixData(text, encoding=encoding)
+    assert f"DataMatrixData({text!r}, encoding={expected_suggestion!r})" in str(exc_info.value)
 
 
 @pytest.mark.parametrize("bad_segment", [
@@ -245,3 +261,64 @@ def test_fnc1_workaround_compat(text, expected_segments, expected_warning_cls):
         with pytest.warns(expected_warning_cls):
             result = fnc1_workaround_compat(text)
     assert result.segments == expected_segments
+
+
+def test_encoding_latin1_upper_shift():
+    """Latin-1 chars >127 emit codeword 235 (Upper Shift) followed by the offset char."""
+    enc = TextEncoder()
+    codewords = [ord(c) for c in enc.encode(DataMatrixData("café", encoding="iso-8859-1"))]
+    # 'c'->100, 'a'->98, 'f'->103, 'é' (ord 233) -> 235 then chr(105)+1 = 106
+    assert codewords[:5] == [100, 98, 103, 235, 106]
+
+
+def test_compat_does_not_emit_upper_shift():
+    """Compat-mode latin-1 chars keep the legacy +1 offset (broken), no Upper Shift gating."""
+    enc = TextEncoder()
+    with pytest.warns(DataMatrixNonAsciiWarning):
+        codewords = [ord(c) for c in enc.encode("café")]
+    # 'é' under compat falls through append_ascii_char -> chr(234), no leading 235.
+    assert codewords[:4] == [100, 98, 103, 234]
+
+
+@pytest.mark.parametrize("text", [
+    "café", "naïve", "tést", "é", "à", "ça", "façade", "ç", "plain", "1²34",
+])
+def test_encode_decode_latin1(text, tmp_path, dmtxread):
+    """Latin-1 strings round-trip through DataMatrixEncoder + dmtxread."""
+    img = tmp_path / "latin1.png"
+    DataMatrixEncoder(DataMatrixData(text, encoding="iso-8859-1")).save(str(img))
+    assert dmtxread(img, encoding="iso-8859-1") == text
+
+
+@pytest.mark.parametrize("text", ["€", "中文", "🙂"])
+def test_datamatrix_data_raises_on_non_latin1_in_latin1(text):
+    with pytest.raises(PyStrichInvalidInput):
+        DataMatrixData(text, encoding="iso-8859-1")
+
+
+def test_encoding_utf8_eci_prefix():
+    """UTF-8 mode emits the ECI 26 prefix (codewords 241, 27) once at the start."""
+    enc = TextEncoder()
+    codewords = [ord(c) for c in enc.encode(DataMatrixData("hi", encoding="utf-8"))]
+    assert codewords[:2] == [241, 27]
+
+
+def test_encoding_utf8_byte_iteration():
+    """Each UTF-8 byte > 127 emits Upper Shift; ASCII bytes pass through unchanged."""
+    enc = TextEncoder()
+    codewords = [ord(c) for c in enc.encode(DataMatrixData("é", encoding="utf-8"))]
+    # 'é' UTF-8 -> bytes 0xC3, 0xA9.
+    # 0xC3 (195) -> 235, (195-128)+1 = 68; 0xA9 (169) -> 235, (169-128)+1 = 42.
+    assert codewords[:6] == [241, 27, 235, 68, 235, 42]
+
+
+@pytest.mark.parametrize("text", [
+    "café", "€", "中文", "🙂", "naïve", "plain ascii", "ça",
+])
+def test_encode_decode_utf8(text, tmp_path, dmtxread):
+    """UTF-8 strings round-trip through DataMatrixEncoder + dmtxread."""
+    img = tmp_path / "utf8.png"
+    DataMatrixEncoder(DataMatrixData(text, encoding="utf-8")).save(str(img))
+    # libdmtx prefixes ECI-encoded output with a raw byte equal to the ECI
+    # value (0x1A = 26 for UTF-8); no dmtxread flag suppresses it.
+    assert dmtxread(img, encoding="utf-8").removeprefix("\x1a") == text

@@ -13,6 +13,8 @@ from pystrich.exceptions import (
 _ENCODING_RULES = {
     "compat": ("ascii", "warn"),
     "ascii": ("ascii", "raise"),
+    "iso-8859-1": ("iso-8859-1", "raise"),
+    "utf-8": ("utf-8", "raise"),
 }
 
 
@@ -22,6 +24,11 @@ class DataMatrixData:
     Build values by concatenating marker constants (e.g. :data:`FNC1`) with
     plain strings on either side, then pass the result to
     :class:`DataMatrixEncoder` in place of a ``str``.
+
+    Four encodings are supported: ``"compat"`` (default; warns on non-ASCII),
+    ``"ascii"`` (raises on any byte > 127), ``"iso-8859-1"`` (Latin-1; emits the
+    DataMatrix Upper Shift codeword for chars 128-255), and ``"utf-8"`` (declares
+    ECI 26 once at the start of the symbol and byte-encodes the input).
     """
 
     __slots__ = ("segments", "encoding")
@@ -46,10 +53,14 @@ class DataMatrixData:
             try:
                 segment.encode(charset)
             except UnicodeEncodeError as exc:
+                suggested = "utf-8" if any(ord(c) > 255 for c in segment) else "iso-8859-1"
                 msg = (
                     f"DataMatrix encoding {encoding!r} expects {charset.upper()}; "
                     f"got {segment!r}."
                 )
+                if suggested != encoding:
+                    seg_args = ", ".join(repr(s) for s in segments)
+                    msg += f" Try {type(self).__name__}({seg_args}, encoding={suggested!r})."
                 if on_fail == "raise":
                     raise PyStrichInvalidInput(msg) from exc
                 warnings.warn(

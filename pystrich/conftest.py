@@ -26,7 +26,12 @@ def dmtxread():
     if not path:
         pytest.skip("dmtxread not installed")
 
-    def _read(image_path: "str | os.PathLike[str]", *, gs1: str | None = None) -> str:
+    def _read(
+        image_path: "str | os.PathLike[str]",
+        *,
+        gs1: str | None = None,
+        encoding: str = "utf-8",
+    ) -> str:
         # -C 0 disables error correction; --corrections-max=0 is rejected by dmtxread.
         args = [path, "-C", "0"]
         if gs1 is not None:
@@ -34,6 +39,6 @@ def dmtxread():
             # dmtxread expects the character as a decimal codepoint, not a literal.
             args += ["-G", str(ord(gs1))]
         args.append(os.fspath(image_path))
-        return subprocess.check_output(args).decode()
+        return subprocess.check_output(args).decode(encoding)
 
     return _read
