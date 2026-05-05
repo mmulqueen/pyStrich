@@ -37,7 +37,7 @@ def test_encode_decode(string, tmp_path, dmtxread):
     """dmtxread can decode this library's output back to the original string"""
     img = tmp_path / "datamatrix-test.png"
     DataMatrixEncoder(string).save(str(img))
-    assert dmtxread(str(img)) == string
+    assert dmtxread(img) == string
 
 
 @pytest.mark.parametrize("text, expected_codewords", [
@@ -82,7 +82,7 @@ def test_quiet_zone_round_trip(tmp_path, dmtxread):
     # quiet_zone=0 is excluded because dmtxread fails to detect the symbol without padding.
     img = tmp_path / "datamatrix-test.png"
     DataMatrixEncoder("test", quiet_zone=10).save(str(img))
-    assert dmtxread(str(img)) == "test"
+    assert dmtxread(img) == "test"
 
 
 def test_get_imagedata_matches_save(tmp_path):
@@ -91,3 +91,19 @@ def test_get_imagedata_matches_save(tmp_path):
     encoder = DataMatrixEncoder("Hello world")
     encoder.save(str(img))
     assert img.read_bytes() == encoder.get_imagedata()
+
+
+def test_gs1_fnc1_workaround(tmp_path, dmtxread):
+    """chr(231) at the start of the input produces an FNC1 codeword (232).
+
+    The encoder offsets every ASCII char by +1 (a longstanding bug), which means
+    feeding it chr(231) lands on codeword 232 = FNC1. dmtxread's -G flag enables
+    GS1 mode and substitutes FNC1 with the given character on output, so we can
+    verify the FNC1 actually made it into the symbol.
+
+    See https://github.com/mmulqueen/pyStrich/issues/13.
+    """
+    payload = "0100312345678901"
+    img = tmp_path / "gs1.png"
+    DataMatrixEncoder(chr(231) + payload).save(str(img))
+    assert dmtxread(img, gs1="|") == "|" + payload
