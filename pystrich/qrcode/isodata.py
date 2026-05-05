@@ -104,9 +104,7 @@ class MatrixInfo:
                 matrix[pos_x][pos_y] = ((255 * (codeword_i & 1)) ^ mask)
                 codeword_i >>= 1
                 j -= 1
-            # end while
             i += 1
-        # end while
 
         for matrix_remain in range(MATRIX_REMAIN_BIT[version], 0, -1):
             remain_bit_temp = matrix_remain + (max_codewords << 3) - 1
@@ -114,9 +112,7 @@ class MatrixInfo:
             pos_y = self.matrix_d[1][remain_bit_temp]
             mask = self.matrix_d[2][remain_bit_temp]
             matrix[pos_x][pos_y] = (255 ^ mask)
-        # end for
         return matrix
-    # end def create_matrix
 
     def put_format_info(self, matrix, format_info_value):
         """Put format information into the matrix"""
@@ -144,8 +140,6 @@ class MatrixInfo:
             content = int(format_info[format_info_value][i]) * 255
             matrix[format_info_x1[i]][format_info_y1[i]] = content
             matrix[self.format_info[0][i]][self.format_info[1][i]] = content
-        # end for
-    # end def put_format_info
 
     def finalize(self, matrix_content, mask_content):
         """Create final matrix and put frame data into it"""
@@ -159,11 +153,7 @@ class MatrixInfo:
                     matrix[i][j] = 1
                 else:
                     matrix[i][j] = self.frame_data[i][j]
-                # end if
-            # end for
-        # end for
         return matrix
-    # end def finalize
 
     def calc_demerit_score(self, bit_r, dem_data):
         """Calculate demerit score"""
@@ -189,7 +179,6 @@ class MatrixInfo:
         ptn_temp = re.findall(n1_search, dem_data[0])
         demerit[0] += sum([len(x) - 2 for x in ptn_temp])
         return sum(demerit)
-    # end def calc_demerit_score
 
     def calc_mask_number(self, matrix_content):
         """Calculate mask number for matrix"""
@@ -203,8 +192,6 @@ class MatrixInfo:
             for k in range(0, mtx_size):
                 hor_master += chr(matrix_content[k][i])
                 ver_master += chr(matrix_content[i][k])
-            # end for
-        # end for
 
         for i in range(0, 8):
             bit_r = chr((~(1 << i)) & 255)
@@ -228,11 +215,7 @@ class MatrixInfo:
             if demerit_score <= min_demerit_score or i == 0:
                 mask_number = i
                 min_demerit_score = demerit_score
-            # end if
-        # end for
         return mask_number
-    # end def calc_mask_number
-# end class MatrixInfo
 
 
 def strings_and(str1, str2):
@@ -240,10 +223,8 @@ def strings_and(str1, str2):
 
     if len(str1) < len(str2):
         str1, str2 = str2, str1
-    # end if
     str2 += '\0' * (len(str1) - len(str2))
     return "".join([chr(ord(x1) & ord(x2)) for x1, x2 in zip(str1, str2)])
-# end def strings_and
 
 
 def strings_or(str1, str2):
@@ -251,14 +232,11 @@ def strings_or(str1, str2):
 
     if len(str1) < len(str2):
         str1, str2 = str2, str1
-    # end if
     str2 += '\0' * (len(str1) - len(str2))
     return "".join([chr(ord(x1) | ord(x2)) for x1, x2 in zip(str1, str2)])
-# end def strings_or
 
 
 def string_not(str1):
     """Apply logical 'not' to every symbol of string"""
 
     return "".join([chr(256 + ~ord(x)) for x in str1])
-# end def string_not

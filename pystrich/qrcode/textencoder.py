@@ -15,30 +15,22 @@ class BitStream:
     def __init__(self):
 
         self.data = []
-    # end def __init__
 
     def append(self, value, bitsnum):
         """Append 'bitsnum' bits to the end of bit stream"""
 
         if bitsnum < 1:
             raise ValueError("Wrong value for number of bits (%d)" % bitsnum)
-        # end if
         for i in range(bitsnum - 1, -1, -1):
             self.data.append((value >> i) & 0x01)
-        # end for
-    # end def append
 
     def prepend(self, value, bitsnum):
         """Prepend 'bitsnum' bits to the begining of bit stream"""
 
         if bitsnum < 1:
             raise ValueError("Wrong value for number of bits (%d)" % bitsnum)
-        # end if
         for i in range(0, bitsnum, 1):
             self.data.insert(0, (value >> i) & 0x01)
-        # end for
-    # end def prepend
-# end class BitStream
 
 
 class TextEncoder:
@@ -53,7 +45,6 @@ class TextEncoder:
         self.mtx_size = 0
         self.minfo = None
         self.max_data_codewords = None
-    # end def __init__
 
     def encode(self, text, ecl=None):
         """Encode the given text and add padding and error codes
@@ -62,7 +53,6 @@ class TextEncoder:
         self.__init__()
         if ecl is None:
             ecl = 'M'
-        # end if
         self.ecl = STR2ECL[ecl]
 
         self.encode_text(text)
@@ -79,7 +69,6 @@ class TextEncoder:
         self.create_matrix()
 
         return self.matrix
-    # end def encode
 
     def encode_text(self, text):
         """Encode the given text into bitstream"""
@@ -94,22 +83,17 @@ class TextEncoder:
                 result_len += 8
             elif self.version == 41:
                 raise ValueError("QRCode cannot store %d bits" % result_len)
-            # end if
 
             max_bits = isodata.MAX_DATA_BITS[self.version - 1 + 40 * self.ecl]
             if max_bits >= result_len:
                 if max_bits - result_len < 4:
                     terminator_len = max_bits - result_len
-                # end if
                 self.max_data_codewords = max_bits >> 3
                 break
-            # end if
-        # end for
 
         bitstream = BitStream()
         for char in text:
             bitstream.append(ord(char), 8)
-        # end for
 
         bitstream.prepend(len(text), char_count_num)
         # write 'byte' mode
@@ -126,9 +110,6 @@ class TextEncoder:
                 self.codewords.append(byte)
                 bit_num = 7
                 byte = 0
-            # end if
-        # end for
-    # end def encode_text
 
     def pad(self):
         """Pad out the encoded text to the correct word length"""
@@ -138,8 +119,6 @@ class TextEncoder:
         for _ in range(len(self.codewords), self.max_data_codewords):
             self.codewords.append(pads[pad_idx])
             pad_idx = 1 - pad_idx
-        # end for
-    # end def pad
 
     def append_error_codes(self):
         """Calculate the necessary number of error codes for the encoded
@@ -158,9 +137,7 @@ class TextEncoder:
                 j = 0
                 rs_block_number += 1
                 rs_temp.append([])
-            # end if
             i += 1
-        # end while
 
         rs_block_number = 0
         rs_block_order_num = len(self.minfo.rs_block_order)
@@ -179,18 +156,13 @@ class TextEncoder:
 
                     if len(rstemp) < len(cal):
                         rstemp, cal = cal, rstemp
-                    # end if
                     cal += [0] * (len(rstemp) - len(cal))
                     rstemp = [x1 ^ x2 for x1, x2 in zip(rstemp, cal)]
                 else:
                     rstemp = rstemp[1:]
-                # end if
                 j -= 1
-            # end while
             self.codewords += rstemp
             rs_block_number += 1
-        # end while
-    # end def append_error_codes
 
     def create_matrix(self):
         """Create QR Code matrix"""
@@ -206,5 +178,3 @@ class TextEncoder:
         format_info_value = ((self.ecl << 3) | mask_number)
         self.minfo.put_format_info(matrix_content, format_info_value)
         self.matrix = self.minfo.finalize(matrix_content, mask_content)
-    # end def create_matrix
-# end class TextEncoder

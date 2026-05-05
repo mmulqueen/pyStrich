@@ -16,7 +16,6 @@ class QRCodeRenderer:
 
         self.mtx_size = len(matrix)
         self.matrix = matrix
-    # end def __init__
 
     def add_border(self, colour=1, width=4):
         """Wrap the matrix in a border of given width
@@ -86,13 +85,10 @@ class QRCodeRenderer:
                 return ' '
             elif value == 1:
                 return 'X'
-            # end if
-        # end def symbol
 
         return '\n'.join([
             ''.join([symbol(cell) for cell in row])
             for row in self.matrix]) + '\n'
-    # end def get_ascii
     
     def get_dxf(self, cellsize, inverse, units):
         """Write an DXF version of the matrix to a string"""
@@ -126,4 +122,3 @@ class QRCodeRenderer:
             dxf.append(solid(self.mtx_size*cellsize, self.mtx_size*cellsize, qz*cellsize, self.mtx_size*cellsize))
         dxf.append("0\nENDSEC\n0\nEOF\n")
         return "".join(dxf)    
-# end class QRCodeRenderer
