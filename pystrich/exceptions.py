@@ -18,3 +18,15 @@ class PyStrichInvalidOption(PyStrichError):
     Typically a programmer error: options are usually hardcoded by the caller
     rather than passed through from end-user input.
     """
+
+
+class PyStrichWarning(UserWarning):
+    """Base class for pyStrich-specific warnings."""
+
+
+class Fnc1WorkaroundCompatWarning(PyStrichWarning):
+    """The legacy chr(231) FNC1 trick triggered the compat shim; use the FNC1 constant instead."""
+
+
+class DataMatrixNonAsciiWarning(PyStrichWarning):
+    """DataMatrix input contains non-ASCII characters; output will not decode correctly."""

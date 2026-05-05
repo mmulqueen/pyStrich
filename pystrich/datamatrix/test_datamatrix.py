@@ -1,12 +1,34 @@
 """Unit test for 2D datamatrix barcode encoder"""
 
+import warnings
+
 import pytest
 
-from pystrich.datamatrix import DataMatrixEncoder
+from pystrich.datamatrix import (
+    DataMatrixCodeword,
+    DataMatrixData,
+    DataMatrixEncoder,
+    FNC1,
+)
+from pystrich.datamatrix.data import fnc1_workaround_compat
 from pystrich.datamatrix.renderer import DATAMATRIX_DEFAULT_QUIET_ZONE
 from pystrich.datamatrix.textencoder import TextEncoder
+from pystrich.exceptions import (
+    DataMatrixNonAsciiWarning,
+    Fnc1WorkaroundCompatWarning,
+    PyStrichInvalidInput,
+    PyStrichInvalidOption,
+    PyStrichWarning,
+)
 
 
+_API_FORMS = [
+    pytest.param(lambda s: s, id="compat"),
+    pytest.param(lambda s: DataMatrixData(s, encoding="ascii"), id="modern"),
+]
+
+
+@pytest.mark.parametrize("wrap", _API_FORMS)
 @pytest.mark.parametrize("string", [
     "banana",
     "wer das liest ist 31337",
@@ -33,13 +55,13 @@ from pystrich.datamatrix.textencoder import TextEncoder
     "http://www.hudora.de/track/0034",
     "This sentence will need multiple datamatrix regions. Tests to see whether bug 2 is fixed.",
 ])
-def test_encode_decode(string, tmp_path, dmtxread):
-    """dmtxread can decode this library's output back to the original string"""
+def test_encode_decode(string, wrap, tmp_path, dmtxread):
     img = tmp_path / "datamatrix-test.png"
-    DataMatrixEncoder(string).save(str(img))
+    DataMatrixEncoder(wrap(string)).save(str(img))
     assert dmtxread(img) == string
 
 
+@pytest.mark.parametrize("wrap", _API_FORMS)
 @pytest.mark.parametrize("text, expected_codewords", [
     pytest.param("hi", [105, 106, 129, 74, 235, 130, 61, 159], id="hi"),
     pytest.param(
@@ -57,10 +79,9 @@ def test_encode_decode(string, tmp_path, dmtxread):
         id="wer-das-liest",
     ),
 ])
-def test_encoding(text, expected_codewords):
-    """Text is correctly encoded with padding and error codewords."""
+def test_encoding(text, wrap, expected_codewords):
     enc = TextEncoder()
-    assert [ord(c) for c in enc.encode(text)] == expected_codewords
+    assert [ord(c) for c in enc.encode(wrap(text))] == expected_codewords
 
 
 @pytest.mark.parametrize("quiet_zone, expected_diff", [
@@ -78,7 +99,6 @@ def test_quiet_zone_changes_width(quiet_zone, expected_diff):
 
 
 def test_quiet_zone_round_trip(tmp_path, dmtxread):
-    """A non-default quiet_zone still produces a decodable image."""
     # quiet_zone=0 is excluded because dmtxread fails to detect the symbol without padding.
     img = tmp_path / "datamatrix-test.png"
     DataMatrixEncoder("test", quiet_zone=10).save(str(img))
@@ -86,7 +106,6 @@ def test_quiet_zone_round_trip(tmp_path, dmtxread):
 
 
 def test_get_imagedata_matches_save(tmp_path):
-    """get_imagedata() returns the same bytes that save() writes to disk."""
     img = tmp_path / "datamatrix-test.png"
     encoder = DataMatrixEncoder("Hello world")
     encoder.save(str(img))
@@ -94,16 +113,135 @@ def test_get_imagedata_matches_save(tmp_path):
 
 
 def test_gs1_fnc1_workaround(tmp_path, dmtxread):
-    """chr(231) at the start of the input produces an FNC1 codeword (232).
+    """A leading chr(231) is translated to a real FNC1 codeword via the compat shim.
 
-    The encoder offsets every ASCII char by +1 (a longstanding bug), which means
-    feeding it chr(231) lands on codeword 232 = FNC1. dmtxread's -G flag enables
-    GS1 mode and substitutes FNC1 with the given character on output, so we can
-    verify the FNC1 actually made it into the symbol.
+    Kept working as a bug-as-feature so existing users of the workaround don't
+    break; new code should use the FNC1 marker constant instead.
 
     See https://github.com/mmulqueen/pyStrich/issues/13.
     """
     payload = "0100312345678901"
     img = tmp_path / "gs1.png"
-    DataMatrixEncoder(chr(231) + payload).save(str(img))
+    with pytest.warns(Fnc1WorkaroundCompatWarning):
+        DataMatrixEncoder(chr(231) + payload).save(str(img))
     assert dmtxread(img, gs1="|") == "|" + payload
+
+
+@pytest.mark.parametrize("payload, expected", [
+    pytest.param(FNC1 + "0100312345678901", "|0100312345678901", id="simple_gs1"),
+    pytest.param(FNC1 + "10ABC" + FNC1 + "21XYZ", "|10ABC|21XYZ", id="separated"),
+    pytest.param(FNC1 + "1" + FNC1 + "21XYZ", "|1|21XYZ", id="unpaired_digit"),
+])
+def test_gs1_fnc1(payload, expected, tmp_path, dmtxread):
+    """The FNC1 marker emits codeword 232 directly (no chr(231) trick)."""
+    img = tmp_path / "gs1.png"
+    DataMatrixEncoder(payload).save(str(img))
+    assert dmtxread(img, gs1="|") == expected
+
+
+@pytest.mark.parametrize("data, expected_encoding", [
+    pytest.param(FNC1 + "abc", "ascii", id="codeword-then-str"),
+    pytest.param("abc" + FNC1, "ascii", id="str-then-codeword"),
+    pytest.param(FNC1 + FNC1, "ascii", id="codeword-then-codeword"),
+    pytest.param(
+        FNC1 + DataMatrixData("abc", encoding="compat"),
+        "compat",
+        id="codeword-preserves-compat-data-encoding",
+    ),
+    pytest.param(
+        DataMatrixData() + "abc" + FNC1, "compat", id="compat-data-then-str-then-codeword"
+    ),
+    pytest.param(
+        DataMatrixData("abc", encoding="ascii") + "def", "ascii", id="ascii-data-then-str"
+    ),
+    pytest.param(
+        DataMatrixData("a", encoding="ascii") + DataMatrixData("b", encoding="ascii"),
+        "ascii",
+        id="ascii-data-then-ascii-data",
+    ),
+])
+def test_concat_returns_datamatrix_data(data, expected_encoding):
+    assert isinstance(data, DataMatrixData)
+    assert data.encoding == expected_encoding
+
+
+@pytest.mark.parametrize("lhs_encoding, rhs_encoding", [
+    ("compat", "ascii"),
+    ("ascii", "compat"),
+])
+def test_concat_with_mismatched_encodings_raises(lhs_encoding, rhs_encoding):
+    with pytest.raises(PyStrichInvalidOption):
+        DataMatrixData("a", encoding=lhs_encoding) + DataMatrixData("b", encoding=rhs_encoding)
+
+
+@pytest.mark.parametrize("text", ["café", "naïve", "tést", "é", "€"])
+def test_datamatrix_data_warns_on_non_ascii_in_compat(text):
+    with pytest.warns(DataMatrixNonAsciiWarning):
+        DataMatrixData(text)
+
+
+@pytest.mark.parametrize("text", ["café", "naïve", "tést", "é", "€"])
+def test_datamatrix_data_raises_on_non_ascii_in_ascii(text):
+    with pytest.raises(PyStrichInvalidInput):
+        DataMatrixData(text, encoding="ascii")
+
+
+def test_datamatrix_data_unknown_encoding_raises():
+    with pytest.raises(PyStrichInvalidOption):
+        DataMatrixData("abc", encoding="bogus")
+
+
+@pytest.mark.parametrize("bad_segment", [
+    pytest.param(123, id="int"),
+    pytest.param(["abc"], id="list"),
+    pytest.param(b"abc", id="bytes"),
+    pytest.param(None, id="none"),
+])
+def test_datamatrix_data_rejects_non_str_segments(bad_segment):
+    with pytest.raises(TypeError):
+        DataMatrixData(bad_segment)
+
+
+def test_datamatrix_data_equality_distinguishes_encoding():
+    compat = DataMatrixData("abc", encoding="compat")
+    strict = DataMatrixData("abc", encoding="ascii")
+    assert compat != strict
+    assert hash(compat) != hash(strict)
+
+
+def test_datamatrix_data_concat_warns_on_non_ascii():
+    with pytest.warns(DataMatrixNonAsciiWarning):
+        DataMatrixData("abc") + "café"
+
+
+def test_encoder_warns_on_non_ascii():
+    with pytest.warns(DataMatrixNonAsciiWarning):
+        DataMatrixEncoder("café")
+
+
+def test_fnc1_concat_with_non_ascii_raises():
+    """Modern path (FNC1 + ...) raises on non-ASCII, no compat-warn fallback."""
+    with pytest.raises(PyStrichInvalidInput):
+        FNC1 + "café"
+
+
+@pytest.mark.parametrize("text, expected_segments, expected_warning_cls", [
+    pytest.param("hello", ("hello",), None, id="ascii-only"),
+    pytest.param("\xe7", (FNC1,), Fnc1WorkaroundCompatWarning, id="just-chr231"),
+    pytest.param("\xe7hello", (FNC1, "hello"), Fnc1WorkaroundCompatWarning, id="leading-chr231"),
+    pytest.param("\xe7a\xe7b", (FNC1, "a", FNC1, "b"), Fnc1WorkaroundCompatWarning, id="leading-and-middle"),
+    pytest.param("\xe7\xe7", (FNC1, FNC1), Fnc1WorkaroundCompatWarning, id="leading-consecutive"),
+    pytest.param("hello\xe7", ("hello\xe7",), DataMatrixNonAsciiWarning, id="trailing-chr231-passthrough"),
+    pytest.param("a\xe7b", ("a\xe7b",), DataMatrixNonAsciiWarning, id="middle-chr231-passthrough"),
+    pytest.param("a\xe7\xe7b", ("a\xe7\xe7b",), DataMatrixNonAsciiWarning, id="middle-consecutive-passthrough"),
+    pytest.param("café", ("café",), DataMatrixNonAsciiWarning, id="non-ascii-no-chr231"),
+])
+def test_fnc1_workaround_compat(text, expected_segments, expected_warning_cls):
+    if expected_warning_cls is None:
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", PyStrichWarning)
+            result = fnc1_workaround_compat(text)
+    else:
+        with pytest.warns(expected_warning_cls):
+            result = fnc1_workaround_compat(text)
+    assert result.segments == expected_segments

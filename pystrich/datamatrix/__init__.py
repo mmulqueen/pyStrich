@@ -35,6 +35,7 @@ You may use this under a BSD License.
 
 __revision__ = "$Rev$"
 
+from .data import DataMatrixCodeword, DataMatrixData, FNC1
 from .textencoder import TextEncoder
 from .placement import DataMatrixPlacer
 from .renderer import DataMatrixRenderer, DATAMATRIX_DEFAULT_QUIET_ZONE

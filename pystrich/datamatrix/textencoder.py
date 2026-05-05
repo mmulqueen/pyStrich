@@ -3,6 +3,7 @@
 __revision__ = "$Rev$"
 
 from .reedsolomon import get_reed_solomon_code
+from .data import DataMatrixData, DataMatrixCodeword, fnc1_workaround_compat
 from pystrich.exceptions import PyStrichInvalidInput
 import logging
 
@@ -68,27 +69,34 @@ class TextEncoder:
     def encode_text(self, text):
         """Encode the given text into codewords"""
 
+        data = text if isinstance(text, DataMatrixData) else fnc1_workaround_compat(text)
+
         numbuf = ''
 
-        for char in text:
-            if char.isdigit():
-                numbuf += char
-                if len(numbuf) == 2:
-                    # we have collected two numbers: add them as a digit pair
-                    self.append_digits(numbuf)
-                    numbuf = ''
-            else:
-                if numbuf:
-                    # an unpaired number: add it as an ascii character
-                    self.append_ascii_char(numbuf)
-                    numbuf = ''
+        def flush_numbuf():
+            nonlocal numbuf
+            if len(numbuf) == 2:
+                self.append_digits(numbuf)
+            elif numbuf:
+                self.append_ascii_char(numbuf)
+            numbuf = ''
 
-                # a regular ascii character
-                self.append_ascii_char(char)
+        for segment in data.segments:
+            if isinstance(segment, DataMatrixCodeword):
+                flush_numbuf()
+                self.codewords += chr(segment.value)
+                continue
 
-        # there might be a single number left over at the end
-        if numbuf:
-            self.append_ascii_char(numbuf)
+            for char in segment:
+                if char.isdigit():
+                    numbuf += char
+                    if len(numbuf) == 2:
+                        flush_numbuf()
+                else:
+                    flush_numbuf()
+                    self.append_ascii_char(char)
+
+        flush_numbuf()
 
     def pad(self):
         """Pad out the encoded text to the correct word length"""
