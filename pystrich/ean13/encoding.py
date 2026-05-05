@@ -1,5 +1,7 @@
 """Encoding tables and functions for EAN-13 barcode"""
 
+from pystrich.exceptions import PyStrichError
+
 #
 # Map the first number system digit to the parity encodings for the
 # following fields, in order:
@@ -48,9 +50,9 @@ def get_left_encoded(digit, parity):
     the given parity (0=even or 1=odd)"""
 
     if parity not in (0, 1):
-        raise Exception("Invalid parity '%s'" % parity)
+        raise PyStrichError("Invalid parity '%s'" % parity)
     elif digit not in list(range(0, 10)):
-        raise Exception("Invalid digit '%s'" % digit)
+        raise PyStrichError("Invalid digit '%s'" % digit)
     else:
         return encoding_table[digit][1 - parity]
 
@@ -59,6 +61,6 @@ def get_right_encoded(digit):
     """Get the right hand encoding of the given digit"""
 
     if digit not in list(range(0, 10)):
-        raise Exception("Invalid digit '%s'" % digit)
+        raise PyStrichError("Invalid digit '%s'" % digit)
     else:
         return encoding_table[digit][2]

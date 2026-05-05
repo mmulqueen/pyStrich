@@ -3,6 +3,7 @@
 import logging
 
 from . import isodata
+from pystrich.exceptions import PyStrichError, PyStrichInvalidInput
 
 LOG = logging.getLogger("qrcode")
 
@@ -20,7 +21,7 @@ class BitStream:
         """Append 'bitsnum' bits to the end of bit stream"""
 
         if bitsnum < 1:
-            raise ValueError("Wrong value for number of bits (%d)" % bitsnum)
+            raise PyStrichError("Wrong value for number of bits (%d)" % bitsnum)
         for i in range(bitsnum - 1, -1, -1):
             self.data.append((value >> i) & 0x01)
 
@@ -28,7 +29,7 @@ class BitStream:
         """Prepend 'bitsnum' bits to the begining of bit stream"""
 
         if bitsnum < 1:
-            raise ValueError("Wrong value for number of bits (%d)" % bitsnum)
+            raise PyStrichError("Wrong value for number of bits (%d)" % bitsnum)
         for i in range(0, bitsnum, 1):
             self.data.insert(0, (value >> i) & 0x01)
 
@@ -82,7 +83,7 @@ class TextEncoder:
                 char_count_num = 16
                 result_len += 8
             elif self.version == 41:
-                raise ValueError("QRCode cannot store %d bits" % result_len)
+                raise PyStrichInvalidInput("QRCode cannot store %d bits" % result_len)
 
             max_bits = isodata.MAX_DATA_BITS[self.version - 1 + 40 * self.ecl]
             if max_bits >= result_len:

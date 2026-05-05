@@ -2,6 +2,8 @@
 
 import os.path
 
+from pystrich.exceptions import PyStrichError
+
 MAX_DATA_BITS = [
     128, 224, 352, 512, 688, 864, 992, 1232, 1456, 1728,
     2032, 2320, 2672, 2920, 3320, 3624, 4056, 4504, 5016, 5352,
@@ -82,7 +84,7 @@ class MatrixInfo:
                     elif char == '0':
                         frame_line.append(0)
                     else:
-                        raise ValueError("Corrupted frame data file, found char: {}".format(char))
+                        raise PyStrichError("Corrupted frame data file, found char: {}".format(char))
                 self.frame_data.append(frame_line)
 
     def create_matrix(self, version, codewords):

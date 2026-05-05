@@ -18,6 +18,7 @@ __revision__ = "$Rev: 1$"
 
 from . import encoding
 from .renderer import EAN13Renderer
+from pystrich.exceptions import PyStrichInvalidInput
 # handling movement of reduce to functools python >= 2.6
 try:
     from functools import reduce
@@ -53,7 +54,7 @@ class EAN13Encoder:
             self.width = 0
             self.encode()
         else:
-            raise Exception("code must be 12 digits long")
+            raise PyStrichInvalidInput("code must be 12 digits long")
 
     def encode(self):
         """Encode the barcode number and return the left and right

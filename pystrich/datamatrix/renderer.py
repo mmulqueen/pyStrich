@@ -6,6 +6,8 @@ from io import BytesIO
 
 from PIL import Image
 
+from pystrich.exceptions import PyStrichInvalidOption
+
 DATAMATRIX_DEFAULT_QUIET_ZONE = 2
 
 
@@ -24,7 +26,7 @@ class DataMatrixRenderer:
         self.regions = regions
         self.region_size = self.width//regions
         if quiet_zone < 0:
-            raise ValueError("Quiet zone must be non-negative")
+            raise PyStrichInvalidOption("Quiet zone must be non-negative")
         self.quiet_zone = quiet_zone
 
         self.matrix = matrix

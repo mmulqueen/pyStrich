@@ -5,8 +5,9 @@ import string
 log = logging.getLogger("code39")
 
 from . import encoding
+from pystrich.exceptions import PyStrichInvalidInput
 
-class CharacterNotAllowedInCode39(Exception):
+class CharacterNotAllowedInCode39(PyStrichInvalidInput):
     pass
 
 class TextEncoder:

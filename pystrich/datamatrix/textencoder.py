@@ -3,6 +3,7 @@
 __revision__ = "$Rev$"
 
 from .reedsolomon import get_reed_solomon_code
+from pystrich.exceptions import PyStrichInvalidInput
 import logging
 
 log = logging.getLogger("datamatrix")
@@ -28,7 +29,7 @@ hv_regions = (1, 1, 1, 1, 1, 1, 1, 1, 1,
               6, 6, 6)
 
 
-class DataTooLongForImplementation(Exception):
+class DataTooLongForImplementation(PyStrichInvalidInput):
     pass
 
 
