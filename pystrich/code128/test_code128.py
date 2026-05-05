@@ -1,88 +1,55 @@
 """Unit test for code128 barcode encoder"""
 
-
-import unittest
 import filecmp
-import tempfile
+from pathlib import Path
+
+import pytest
 
 from pystrich.code128 import Code128Encoder
 
-
-class Code128Test(unittest.TestCase):
-    """Unit test class for code128 bar code encoder"""
-
-    test_strings = ("banana",
-                    "wer das liest ist 31337",
-                    "http://hudora.de/",
-                    "http://hudora.de/artnr/12345/12/",
-                    "http://hudora.de/track/00340059980000001319/",
-                    "12345678",
-                    "123456789"
-                    )
-
-    def test_charset_encoding(self):
-        """Make sure the character set encoding, code type switching
-        and optimization works correctly"""
-        known_good = {
-            # dense C encoding
-            # immediate switch into C-mode, should compress
-            "1234": [105, 12, 34],
-
-            # B only
-            "hello": [104, 72, 69, 76, 76, 79],
-
-            # B switching to C
-            "HI345678": [104, 40, 41, 99, 34, 56, 78],
-
-            "BarCode 1": [104, 34, 65, 82, 35, 79, 68, 69, 0, 17],
-        }
-        for text, encoded in known_good.items():
-            enc = Code128Encoder(text)
-            self.assertEqual(enc.encoded_text, encoded)
-
-        # B => C => B, with leftover digit
-        self.assertEqual(Code128Encoder('HI34567A').encoded_text, [104, 40, 41, 99, 34, 56, 100, 23, 33])
-
-        # there was a Bug in C encoding when we have a leftover digit at the end
-        # see https://github.com/hudora/huBarcode/issues/issue/11
-        self.assertEqual(Code128Encoder('12345').encoded_text, [105, 12, 34, 100, 21])
-
-    def test_check_sum(self):
-        """Make sure the checksum is calculated correctly"""
-
-        known_good = {
-            "HI345678": 68,
-            "BarCode 1": 33
-        }
-
-        for text, chk in known_good.items():
-            enc = Code128Encoder(text)
-            self.assertEqual(enc.checksum, chk)
-
-    def test_bar_encoding(self):
-        """Make sure the bar encoding works correctly"""
-        bars = "11010010000" + "11000101000" + "11000100010" + \
-            "10111011110" + "10001011000" + "11100010110" + \
-            "11000010100" + "10000100110" + "11000111010" + "11"
-
-        text = "HI345678"
-
-        enc = Code128Encoder(text)
-        self.assertEqual(enc.bars, bars)
-
-    def test_against_generated(self):
-        """Compare the output of this library with generated barcodes"""
-
-        for index, string in enumerate(Code128Test.test_strings):
-            generated = tempfile.mkstemp(".png")[1]
-            encoder = Code128Encoder(string)
-            encoder.save(generated)
+TEST_IMG_DIR = Path(__file__).parent / "test_img"
 
 
-            test_against = 'pystrich/code128/test_img/%d.png' % (index + 1)
-            self.assertTrue(filecmp.cmp(generated, test_against),
-                                        msg="{} didn't match {}".format(test_against, generated))
+@pytest.mark.parametrize("text, expected_codewords", [
+    pytest.param("1234", [105, 12, 34], id="dense-C"),
+    pytest.param("hello", [104, 72, 69, 76, 76, 79], id="B-only"),
+    pytest.param("HI345678", [104, 40, 41, 99, 34, 56, 78], id="B-to-C"),
+    pytest.param("BarCode 1", [104, 34, 65, 82, 35, 79, 68, 69, 0, 17], id="B-mixed"),
+    pytest.param("HI34567A", [104, 40, 41, 99, 34, 56, 100, 23, 33], id="B-C-B-leftover"),
+    # https://github.com/hudora/huBarcode/issues/issue/11
+    pytest.param("12345", [105, 12, 34, 100, 21], id="C-leftover-digit"),
+])
+def test_charset_encoding(text, expected_codewords):
+    """Charset selection, code switching, and optimization produce known-good codewords."""
+    assert Code128Encoder(text).encoded_text == expected_codewords
 
 
-if __name__ == '__main__':
-    unittest.main()
+@pytest.mark.parametrize("text, checksum", [
+    ("HI345678", 68),
+    ("BarCode 1", 33),
+])
+def test_check_sum(text, checksum):
+    assert Code128Encoder(text).checksum == checksum
+
+
+def test_bar_encoding():
+    bars = ("11010010000" + "11000101000" + "11000100010" +
+            "10111011110" + "10001011000" + "11100010110" +
+            "11000010100" + "10000100110" + "11000111010" + "11")
+    assert Code128Encoder("HI345678").bars == bars
+
+
+@pytest.mark.parametrize("string, reference", [
+    ("banana", "1.png"),
+    ("wer das liest ist 31337", "2.png"),
+    ("http://hudora.de/", "3.png"),
+    ("http://hudora.de/artnr/12345/12/", "4.png"),
+    ("http://hudora.de/track/00340059980000001319/", "5.png"),
+    ("12345678", "6.png"),
+    ("123456789", "7.png"),
+])
+def test_against_generated(string, reference, tmp_path):
+    """Output bytes match the checked-in reference image."""
+    generated = tmp_path / "barcode.png"
+    Code128Encoder(string).save(str(generated))
+    assert filecmp.cmp(str(generated), str(TEST_IMG_DIR / reference), shallow=False)

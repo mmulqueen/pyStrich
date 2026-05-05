@@ -1,24 +1,9 @@
 """Unit test for QR Code barcode encoder"""
 
-import subprocess
-from shutil import which
-
 import pytest
 
 from pystrich.qrcode import QRCodeEncoder, isodata
-from pystrich.qrcode.textencoder import STR2ECL, TextEncoder
-
-zbarimg_path = which("zbarimg")
-
-
-def zbarimg(image_path: str) -> str:
-    """Read a QR code from an image file using zbarimg"""
-    if not zbarimg_path:
-        raise RuntimeError("zbarimg not found")
-    output = subprocess.check_output(
-        [zbarimg_path, "--quiet", "--raw", image_path]
-    ).decode()
-    return output.rstrip("\n")
+from pystrich.qrcode.textencoder import TextEncoder
 
 
 @pytest.mark.parametrize("text, expected_codewords", [
@@ -49,7 +34,6 @@ def test_encoding(text, expected_codewords):
     assert enc.codewords == expected_codewords
 
 
-@pytest.mark.skipif(not zbarimg_path, reason="zbarimg not installed")
 @pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])
 @pytest.mark.parametrize("string", [
     "banana",
@@ -81,7 +65,7 @@ def test_encoding(text, expected_codewords):
     "00231872347699829949",
     "00231872347699829948",
 ])
-def test_encode_decode(string, ecl, tmp_path):
+def test_encode_decode(string, ecl, tmp_path, zbarimg):
     """zbarimg can decode this library's output back to the original string"""
     img = tmp_path / "qrcode-test.png"
     QRCodeEncoder(string, ecl).save(str(img), 3)
