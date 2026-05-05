@@ -2,7 +2,7 @@ ARG PYTHON_VERSION=3.13
 FROM python:${PYTHON_VERSION}-slim
 
 RUN apt-get update \
- && apt-get install -y --no-install-recommends dmtx-utils \
+ && apt-get install -y --no-install-recommends dmtx-utils zbar-tools \
  && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir poetry

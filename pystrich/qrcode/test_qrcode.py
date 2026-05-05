@@ -1,8 +1,24 @@
 """Unit test for QR Code barcode encoder"""
 
+import subprocess
 import unittest
+from shutil import which
+
+import pytest
 
 from pystrich.qrcode import QRCodeEncoder
+
+zbarimg_path = which("zbarimg")
+
+
+def zbarimg(image_path: str) -> str:
+    """Read a QR code from an image file using zbarimg"""
+    if not zbarimg_path:
+        raise RuntimeError("zbarimg not found")
+    output = subprocess.check_output(
+        [zbarimg_path, "--quiet", "--raw", image_path]
+    ).decode()
+    return output.rstrip("\n")
 
 
 class QRTest(unittest.TestCase):
@@ -69,3 +85,53 @@ class QRTest(unittest.TestCase):
         for key, value in correct_encodings.items():
             enc.encode(key, ecl='M')
             self.assertEqual(enc.codewords, value)
+
+
+_xfail_unscannable = pytest.mark.xfail(
+    raises=subprocess.CalledProcessError,
+    reason="zbarimg cannot decode output",
+    strict=True,
+)
+_xfail_indexerror = pytest.mark.xfail(
+    raises=IndexError,
+    reason="encoder raises IndexError (issue #8)",
+    strict=True,
+)
+
+
+@pytest.mark.skipif(not zbarimg_path, reason="zbarimg not installed")
+@pytest.mark.parametrize("string", [
+    pytest.param("banana"),
+    pytest.param("wer das liest ist 31337"),
+    pytest.param("http://hudora.de/"),
+    pytest.param("http://hudora.de/artnr/12345/12/"),
+    pytest.param("http://hudora.de/track/00340059980000001319/"),
+    pytest.param("http://www.hudora.de/track/00340059980000001319/", marks=_xfail_unscannable),
+    pytest.param("http://www.hudora.de/track/00340059980000001319"),
+    pytest.param("http://www.hudora.de/track/0034005998000000131", marks=_xfail_unscannable),
+    pytest.param("http://www.hudora.de/track/003400599800000013"),
+    pytest.param("http://www.hudora.de/track/00340059980000001", marks=_xfail_unscannable),
+    pytest.param("http://www.hudora.de/track/0034005998000000", marks=_xfail_unscannable),
+    pytest.param("http://www.hudora.de/track/003400599800000"),
+    pytest.param("http://www.hudora.de/track/00340059980000"),
+    pytest.param("http://www.hudora.de/track/0034005998000"),
+    pytest.param("http://www.hudora.de/track/003400599800"),
+    pytest.param("http://www.hudora.de/track/00340059980"),
+    pytest.param("http://www.hudora.de/track/0034005998"),
+    pytest.param("http://www.hudora.de/track/003400599"),
+    pytest.param("http://www.hudora.de/track/00340059"),
+    pytest.param("http://www.hudora.de/track/0034005"),
+    pytest.param("http://www.hudora.de/track/003400"),
+    pytest.param("http://www.hudora.de/track/00340"),
+    pytest.param("http://www.hudora.de/track/0034"),
+    # https://github.com/mmulqueen/pyStrich/issues/8
+    pytest.param("B-4-1-20170805-6", marks=_xfail_indexerror),
+    pytest.param("b-4-1-20170805-6"),
+    pytest.param("00231872347699829949", marks=_xfail_indexerror),
+    pytest.param("00231872347699829948"),
+])
+def test_encode_decode(string, tmp_path):
+    """zbarimg can decode this library's output back to the original string"""
+    img = tmp_path / "qrcode-test.png"
+    QRCodeEncoder(string, "M").save(str(img), 3)
+    assert zbarimg(str(img)) == string
