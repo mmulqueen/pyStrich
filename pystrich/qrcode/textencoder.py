@@ -6,6 +6,8 @@ from . import isodata
 
 LOG = logging.getLogger("qrcode")
 
+STR2ECL = {"L": 1, "l": 1, "M": 0, "m": 0, "Q": 3, "q": 3, "H": 2, "h": 2}
+
 
 class BitStream:
     """Simple Bit stream implementation"""
@@ -61,8 +63,7 @@ class TextEncoder:
         if ecl is None:
             ecl = 'M'
         # end if
-        str2ecl = {"L": 1, "l": 1, "M": 0, "m": 0, "Q": 3, "q": 3, "H": 2, "h": 2}
-        self.ecl = str2ecl[ecl]
+        self.ecl = STR2ECL[ecl]
 
         self.encode_text(text)
 
@@ -84,7 +85,7 @@ class TextEncoder:
         """Encode the given text into bitstream"""
 
         char_count_num = 8
-        result_len = 4 + 8 * len(text)
+        result_len = 4 + char_count_num + 8 * len(text)
         terminator_len = 4
         # Calculate smallest symbol version
         for self.version in range(1, 42):
@@ -168,13 +169,13 @@ class TextEncoder:
             rs_codewords = self.minfo.rs_block_order[rs_block_number]
             rs_data_codewords = rs_codewords - self.minfo.rs_ecc_codewords
 
-            rstemp = rs_temp[rs_block_number]
+            rstemp = rs_temp[rs_block_number] + [0] * self.minfo.rs_ecc_codewords
             j = rs_data_codewords
             while j > 0:
                 first = rstemp[0]
                 if first != 0:
                     rstemp = rstemp[1:]
-                    cal = self.minfo.rs_cal_table[first]
+                    cal = list(self.minfo.rs_cal_table[first])
 
                     if len(rstemp) < len(cal):
                         rstemp, cal = cal, rstemp
