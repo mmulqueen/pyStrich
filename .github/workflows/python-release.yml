@@ -29,6 +29,9 @@ jobs:
     - name: Test with pytest
       run: |
         poetry run pytest
+    - name: Type-check with mypy
+      run: |
+        poetry run mypy
 
   release-build:
     runs-on: ubuntu-latest
