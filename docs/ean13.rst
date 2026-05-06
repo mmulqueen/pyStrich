@@ -22,10 +22,10 @@ recomputed).
    ``5050070007664``, is the GTIN of a real product (a DVD of *Road House*).
 
 Input must be exactly 12 or 13 digits, ASCII ``0``-``9``. Anything else
-raises :class:`~pystrich.exceptions.PyStrichInvalidInput`. Unlike the other
-1D encoders in pyStrich, :class:`EAN13Encoder` takes no ``options`` dict --
-the human-readable label below the bars is mandated by the EAN-13
-specification and always rendered.
+raises :class:`~pystrich.exceptions.PyStrichInvalidInput`. The human-readable
+label below the bars is mandated by the EAN-13 specification and always
+rendered; the only customisation hook is the cosmetic
+:class:`EAN13RenderOptions` dict (see `Label baseline`_ below).
 
 The check digit is always computed by pyStrich; pass either 12 digits (it
 is appended) or 13 digits (the supplied final digit is discarded and
@@ -82,7 +82,31 @@ retail scanners may fail to read the symbol.
    :doc:`printing` for guidance on selecting ``bar_width`` for printed
    output.
 
+Label baseline
+--------------
+
+By default pyStrich draws the leading number-system digit slightly higher
+than the two main digit groups. To draw all three groups on a level baseline instead, pass an
+``options`` dict with ``first_digit_y_offset`` set to ``0``:
+
+.. code-block:: python
+
+   encoder = EAN13Encoder(
+       "5050070007664", options={"first_digit_y_offset": 0}
+   )
+   encoder.save("ean13-level.png")
+
+The value is the gap between the first digit and the others, expressed as
+a fraction of image height. ``0.1`` (the default) preserves the classic
+look; ``0`` aligns all three groups.
+
+.. versionadded:: 0.11
+   The ``options`` dict and ``first_digit_y_offset`` key.
+
 API
 ---
 
 .. autoclass:: pystrich.ean13.EAN13Encoder
+
+.. autoclass:: pystrich.ean13.EAN13RenderOptions
+   :members:

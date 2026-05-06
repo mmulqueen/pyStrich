@@ -64,3 +64,12 @@ def test_zbarimg_round_trip(string, decoded, tmp_path, zbarimg):
     img = tmp_path / "ean13.png"
     EAN13Encoder(string).save(str(img))
     assert zbarimg(img) == decoded
+
+
+def test_first_digit_y_offset_zero(tmp_path, zbarimg):
+    """Setting the option does not break scanner decoding."""
+    img = tmp_path / "ean13.png"
+    EAN13Encoder(
+        "750103131130", options={"first_digit_y_offset": 0}
+    ).save(str(img))
+    assert zbarimg(img) == "7501031311309"

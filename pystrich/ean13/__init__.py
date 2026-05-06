@@ -21,7 +21,7 @@ from functools import reduce
 from typing import TYPE_CHECKING
 
 from . import encoding
-from .renderer import EAN13Renderer
+from .renderer import EAN13Renderer, EAN13RenderOptions
 from pystrich.exceptions import PyStrichInvalidInput
 
 if TYPE_CHECKING:
@@ -47,6 +47,7 @@ class EAN13Encoder:
     :ivar full_code: The 13-digit code including check digit.
     :ivar left_bars: Bar pattern for the left half of the symbol.
     :ivar right_bars: Bar pattern for the right half.
+    :ivar options: Render-time options dict (empty if none were supplied).
     :ivar width: Pixel width of the most recently rendered image.
     :ivar height: Pixel height of the most recently rendered image.
     """
@@ -56,16 +57,23 @@ class EAN13Encoder:
     full_code: str
     left_bars: str
     right_bars: str
+    options: EAN13RenderOptions
     width: int
     height: int
 
-    def __init__(self, code: str) -> None:
+    def __init__(
+        self,
+        code: str,
+        options: EAN13RenderOptions | None = None,
+    ) -> None:
         """Validate ``code`` and compute its check digit.
 
         :param code: A string of 12 digits in the form ``nnmmmmmppppp``,
             where ``n`` is the number system, ``m`` is the manufacturer code
             and ``p`` is the product code. A 13-digit code is also accepted;
             its final digit is treated as a check digit and recomputed.
+        :param options: Optional dict tweaking the rendered output. See
+            :class:`pystrich.ean13.EAN13RenderOptions` for accepted keys.
         :raises pystrich.exceptions.PyStrichInvalidInput: if ``code`` is not
             exactly 12 (or 13) digits.
         """
@@ -80,6 +88,7 @@ class EAN13Encoder:
             self.full_code = self.code + str(self.check_digit)
             self.left_bars = ""
             self.right_bars = ""
+            self.options = options or {}
             self.height = 0
             self.width = 0
             self.encode()
@@ -141,7 +150,8 @@ class EAN13Encoder:
         :rtype: bytes
         """
         barcode = EAN13Renderer(
-            self.full_code, self.left_bars, self.right_bars, GUARDS)
+            self.full_code, self.left_bars, self.right_bars, GUARDS,
+            self.options)
         imagedata = barcode.get_imagedata(bar_width)
         self.height = barcode.height
         self.width = barcode.width
@@ -157,7 +167,8 @@ class EAN13Encoder:
         .. versionadded:: 0.11
         """
         barcode = EAN13Renderer(
-            self.full_code, self.left_bars, self.right_bars, GUARDS)
+            self.full_code, self.left_bars, self.right_bars, GUARDS,
+            self.options)
         img = barcode.get_pilimage(bar_width)
         self.height = barcode.height
         self.width = barcode.width
@@ -172,4 +183,5 @@ class EAN13Encoder:
         EAN13Renderer(self.full_code,
                       self.left_bars,
                       self.right_bars,
-                      GUARDS).write_file(filename, bar_width)
+                      GUARDS,
+                      self.options).write_file(filename, bar_width)

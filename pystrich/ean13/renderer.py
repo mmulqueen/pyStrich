@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 from functools import reduce
 from io import BytesIO
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
 from PIL import Image, ImageFont, ImageDraw
 
@@ -22,6 +22,24 @@ font_sizes = {
 }
 
 
+class EAN13RenderOptions(TypedDict, total=False):
+    """Optional render-time tweaks for EAN-13 barcodes.
+
+    The label layout in EAN-13 is fixed by the standard, so this is a small
+    set of cosmetic toggles. All keys are optional; omitted keys fall back
+    to library defaults.
+
+    .. versionadded:: 0.11
+    """
+
+    first_digit_y_offset: float
+    """How far above the other text the first digit sits, as a fraction of
+    image height. Defaults to ``0.1`` (the long-standing pyStrich look,
+    where the leading number-system digit sits slightly higher than the two
+    main digit groups). Set to ``0`` for a level baseline across all three
+    groups."""
+
+
 class EAN13Renderer:
     """Rendering class - given the code and corresponding
     bar encodings and guard bars,
@@ -33,6 +51,7 @@ class EAN13Renderer:
     left_bars: str
     right_bars: str
     guards: tuple[str, str, str]
+    options: EAN13RenderOptions
 
     def __init__(
         self,
@@ -40,11 +59,13 @@ class EAN13Renderer:
         left_bars: str,
         right_bars: str,
         guards: tuple[str, str, str],
+        options: EAN13RenderOptions | None = None,
     ) -> None:
         self.code = code
         self.left_bars = left_bars
         self.right_bars = right_bars
         self.guards = guards
+        self.options = options or {}
         self.width = 0
         self.height = 0
 
@@ -103,11 +124,13 @@ class EAN13Renderer:
 
         font = get_font("courR", font_size)
         draw = ImageDraw.Draw(img)
-        draw.text((1 * bar_width, int(image_height * 0.7)),
+        text_y = 0.8
+        first_digit_y = text_y - self.options.get("first_digit_y_offset", 0.1)
+        draw.text((1 * bar_width, int(image_height * first_digit_y)),
                   self.code[0], font=font)
-        draw.text((left_quiet + 7 * bar_width, int(image_height * 0.8)),
+        draw.text((left_quiet + 7 * bar_width, int(image_height * text_y)),
                   self.code[1:7], font=font)
-        draw.text((left_quiet + 54 * bar_width, int(image_height * 0.8)),
+        draw.text((left_quiet + 54 * bar_width, int(image_height * text_y)),
                   self.code[7:], font=font)
         self.width = image_width
         self.height = image_height

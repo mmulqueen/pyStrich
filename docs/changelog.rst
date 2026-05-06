@@ -20,6 +20,12 @@ Unreleased (next version: 0.11)
 - EAN-13 quiet zone is now 11 modules left, 7 modules right (per the GS1
   General Specifications); previously 9 modules each side, which was below
   spec on the left.
+- EAN-13: the leading digit's vertical position is now
+  configurable via an ``options`` dict
+  (``first_digit_y_offset``); pass ``0`` for a level baseline across all
+  three digit groups (`issue #18
+  <https://github.com/mmulqueen/pyStrich/issues/18>`_). The default
+  preserves the classic look where the first digit is slightly higher
 - Errors: unified exception hierarchy. All pyStrich-raised errors now
   inherit from :class:`~pystrich.exceptions.PyStrichError`.
 - Public ``get_pilimage`` method on every encoder, returning a
