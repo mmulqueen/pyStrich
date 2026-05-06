@@ -1,11 +1,18 @@
 """Rendering code for EAN-13 barcode"""
 
+from __future__ import annotations
+
+import os
 from functools import reduce
 from io import BytesIO
+from typing import TYPE_CHECKING
 
 from PIL import Image, ImageFont, ImageDraw
 
 from pystrich.fonts import get_font
+
+if TYPE_CHECKING:
+    from PIL.Image import Image as PILImage
 # maps bar width against font size
 font_sizes = {
     1: 8,
@@ -20,17 +27,29 @@ class EAN13Renderer:
     bar encodings and guard bars,
     it will add edge zones and render to an image"""
 
-    width = None
-    height = None
+    width: int
+    height: int
+    code: str
+    left_bars: str
+    right_bars: str
+    guards: tuple[str, str, str]
 
-    def __init__(self, code, left_bars, right_bars, guards):
+    def __init__(
+        self,
+        code: str,
+        left_bars: str,
+        right_bars: str,
+        guards: tuple[str, str, str],
+    ) -> None:
         self.code = code
         self.left_bars = left_bars
         self.right_bars = right_bars
         self.guards = guards
+        self.width = 0
+        self.height = 0
 
-    def get_pilimage(self, bar_width):
-        def sum_len(total, item):
+    def get_pilimage(self, bar_width: int) -> PILImage:
+        def sum_len(total: int, item: str) -> int:
             """add the length of a given item to the total"""
             return total + len(item)
 
@@ -94,14 +113,14 @@ class EAN13Renderer:
         self.height = image_height
         return img
 
-    def write_file(self, filename, bar_width):
+    def write_file(self, filename: str | os.PathLike[str], bar_width: int) -> None:
         """Write barcode data out to image file
         filename - the name of the image file
         bar_width - the desired width of each bar"""
         img = self.get_pilimage(bar_width)
         img.save(filename, "PNG")
 
-    def get_imagedata(self, bar_width):
+    def get_imagedata(self, bar_width: int) -> bytes:
         """Write the matrix out as PNG to a bytestream"""
         buffer = BytesIO()
         img = self.get_pilimage(bar_width)

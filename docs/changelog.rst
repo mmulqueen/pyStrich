@@ -24,6 +24,7 @@ Unreleased (next version: 0.11)
   inherit from :class:`~pystrich.exceptions.PyStrichError`.
 - Public ``get_pilimage`` method on every encoder, returning a
   :class:`PIL.Image.Image` directly.
+- Typing: encoders and renderers now have type hints and are checked with mypy
 - Tests: refactored test suite to make better use of pytest, and extended
   encode/decode round-trip test coverage to Code 39, Code 128, EAN-13 and
   QR Code (previously DataMatrix only).

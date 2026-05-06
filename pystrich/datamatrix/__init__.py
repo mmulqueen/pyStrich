@@ -33,12 +33,19 @@ Further resources here: http://www.libdmtx.org/resources.php
 You may use this under a BSD License.
 """
 
-__revision__ = "$Rev$"
+from __future__ import annotations
+
+import os
+from typing import TYPE_CHECKING
+
 
 from .data import DataMatrixCodeword, DataMatrixData, FNC1
 from .textencoder import TextEncoder
 from .placement import DataMatrixPlacer
 from .renderer import DataMatrixRenderer, DATAMATRIX_DEFAULT_QUIET_ZONE
+
+if TYPE_CHECKING:
+    from PIL.Image import Image as PILImage
 
 
 class DataMatrixEncoder:
@@ -59,8 +66,8 @@ class DataMatrixEncoder:
     that does not decode correctly. New code should always pass an explicit
     encoding.
 
-    :ivar matrix: 2D list of bools (or ``None`` for unset cells) describing
-        the symbol prior to rendering.
+    :ivar matrix: 2D list of ints (``0``/``1``, or ``None`` for unset cells)
+        describing the symbol prior to rendering.
     :ivar regions: Number of square regions the symbol is divided into.
     :ivar quiet_zone: Width in modules of the white border applied at render time.
     :ivar width: Pixel width of the most recently rendered image. ``0`` until a
@@ -68,7 +75,18 @@ class DataMatrixEncoder:
     :ivar height: Pixel height of the most recently rendered image.
     """
 
-    def __init__(self, text, *, quiet_zone=DATAMATRIX_DEFAULT_QUIET_ZONE):
+    matrix: list[list[int | None]]
+    regions: int
+    quiet_zone: int
+    width: int
+    height: int
+
+    def __init__(
+        self,
+        text: DataMatrixData | str,
+        *,
+        quiet_zone: int = DATAMATRIX_DEFAULT_QUIET_ZONE,
+    ) -> None:
         """Encode ``text`` and lay it out in a Data Matrix grid.
 
         :param text: The data to encode. Either a :class:`DataMatrixData`
@@ -97,7 +115,7 @@ class DataMatrixEncoder:
         placer = DataMatrixPlacer()
         placer.place(codewords, self.matrix)
 
-    def init_renderer(self):
+    def init_renderer(self) -> DataMatrixRenderer:
         """Construct a :class:`DataMatrixRenderer` for the encoded matrix.
 
         Updates :attr:`width` and :attr:`height` with the renderer's pixel
@@ -108,7 +126,7 @@ class DataMatrixEncoder:
         self.height = dmtx.height
         return dmtx
 
-    def save(self, filename, cellsize=5):
+    def save(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
         """Save the symbol as a PNG. Pass a ``.png`` filename.
 
         :param filename: PNG output path.
@@ -117,7 +135,7 @@ class DataMatrixEncoder:
         dmtx = self.init_renderer()
         dmtx.write_file(cellsize, filename)
 
-    def get_imagedata(self, cellsize=5):
+    def get_imagedata(self, cellsize: int = 5) -> bytes:
         """Render the symbol and return PNG bytes.
 
         :param cellsize: Side length in pixels of one module.
@@ -127,7 +145,7 @@ class DataMatrixEncoder:
         dmtx = self.init_renderer()
         return dmtx.get_imagedata(cellsize)
 
-    def get_pilimage(self, cellsize=5):
+    def get_pilimage(self, cellsize: int = 5) -> PILImage:
         """Render the symbol and return a Pillow image.
 
         :param cellsize: Side length in pixels of one module.
@@ -139,7 +157,7 @@ class DataMatrixEncoder:
         dmtx = self.init_renderer()
         return dmtx.get_pilimage(cellsize)
 
-    def get_ascii(self):
+    def get_ascii(self) -> str:
         """Return an ASCII-art rendering of the symbol.
 
         Useful for quick inspection in a terminal or in tests.
@@ -149,7 +167,9 @@ class DataMatrixEncoder:
         dmtx = self.init_renderer()
         return dmtx.get_ascii()
 
-    def get_dxf(self, cellsize=1.0, inverse=True, units="mm"):
+    def get_dxf(
+        self, cellsize: float = 1.0, inverse: bool = True, units: str = "mm"
+    ) -> str:
         """Return a DXF (CAD) representation of the symbol.
 
         :param cellsize: Side length of one module in ``units``.

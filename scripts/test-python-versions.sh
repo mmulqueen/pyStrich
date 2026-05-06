@@ -33,6 +33,12 @@ run_version() {
     && podman run --rm "$tag"
 }
 
+run_mypy() {
+    # Reuse one of the built images; mypy only needs to run once.
+    local tag="pystrich-test:${VERSIONS[-1]}"
+    podman run --rm "$tag" poetry run mypy
+}
+
 status=0
 for v in "${VERSIONS[@]}"; do
     if (( verbose )); then
@@ -53,5 +59,23 @@ for v in "${VERSIONS[@]}"; do
         fi
     fi
 done
+
+if (( verbose )); then
+    echo "=== mypy ==="
+    if run_mypy; then
+        echo "mypy: PASS"
+    else
+        echo "mypy: FAIL"
+        status=1
+    fi
+else
+    if output=$(run_mypy 2>&1); then
+        echo "mypy: PASS"
+    else
+        echo "mypy: FAIL"
+        echo "$output"
+        status=1
+    fi
+fi
 
 exit $status

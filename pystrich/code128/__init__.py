@@ -14,9 +14,19 @@ http://www.adams1.com/pub/russadam/128code.html
 
 You may use this under a BSD License.
 """
+from __future__ import annotations
+
+import logging
+import os
+from typing import TYPE_CHECKING
+
+from pystrich.types import BarcodeRenderOptions
+
 from .textencoder import TextEncoder
 from .renderer import Code128Renderer
-import logging
+
+if TYPE_CHECKING:
+    from PIL.Image import Image as PILImage
 
 log = logging.getLogger("code128")
 
@@ -37,13 +47,23 @@ class Code128Encoder:
         including start codes and code-set switches.
     :ivar checksum: The mod-103 checksum value.
     :ivar bars: The bar/space pattern as a string of ``"1"`` and ``"0"``.
-    :ivar options: The options dict passed to ``__init__``, or ``None``.
+    :ivar options: Render-time options dict (empty if none were supplied).
     :ivar width: Pixel width of the most recently rendered image. ``0`` until a
         render method has been called.
     :ivar height: Pixel height of the most recently rendered image.
     """
 
-    def __init__(self, text, options=None):
+    text: str
+    encoded_text: list[int]
+    checksum: int
+    bars: str
+    options: BarcodeRenderOptions
+    width: int
+    height: int
+
+    def __init__(
+        self, text: str, options: BarcodeRenderOptions | None = None
+    ) -> None:
         """Encode ``text`` as Code 128 and compute the checksum.
 
         :param text: The data to encode. Any character in the Code 128 set
@@ -64,7 +84,7 @@ class Code128Encoder:
               bottom edge.
         """
 
-        self.options = options
+        self.options = options or {}
         self.text = text
         self.height = 0
         self.width = 0
@@ -79,7 +99,7 @@ class Code128Encoder:
         self.bars = encoder.get_bars(self.encoded_text, self.checksum)
         log.debug("Bars: %s", self.bars)
 
-    def calculate_check_sum(self):
+    def calculate_check_sum(self) -> int:
         """Compute the Code 128 mod-103 checksum for :attr:`encoded_text`.
 
         The start code contributes with weight 1; subsequent symbols are
@@ -94,7 +114,7 @@ class Code128Encoder:
 
         return checksum % 103
 
-    def get_imagedata(self, bar_width=3):
+    def get_imagedata(self, bar_width: int = 3) -> bytes:
         """Render the barcode and return PNG bytes.
 
         :param bar_width: Width in pixels of the narrowest bar.
@@ -108,7 +128,7 @@ class Code128Encoder:
         self.height = barcode.image_height
         return imagedata
 
-    def get_pilimage(self, bar_width=3):
+    def get_pilimage(self, bar_width: int = 3) -> PILImage:
         """Render the barcode and return a Pillow image.
 
         :param bar_width: Width in pixels of the narrowest bar.
@@ -123,7 +143,7 @@ class Code128Encoder:
         self.height = barcode.image_height
         return img
 
-    def save(self, filename, bar_width=3):
+    def save(self, filename: str | os.PathLike[str], bar_width: int = 3) -> None:
         """Render the barcode to a PNG file.
 
         :param filename: Path to write the PNG to.

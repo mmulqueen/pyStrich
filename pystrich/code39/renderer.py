@@ -1,11 +1,19 @@
 """Rendering code for code128 barcode"""
 
+from __future__ import annotations
+
 import logging
+import os
 from io import BytesIO
+from typing import TYPE_CHECKING
 
 from PIL import Image, ImageFont, ImageDraw
 
 from pystrich.fonts import get_font
+from pystrich.types import BarcodeRenderOptions
+
+if TYPE_CHECKING:
+    from PIL.Image import Image as PILImage
 
 log = logging.getLogger("code128")
 
@@ -23,21 +31,26 @@ class Code39Renderer:
     text, it will render an image of the barcode, including edge
     zones and text."""
 
-    def __init__(self, bars, text, options=None):
-        """ The options hash currently supports three options:
-            * ttf_font: absolute path to a truetype font file used to render the label
-            * ttf_fontsize: the size the label is drawn in
-            * label_border: number of pixels space between the barcode and the label
-            * bottom_border: number of pixels space between the label and the bottom border
-            * height: height of the image in pixels
-            * show_label: whether to show the label below the barcode (defaults to True) """
+    options: BarcodeRenderOptions
+    bars: str
+    text: str
+    image_width: int
+    image_height: int
+
+    def __init__(
+        self,
+        bars: str,
+        text: str,
+        options: BarcodeRenderOptions | None = None,
+    ) -> None:
+        """See :class:`pystrich.types.BarcodeRenderOptions` for accepted keys."""
         self.options = options or {}
         self.bars = bars
         self.text = text
-        self.image_width = None
-        self.image_height = None
+        self.image_width = 0
+        self.image_height = 0
 
-    def get_pilimage(self, bar_width):
+    def get_pilimage(self, bar_width: int) -> PILImage:
         """Return the barcode as a PIL object"""
 
         show_label = self.options.get('show_label', True)
@@ -114,14 +127,14 @@ class Code39Renderer:
             draw.text((xtextpos, ytextpos), self.text, font=font)
         return img
 
-    def write_file(self, filename, bar_width):
+    def write_file(self, filename: str | os.PathLike[str], bar_width: int) -> None:
         """Write barcode data out to image file
         filename - the name of the image file or an file object
         bar_width - the desired width in pixels of each bar"""
         img = self.get_pilimage(bar_width)
         img.save(filename, 'PNG')
 
-    def get_imagedata(self, bar_width):
+    def get_imagedata(self, bar_width: int) -> bytes:
         """Write the matrix out as PNG to an bytestream"""
         imagedata = BytesIO()
         img = self.get_pilimage(bar_width)

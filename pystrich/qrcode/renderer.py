@@ -1,10 +1,18 @@
 """QR Code renderer"""
 
+from __future__ import annotations
+
+import os
 from io import BytesIO
-try:
-    from PIL import Image
-except ImportError:
-    import Image
+from typing import TYPE_CHECKING
+
+from PIL import Image
+
+if TYPE_CHECKING:
+    from PIL.Image import Image as PILImage
+
+_PIXEL: dict[int, bytes] = {0: b"\xff", 1: b"\x00"}
+_SYMBOL: dict[int, str] = {0: ' ', 1: 'X'}
 
 
 class QRCodeRenderer:
@@ -12,12 +20,15 @@ class QRCodeRenderer:
     it will add edge handles and render to either to an image
     (including quiet zone) or ascii printout"""
 
-    def __init__(self, matrix):
+    mtx_size: int
+    matrix: list[list[int]]
+
+    def __init__(self, matrix: list[list[int]]) -> None:
 
         self.mtx_size = len(matrix)
         self.matrix = matrix
 
-    def add_border(self, colour=1, width=4):
+    def add_border(self, colour: int = 1, width: int = 4) -> None:
         """Wrap the matrix in a border of given width
             and colour"""
 
@@ -28,7 +39,7 @@ class QRCodeRenderer:
                           for i in range(0, self.mtx_size - (width * 2))] + \
                       [[colour, ] * self.mtx_size, ] * width
 
-    def get_pilimage(self, cellsize):
+    def get_pilimage(self, cellsize: int) -> PILImage:
         """Return the matrix as a PIL object"""
 
         # add the quiet zone (4 x cell width)
@@ -44,53 +55,36 @@ class QRCodeRenderer:
             buff, 'raw', 'L', 0, -1)
         return img
 
-    def write_file(self, cellsize, filename):
+    def write_file(self, cellsize: int, filename: str | os.PathLike[str]) -> None:
         """Write the matrix out to an image file"""
         img = self.get_pilimage(cellsize)
         img.save(filename)
 
-    def get_imagedata(self, cellsize):
+    def get_imagedata(self, cellsize: int) -> bytes:
         """Write the matrix out as PNG to an bytestream"""
         imagedata = BytesIO()
         img = self.get_pilimage(cellsize)
         img.save(imagedata, "PNG")
         return imagedata.getvalue()
 
-    def get_buffer(self, cellsize):
+    def get_buffer(self, cellsize: int) -> bytes:
         """Convert the matrix into the buffer format used by PIL"""
-
-        def pixel(value):
-            """return pixel representation of a matrix value
-            0 => white, 1 => black"""
-            if value == 0:
-                return b"\xff"
-            elif value == 1:
-                return b"\x00"
 
         # PIL writes image buffers from the bottom up,
         # so feed in the rows in reverse
         buf = b""
         for row in self.matrix[::-1]:
-            bufrow = b''.join([pixel(cell) * cellsize for cell in row])
+            bufrow = b''.join([_PIXEL[cell] * cellsize for cell in row])
             for _ in range(0, cellsize):
                 buf += bufrow
         return buf
 
-    def get_ascii(self):
+    def get_ascii(self) -> str:
         """Write an ascii version of the matrix out to screen"""
 
-        def symbol(value):
-            """return ascii representation of matrix value"""
-            if value == 0:
-                return ' '
-            elif value == 1:
-                return 'X'
+        return '\n'.join(''.join(_SYMBOL[cell] for cell in row) for row in self.matrix) + '\n'
 
-        return '\n'.join([
-            ''.join([symbol(cell) for cell in row])
-            for row in self.matrix]) + '\n'
-    
-    def get_dxf(self, cellsize, inverse, units):
+    def get_dxf(self, cellsize: float, inverse: bool, units: str) -> str:
         """Write an DXF version of the matrix to a string"""
         dxf = []
         dxf.append("0\nSECTION\n2\nHEADER\n")

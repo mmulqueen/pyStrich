@@ -33,6 +33,9 @@ autodoc_default_options = {
     "members": True,
     "show-inheritance": True,
 }
+autodoc_type_aliases = {
+    "PILImage": "PIL.Image.Image",
+}
 add_module_names = False
 
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]

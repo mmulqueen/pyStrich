@@ -14,16 +14,19 @@ http://www.barcodeisland.com/ean13.phtml
 You may use this under a BSD License.
 """
 
-__revision__ = "$Rev: 1$"
+from __future__ import annotations
+
+import os
+from functools import reduce
+from typing import TYPE_CHECKING
 
 from . import encoding
 from .renderer import EAN13Renderer
 from pystrich.exceptions import PyStrichInvalidInput
-# handling movement of reduce to functools python >= 2.6
-try:
-    from functools import reduce
-except ImportError:
-    pass
+
+if TYPE_CHECKING:
+    from PIL.Image import Image as PILImage
+
 
 GUARDS = ("101", "01010", "101")
 
@@ -48,7 +51,15 @@ class EAN13Encoder:
     :ivar height: Pixel height of the most recently rendered image.
     """
 
-    def __init__(self, code):
+    code: str
+    check_digit: int
+    full_code: str
+    left_bars: str
+    right_bars: str
+    width: int
+    height: int
+
+    def __init__(self, code: str) -> None:
         """Validate ``code`` and compute its check digit.
 
         :param code: A string of 12 digits in the form ``nnmmmmmppppp``,
@@ -75,7 +86,7 @@ class EAN13Encoder:
         else:
             raise PyStrichInvalidInput("code must be 12 or 13 digits long")
 
-    def encode(self):
+    def encode(self) -> tuple[str, str]:
         """Encode the barcode number and return the left and right
         data strings"""
 
@@ -93,11 +104,11 @@ class EAN13Encoder:
 
         return self.left_bars, self.right_bars
 
-    def get_parity(self):
+    def get_parity(self) -> tuple[int, int, int, int, int, int]:
         """Return the parity mappings applicable to this code"""
         return encoding.parity_table[int(self.code[0])]
 
-    def calculate_check_digit(self):
+    def calculate_check_digit(self) -> int:
         """Compute the EAN-13 mod-10 check digit for :attr:`code`.
 
         Working right-to-left across the 12-digit input, odd-positioned
@@ -122,7 +133,7 @@ class EAN13Encoder:
         # to get to a multiple of 10
         return (10 - (total % 10)) % 10
 
-    def get_imagedata(self, bar_width=3):
+    def get_imagedata(self, bar_width: int = 3) -> bytes:
         """Render the barcode and return PNG bytes.
 
         :param bar_width: Width in pixels of the narrowest bar.
@@ -136,7 +147,7 @@ class EAN13Encoder:
         self.width = barcode.width
         return imagedata
 
-    def get_pilimage(self, bar_width=3):
+    def get_pilimage(self, bar_width: int = 3) -> PILImage:
         """Render the barcode and return a Pillow image.
 
         :param bar_width: Width in pixels of the narrowest bar.
@@ -152,7 +163,7 @@ class EAN13Encoder:
         self.width = barcode.width
         return img
 
-    def save(self, filename, bar_width=3):
+    def save(self, filename: str | os.PathLike[str], bar_width: int = 3) -> None:
         """Render the barcode to a PNG file.
 
         :param filename: Path to write the PNG to.

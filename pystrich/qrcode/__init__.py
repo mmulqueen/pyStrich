@@ -10,10 +10,19 @@ All needed by the user is done via the QRCodeEncoder class:
 
 """
 
-__revision__ = "$Rev$"
+from __future__ import annotations
+
+import os
+from typing import TYPE_CHECKING, Literal
 
 from .textencoder import TextEncoder
 from .renderer import QRCodeRenderer
+
+if TYPE_CHECKING:
+    from PIL.Image import Image as PILImage
+
+
+QRErrorCorrectionLevel = Literal["L", "M", "Q", "H"]
 
 
 class QRCodeEncoder:
@@ -29,7 +38,11 @@ class QRCodeEncoder:
     :ivar height: Pixel height of the most recently rendered image.
     """
 
-    def __init__(self, text, ecl=None):
+    matrix: list[list[int]]
+    width: int
+    height: int
+
+    def __init__(self, text: str, ecl: QRErrorCorrectionLevel | None = None) -> None:
         """Encode ``text`` and build the QR matrix.
 
         :param text: The data to encode.
@@ -43,7 +56,7 @@ class QRCodeEncoder:
         self.height = 0
         self.width = 0
 
-    def save(self, filename, cellsize=5):
+    def save(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
         """Save the symbol as a PNG. Pass a ``.png`` filename.
 
         :param filename: PNG output path.
@@ -53,7 +66,7 @@ class QRCodeEncoder:
         qrc = QRCodeRenderer(self.matrix)
         qrc.write_file(cellsize, filename)
 
-    def get_imagedata(self, cellsize=5):
+    def get_imagedata(self, cellsize: int = 5) -> bytes:
         """Render the symbol and return PNG bytes.
 
         :param cellsize: Side length in pixels of one module.
@@ -67,7 +80,7 @@ class QRCodeEncoder:
         self.width = qrc.mtx_size
         return imagedata
 
-    def get_pilimage(self, cellsize=5):
+    def get_pilimage(self, cellsize: int = 5) -> PILImage:
         """Render the symbol and return a Pillow image.
 
         :param cellsize: Side length in pixels of one module.
@@ -82,7 +95,7 @@ class QRCodeEncoder:
         self.width = qrc.mtx_size
         return img
 
-    def get_ascii(self):
+    def get_ascii(self) -> str:
         """Return an ASCII-art rendering of the symbol.
 
         :rtype: str
@@ -90,7 +103,9 @@ class QRCodeEncoder:
         qrc = QRCodeRenderer(self.matrix)
         return qrc.get_ascii()
 
-    def get_dxf(self, cellsize=1.0, inverse=True, units="mm"):
+    def get_dxf(
+        self, cellsize: float = 1.0, inverse: bool = True, units: str = "mm"
+    ) -> str:
         """Return a DXF (CAD) representation of the symbol.
 
         :param cellsize: Side length of one module in ``units``.

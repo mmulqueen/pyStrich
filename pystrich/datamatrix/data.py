@@ -1,6 +1,9 @@
 """DataMatrix-specific composition types and marker constants."""
 
+from __future__ import annotations
+
 import warnings
+from typing import Literal
 
 from pystrich.exceptions import (
     DataMatrixNonAsciiWarning,
@@ -10,7 +13,9 @@ from pystrich.exceptions import (
 )
 
 
-_ENCODING_RULES = {
+DataMatrixEncoding = Literal["compat", "ascii", "iso-8859-1", "utf-8"]
+
+_ENCODING_RULES: dict[DataMatrixEncoding, tuple[str, Literal["warn", "raise"]]] = {
     "compat": ("ascii", "warn"),
     "ascii": ("ascii", "raise"),
     "iso-8859-1": ("iso-8859-1", "raise"),
@@ -40,7 +45,14 @@ class DataMatrixData:
 
     __slots__ = ("segments", "encoding")
 
-    def __init__(self, *segments, encoding: str = "compat"):
+    segments: tuple[str | DataMatrixCodeword, ...]
+    encoding: DataMatrixEncoding
+
+    def __init__(
+        self,
+        *segments: str | DataMatrixCodeword,
+        encoding: DataMatrixEncoding = "compat",
+    ) -> None:
         if encoding not in _ENCODING_RULES:
             raise PyStrichInvalidOption(
                 f"unknown DataMatrixData encoding {encoding!r}; "
@@ -125,7 +137,9 @@ class DataMatrixCodeword:
 
     __slots__ = ("value",)
 
-    def __init__(self, value: int):
+    value: int
+
+    def __init__(self, value: int) -> None:
         if not 0 <= value <= 255:
             raise ValueError(f"codeword must be 0-255, got {value}")
         self.value = value
@@ -158,7 +172,7 @@ class DataMatrixCodeword:
 FNC1 = DataMatrixCodeword(232)
 
 
-def fnc1_workaround_compat(text: str) -> DataMatrixData:
+def fnc1_workaround_compat(text: str, /) -> DataMatrixData:
     """Translate a leading chr(231) into an explicit FNC1 marker.
 
     Predates the FNC1 constant: callers triggered codeword 232 via the +1 ASCII
@@ -178,7 +192,7 @@ def fnc1_workaround_compat(text: str) -> DataMatrixData:
         stacklevel=2,
     )
 
-    segments = []
+    segments: list[str | DataMatrixCodeword] = []
     for i, chunk in enumerate(text.split("\xe7")):
         if i > 0:
             segments.append(FNC1)
