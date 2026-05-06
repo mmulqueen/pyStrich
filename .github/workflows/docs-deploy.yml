@@ -1,0 +1,45 @@
+name: Docs deploy
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip poetry
+          poetry install --with docs
+
+      - name: Build docs
+        run: |
+          poetry run sphinx-build -W --keep-going -b doctest docs docs/_build/doctest
+          poetry run sphinx-build -W --keep-going -b text docs docs/_build/text
+          poetry run sphinx-build -W --keep-going -b html docs docs/_build/html
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Sync to S3
+        run: |
+          aws s3 sync docs/_build/html/ "s3://${{ secrets.S3_BUCKET }}/pyStrich/docs/" --delete
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/pyStrich/docs/*"
