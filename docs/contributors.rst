@@ -6,6 +6,7 @@ Contributors to pyStrich since the 2015 fork:
 * `Michael Mulqueen <https://michael.mulqueen.me.uk/>`_,
   `Method B Ltd <https://www.method-b.uk/>`_
   (`@mmulqueen <https://github.com/mmulqueen>`_)
+* Michael Jochum (`@micjoc00 <https://github.com/micjoc00>`_)
 * Mike Jones (`@imsickofmaps <https://github.com/imsickofmaps>`_)
 
 Known contributors to huBarcode before fork:
@@ -15,6 +16,7 @@ Known contributors to huBarcode before fork:
 * Christian Klein (`@cklein <https://github.com/cklein>`_)
 * Christoph Borgolte (`@cborgolte <https://github.com/cborgolte>`_)
 * Fabien Wald
+* Helen Taylor
 * Kazuhiko
 * Maximillian Dornseif (`@mdornseif <https://github.com/mdornseif>`_)
 * Philipp Benjamin Köppchen
