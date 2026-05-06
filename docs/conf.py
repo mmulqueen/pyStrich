@@ -45,6 +45,7 @@ templates_path = ["_templates"]
 html_theme = "furo"
 html_title = f"pyStrich {release}"
 html_logo = "logo.svg"
+html_favicon = "favicon.svg"
 
 
 def _generate_example_images(app):
