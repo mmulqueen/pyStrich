@@ -1,9 +1,12 @@
 Changelog
 =========
 
-Unreleased (next version: 0.11)
--------------------------------
+0.11 — 2026-05-07
+-----------------
 
+- Documentation: full Sphinx-built docs are now published at
+  https://www.method-b.uk/pyStrich/docs/, covering each symbology, recipes
+  and printing guidance, exception hierarchy and a reference index.
 - DataMatrix: add explicit ``"iso-8859-1"`` and ``"utf-8"`` encodings for
   non-ASCII payloads, selectable via
   :class:`~pystrich.datamatrix.DataMatrixData`.
@@ -25,12 +28,12 @@ Unreleased (next version: 0.11)
   (``first_digit_y_offset``); pass ``0`` for a level baseline across all
   three digit groups (`issue #18
   <https://github.com/mmulqueen/pyStrich/issues/18>`_). The default
-  preserves the classic look where the first digit is slightly higher
+  preserves the classic look where the first digit is slightly higher.
 - Errors: unified exception hierarchy. All pyStrich-raised errors now
   inherit from :class:`~pystrich.exceptions.PyStrichError`.
 - Public ``get_pilimage`` method on every encoder, returning a
   :class:`PIL.Image.Image` directly.
-- Typing: encoders and renderers now have type hints and are checked with mypy
+- Typing: encoders and renderers now have type hints and are checked with mypy.
 - Tests: refactored test suite to make better use of pytest, and extended
   encode/decode round-trip test coverage to Code 39, Code 128, EAN-13 and
   QR Code (previously DataMatrix only).

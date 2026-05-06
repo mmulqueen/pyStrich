@@ -9,7 +9,7 @@ supports
  * datamatrix
  * qrcode
 
-Available from PyPI: https://pypi.python.org/pypi/pyStrich
+Available from PyPI: https://pypi.org/project/pyStrich/
 
 Documentation: https://www.method-b.uk/pyStrich/docs/
 
