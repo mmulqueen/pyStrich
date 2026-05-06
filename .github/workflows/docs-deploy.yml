@@ -9,6 +9,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    environment:
+      name: docs
+      url: https://www.method-b.uk/pyStrich/docs/
+
     steps:
       - uses: actions/checkout@v5
 
