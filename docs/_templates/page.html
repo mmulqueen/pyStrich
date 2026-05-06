@@ -1,0 +1,13 @@
+{%- extends "!page.html" %}
+
+{%- block footer %}
+<div class="related-pages">
+  <a class="next-page" href="{{ pathto(pagename + '.txt', resource=True) }}">
+    <span class="page-info">
+      <span class="context"><span>View this page as</span></span>
+      <span class="title">Plain text</span>
+    </span>
+  </a>
+</div>
+{{ super() }}
+{%- endblock %}

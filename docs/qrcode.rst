@@ -1,0 +1,95 @@
+QR Code
+=======
+
+QR Code is a 2D symbology widely used for URLs and contact details.
+
+.. seealso::
+
+   `QR code on Wikipedia <https://en.wikipedia.org/wiki/QR_code>`_ for
+   background on the symbology itself.
+
+.. note::
+
+   The QR support in pyStrich is less actively maintained than the other
+   symbologies. If your project's main need is QR codes, consider whether
+   `python-qrcode <https://github.com/lincolnloop/python-qrcode>`_ is a
+   better fit -- it has a larger feature set (logos, styled modules, SVG
+   output) and a more active maintainer base. pyStrich's QR support is most
+   useful when you also need one of its other symbologies and want a single
+   dependency.
+
+Example
+-------
+
+.. code-block:: python
+
+   from pystrich.qrcode import QRCodeEncoder
+
+   encoder = QRCodeEncoder("https://github.com/mmulqueen/pyStrich")
+   encoder.save("qrcode-example.png")
+
+.. image:: examples/qrcode-example.png
+   :alt: QR code encoding the pyStrich GitHub URL.
+
+Sizing
+------
+
+The ``cellsize`` argument to :meth:`~QRCodeEncoder.save` and
+:meth:`~QRCodeEncoder.get_imagedata` sets the pixel side length of one
+module (default ``5``).
+
+.. code-block:: python
+
+   encoder = QRCodeEncoder("https://github.com/mmulqueen/pyStrich")
+   encoder.save("qrcode-large.png", cellsize=10)
+
+.. image:: examples/qrcode-large.png
+   :alt: QR code encoding the pyStrich GitHub URL rendered with cellsize=10.
+
+.. seealso::
+
+   :doc:`printing` for guidance on selecting ``cellsize`` for printed
+   output.
+
+Error correction level
+----------------------
+
+QR Codes embed redundant data so that a partly-damaged symbol can still be
+read. The error correction level (ECL) sets how much redundancy is added,
+and is one of:
+
+==========  =====================================================
+``"L"``     Low: ~7% of codewords recoverable. Smallest symbol.
+``"M"``     Medium: ~15%. **Default** if ``ecl`` is not supplied.
+``"Q"``     Quartile: ~25%.
+``"H"``     High: ~30%. Largest symbol; tolerates the most damage.
+==========  =====================================================
+
+Higher levels produce a denser symbol for the same payload (or, equivalently,
+require a larger symbol to fit the same payload), so pick the lowest level
+that meets your durability needs. ``"H"`` is typically reserved for symbols
+that may be partly obscured (e.g. by a logo) or printed on surfaces likely
+to be scratched, smudged or torn.
+
+.. code-block:: python
+
+   QRCodeEncoder("https://example.com", ecl="H").save("qr-high.png")
+
+GS1 Digital Link
+----------------
+
+`GS1 Digital Link <https://www.gs1uk.org/standards-services/get-market-ready/qr-codes-powered-by-gs1/design-guidelines>`_
+encodes a GTIN (with optional batch, expiry, serial, ...) as a URL.
+It's just a URL -- pass it to :class:`QRCodeEncoder` directly:
+
+.. code-block:: python
+
+   QRCodeEncoder("https://id.gs1.org/01/05050070007664/10/ABC123").save("dl.png")
+
+Raw AI-syntax GS1 QR (FNC1 mode indicator) is not supported; for that,
+use :doc:`datamatrix`.
+
+API
+---
+
+.. autoclass:: pystrich.qrcode.QRCodeEncoder

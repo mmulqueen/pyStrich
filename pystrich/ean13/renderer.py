@@ -36,8 +36,12 @@ class EAN13Renderer:
 
         num_bars = (7 * 12) + reduce(sum_len, self.guards, 0)
 
-        quiet_width = bar_width * 9
-        image_width = (2 * quiet_width) + (num_bars * bar_width)
+        # GS1 mandates an asymmetric quiet zone: 11 modules on the left,
+        # 7 on the right. Anything narrower on the left risks rejection by
+        # retail scanners.
+        left_quiet = bar_width * 11
+        right_quiet = bar_width * 7
+        image_width = left_quiet + right_quiet + (num_bars * bar_width)
         image_height = image_width // 2
 
         img = Image.new('L', (image_width, image_height), 255)
@@ -46,8 +50,8 @@ class EAN13Renderer:
             """Class which moves across the image, writing out bars"""
             def __init__(self, img):
                 self.img = img
-                self.current_x = quiet_width
-                self.symbol_top = quiet_width // 2
+                self.current_x = left_quiet
+                self.symbol_top = (left_quiet + right_quiet) // 4
 
             def write_bar(self, value, full=False):
                 """Draw a bar at the current position,
@@ -82,9 +86,10 @@ class EAN13Renderer:
         draw = ImageDraw.Draw(img)
         draw.text((1 * bar_width, int(image_height * 0.7)),
                   self.code[0], font=font)
-        draw.text((16 * bar_width, int(image_height * 0.8)),
+        draw.text((left_quiet + 7 * bar_width, int(image_height * 0.8)),
                   self.code[1:7], font=font)
-        draw.text((63 * bar_width, int(image_height * 0.8)), self.code[7:], font=font)
+        draw.text((left_quiet + 54 * bar_width, int(image_height * 0.8)),
+                  self.code[7:], font=font)
         self.width = image_width
         self.height = image_height
         return img

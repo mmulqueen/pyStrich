@@ -29,6 +29,13 @@ class DataMatrixData:
     ``"ascii"`` (raises on any byte > 127), ``"iso-8859-1"`` (Latin-1; emits the
     DataMatrix Upper Shift codeword for chars 128-255), and ``"utf-8"`` (declares
     ECI 26 once at the start of the symbol and byte-encodes the input).
+
+    .. versionadded:: 0.11
+
+    .. deprecated:: 0.11
+       The default ``"compat"`` encoding is retained only for backwards
+       compatibility and will be removed in a future release. New code
+       should pick ``"ascii"``, ``"iso-8859-1"`` or ``"utf-8"`` explicitly.
     """
 
     __slots__ = ("segments", "encoding")
@@ -112,6 +119,8 @@ class DataMatrixCodeword:
     is the modern API path and produces a :class:`DataMatrixData` tagged with
     the strict ``"ascii"`` encoding. Concatenation with an existing
     :class:`DataMatrixData` preserves that object's encoding instead.
+
+    .. versionadded:: 0.11
     """
 
     __slots__ = ("value",)
