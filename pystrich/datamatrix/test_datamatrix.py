@@ -93,6 +93,34 @@ def test_eps_round_trip(string, wrap, cellsize, tmp_path, eps_to_png, dmtxread):
     assert dmtxread(png) == string
 
 
+@pytest.mark.parametrize("inverse", [True, False])
+@pytest.mark.parametrize("wrap", _API_FORMS)
+@pytest.mark.parametrize("string", [
+    "banana",
+    "http://www.hudora.de/track/00340059980000001319/",
+    "This sentence will need multiple datamatrix regions. Tests to see whether bug 2 is fixed.",
+])
+def test_dxf_round_trip(string, wrap, inverse, tmp_path, dxf_to_svg, svg_to_png, dmtxread):
+    """DXF output rendered to SVG via ezdxf, rasterised, decodes back to the original string."""
+    cellsize = 5
+    dxf = tmp_path / "datamatrix-test.dxf"
+    svg = tmp_path / "datamatrix-test.svg"
+    png = tmp_path / "datamatrix-test.png"
+    dxf.write_text(
+        DataMatrixEncoder(wrap(string)).get_dxf(cellsize=cellsize, inverse=inverse),
+        encoding="ascii",
+    )
+    if inverse:
+        dxf_to_svg(dxf, svg, inverse=True)
+    else:
+        # inverse=False emits no geometry for the light quiet-zone cells, so
+        # the SVG bounding box hugs the dark modules; pad a 2-module margin
+        # back in for the decoder.
+        dxf_to_svg(dxf, svg, inverse=False, margin_mm=2 * cellsize)
+    svg_to_png(svg, png)
+    assert dmtxread(png) == string
+
+
 @pytest.mark.parametrize("wrap", _API_FORMS)
 @pytest.mark.parametrize("text, expected_codewords", [
     pytest.param("hi", [105, 106, 129, 74, 235, 130, 61, 159], id="hi"),

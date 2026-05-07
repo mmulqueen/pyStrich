@@ -9,9 +9,22 @@ Changelog
   :class:`~pystrich.datamatrix.DataMatrixEncoder`.
 - EPS output for QR Code and Data Matrix via new ``save_eps`` /
   ``get_eps`` methods on the same classes.
+- Tests: round-trip DXF coverage for QR Code and Data Matrix -- the
+  rendered DXF is read with ``ezdxf``, rasterised, and decoded back to
+  the original string.
 
 0.11 — 2026-05-07
 -----------------
+
+.. note::
+
+   Erratum: the
+   :meth:`~pystrich.qrcode.QRCodeEncoder.get_dxf` and
+   :meth:`~pystrich.datamatrix.DataMatrixEncoder.get_dxf` docstrings
+   stated that ``inverse=True`` (the default) draws dark modules as
+   filled cells. In fact ``inverse=True`` draws the *light* modules;
+   ``inverse=False`` draws the dark ones. Behaviour is unchanged --
+   only the description was wrong. Corrected in 0.12.
 
 - Documentation: full Sphinx-built docs are now published at
   https://www.method-b.uk/pyStrich/docs/, covering each symbology, recipes

@@ -86,6 +86,26 @@ points (1 point = 1/72 inch).
 
 .. versionadded:: 0.12
 
+DXF (CAD) output
+----------------
+
+For direct part marking applications, :meth:`~QRCodeEncoder.get_dxf`
+returns a DXF representation of the symbol that CAD and CAM tools can read
+directly. The ``cellsize`` is in your chosen ``units`` (default ``"mm"``)
+rather than pixels.
+
+.. code-block:: python
+
+   encoder = QRCodeEncoder("https://example.com/PART-001234")
+   with open("part.dxf", "w") as f:
+       f.write(encoder.get_dxf(cellsize=0.5, units="mm"))
+
+The default ``inverse=True`` emits geometry for the light modules,
+including the quiet zone -- so the bounding box frames the symbol. Pass
+``inverse=False`` to emit only the dark modules instead, matching the
+symbol's normal appearance; the bounding box then hugs the dark cells and
+the quiet zone has to be reintroduced downstream.
+
 Error correction level
 ----------------------
 

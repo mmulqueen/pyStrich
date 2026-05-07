@@ -147,7 +147,9 @@ class QRCodeEncoder:
         """Return a DXF (CAD) representation of the symbol.
 
         :param cellsize: Side length of one module in ``units``.
-        :param inverse: If ``True``, dark modules are drawn as filled cells.
+        :param inverse: If ``True`` (the default), light modules are drawn as
+            filled cells. If ``False``, dark modules are drawn, matching the
+            normal appearance of the symbol.
         :param units: Unit string written into the DXF header (e.g. ``"mm"``).
         :rtype: str
 

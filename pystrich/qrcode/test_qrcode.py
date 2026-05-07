@@ -106,6 +106,35 @@ def test_eps_round_trip(string, ecl, cellsize, tmp_path, eps_to_png, zbarimg):
     assert zbarimg(png) == string
 
 
+@pytest.mark.parametrize("inverse", [True, False])
+@pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])
+@pytest.mark.parametrize("string", [
+    "banana",
+    "http://www.hudora.de/track/00340059980000001319/",
+    "B-4-1-20170805-6",
+    "00231872347699829949",
+])
+def test_dxf_round_trip(string, ecl, inverse, tmp_path, dxf_to_svg, svg_to_png, zbarimg):
+    """DXF output rendered to SVG via ezdxf, rasterised, decodes back to the original string."""
+    cellsize = 5
+    dxf = tmp_path / "qrcode-test.dxf"
+    svg = tmp_path / "qrcode-test.svg"
+    png = tmp_path / "qrcode-test.png"
+    dxf.write_text(
+        QRCodeEncoder(string, ecl).get_dxf(cellsize=cellsize, inverse=inverse),
+        encoding="ascii",
+    )
+    if inverse:
+        dxf_to_svg(dxf, svg, inverse=True)
+    else:
+        # inverse=False emits no geometry for the light quiet-zone cells, so
+        # the SVG bounding box hugs the dark modules; pad a 4-module margin
+        # back in for the decoder.
+        dxf_to_svg(dxf, svg, inverse=False, margin_mm=4 * cellsize)
+    svg_to_png(svg, png)
+    assert zbarimg(png) == string
+
+
 @pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])
 @pytest.mark.parametrize("text", [
     "hi",

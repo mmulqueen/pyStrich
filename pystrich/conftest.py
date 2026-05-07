@@ -90,3 +90,38 @@ def eps_to_png():
         ])
 
     return _convert
+
+@pytest.fixture
+def dxf_to_svg():
+    try:
+        import ezdxf
+        from ezdxf.addons.drawing import Frontend, RenderContext, config, layout
+        from ezdxf.addons.drawing.svg import SVGBackend
+    except ImportError:
+        pytest.skip("ezdxf not installed")
+
+    def _convert(
+        dxf_path: "str | os.PathLike[str]",
+        svg_path: "str | os.PathLike[str]",
+        *,
+        inverse: bool,
+        margin_mm: float = 0,
+    ) -> None:
+        doc = ezdxf.readfile(os.fspath(dxf_path))
+        if inverse:
+            cfg = config.Configuration(
+                color_policy=config.ColorPolicy.WHITE,
+                background_policy=config.BackgroundPolicy.BLACK,
+            )
+        else:
+            cfg = config.Configuration(
+                color_policy=config.ColorPolicy.BLACK,
+                background_policy=config.BackgroundPolicy.WHITE,
+            )
+        backend = SVGBackend()
+        Frontend(RenderContext(doc), backend, config=cfg).draw_layout(doc.modelspace())
+        page = layout.Page(0, 0, margins=layout.Margins.all(margin_mm))
+        with open(svg_path, "w", encoding="utf-8") as fp:
+            fp.write(backend.get_string(page))
+
+    return _convert

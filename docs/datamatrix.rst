@@ -114,6 +114,12 @@ etching tool. The ``cellsize`` is in your chosen ``units`` (default
    with open("part.dxf", "w") as f:
        f.write(encoder.get_dxf(cellsize=0.5, units="mm"))
 
+The default ``inverse=True`` emits geometry for the light modules,
+including the quiet zone -- so the bounding box frames the symbol. Pass
+``inverse=False`` to emit only the dark modules instead, matching the
+symbol's normal appearance; the bounding box then hugs the dark cells and
+the quiet zone has to be reintroduced downstream.
+
 GS1 / FNC1
 ----------
 
