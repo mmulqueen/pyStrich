@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+from pystrich.matrix_runs import iter_dark_runs
+
 
 def matrix_to_svg(matrix: Sequence[Sequence[int | None]], cellsize: int) -> str:
     """Render a 2D module matrix as an SVG string.
@@ -30,23 +32,8 @@ def matrix_to_svg(matrix: Sequence[Sequence[int | None]], cellsize: int) -> str:
         '<g fill="#000">',
     ]
 
-    for y, row in enumerate(matrix):
-        run_start: int | None = None
-        for x, cell in enumerate(row):
-            if cell:
-                if run_start is None:
-                    run_start = x
-            elif run_start is not None:
-                parts.append(
-                    f'<rect x="{run_start}" y="{y}" '
-                    f'width="{x - run_start}" height="1"/>'
-                )
-                run_start = None
-        if run_start is not None:
-            parts.append(
-                f'<rect x="{run_start}" y="{y}" '
-                f'width="{len(row) - run_start}" height="1"/>'
-            )
+    for x, y, w in iter_dark_runs(matrix):
+        parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="1"/>')
 
     parts.append('</g>')
     parts.append('</svg>')

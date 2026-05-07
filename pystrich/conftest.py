@@ -64,3 +64,29 @@ def svg_to_png():
         ])
 
     return _convert
+
+
+@pytest.fixture
+def eps_to_png():
+    path = which("gs")
+    if not path:
+        pytest.skip("Ghostscript `gs` not installed")
+
+    def _convert(
+        eps_path: "str | os.PathLike[str]",
+        png_path: "str | os.PathLike[str]",
+    ) -> None:
+        subprocess.check_call([
+            path,
+            "-q",
+            "-dSAFER",
+            "-dBATCH",
+            "-dNOPAUSE",
+            "-dEPSCrop",
+            "-sDEVICE=png16m",
+            "-r150",
+            f"-sOutputFile={os.fspath(png_path)}",
+            os.fspath(eps_path),
+        ])
+
+    return _convert

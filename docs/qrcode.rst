@@ -62,8 +62,27 @@ resolution-independent output, use :meth:`~QRCodeEncoder.save_svg` (or
 
    QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg("qr.svg")
 
+.. image:: examples/qrcode-example.svg
+   :alt: SVG QR code encoding the pyStrich GitHub URL.
+
 The SVG's ``viewBox`` is in module units, while ``width`` and ``height``
 scale by ``cellsize``.
+
+.. versionadded:: 0.12
+
+EPS output
+----------
+
+For embedding in LaTeX (``\includegraphics``) or other vector print
+workflows, use :meth:`~QRCodeEncoder.save_eps` (or
+:meth:`~QRCodeEncoder.get_eps` to receive the EPS as a string).
+
+.. code-block:: python
+
+   QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_eps("qr.eps")
+
+The ``cellsize`` argument is the side length of one module in PostScript
+points (1 point = 1/72 inch).
 
 .. versionadded:: 0.12
 

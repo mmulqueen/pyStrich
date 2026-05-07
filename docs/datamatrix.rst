@@ -72,8 +72,28 @@ resolution-independent output, use :meth:`~DataMatrixEncoder.save_svg` (or
    payload = DataMatrixData("https://github.com/mmulqueen/pyStrich", encoding="ascii")
    DataMatrixEncoder(payload).save_svg("datamatrix.svg")
 
+.. image:: examples/datamatrix-example.svg
+   :alt: SVG Data Matrix encoding the pyStrich GitHub URL.
+
 The SVG's ``viewBox`` is in module units, while ``width`` and ``height``
 scale by ``cellsize``.
+
+.. versionadded:: 0.12
+
+EPS output
+----------
+
+For embedding in LaTeX (``\includegraphics``) or other vector print
+workflows, use :meth:`~DataMatrixEncoder.save_eps` (or
+:meth:`~DataMatrixEncoder.get_eps` to receive the EPS as a string).
+
+.. code-block:: python
+
+   payload = DataMatrixData("https://github.com/mmulqueen/pyStrich", encoding="ascii")
+   DataMatrixEncoder(payload).save_eps("datamatrix.eps")
+
+The ``cellsize`` argument is the side length of one module in PostScript
+points (1 point = 1/72 inch).
 
 .. versionadded:: 0.12
 

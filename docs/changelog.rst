@@ -7,6 +7,8 @@ Changelog
 - SVG output for QR Code and Data Matrix via new ``save_svg`` /
   ``get_svg`` methods on :class:`~pystrich.qrcode.QRCodeEncoder` and
   :class:`~pystrich.datamatrix.DataMatrixEncoder`.
+- EPS output for QR Code and Data Matrix via new ``save_eps`` /
+  ``get_eps`` methods on the same classes.
 
 0.11 — 2026-05-07
 -----------------

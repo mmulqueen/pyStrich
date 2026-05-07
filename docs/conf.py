@@ -90,6 +90,7 @@ def _generate_example_images(app):
     )
 
     DataMatrixEncoder(pystrich_url).save(str(out / "datamatrix-example.png"))
+    DataMatrixEncoder(pystrich_url).save_svg(str(out / "datamatrix-example.svg"))
     DataMatrixEncoder(pystrich_url).save(
         str(out / "datamatrix-large.png"), cellsize=10
     )
@@ -116,6 +117,9 @@ def _generate_example_images(app):
 
     QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save(
         str(out / "qrcode-example.png")
+    )
+    QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg(
+        str(out / "qrcode-example.svg")
     )
     QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save(
         str(out / "qrcode-large.png"), cellsize=10

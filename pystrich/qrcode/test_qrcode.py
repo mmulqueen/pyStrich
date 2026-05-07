@@ -89,6 +89,23 @@ def test_svg_round_trip(string, ecl, cellsize, tmp_path, svg_to_png, zbarimg):
     assert zbarimg(png) == string
 
 
+@pytest.mark.parametrize("cellsize", [5, 10])
+@pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])
+@pytest.mark.parametrize("string", [
+    "banana",
+    "http://www.hudora.de/track/00340059980000001319/",
+    "B-4-1-20170805-6",
+    "00231872347699829949",
+])
+def test_eps_round_trip(string, ecl, cellsize, tmp_path, eps_to_png, zbarimg):
+    """EPS output rasterised with Ghostscript decodes back to the original string."""
+    eps = tmp_path / "qrcode-test.eps"
+    png = tmp_path / "qrcode-test.png"
+    QRCodeEncoder(string, ecl).save_eps(str(eps), cellsize=cellsize)
+    eps_to_png(eps, png)
+    assert zbarimg(png) == string
+
+
 @pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])
 @pytest.mark.parametrize("text", [
     "hi",

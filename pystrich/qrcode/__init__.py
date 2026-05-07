@@ -120,6 +120,31 @@ class QRCodeEncoder:
         qrc = QRCodeRenderer(self.matrix)
         qrc.write_svg_file(cellsize, filename)
 
+    def get_eps(self, cellsize: int = 5) -> str:
+        """Render the symbol and return EPS markup.
+
+        :param cellsize: Side length in PostScript points of one module.
+        :rtype: str
+
+        .. versionadded:: 0.12
+        """
+        qrc = QRCodeRenderer(self.matrix)
+        eps = qrc.get_eps(cellsize)
+        self.height = qrc.mtx_size
+        self.width = qrc.mtx_size
+        return eps
+
+    def save_eps(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
+        """Save the symbol as an EPS file. Pass an ``.eps`` filename.
+
+        :param filename: EPS output path.
+        :param cellsize: Side length in PostScript points of one module.
+
+        .. versionadded:: 0.12
+        """
+        qrc = QRCodeRenderer(self.matrix)
+        qrc.write_eps_file(cellsize, filename)
+
     def get_ascii(self) -> str:
         """Return an ASCII-art rendering of the symbol.
 
