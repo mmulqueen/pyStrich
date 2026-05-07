@@ -132,8 +132,7 @@ class DataMatrixEncoder:
         :param filename: PNG output path.
         :param cellsize: Side length in pixels of one module (one square cell).
         """
-        dmtx = self.init_renderer()
-        dmtx.write_file(cellsize, filename)
+        self.init_renderer().write_file(cellsize, filename)
 
     def get_imagedata(self, cellsize: int = 5) -> bytes:
         """Render the symbol and return PNG bytes.
@@ -142,8 +141,7 @@ class DataMatrixEncoder:
         :returns: PNG-encoded image data.
         :rtype: bytes
         """
-        dmtx = self.init_renderer()
-        return dmtx.get_imagedata(cellsize)
+        return self.init_renderer().get_imagedata(cellsize)
 
     def get_pilimage(self, cellsize: int = 5) -> PILImage:
         """Render the symbol and return a Pillow image.
@@ -154,8 +152,7 @@ class DataMatrixEncoder:
 
         .. versionadded:: 0.11
         """
-        dmtx = self.init_renderer()
-        return dmtx.get_pilimage(cellsize)
+        return self.init_renderer().get_pilimage(cellsize)
 
     def get_svg(self, cellsize: int = 5) -> str:
         """Render the symbol and return SVG markup.
@@ -165,8 +162,7 @@ class DataMatrixEncoder:
 
         .. versionadded:: 0.12
         """
-        dmtx = self.init_renderer()
-        return dmtx.get_svg(cellsize)
+        return self.init_renderer().get_svg(cellsize)
 
     def save_svg(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
         """Save the symbol as an SVG file. Pass a ``.svg`` filename.
@@ -176,8 +172,7 @@ class DataMatrixEncoder:
 
         .. versionadded:: 0.12
         """
-        dmtx = self.init_renderer()
-        dmtx.write_svg_file(cellsize, filename)
+        self.init_renderer().write_svg_file(cellsize, filename)
 
     def get_eps(self, cellsize: int = 5) -> str:
         """Render the symbol and return EPS markup.
@@ -187,8 +182,7 @@ class DataMatrixEncoder:
 
         .. versionadded:: 0.12
         """
-        dmtx = self.init_renderer()
-        return dmtx.get_eps(cellsize)
+        return self.init_renderer().get_eps(cellsize)
 
     def save_eps(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
         """Save the symbol as an EPS file. Pass an ``.eps`` filename.
@@ -198,8 +192,7 @@ class DataMatrixEncoder:
 
         .. versionadded:: 0.12
         """
-        dmtx = self.init_renderer()
-        dmtx.write_eps_file(cellsize, filename)
+        self.init_renderer().write_eps_file(cellsize, filename)
 
     def get_ascii(self) -> str:
         """Return an ASCII-art rendering of the symbol.
@@ -208,8 +201,7 @@ class DataMatrixEncoder:
 
         :rtype: str
         """
-        dmtx = self.init_renderer()
-        return dmtx.get_ascii()
+        return self.init_renderer().get_ascii()
 
     def get_dxf(
         self, cellsize: float = 1.0, inverse: bool = True, units: str = "mm"
@@ -224,6 +216,5 @@ class DataMatrixEncoder:
 
         .. versionadded:: 0.9
         """
-        dmtx = self.init_renderer()
-        return dmtx.get_dxf(cellsize, inverse, units)
+        return self.init_renderer().get_dxf(cellsize, inverse, units)
         

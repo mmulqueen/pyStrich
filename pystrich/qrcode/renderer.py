@@ -31,6 +31,8 @@ class QRCodeRenderer:
         self.mtx_size = len(matrix)
         self.matrix = matrix
 
+        self.add_border(colour=0, width=4)
+
     def add_border(self, colour: int = 1, width: int = 4) -> None:
         """Wrap the matrix in a border of given width
             and colour"""
@@ -44,9 +46,6 @@ class QRCodeRenderer:
 
     def get_pilimage(self, cellsize: int) -> PILImage:
         """Return the matrix as a PIL object"""
-
-        # add the quiet zone (4 x cell width)
-        self.add_border(colour=0, width=4)
 
         # get the matrix into the right buffer format
         buff = self.get_buffer(cellsize)
@@ -72,7 +71,6 @@ class QRCodeRenderer:
 
     def get_svg(self, cellsize: int) -> str:
         """Return the matrix as an SVG string with the QR quiet zone applied."""
-        self.add_border(colour=0, width=4)
         return matrix_to_svg(self.matrix, cellsize)
 
     def write_svg_file(self, cellsize: int, filename: str | os.PathLike[str]) -> None:
@@ -82,7 +80,6 @@ class QRCodeRenderer:
 
     def get_eps(self, cellsize: int) -> str:
         """Return the matrix as an EPS string with the QR quiet zone applied."""
-        self.add_border(colour=0, width=4)
         return matrix_to_eps(self.matrix, cellsize)
 
     def write_eps_file(self, cellsize: int, filename: str | os.PathLike[str]) -> None:
@@ -131,11 +128,5 @@ class QRCodeRenderer:
                                if bool(val) != inverse else ''
                               for x, val in enumerate(row)])
                     for y, row in enumerate(self.matrix)] )
-        if inverse:
-            qz = 4 #quietzone
-            dxf.append(solid(-qz*cellsize, 0, self.mtx_size + 2 * qz * cellsize, qz*cellsize))
-            dxf.append(solid(-qz*cellsize, self.mtx_size+qz*cellsize, self.mtx_size + 2 * qz * cellsize, qz*cellsize))
-            dxf.append(solid(-qz*cellsize, self.mtx_size*cellsize, qz*cellsize, self.mtx_size*cellsize))
-            dxf.append(solid(self.mtx_size*cellsize, self.mtx_size*cellsize, qz*cellsize, self.mtx_size*cellsize))
         dxf.append("0\nENDSEC\n0\nEOF\n")
-        return "".join(dxf)    
+        return "".join(dxf)

@@ -56,15 +56,23 @@ class QRCodeEncoder:
         self.height = 0
         self.width = 0
 
+    def init_renderer(self) -> QRCodeRenderer:
+        """Construct a :class:`QRCodeRenderer` for the encoded matrix.
+
+        Updates :attr:`width` and :attr:`height` with the renderer's
+        dimensions and returns the renderer.
+        """
+        qrc = QRCodeRenderer(self.matrix)
+        self.height = self.width = qrc.mtx_size
+        return qrc
+
     def save(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
         """Save the symbol as a PNG. Pass a ``.png`` filename.
 
         :param filename: PNG output path.
         :param cellsize: Side length in pixels of one module.
         """
-
-        qrc = QRCodeRenderer(self.matrix)
-        qrc.write_file(cellsize, filename)
+        self.init_renderer().write_file(cellsize, filename)
 
     def get_imagedata(self, cellsize: int = 5) -> bytes:
         """Render the symbol and return PNG bytes.
@@ -73,12 +81,7 @@ class QRCodeEncoder:
         :returns: PNG-encoded image data.
         :rtype: bytes
         """
-
-        qrc = QRCodeRenderer(self.matrix)
-        imagedata = qrc.get_imagedata(cellsize)
-        self.height = qrc.mtx_size
-        self.width = qrc.mtx_size
-        return imagedata
+        return self.init_renderer().get_imagedata(cellsize)
 
     def get_pilimage(self, cellsize: int = 5) -> PILImage:
         """Render the symbol and return a Pillow image.
@@ -89,11 +92,7 @@ class QRCodeEncoder:
 
         .. versionadded:: 0.11
         """
-        qrc = QRCodeRenderer(self.matrix)
-        img = qrc.get_pilimage(cellsize)
-        self.height = qrc.mtx_size
-        self.width = qrc.mtx_size
-        return img
+        return self.init_renderer().get_pilimage(cellsize)
 
     def get_svg(self, cellsize: int = 5) -> str:
         """Render the symbol and return SVG markup.
@@ -103,11 +102,7 @@ class QRCodeEncoder:
 
         .. versionadded:: 0.12
         """
-        qrc = QRCodeRenderer(self.matrix)
-        svg = qrc.get_svg(cellsize)
-        self.height = qrc.mtx_size
-        self.width = qrc.mtx_size
-        return svg
+        return self.init_renderer().get_svg(cellsize)
 
     def save_svg(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
         """Save the symbol as an SVG file. Pass a ``.svg`` filename.
@@ -117,8 +112,7 @@ class QRCodeEncoder:
 
         .. versionadded:: 0.12
         """
-        qrc = QRCodeRenderer(self.matrix)
-        qrc.write_svg_file(cellsize, filename)
+        self.init_renderer().write_svg_file(cellsize, filename)
 
     def get_eps(self, cellsize: int = 5) -> str:
         """Render the symbol and return EPS markup.
@@ -128,11 +122,7 @@ class QRCodeEncoder:
 
         .. versionadded:: 0.12
         """
-        qrc = QRCodeRenderer(self.matrix)
-        eps = qrc.get_eps(cellsize)
-        self.height = qrc.mtx_size
-        self.width = qrc.mtx_size
-        return eps
+        return self.init_renderer().get_eps(cellsize)
 
     def save_eps(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
         """Save the symbol as an EPS file. Pass an ``.eps`` filename.
@@ -142,16 +132,14 @@ class QRCodeEncoder:
 
         .. versionadded:: 0.12
         """
-        qrc = QRCodeRenderer(self.matrix)
-        qrc.write_eps_file(cellsize, filename)
+        self.init_renderer().write_eps_file(cellsize, filename)
 
     def get_ascii(self) -> str:
         """Return an ASCII-art rendering of the symbol.
 
         :rtype: str
         """
-        qrc = QRCodeRenderer(self.matrix)
-        return qrc.get_ascii()
+        return self.init_renderer().get_ascii()
 
     def get_dxf(
         self, cellsize: float = 1.0, inverse: bool = True, units: str = "mm"
@@ -165,5 +153,4 @@ class QRCodeEncoder:
 
         .. versionadded:: 0.9
         """
-        qrc = QRCodeRenderer(self.matrix)
-        return qrc.get_dxf(cellsize, inverse, units)
+        return self.init_renderer().get_dxf(cellsize, inverse, units)
