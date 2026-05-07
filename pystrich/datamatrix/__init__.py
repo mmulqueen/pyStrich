@@ -39,6 +39,9 @@ import os
 from typing import TYPE_CHECKING
 
 
+from pystrich.dxf import DxfUnit
+from pystrich.marks import MarkShape
+
 from .data import DataMatrixCodeword, DataMatrixData, FNC1
 from .textencoder import TextEncoder
 from .placement import DataMatrixPlacer
@@ -154,45 +157,83 @@ class DataMatrixEncoder:
         """
         return self.init_renderer().get_pilimage(cellsize)
 
-    def get_svg(self, cellsize: int = 5) -> str:
+    def get_svg(
+        self,
+        cellsize: int = 5,
+        *,
+        inverse: bool = False,
+        mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+    ) -> str:
         """Render the symbol and return SVG markup.
 
         :param cellsize: Side length in user units of one module.
+        :param inverse: If ``True``, mark the light cells instead of the dark ones.
+        :param mark_shape: How matched cells are grouped and drawn.
         :rtype: str
 
         .. versionadded:: 0.12
         """
-        return self.init_renderer().get_svg(cellsize)
+        return self.init_renderer().get_svg(cellsize, inverse=inverse, mark_shape=mark_shape)
 
-    def save_svg(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
+    def save_svg(
+        self,
+        filename: str | os.PathLike[str],
+        cellsize: int = 5,
+        *,
+        inverse: bool = False,
+        mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+    ) -> None:
         """Save the symbol as an SVG file. Pass a ``.svg`` filename.
 
         :param filename: SVG output path.
         :param cellsize: Side length in user units of one module.
+        :param inverse: If ``True``, mark the light cells instead of the dark ones.
+        :param mark_shape: How matched cells are grouped and drawn.
 
         .. versionadded:: 0.12
         """
-        self.init_renderer().write_svg_file(cellsize, filename)
+        self.init_renderer().write_svg_file(
+            cellsize, filename, inverse=inverse, mark_shape=mark_shape
+        )
 
-    def get_eps(self, cellsize: int = 5) -> str:
+    def get_eps(
+        self,
+        cellsize: int = 5,
+        *,
+        inverse: bool = False,
+        mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+    ) -> str:
         """Render the symbol and return EPS markup.
 
         :param cellsize: Side length in PostScript points of one module.
+        :param inverse: If ``True``, mark the light cells instead of the dark ones.
+        :param mark_shape: How matched cells are grouped and drawn.
         :rtype: str
 
         .. versionadded:: 0.12
         """
-        return self.init_renderer().get_eps(cellsize)
+        return self.init_renderer().get_eps(cellsize, inverse=inverse, mark_shape=mark_shape)
 
-    def save_eps(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
+    def save_eps(
+        self,
+        filename: str | os.PathLike[str],
+        cellsize: int = 5,
+        *,
+        inverse: bool = False,
+        mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+    ) -> None:
         """Save the symbol as an EPS file. Pass an ``.eps`` filename.
 
         :param filename: EPS output path.
         :param cellsize: Side length in PostScript points of one module.
+        :param inverse: If ``True``, mark the light cells instead of the dark ones.
+        :param mark_shape: How matched cells are grouped and drawn.
 
         .. versionadded:: 0.12
         """
-        self.init_renderer().write_eps_file(cellsize, filename)
+        self.init_renderer().write_eps_file(
+            cellsize, filename, inverse=inverse, mark_shape=mark_shape
+        )
 
     def get_ascii(self) -> str:
         """Return an ASCII-art rendering of the symbol.
@@ -204,7 +245,12 @@ class DataMatrixEncoder:
         return self.init_renderer().get_ascii()
 
     def get_dxf(
-        self, cellsize: float = 1.0, inverse: bool = True, units: str = "mm"
+        self,
+        cellsize: float = 1.0,
+        inverse: bool = True,
+        units: DxfUnit | None = "mm",
+        *,
+        mark_shape: MarkShape = MarkShape.SQUARE_CELLS,
     ) -> str:
         """Return a DXF (CAD) representation of the symbol.
 
@@ -212,10 +258,17 @@ class DataMatrixEncoder:
         :param inverse: If ``True`` (the default), light modules are drawn as
             filled cells. If ``False``, dark modules are drawn, matching the
             normal appearance of the symbol.
-        :param units: Unit string written into the DXF header (e.g. ``"mm"``).
+        :param units: One of ``"in"``, ``"ft"``, ``"mi"``, ``"mm"``, ``"cm"``
+            or ``"m"``, or ``None`` for Unspecified (``$INSUNITS=0``).
+        :param mark_shape: How matched cells are grouped and drawn.
         :rtype: str
 
         .. versionadded:: 0.9
+
+        .. versionchanged:: 0.12
+            ``units`` now supports ``"in"``, ``"ft"``, ``"mi"``, ``"cm"``,
+            ``"m"`` and ``None`` (Unspecified); previously any value other
+            than ``"mm"`` was silently written as ``$INSUNITS=0``.
         """
-        return self.init_renderer().get_dxf(cellsize, inverse, units)
+        return self.init_renderer().get_dxf(cellsize, inverse, units, mark_shape=mark_shape)
         

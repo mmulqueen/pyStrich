@@ -7,9 +7,10 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 
 from PIL import Image
-
+from pystrich.dxf import DxfUnit, matrix_to_dxf
 from pystrich.eps import matrix_to_eps
 from pystrich.exceptions import PyStrichInvalidOption
+from pystrich.marks import MarkShape
 from pystrich.svg import matrix_to_svg
 
 if TYPE_CHECKING:
@@ -150,23 +151,37 @@ class DataMatrixRenderer:
         img.save(imagedata, "PNG")
         return imagedata.getvalue()
 
-    def get_svg(self, cellsize: int) -> str:
+    def get_svg(self, cellsize: int, *, inverse: bool, mark_shape: MarkShape) -> str:
         """Return the matrix as an SVG string."""
-        return matrix_to_svg(self.matrix, cellsize)
+        return matrix_to_svg(self.matrix, cellsize, inverse=inverse, mark_shape=mark_shape)
 
-    def write_svg_file(self, cellsize: int, filename: str | os.PathLike[str]) -> None:
+    def write_svg_file(
+        self,
+        cellsize: int,
+        filename: str | os.PathLike[str],
+        *,
+        inverse: bool,
+        mark_shape: MarkShape,
+    ) -> None:
         """Write the matrix out to an SVG file."""
         with open(filename, "w", encoding="utf-8") as f:
-            f.write(self.get_svg(cellsize))
+            f.write(self.get_svg(cellsize, inverse=inverse, mark_shape=mark_shape))
 
-    def get_eps(self, cellsize: int) -> str:
+    def get_eps(self, cellsize: int, *, inverse: bool, mark_shape: MarkShape) -> str:
         """Return the matrix as an EPS string."""
-        return matrix_to_eps(self.matrix, cellsize)
+        return matrix_to_eps(self.matrix, cellsize, inverse=inverse, mark_shape=mark_shape)
 
-    def write_eps_file(self, cellsize: int, filename: str | os.PathLike[str]) -> None:
+    def write_eps_file(
+        self,
+        cellsize: int,
+        filename: str | os.PathLike[str],
+        *,
+        inverse: bool,
+        mark_shape: MarkShape,
+    ) -> None:
         """Write the matrix out to an EPS file."""
         with open(filename, "w", encoding="ascii") as f:
-            f.write(self.get_eps(cellsize))
+            f.write(self.get_eps(cellsize, inverse=inverse, mark_shape=mark_shape))
 
     def get_buffer(self, cellsize: int) -> bytes:
         """Convert the matrix into the buffer format used by PIL"""
@@ -185,29 +200,15 @@ class DataMatrixRenderer:
 
         return '\n'.join(''.join(_SYMBOL[cell] for cell in row) for row in self.matrix) + '\n'
 
-    def get_dxf(self, cellsize: float, inverse: bool, units: str) -> str:
-        """Write an DXF version of the matrix to a string"""
-        dxf = []
-        dxf.append("0\nSECTION\n2\nHEADER\n")
-        # AutoCAD drawing version number (AC1006 = R10, AC1009 = R11/R12, AC1012 = R13, AC1014 = R14)
-        dxf.append("9\n$ACADVER\n1\nAC1006\n")
-        # Default drawing units (1 = Inches; 2 = Feet; 3 = Miles; 4 = Millimeters; 5 = Centimeters; 6 = Meters)
-        dxf.append("9\n$INSUNITS\n70\n")
-        dxf.append("4\n" if units == "mm" else "0\n")
-        dxf.append("0\nENDSEC\n0\nSECTION\n2\nENTITIES\n")
-        
-        def coord(x,y,c):
-            # Group codes 10,11,12,13 are X1,X2,X3,X4 coordinates
-            # Group codes 20,21,22,23 are Y1,Y2,Y3,Y4 coordinates
-            # Group codes 30,31,32,33 are Z1,Z2,Z3,Z4 coordinates
-            return '\n'.join(map(str,(10+c, x, 20+c, y, 30+c, 0, '')))
-        def solid(x,y,w=cellsize,h=cellsize):
-            # calculate corner coordinates
-            cl = ((x,y,0), (x+w,y,1), (x,y-h,2), (x+w,y-h,3))
-            return "0\nSOLID\n8\nbarcode\n" + "".join( [coord(x,y,c) for x,y,c in cl] )
-        dxf.extend( [ ''.join([solid(x*cellsize, (self.height-y)*cellsize)
-                               if bool(val) != inverse else ''
-                              for x, val in enumerate(row)])
-                    for y, row in enumerate(self.matrix)] )
-        dxf.append("0\nENDSEC\n0\nEOF\n")
-        return "".join(dxf)
+    def get_dxf(
+        self,
+        cellsize: float,
+        inverse: bool,
+        units: DxfUnit | None,
+        *,
+        mark_shape: MarkShape,
+    ) -> str:
+        """Return the matrix as a DXF string."""
+        return matrix_to_dxf(
+            self.matrix, cellsize, inverse=inverse, units=units, mark_shape=mark_shape
+        )

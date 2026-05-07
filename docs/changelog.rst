@@ -9,6 +9,16 @@ Changelog
   :class:`~pystrich.datamatrix.DataMatrixEncoder`.
 - EPS output for QR Code and Data Matrix via new ``save_eps`` /
   ``get_eps`` methods on the same classes.
+- DXF: :meth:`~pystrich.qrcode.QRCodeEncoder.get_dxf` and
+  :meth:`~pystrich.datamatrix.DataMatrixEncoder.get_dxf` now write the
+  correct ``$INSUNITS`` value for ``"in"``, ``"ft"``, ``"mi"``,
+  ``"cm"`` and ``"m"`` (previously any value other than ``"mm"`` was
+  silently treated as unspecified); you should now pass ``units=None``
+  if unspecified is desired.
+- All vector outputs accept a ``mark_shape`` keyword argument
+  (:class:`~pystrich.marks.MarkShape`) selecting how matched cells are
+  grouped: horizontal runs (the SVG / EPS default) or one square mark
+  per cell (the DXF default).
 - Tests: round-trip DXF coverage for QR Code and Data Matrix -- the
   rendered DXF is read with ``ezdxf``, rasterised, and decoded back to
   the original string.

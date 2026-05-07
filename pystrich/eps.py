@@ -2,21 +2,27 @@
 
 Both QR Code and Data Matrix produce a 2D matrix of 0/1 module values;
 this module turns one of those matrices into an Encapsulated PostScript
-string. Adjacent dark cells in a row are merged into a single
-``rectfill`` call to keep the output compact.
+string.
 """
 
 from __future__ import annotations
 
 from collections.abc import Sequence
 
-from pystrich.matrix_runs import iter_dark_runs
+from pystrich.marks import MarkShape, iter_marks
 
 
-def matrix_to_eps(matrix: Sequence[Sequence[int | None]], cellsize: int) -> str:
+def matrix_to_eps(
+    matrix: Sequence[Sequence[int | None]],
+    cellsize: int,
+    *,
+    inverse: bool = False,
+    mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+) -> str:
     """Render a 2D module matrix as an EPS string.
 
-    Truthy cells become dark squares; ``0`` and ``None`` are background.
+    By default truthy cells become dark squares and ``0``/``None`` are
+    background; pass ``inverse=True`` to mark the light cells instead.
     Coordinates inside the EPS body are in module units (after the
     ``cellsize cellsize scale``); the ``%%BoundingBox`` is in PostScript
     points and so scales by ``cellsize``.
@@ -39,8 +45,11 @@ def matrix_to_eps(matrix: Sequence[Sequence[int | None]], cellsize: int) -> str:
         "0 setgray",
     ]
 
-    for x, y, w in iter_dark_runs(matrix):
-        parts.append(f"{x} {height - 1 - y} {w} 1 rectfill")
+    for mark in iter_marks(matrix, mark_values_when=not inverse, mark_shape=mark_shape):
+        parts.append(
+            f"{mark.x} {height - mark.y - mark.height} "
+            f"{mark.width} {mark.height} rectfill"
+        )
 
     parts.append("grestore")
     parts.append("%%EOF")
