@@ -25,7 +25,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        sudo apt-get update && sudo apt-get install -y dmtx-utils zbar-tools
+        sudo apt-get update && sudo apt-get install -y dmtx-utils zbar-tools imagemagick librsvg2-bin
         python -m pip install --upgrade pip poetry
         poetry install --with dev
     - name: Test with pytest

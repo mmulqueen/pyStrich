@@ -72,6 +72,23 @@ def test_encode_decode(string, ecl, tmp_path, zbarimg):
     assert zbarimg(img) == string
 
 
+@pytest.mark.parametrize("cellsize", [5, 10])
+@pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])
+@pytest.mark.parametrize("string", [
+    "banana",
+    "http://www.hudora.de/track/00340059980000001319/",
+    "B-4-1-20170805-6",
+    "00231872347699829949",
+])
+def test_svg_round_trip(string, ecl, cellsize, tmp_path, svg_to_png, zbarimg):
+    """SVG output rasterised with ImageMagick decodes back to the original string."""
+    svg = tmp_path / "qrcode-test.svg"
+    png = tmp_path / "qrcode-test.png"
+    QRCodeEncoder(string, ecl).save_svg(str(svg), cellsize=cellsize)
+    svg_to_png(svg, png)
+    assert zbarimg(png) == string
+
+
 @pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])
 @pytest.mark.parametrize("text", [
     "hi",

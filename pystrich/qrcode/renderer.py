@@ -8,6 +8,8 @@ from typing import TYPE_CHECKING
 
 from PIL import Image
 
+from pystrich.svg import matrix_to_svg
+
 if TYPE_CHECKING:
     from PIL.Image import Image as PILImage
 
@@ -66,6 +68,16 @@ class QRCodeRenderer:
         img = self.get_pilimage(cellsize)
         img.save(imagedata, "PNG")
         return imagedata.getvalue()
+
+    def get_svg(self, cellsize: int) -> str:
+        """Return the matrix as an SVG string with the QR quiet zone applied."""
+        self.add_border(colour=0, width=4)
+        return matrix_to_svg(self.matrix, cellsize)
+
+    def write_svg_file(self, cellsize: int, filename: str | os.PathLike[str]) -> None:
+        """Write the matrix out to an SVG file."""
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(self.get_svg(cellsize))
 
     def get_buffer(self, cellsize: int) -> bytes:
         """Convert the matrix into the buffer format used by PIL"""

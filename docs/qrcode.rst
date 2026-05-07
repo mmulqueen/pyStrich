@@ -51,6 +51,22 @@ module (default ``5``).
    :doc:`printing` for guidance on selecting ``cellsize`` for printed
    output.
 
+SVG output
+----------
+
+For embedding in web pages or any workflow that benefits from
+resolution-independent output, use :meth:`~QRCodeEncoder.save_svg` (or
+:meth:`~QRCodeEncoder.get_svg` to receive the SVG as a string).
+
+.. code-block:: python
+
+   QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg("qr.svg")
+
+The SVG's ``viewBox`` is in module units, while ``width`` and ``height``
+scale by ``cellsize``.
+
+.. versionadded:: 0.12
+
 Error correction level
 ----------------------
 

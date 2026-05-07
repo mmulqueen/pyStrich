@@ -157,6 +157,28 @@ class DataMatrixEncoder:
         dmtx = self.init_renderer()
         return dmtx.get_pilimage(cellsize)
 
+    def get_svg(self, cellsize: int = 5) -> str:
+        """Render the symbol and return SVG markup.
+
+        :param cellsize: Side length in user units of one module.
+        :rtype: str
+
+        .. versionadded:: 0.12
+        """
+        dmtx = self.init_renderer()
+        return dmtx.get_svg(cellsize)
+
+    def save_svg(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
+        """Save the symbol as an SVG file. Pass a ``.svg`` filename.
+
+        :param filename: SVG output path.
+        :param cellsize: Side length in user units of one module.
+
+        .. versionadded:: 0.12
+        """
+        dmtx = self.init_renderer()
+        dmtx.write_svg_file(cellsize, filename)
+
     def get_ascii(self) -> str:
         """Return an ASCII-art rendering of the symbol.
 

@@ -61,6 +61,22 @@ def test_encode_decode(string, wrap, tmp_path, dmtxread):
     assert dmtxread(img) == string
 
 
+@pytest.mark.parametrize("cellsize", [5, 10])
+@pytest.mark.parametrize("wrap", _API_FORMS)
+@pytest.mark.parametrize("string", [
+    "banana",
+    "http://www.hudora.de/track/00340059980000001319/",
+    "This sentence will need multiple datamatrix regions. Tests to see whether bug 2 is fixed.",
+])
+def test_svg_round_trip(string, wrap, cellsize, tmp_path, svg_to_png, dmtxread):
+    """SVG output rasterised with ImageMagick decodes back to the original string."""
+    svg = tmp_path / "datamatrix-test.svg"
+    png = tmp_path / "datamatrix-test.png"
+    DataMatrixEncoder(wrap(string)).save_svg(str(svg), cellsize=cellsize)
+    svg_to_png(svg, png)
+    assert dmtxread(png) == string
+
+
 @pytest.mark.parametrize("wrap", _API_FORMS)
 @pytest.mark.parametrize("text, expected_codewords", [
     pytest.param("hi", [105, 106, 129, 74, 235, 130, 61, 159], id="hi"),

@@ -60,6 +60,23 @@ tends to bleed into the margin.
    :doc:`printing` for guidance on selecting ``cellsize`` for printed
    output.
 
+SVG output
+----------
+
+For embedding in web pages or any workflow that benefits from
+resolution-independent output, use :meth:`~DataMatrixEncoder.save_svg` (or
+:meth:`~DataMatrixEncoder.get_svg` to receive the SVG as a string).
+
+.. code-block:: python
+
+   payload = DataMatrixData("https://github.com/mmulqueen/pyStrich", encoding="ascii")
+   DataMatrixEncoder(payload).save_svg("datamatrix.svg")
+
+The SVG's ``viewBox`` is in module units, while ``width`` and ``height``
+scale by ``cellsize``.
+
+.. versionadded:: 0.12
+
 DXF (CAD) output
 ----------------
 

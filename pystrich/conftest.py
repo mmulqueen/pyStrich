@@ -42,3 +42,25 @@ def dmtxread():
         return subprocess.check_output(args).decode(encoding)
 
     return _read
+
+
+@pytest.fixture
+def svg_to_png():
+    path = which("convert")
+    if not path:
+        pytest.skip("ImageMagick `convert` not installed")
+
+    def _convert(
+        svg_path: "str | os.PathLike[str]",
+        png_path: "str | os.PathLike[str]",
+    ) -> None:
+        subprocess.check_call([
+            path,
+            "-background", "white",
+            "-alpha", "remove",
+            "-density", "150",
+            os.fspath(svg_path),
+            os.fspath(png_path),
+        ])
+
+    return _convert

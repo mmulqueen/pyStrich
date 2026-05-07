@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.12 — unreleased
+-----------------
+
+- SVG output for QR Code and Data Matrix via new ``save_svg`` /
+  ``get_svg`` methods on :class:`~pystrich.qrcode.QRCodeEncoder` and
+  :class:`~pystrich.datamatrix.DataMatrixEncoder`.
+
 0.11 — 2026-05-07
 -----------------
 

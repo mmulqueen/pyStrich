@@ -95,6 +95,31 @@ class QRCodeEncoder:
         self.width = qrc.mtx_size
         return img
 
+    def get_svg(self, cellsize: int = 5) -> str:
+        """Render the symbol and return SVG markup.
+
+        :param cellsize: Side length in user units of one module.
+        :rtype: str
+
+        .. versionadded:: 0.12
+        """
+        qrc = QRCodeRenderer(self.matrix)
+        svg = qrc.get_svg(cellsize)
+        self.height = qrc.mtx_size
+        self.width = qrc.mtx_size
+        return svg
+
+    def save_svg(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
+        """Save the symbol as an SVG file. Pass a ``.svg`` filename.
+
+        :param filename: SVG output path.
+        :param cellsize: Side length in user units of one module.
+
+        .. versionadded:: 0.12
+        """
+        qrc = QRCodeRenderer(self.matrix)
+        qrc.write_svg_file(cellsize, filename)
+
     def get_ascii(self) -> str:
         """Return an ASCII-art rendering of the symbol.
 
