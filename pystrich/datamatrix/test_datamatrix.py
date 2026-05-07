@@ -251,7 +251,9 @@ def test_gs1_fnc1(payload, expected, tmp_path, dmtxread):
         id="codeword-preserves-compat-data-encoding",
     ),
     pytest.param(
-        DataMatrixData() + "abc" + FNC1, "compat", id="compat-data-then-str-then-codeword"
+        DataMatrixData(encoding="compat") + "abc" + FNC1,
+        "compat",
+        id="compat-data-then-str-then-codeword",
     ),
     pytest.param(
         DataMatrixData("abc", encoding="ascii") + "def", "ascii", id="ascii-data-then-str"
@@ -284,7 +286,7 @@ def test_concat_with_mismatched_encodings_raises(lhs_encoding, rhs_encoding):
 @pytest.mark.parametrize("text", ["café", "naïve", "tést", "é", "€"])
 def test_datamatrix_data_warns_on_non_ascii_in_compat(text):
     with pytest.warns(DataMatrixNonAsciiWarning):
-        DataMatrixData(text)
+        DataMatrixData(text, encoding="compat")
 
 
 @pytest.mark.parametrize("text", ["café", "naïve", "tést", "é", "€"])
@@ -306,7 +308,9 @@ def test_datamatrix_data_unknown_encoding_raises():
 def test_validation_error_suggests_encoding(encoding, text, expected_suggestion):
     with pytest.raises(PyStrichInvalidInput) as exc_info:
         DataMatrixData(text, encoding=encoding)
-    assert f"DataMatrixData({text!r}, encoding={expected_suggestion!r})" in str(exc_info.value)
+    msg = str(exc_info.value)
+    assert f"DataMatrixData({text!r}, encoding={expected_suggestion!r})" in msg
+    assert "auto_encoding=True" in msg
 
 
 @pytest.mark.parametrize("bad_segment", [
@@ -317,7 +321,7 @@ def test_validation_error_suggests_encoding(encoding, text, expected_suggestion)
 ])
 def test_datamatrix_data_rejects_non_str_segments(bad_segment):
     with pytest.raises(TypeError):
-        DataMatrixData(bad_segment)
+        DataMatrixData(bad_segment, encoding="compat")
 
 
 def test_datamatrix_data_equality_distinguishes_encoding():
@@ -329,7 +333,7 @@ def test_datamatrix_data_equality_distinguishes_encoding():
 
 def test_datamatrix_data_concat_warns_on_non_ascii():
     with pytest.warns(DataMatrixNonAsciiWarning):
-        DataMatrixData("abc") + "café"
+        DataMatrixData("abc", encoding="compat") + "café"
 
 
 def test_encoder_warns_on_non_ascii():
@@ -424,3 +428,41 @@ def test_encode_decode_utf8(text, tmp_path, dmtxread):
     # libdmtx prefixes ECI-encoded output with a raw byte equal to the ECI
     # value (0x1A = 26 for UTF-8); no dmtxread flag suppresses it.
     assert dmtxread(img, encoding="utf-8").removeprefix("\x1a") == text
+
+
+def test_datamatrix_data_requires_encoding_choice():
+    with pytest.raises(PyStrichInvalidOption) as exc_info:
+        DataMatrixData("hello")
+    msg = str(exc_info.value)
+    assert "encoding=" in msg
+    assert "auto_encoding=True" in msg
+
+
+@pytest.mark.parametrize("text, expected_encoding", [
+    pytest.param("hello", "ascii", id="ascii-fits"),
+    pytest.param("café", "iso-8859-1", id="escalates-to-latin1"),
+    pytest.param("中文", "utf-8", id="escalates-to-utf8"),
+    pytest.param("🙂", "utf-8", id="emoji-escalates-to-utf8"),
+])
+def test_auto_encoding_picks_narrowest_fit(text, expected_encoding):
+    assert DataMatrixData(text, auto_encoding=True).encoding == expected_encoding
+
+
+def test_auto_encoding_survives_concat():
+    """auto_encoding propagates through concat and re-derives for the combined segments."""
+    parent = DataMatrixData("a", auto_encoding=True)
+    assert parent.encoding == "ascii"
+    child = parent + "café"
+    assert child.auto_encoding is True
+    assert child.encoding == "iso-8859-1"
+
+
+def test_auto_encoding_concat_with_two_auto_re_derives():
+    """Two auto-encoded values combine and re-derive against the merged segments."""
+    ascii_auto = DataMatrixData("a", auto_encoding=True)
+    latin1_auto = DataMatrixData("é", auto_encoding=True)
+    assert ascii_auto.encoding == "ascii"
+    assert latin1_auto.encoding == "iso-8859-1"
+    combined = ascii_auto + latin1_auto
+    assert combined.auto_encoding is True
+    assert combined.encoding == "iso-8859-1"

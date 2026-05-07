@@ -4,6 +4,10 @@ Changelog
 0.12 — unreleased
 -----------------
 
+- Data Matrix: :class:`~pystrich.datamatrix.DataMatrixData` now expects
+  either an ``encoding=`` argument or ``auto_encoding=True`` to be set
+  on construction. The new ``auto_encoding=True`` flag picks the
+  narrowest encoding.
 - SVG output for QR Code and Data Matrix via new ``save_svg`` /
   ``get_svg`` methods on :class:`~pystrich.qrcode.QRCodeEncoder` and
   :class:`~pystrich.datamatrix.DataMatrixEncoder`.

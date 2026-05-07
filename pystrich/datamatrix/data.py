@@ -15,12 +15,23 @@ from pystrich.exceptions import (
 
 DataMatrixEncoding = Literal["compat", "ascii", "iso-8859-1", "utf-8"]
 
-_ENCODING_RULES: dict[DataMatrixEncoding, tuple[str, Literal["warn", "raise"]]] = {
-    "compat": ("ascii", "warn"),
-    "ascii": ("ascii", "raise"),
-    "iso-8859-1": ("iso-8859-1", "raise"),
-    "utf-8": ("utf-8", "raise"),
+_ENCODING_RULES: dict[DataMatrixEncoding, tuple[str, int, Literal["warn", "raise"]]] = {
+    # encoding name -> (Python codec name, max representable codepoint, on-fail policy)
+    "compat":     ("ascii",      0x7F,     "warn"),
+    "ascii":      ("ascii",      0x7F,     "raise"),
+    "iso-8859-1": ("iso-8859-1", 0xFF,     "raise"),
+    "utf-8":      ("utf-8",      0x10FFFF, "raise"),
 }
+
+_AUTO_ENCODING_ORDER: tuple[DataMatrixEncoding, ...] = ("ascii", "iso-8859-1", "utf-8")
+
+
+def get_suitable_encoding_for_codepoint(codepoint: int) -> DataMatrixEncoding:
+    """Return the narrowest encoding from the auto-selection order that fits ``codepoint``."""
+    return next(
+        c for c in _AUTO_ENCODING_ORDER
+        if codepoint <= _ENCODING_RULES[c][1]
+    )
 
 
 class DataMatrixData:
@@ -30,37 +41,53 @@ class DataMatrixData:
     plain strings on either side, then pass the result to
     :class:`DataMatrixEncoder` in place of a ``str``.
 
-    Four encodings are supported: ``"compat"`` (default; warns on non-ASCII),
-    ``"ascii"`` (raises on any byte > 127), ``"iso-8859-1"`` (Latin-1; emits the
-    DataMatrix Upper Shift codeword for chars 128-255), and ``"utf-8"`` (declares
-    ECI 26 once at the start of the symbol and byte-encodes the input).
+    Construction requires either an explicit ``encoding=`` (one of
+    ``"ascii"``, ``"iso-8859-1"``, ``"utf-8"`` or the legacy ``"compat"``)
+    or ``auto_encoding=True``. With ``auto_encoding=True`` the constructor
+    picks the narrowest encoding from ``ascii``, ``iso-8859-1``, ``utf-8``
+    that represents every segment; any ``encoding=`` argument passed
+    alongside is ignored. After construction, :attr:`encoding` is always
+    one of the four concrete charsets.
 
     .. versionadded:: 0.11
 
+    .. versionchanged:: 0.12
+       Callers must now pass either an explicit ``encoding=`` or
+       ``auto_encoding=True``. Added the ``auto_encoding`` flag.
+
     .. deprecated:: 0.11
-       The default ``"compat"`` encoding is retained only for backwards
+       The ``"compat"`` encoding is retained only for backwards
        compatibility and will be removed in a future release. New code
-       should pick ``"ascii"``, ``"iso-8859-1"`` or ``"utf-8"`` explicitly.
+       should pick ``"ascii"``, ``"iso-8859-1"`` or ``"utf-8"`` explicitly,
+       or use ``auto_encoding=True``.
     """
 
-    __slots__ = ("segments", "encoding")
+    __slots__ = ("segments", "encoding", "auto_encoding")
 
     segments: tuple[str | DataMatrixCodeword, ...]
     encoding: DataMatrixEncoding
+    auto_encoding: bool
 
     def __init__(
         self,
         *segments: str | DataMatrixCodeword,
-        encoding: DataMatrixEncoding = "compat",
+        encoding: DataMatrixEncoding | None = None,
+        auto_encoding: bool = False,
     ) -> None:
-        if encoding not in _ENCODING_RULES:
+        if encoding is None and not auto_encoding:
+            raise PyStrichInvalidOption(
+                "DataMatrixData requires an explicit encoding= "
+                "(one of 'ascii', 'iso-8859-1', 'utf-8', 'compat') "
+                "or auto_encoding=True for automatic selection."
+            )
+        if encoding is not None and encoding not in _ENCODING_RULES:
             raise PyStrichInvalidOption(
                 f"unknown DataMatrixData encoding {encoding!r}; "
                 f"expected one of {sorted(_ENCODING_RULES)}"
             )
 
-        charset, on_fail = _ENCODING_RULES[encoding]
-
+        # Type-check segments and find the highest codepoint in one pass.
+        max_codepoint = 0
         for segment in segments:
             if isinstance(segment, DataMatrixCodeword):
                 continue
@@ -69,19 +96,25 @@ class DataMatrixData:
                     f"DataMatrixData segments must be str or DataMatrixCodeword, "
                     f"got {type(segment).__name__}"
                 )
-            try:
-                segment.encode(charset)
-            except UnicodeEncodeError as exc:
-                suggested = "utf-8" if any(ord(c) > 255 for c in segment) else "iso-8859-1"
+            max_codepoint = max(max_codepoint, max((ord(c) for c in segment), default=0))
+
+        if auto_encoding:
+            chosen = get_suitable_encoding_for_codepoint(max_codepoint)
+        else:
+            assert encoding is not None  # guaranteed by the early None+!auto check
+            chosen = encoding
+            charset, max_allowed, on_fail = _ENCODING_RULES[encoding]
+            if max_codepoint > max_allowed:
+                suggested = get_suitable_encoding_for_codepoint(max_codepoint)
+                seg_args = ", ".join(repr(s) for s in segments)
                 msg = (
                     f"DataMatrix encoding {encoding!r} expects {charset.upper()}; "
-                    f"got {segment!r}."
+                    f"got {chr(max_codepoint)!r}. "
+                    f"Try {type(self).__name__}({seg_args}, encoding={suggested!r})"
+                    " or pass auto_encoding=True to select an encoding automatically."
                 )
-                if suggested != encoding:
-                    seg_args = ", ".join(repr(s) for s in segments)
-                    msg += f" Try {type(self).__name__}({seg_args}, encoding={suggested!r})."
                 if on_fail == "raise":
-                    raise PyStrichInvalidInput(msg) from exc
+                    raise PyStrichInvalidInput(msg)
                 warnings.warn(
                     msg + " Promote to error with "
                     "warnings.filterwarnings('error', category=PyStrichWarning).",
@@ -90,27 +123,40 @@ class DataMatrixData:
                 )
 
         self.segments = segments
-        self.encoding = encoding
+        self.encoding = chosen
+        self.auto_encoding = auto_encoding
 
     def __add__(self, other):
-        cls = type(self)
-        if isinstance(other, str):
-            return cls(*self.segments, other, encoding=self.encoding)
-        if isinstance(other, DataMatrixData):
-            if other.encoding != self.encoding:
+        if isinstance(other, (str, DataMatrixCodeword)):
+            new_segments = (*self.segments, other)
+            other_auto = False
+        elif isinstance(other, DataMatrixData):
+            if (
+                not (self.auto_encoding or other.auto_encoding)
+                and other.encoding != self.encoding
+            ):
                 raise PyStrichInvalidOption(
                     f"cannot concatenate DataMatrixData with different encodings "
                     f"({self.encoding!r} and {other.encoding!r})"
                 )
-            return cls(*self.segments, *other.segments, encoding=self.encoding)
-        if isinstance(other, DataMatrixCodeword):
-            return cls(*self.segments, other, encoding=self.encoding)
-        return NotImplemented
+            new_segments = (*self.segments, *other.segments)
+            other_auto = other.auto_encoding
+        else:
+            return NotImplemented
+        return type(self)(
+            *new_segments,
+            encoding=self.encoding,
+            auto_encoding=self.auto_encoding or other_auto,
+        )
 
     def __radd__(self, other):
-        if isinstance(other, str):
-            return type(self)(other, *self.segments, encoding=self.encoding)
-        return NotImplemented
+        if not isinstance(other, str):
+            return NotImplemented
+        return type(self)(
+            other, *self.segments,
+            encoding=self.encoding,
+            auto_encoding=self.auto_encoding,
+        )
 
     def __eq__(self, other):
         if type(self) is not type(other):

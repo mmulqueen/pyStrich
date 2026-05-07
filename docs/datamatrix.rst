@@ -12,16 +12,18 @@ of encoding up to 174 ASCII characters in pyStrich's implementation.
 Example
 -------
 
-Wrap the input in :class:`DataMatrixData` and pass an explicit ``encoding``.
-Use ``"ascii"`` for any payload that fits in 7-bit ASCII (URLs, identifiers,
-GS1 AI strings); see :ref:`datamatrix-non-ascii` below for ``"iso-8859-1"``
-and ``"utf-8"``.
+Wrap the input in :class:`DataMatrixData`. The simplest path is
+``auto_encoding=True``, which picks the narrowest encoding that fits the
+input automatically. For control over the encoded byte sequence -- to
+enforce ``"ascii"`` for a 7-bit payload (URLs, identifiers, GS1 AI strings)
+or to require Latin-1 / UTF-8 -- pass an explicit ``encoding`` instead;
+see :ref:`datamatrix-non-ascii` below.
 
 .. code-block:: python
 
    from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder
 
-   payload = DataMatrixData("https://github.com/mmulqueen/pyStrich", encoding="ascii")
+   payload = DataMatrixData("https://github.com/mmulqueen/pyStrich", auto_encoding=True)
    DataMatrixEncoder(payload).save("datamatrix-example.png")
 
 .. image:: examples/datamatrix-example.png
@@ -221,15 +223,13 @@ Non-ASCII text
 
 The Data Matrix ASCII codeword set only covers bytes 0-127. To encode
 anything outside that range in a non-GS1 symbol, wrap the input in
-:class:`DataMatrixData` and choose an encoding:
+:class:`DataMatrixData` and either pass ``auto_encoding=True`` (the
+constructor picks the narrowest fitting encoding for you) or specify an
+encoding explicitly:
 
 ================  ===================================================================
 Encoding          Behaviour
 ================  ===================================================================
-``"compat"``      Default for backwards compatibility. Non-ASCII characters emit
-                  :class:`~pystrich.exceptions.DataMatrixNonAsciiWarning` and produce
-                  output that will not decode correctly. Deprecated; a future release
-                  will make ``"ascii"`` the default.
 ``"ascii"``       Raises :class:`~pystrich.exceptions.PyStrichInvalidInput` on any
                   byte > 127.
 ``"iso-8859-1"``  Latin-1 -- the default character set for Data Matrix per ISO/IEC
@@ -238,6 +238,10 @@ Encoding          Behaviour
                   the encoding automatically.
 ``"utf-8"``       Declares ECI 26 once at the start of the symbol and byte-encodes
                   the input. Conformant decoders pick up the encoding automatically.
+``"compat"``      Legacy lenient mode. Non-ASCII characters emit
+                  :class:`~pystrich.exceptions.DataMatrixNonAsciiWarning` and produce
+                  output that will not decode correctly. Deprecated; pick one of
+                  the above instead.
 ================  ===================================================================
 
 .. tip::
@@ -246,7 +250,8 @@ Encoding          Behaviour
    fits your data: ``"ascii"`` first, then ``"iso-8859-1"``, then
    ``"utf-8"``. Each step adds overhead -- Latin-1 spends an extra codeword
    per high byte, and UTF-8 adds a two-codeword ECI prefix and emits
-   multi-byte sequences for anything outside ASCII.
+   multi-byte sequences for anything outside ASCII. ``auto_encoding=True``
+   makes the same choice for you if you'd rather not pick by hand.
 
 .. code-block:: python
 
@@ -266,8 +271,8 @@ Encoding          Behaviour
 .. image:: examples/datamatrix-utf8.png
    :alt: Data Matrix encoding "€5 親切にしろ 🙂" as UTF-8 (ECI 26).
 
-If you pass a string with the wrong encoding, the raised error suggests the
-encoding that *would* have worked:
+If you pass a string with the wrong encoding, the raised error names the
+offending character and suggests the encoding that *would* have worked:
 
 .. doctest::
 
@@ -275,7 +280,7 @@ encoding that *would* have worked:
    >>> DataMatrixData("café", encoding="ascii")
    Traceback (most recent call last):
        ...
-   pystrich.exceptions.PyStrichInvalidInput: DataMatrix encoding 'ascii' expects ASCII; got 'café'. Try DataMatrixData('café', encoding='iso-8859-1').
+   pystrich.exceptions.PyStrichInvalidInput: DataMatrix encoding 'ascii' expects ASCII; got 'é'. Try DataMatrixData('café', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
 
 API
 ---

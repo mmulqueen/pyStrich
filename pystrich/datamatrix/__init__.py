@@ -56,18 +56,23 @@ class DataMatrixEncoder:
 
     The matrix size is selected automatically based on input length. Wrap
     the input in :class:`DataMatrixData` and pass an explicit ``encoding``
-    of ``"ascii"``, ``"iso-8859-1"`` or ``"utf-8"``. To produce a GS1 Data
-    Matrix, prefix the payload with the :data:`FNC1` marker.
+    of ``"ascii"``, ``"iso-8859-1"`` or ``"utf-8"`` — or pass
+    ``auto_encoding=True`` to let the constructor pick the narrowest
+    encoding that fits. To produce a GS1 Data Matrix, prefix the payload
+    with the :data:`FNC1` marker.
 
     Typical use::
 
         encoder = DataMatrixEncoder(DataMatrixData("Hello", encoding="ascii"))
         encoder.save("hello.png")
 
+        # Or, let DataMatrixData pick the encoding:
+        encoder = DataMatrixEncoder(DataMatrixData("café", auto_encoding=True))
+
     Plain ``str`` input is also accepted but falls back to a deprecated
     ``"compat"`` encoding that warns on non-ASCII bytes and produces output
-    that does not decode correctly. New code should always pass an explicit
-    encoding.
+    that does not decode correctly. New code should always wrap the input
+    in :class:`DataMatrixData`.
 
     :ivar matrix: 2D list of ints (``0``/``1``, or ``None`` for unset cells)
         describing the symbol prior to rendering.
