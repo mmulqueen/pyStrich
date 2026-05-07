@@ -27,21 +27,34 @@ def matrix_to_svg(
     """
     height = len(matrix)
     width = len(matrix[0]) if height else 0
+    # crispEdges gives axis-aligned rectangles pixel-snapped edges; for circles
+    # we want curve fidelity instead.
+    shape_rendering = (
+        "geometricPrecision"
+        if mark_shape is MarkShape.CIRCULAR_CELLS
+        else "crispEdges"
+    )
 
     parts = [
         '<svg xmlns="http://www.w3.org/2000/svg" '
         f'viewBox="0 0 {width} {height}" '
         f'width="{width * cellsize}" height="{height * cellsize}" '
-        'shape-rendering="crispEdges">',
+        f'shape-rendering="{shape_rendering}">',
         f'<rect width="{width}" height="{height}" fill="#fff"/>',
         '<g fill="#000">',
     ]
 
     for mark in iter_marks(matrix, mark_values_when=not inverse, mark_shape=mark_shape):
-        parts.append(
-            f'<rect x="{mark.x}" y="{mark.y}" '
-            f'width="{mark.width}" height="{mark.height}"/>'
-        )
+        if mark_shape is MarkShape.CIRCULAR_CELLS:
+            cx = mark.x + mark.width / 2
+            cy = mark.y + mark.height / 2
+            r = mark.width / 2
+            parts.append(f'<circle cx="{cx}" cy="{cy}" r="{r}"/>')
+        else:
+            parts.append(
+                f'<rect x="{mark.x}" y="{mark.y}" '
+                f'width="{mark.width}" height="{mark.height}"/>'
+            )
 
     parts.append('</g>')
     parts.append('</svg>')

@@ -13,6 +13,7 @@ from pystrich.datamatrix import (
 from pystrich.datamatrix.data import fnc1_workaround_compat
 from pystrich.datamatrix.renderer import DATAMATRIX_DEFAULT_QUIET_ZONE
 from pystrich.datamatrix.textencoder import TextEncoder
+from pystrich.marks import MarkShape
 from pystrich.exceptions import (
     DataMatrixNonAsciiWarning,
     Fnc1WorkaroundCompatWarning,
@@ -90,6 +91,47 @@ def test_eps_round_trip(string, wrap, cellsize, tmp_path, eps_to_png, dmtxread):
     png = tmp_path / "datamatrix-test.png"
     DataMatrixEncoder(wrap(string)).save_eps(str(eps), cellsize=cellsize)
     eps_to_png(eps, png)
+    assert dmtxread(png) == string
+
+
+def test_svg_round_trip_circular_cells(tmp_path, svg_to_png, dmtxread):
+    """Circular-cell SVG output rasterises and decodes back to the original string."""
+    string = "banana"
+    svg = tmp_path / "datamatrix-test.svg"
+    png = tmp_path / "datamatrix-test.png"
+    DataMatrixEncoder(string).save_svg(str(svg), mark_shape=MarkShape.CIRCULAR_CELLS)
+    svg_to_png(svg, png)
+    assert dmtxread(png) == string
+
+
+def test_eps_round_trip_circular_cells(tmp_path, eps_to_png, dmtxread):
+    """Circular-cell EPS output rasterises and decodes back to the original string."""
+    string = "banana"
+    eps = tmp_path / "datamatrix-test.eps"
+    png = tmp_path / "datamatrix-test.png"
+    DataMatrixEncoder(string).save_eps(str(eps), mark_shape=MarkShape.CIRCULAR_CELLS)
+    eps_to_png(eps, png)
+    assert dmtxread(png) == string
+
+
+def test_dxf_round_trip_circular_cells(tmp_path, dxf_to_svg, svg_to_png, dmtxread):
+    """Circular-cell DXF output (HATCH entities) round-trips through ezdxf."""
+    # cellsize=2: ezdxf renders modelspace in mm, so a 30-module symbol with
+    # cellsize=5 rasterises at ~880 px and the crisp inter-circle gaps defeat
+    # the decoder; cellsize=2 keeps the antialiasing soft enough.
+    string = "banana"
+    cellsize = 2
+    dxf = tmp_path / "datamatrix-test.dxf"
+    svg = tmp_path / "datamatrix-test.svg"
+    png = tmp_path / "datamatrix-test.png"
+    dxf.write_text(
+        DataMatrixEncoder(string).get_dxf(
+            cellsize=cellsize, inverse=False, mark_shape=MarkShape.CIRCULAR_CELLS
+        ),
+        encoding="ascii",
+    )
+    dxf_to_svg(dxf, svg, inverse=False, margin_mm=2 * cellsize)
+    svg_to_png(svg, png)
     assert dmtxread(png) == string
 
 

@@ -30,6 +30,9 @@ class MarkShape(Enum):
     SQUARE_CELLS = auto()
     """One 1x1 region per matched cell, drawn as a filled rectangle."""
 
+    CIRCULAR_CELLS = auto()
+    """One 1x1 region per matched cell, drawn as a filled circle inscribed in the cell."""
+
 
 def iter_horizontal_runs(
     matrix: Sequence[Sequence[int | None]],
@@ -75,6 +78,6 @@ def iter_marks(
     """Yield ``MatrixMark`` regions for the chosen ``mark_shape``."""
     if mark_shape is MarkShape.HORIZONTAL_RUNS:
         return iter_horizontal_runs(matrix, mark_values_when=mark_values_when)
-    if mark_shape is MarkShape.SQUARE_CELLS:
+    if mark_shape in (MarkShape.SQUARE_CELLS, MarkShape.CIRCULAR_CELLS):
         return iter_cells(matrix, mark_values_when=mark_values_when)
     raise ValueError(f"Unknown MarkShape: {mark_shape!r}")

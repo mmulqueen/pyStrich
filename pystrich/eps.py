@@ -46,10 +46,18 @@ def matrix_to_eps(
     ]
 
     for mark in iter_marks(matrix, mark_values_when=not inverse, mark_shape=mark_shape):
-        parts.append(
-            f"{mark.x} {height - mark.y - mark.height} "
-            f"{mark.width} {mark.height} rectfill"
-        )
+        if mark_shape is MarkShape.CIRCULAR_CELLS:
+            # PostScript y-axis points up, so flip the centre. ``newpath`` is
+            # required because ``arc`` adds to the current path.
+            cx = mark.x + mark.width / 2
+            cy = height - mark.y - mark.height / 2
+            r = mark.width / 2
+            parts.append(f"newpath {cx} {cy} {r} 0 360 arc fill")
+        else:
+            parts.append(
+                f"{mark.x} {height - mark.y - mark.height} "
+                f"{mark.width} {mark.height} rectfill"
+            )
 
     parts.append("grestore")
     parts.append("%%EOF")

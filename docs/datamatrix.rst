@@ -69,14 +69,34 @@ resolution-independent output, use :meth:`~DataMatrixEncoder.save_svg` (or
 
 .. code-block:: python
 
+   from pystrich.marks import MarkShape
+
    payload = DataMatrixData("https://github.com/mmulqueen/pyStrich", encoding="ascii")
    DataMatrixEncoder(payload).save_svg("datamatrix.svg")
+   DataMatrixEncoder(payload).save_svg(
+       "datamatrix-circles.svg", mark_shape=MarkShape.CIRCULAR_CELLS
+   )
 
-.. image:: examples/datamatrix-example.svg
-   :alt: SVG Data Matrix encoding the pyStrich GitHub URL.
+.. list-table::
+   :widths: 50 50
+   :header-rows: 1
+
+   * - Default
+     - ``mark_shape=MarkShape.CIRCULAR_CELLS``
+   * - .. image:: examples/datamatrix-example.svg
+          :alt: SVG Data Matrix with the default rectangular cells.
+     - .. image:: examples/datamatrix-example-circles.svg
+          :alt: SVG Data Matrix with circular cells.
 
 The SVG's ``viewBox`` is in module units, while ``width`` and ``height``
-scale by ``cellsize``.
+scale by ``cellsize``. The ``mark_shape`` keyword selects how matched
+cells are drawn -- horizontal runs of rectangles (the default) or one
+filled circle per cell.
+
+.. note::
+
+   Circular cells fall outside the standard module shape and decoder
+   support varies. Test with your target scanner before deploying.
 
 .. versionadded:: 0.12
 

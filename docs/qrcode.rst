@@ -60,13 +60,33 @@ resolution-independent output, use :meth:`~QRCodeEncoder.save_svg` (or
 
 .. code-block:: python
 
-   QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg("qr.svg")
+   from pystrich.marks import MarkShape
 
-.. image:: examples/qrcode-example.svg
-   :alt: SVG QR code encoding the pyStrich GitHub URL.
+   QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg("qr.svg")
+   QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg(
+       "qr-circles.svg", mark_shape=MarkShape.CIRCULAR_CELLS
+   )
+
+.. list-table::
+   :widths: 50 50
+   :header-rows: 1
+
+   * - Default
+     - ``mark_shape=MarkShape.CIRCULAR_CELLS``
+   * - .. image:: examples/qrcode-example.svg
+          :alt: SVG QR code with the default rectangular cells.
+     - .. image:: examples/qrcode-example-circles.svg
+          :alt: SVG QR code with circular cells.
 
 The SVG's ``viewBox`` is in module units, while ``width`` and ``height``
-scale by ``cellsize``.
+scale by ``cellsize``. The ``mark_shape`` keyword selects how matched
+cells are drawn -- horizontal runs of rectangles (the default) or one
+filled circle per cell.
+
+.. note::
+
+   Circular cells fall outside the standard module shape and decoder
+   support varies. Test with your target scanner before deploying.
 
 .. versionadded:: 0.12
 

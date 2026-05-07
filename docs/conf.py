@@ -61,6 +61,7 @@ def _generate_example_images(app):
     from pystrich.code128 import Code128Encoder
     from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder, FNC1
     from pystrich.ean13 import EAN13Encoder
+    from pystrich.marks import MarkShape
     from pystrich.qrcode import QRCodeEncoder
 
     out = Path(app.srcdir) / "examples"
@@ -91,6 +92,10 @@ def _generate_example_images(app):
 
     DataMatrixEncoder(pystrich_url).save(str(out / "datamatrix-example.png"))
     DataMatrixEncoder(pystrich_url).save_svg(str(out / "datamatrix-example.svg"))
+    DataMatrixEncoder(pystrich_url).save_svg(
+        str(out / "datamatrix-example-circles.svg"),
+        mark_shape=MarkShape.CIRCULAR_CELLS,
+    )
     DataMatrixEncoder(pystrich_url).save(
         str(out / "datamatrix-large.png"), cellsize=10
     )
@@ -120,6 +125,10 @@ def _generate_example_images(app):
     )
     QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg(
         str(out / "qrcode-example.svg")
+    )
+    QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg(
+        str(out / "qrcode-example-circles.svg"),
+        mark_shape=MarkShape.CIRCULAR_CELLS,
     )
     QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save(
         str(out / "qrcode-large.png"), cellsize=10

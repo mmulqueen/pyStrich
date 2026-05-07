@@ -17,8 +17,9 @@ Changelog
   if unspecified is desired.
 - All vector outputs accept a ``mark_shape`` keyword argument
   (:class:`~pystrich.marks.MarkShape`) selecting how matched cells are
-  grouped: horizontal runs (the SVG / EPS default) or one square mark
-  per cell (the DXF default).
+  grouped and drawn: horizontal runs (the SVG / EPS default), one
+  square mark per cell (the DXF default), or one filled circle per
+  cell.
 - Tests: round-trip DXF coverage for QR Code and Data Matrix -- the
   rendered DXF is read with ``ezdxf``, rasterised, and decoded back to
   the original string.
