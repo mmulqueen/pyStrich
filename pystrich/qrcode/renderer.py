@@ -29,11 +29,35 @@ class QRCodeRenderer(Matrix2DRenderer[int]):
 
     def add_border(self, colour: int = 1, width: int = 4) -> None:
         """Wrap the matrix in a border of given width
-            and colour"""
+        and colour"""
 
         self.width = self.height = self.width + width * 2
 
-        self.matrix = [[colour, ] * self.width, ] * width + \
-                      [[colour, ] * width + self.matrix[i] + [colour, ] * width
-                          for i in range(0, self.width - (width * 2))] + \
-                      [[colour, ] * self.width, ] * width
+        self.matrix = (
+            [
+                [
+                    colour,
+                ]
+                * self.width,
+            ]
+            * width
+            + [
+                [
+                    colour,
+                ]
+                * width
+                + self.matrix[i]
+                + [
+                    colour,
+                ]
+                * width
+                for i in range(0, self.width - (width * 2))
+            ]
+            + [
+                [
+                    colour,
+                ]
+                * self.width,
+            ]
+            * width
+        )

@@ -7,6 +7,7 @@ All needed by the user is done via the Code39Encoder class:
 
 You may use this under a BSD License.
 """
+
 from __future__ import annotations
 
 import logging

@@ -37,8 +37,7 @@ def _label_defs(chars: Iterable[str]) -> list[str]:
     for char in sorted(chars):
         glyph = GLYPHS[char]
         parts.append(
-            f'<symbol id="{glyph_id(char)}" overflow="visible">'
-            f'<path d="{glyph.svg_d}"/></symbol>'
+            f'<symbol id="{glyph_id(char)}" overflow="visible"><path d="{glyph.svg_d}"/></symbol>'
         )
     parts.append("</defs>")
     return parts
@@ -55,8 +54,7 @@ def _label_groups(labels: Sequence[TextLabel]) -> list[str]:
     for label in labels:
         scale, x_start, baseline_y = label_geometry(label)
         uses = "".join(
-            f'<use href="#{glyph_id(c)}" x="{i * ADVANCE}"/>'
-            for i, c in enumerate(label.text)
+            f'<use href="#{glyph_id(c)}" x="{i * ADVANCE}"/>' for i, c in enumerate(label.text)
         )
         parts.append(
             f'<g transform="translate({_fmt(x_start)} {_fmt(baseline_y)}) '
@@ -82,25 +80,21 @@ def _wrap_svg(
         f'<rect width="{view_w}" height="{view_h}" fill="#fff"/>',
         '<g fill="#000">',
         *body,
-        '</g>',
-        '</svg>',
+        "</g>",
+        "</svg>",
     ]
-    return '\n'.join(parts) + '\n'
+    return "\n".join(parts) + "\n"
 
 
 def marks_to_svg_rects(marks: Iterable[MatrixMark]) -> list[str]:
     """Render each mark as an SVG ``<rect>`` element."""
-    return [
-        f'<rect x="{m.x}" y="{m.y}" width="{m.width}" height="{m.height}"/>'
-        for m in marks
-    ]
+    return [f'<rect x="{m.x}" y="{m.y}" width="{m.width}" height="{m.height}"/>' for m in marks]
 
 
 def marks_to_svg_circles(marks: Iterable[MatrixMark]) -> list[str]:
     """Render each mark as an SVG ``<circle>`` inscribed in its bounding box."""
     return [
-        f'<circle cx="{m.x + m.width / 2}" cy="{m.y + m.height / 2}" '
-        f'r="{m.width / 2}"/>'
+        f'<circle cx="{m.x + m.width / 2}" cy="{m.y + m.height / 2}" r="{m.width / 2}"/>'
         for m in marks
     ]
 
@@ -124,9 +118,7 @@ def matrix_to_svg(
     # crispEdges gives axis-aligned rectangles pixel-snapped edges; for circles
     # we want curve fidelity instead.
     shape_rendering = (
-        "geometricPrecision"
-        if mark_shape is MarkShape.CIRCULAR_CELLS
-        else "crispEdges"
+        "geometricPrecision" if mark_shape is MarkShape.CIRCULAR_CELLS else "crispEdges"
     )
 
     marks = iter_marks(matrix, mark_values_when=not inverse, mark_shape=mark_shape)
@@ -146,11 +138,7 @@ def bars_to_svg(layout: BarLayout) -> str:
     descent extends below the natural canvas height, the canvas is
     enlarged just enough to keep them inside the ``viewBox``.
     """
-    view_w = (
-        layout.quiet_left
-        + len(layout.heights) * layout.bar_width
-        + layout.quiet_right
-    )
+    view_w = layout.quiet_left + len(layout.heights) * layout.bar_width + layout.quiet_right
     view_h = layout.quiet_top + max(layout.heights, default=0) + layout.quiet_bottom
     if layout.labels:
         view_h = max(view_h, ceil(max(label_descent_y(lbl) for lbl in layout.labels)))

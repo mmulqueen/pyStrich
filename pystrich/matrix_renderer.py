@@ -39,20 +39,22 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
     height: int
 
     _PIXEL: ClassVar[dict[int | None, bytes]] = {0: b"\xff", 1: b"\x00"}
-    _SYMBOL: ClassVar[dict[int | None, str]] = {0: ' ', 1: 'X'}
+    _SYMBOL: ClassVar[dict[int | None, str]] = {0: " ", 1: "X"}
 
     def get_pilimage(self, cellsize: int) -> PILImage:
         """Return the matrix as a PIL image."""
         buff = self.get_buffer(cellsize)
         return Image.frombuffer(
-            'L',
+            "L",
             (self.width * cellsize, self.height * cellsize),
-            buff, 'raw', 'L', 0, -1,
+            buff,
+            "raw",
+            "L",
+            0,
+            -1,
         )
 
-    def write_file(
-        self, cellsize: int, filename: str | os.PathLike[str]
-    ) -> None:
+    def write_file(self, cellsize: int, filename: str | os.PathLike[str]) -> None:
         """Write the matrix out to an image file."""
         self.get_pilimage(cellsize).save(filename)
 
@@ -68,17 +70,14 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         # reverse.
         buf = b""
         for row in self.matrix[::-1]:
-            bufrow = b''.join([self._PIXEL[cell] * cellsize for cell in row])
+            bufrow = b"".join([self._PIXEL[cell] * cellsize for cell in row])
             for _ in range(0, cellsize):
                 buf += bufrow
         return buf
 
     def get_ascii(self) -> str:
         """Return an ASCII-art rendering of the matrix."""
-        return '\n'.join(
-            ''.join(self._SYMBOL[cell] for cell in row)
-            for row in self.matrix
-        ) + '\n'
+        return "\n".join("".join(self._SYMBOL[cell] for cell in row) for row in self.matrix) + "\n"
 
     def get_terminal_art(self, *, ansi_bg: bool = True) -> str:
         """Render the matrix using Unicode half-block characters.
@@ -98,7 +97,7 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         """
         # Top cell, bottom cell.
         blocks = {
-            (True, True): "█",   # Full block
+            (True, True): "█",  # Full block
             (True, False): "▀",  # Upper half block
             (False, True): "▄",  # Lower half block
             (False, False): " ",
@@ -111,22 +110,16 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         for i in range(0, len(rows), 2):
             top = rows[i]
             bottom = rows[i + 1] if i + 1 < len(rows) else empty_row
-            line = "".join(
-                blocks[(bool(t), bool(b))] for t, b in zip(top, bottom, strict=False)
-            )
+            line = "".join(blocks[(bool(t), bool(b))] for t, b in zip(top, bottom, strict=False))
             if ansi_bg:
                 # 107 = bright white background, 30 = black foreground, 0 = reset.
                 line = f"\033[107;30m{line}\033[0m"
             lines.append(line)
         return "\n".join(lines) + "\n"
 
-    def get_svg(
-        self, cellsize: int, *, inverse: bool, mark_shape: MarkShape
-    ) -> str:
+    def get_svg(self, cellsize: int, *, inverse: bool, mark_shape: MarkShape) -> str:
         """Return the matrix as an SVG string."""
-        return matrix_to_svg(
-            self.matrix, cellsize, inverse=inverse, mark_shape=mark_shape
-        )
+        return matrix_to_svg(self.matrix, cellsize, inverse=inverse, mark_shape=mark_shape)
 
     def write_svg_file(
         self,
@@ -140,13 +133,9 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         with open(filename, "w", encoding="utf-8") as f:
             f.write(self.get_svg(cellsize, inverse=inverse, mark_shape=mark_shape))
 
-    def get_eps(
-        self, cellsize: int, *, inverse: bool, mark_shape: MarkShape
-    ) -> str:
+    def get_eps(self, cellsize: int, *, inverse: bool, mark_shape: MarkShape) -> str:
         """Return the matrix as an EPS string."""
-        return matrix_to_eps(
-            self.matrix, cellsize, inverse=inverse, mark_shape=mark_shape
-        )
+        return matrix_to_eps(self.matrix, cellsize, inverse=inverse, mark_shape=mark_shape)
 
     def write_eps_file(
         self,

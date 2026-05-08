@@ -54,7 +54,7 @@ class TextEncoder:
 
         self.__init__()
         if ecl is None:
-            ecl = 'M'
+            ecl = "M"
         self.ecl = STR2ECL[ecl]
 
         self.encode_text(text)
@@ -65,8 +65,7 @@ class TextEncoder:
 
         self.append_error_codes()
 
-        LOG.debug(
-            "Codewords: " + ' '.join([str(codeword) for codeword in self.codewords]))
+        LOG.debug("Codewords: " + " ".join([str(codeword) for codeword in self.codewords]))
 
         self.create_matrix()
 
@@ -131,7 +130,6 @@ class TextEncoder:
         rs_block_number = 0
         rs_temp = [[]]
         while i < self.max_data_codewords:
-
             rs_temp[rs_block_number].append(self.codewords[i])
 
             j += 1
@@ -177,6 +175,6 @@ class TextEncoder:
         mask_number = self.minfo.calc_mask_number(matrix_content)
         mask_content = 1 << mask_number
 
-        format_info_value = ((self.ecl << 3) | mask_number)
+        format_info_value = (self.ecl << 3) | mask_number
         self.minfo.put_format_info(matrix_content, format_info_value)
         self.matrix = self.minfo.finalize(matrix_content, mask_content)

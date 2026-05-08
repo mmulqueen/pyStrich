@@ -25,7 +25,7 @@ class DataMatrixRenderer(Matrix2DRenderer[int | None]):
 
     # Double-width glyphs make terminal output roughly square given the
     # typical 2:1 character aspect ratio.
-    _SYMBOL: ClassVar[dict[int | None, str]] = {0: '  ', 1: 'XX'}
+    _SYMBOL: ClassVar[dict[int | None, str]] = {0: "  ", 1: "XX"}
 
     def __init__(
         self,
@@ -37,7 +37,7 @@ class DataMatrixRenderer(Matrix2DRenderer[int | None]):
         self.width = len(matrix)
         self.height = len(matrix[0])
         self.regions = regions
-        self.region_size = self.width//regions
+        self.region_size = self.width // regions
         if quiet_zone < 0:
             raise PyStrichInvalidOption("Quiet zone must be non-negative")
         self.quiet_zone = quiet_zone
@@ -84,34 +84,34 @@ class DataMatrixRenderer(Matrix2DRenderer[int | None]):
 
     def add_border(self, colour: int = 1) -> None:
         """Wrap the matrix in a border of given width
-            and colour"""
+        and colour"""
 
         a_gap = 1  # Gap for alignment/"handles"
-        self.width += a_gap*2 + self.quiet_zone*2 + (self.regions-1)*a_gap*2
-        self.height += a_gap*2 + self.quiet_zone*2 + (self.regions-1)*a_gap*2
+        self.width += a_gap * 2 + self.quiet_zone * 2 + (self.regions - 1) * a_gap * 2
+        self.height += a_gap * 2 + self.quiet_zone * 2 + (self.regions - 1) * a_gap * 2
 
         new_matrix: list[list[int | None]] = []
-        for _ in range(a_gap+self.quiet_zone):
-            new_matrix += [[colour]*self.width]
+        for _ in range(a_gap + self.quiet_zone):
+            new_matrix += [[colour] * self.width]
 
         for row_n, row in enumerate(self.matrix):
             if row_n > 0 and row_n % self.region_size == 0:
                 # Vertical gap between regions
-                for _ in range(a_gap*2):
-                    new_matrix += [[colour]*self.width]
+                for _ in range(a_gap * 2):
+                    new_matrix += [[colour] * self.width]
             # Left gap
-            new_row: list[int | None] = [colour]*(a_gap+self.quiet_zone)
+            new_row: list[int | None] = [colour] * (a_gap + self.quiet_zone)
             # Split according to regions
             for i in range(self.regions):
-                part = row[i*self.region_size:(i+1)*self.region_size]
+                part = row[i * self.region_size : (i + 1) * self.region_size]
                 if i > 0:
                     # Add the space for the alignment gap
-                    new_row += [colour]*(a_gap*2)
+                    new_row += [colour] * (a_gap * 2)
                 new_row += part
             # Right gap
-            new_row += [colour]*(a_gap+self.quiet_zone)
+            new_row += [colour] * (a_gap + self.quiet_zone)
             new_matrix.append(new_row)
 
-        for _ in range(a_gap+self.quiet_zone):
-            new_matrix += [[colour]*self.width]
+        for _ in range(a_gap + self.quiet_zone):
+            new_matrix += [[colour] * self.width]
         self.matrix = new_matrix

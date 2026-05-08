@@ -65,9 +65,7 @@ class Bar1DEncoder(ABC):
         self.height = barcode.image_height
         return img
 
-    def save(
-        self, filename: str | os.PathLike[str], bar_width: int = 3
-    ) -> None:
+    def save(self, filename: str | os.PathLike[str], bar_width: int = 3) -> None:
         """Render the barcode to a PNG file.
 
         :param filename: Path to write the PNG to.
@@ -85,9 +83,7 @@ class Bar1DEncoder(ABC):
         """
         return self.init_renderer().get_svg(bar_width)
 
-    def save_svg(
-        self, filename: str | os.PathLike[str], bar_width: int = 3
-    ) -> None:
+    def save_svg(self, filename: str | os.PathLike[str], bar_width: int = 3) -> None:
         """Save the barcode as an SVG file. Pass a ``.svg`` filename.
 
         :param filename: SVG output path.
@@ -107,9 +103,7 @@ class Bar1DEncoder(ABC):
         """
         return self.init_renderer().get_eps(bar_width)
 
-    def save_eps(
-        self, filename: str | os.PathLike[str], bar_width: int = 3
-    ) -> None:
+    def save_eps(self, filename: str | os.PathLike[str], bar_width: int = 3) -> None:
         """Save the barcode as an EPS file. Pass an ``.eps`` filename.
 
         :param filename: EPS output path.

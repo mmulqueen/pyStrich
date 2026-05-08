@@ -103,10 +103,7 @@ def marks_to_eps_rects(marks: Iterable[MatrixMark], view_h: int) -> list[str]:
 
     PostScript's y-axis points up, so y is flipped against ``view_h``.
     """
-    return [
-        f"{m.x} {view_h - m.y - m.height} {m.width} {m.height} rectfill"
-        for m in marks
-    ]
+    return [f"{m.x} {view_h - m.y - m.height} {m.width} {m.height} rectfill" for m in marks]
 
 
 def marks_to_eps_circles(marks: Iterable[MatrixMark], view_h: int) -> list[str]:
@@ -115,8 +112,7 @@ def marks_to_eps_circles(marks: Iterable[MatrixMark], view_h: int) -> list[str]:
     ``newpath`` is required because ``arc`` adds to the current path.
     """
     return [
-        f"newpath {m.x + m.width / 2} {view_h - m.y - m.height / 2} "
-        f"{m.width / 2} 0 360 arc fill"
+        f"newpath {m.x + m.width / 2} {view_h - m.y - m.height / 2} {m.width / 2} 0 360 arc fill"
         for m in marks
     ]
 
@@ -156,11 +152,7 @@ def bars_to_eps(layout: BarLayout) -> str:
     natural canvas height, the canvas is enlarged just enough to keep them
     inside the bounding box.
     """
-    view_w = (
-        layout.quiet_left
-        + len(layout.heights) * layout.bar_width
-        + layout.quiet_right
-    )
+    view_w = layout.quiet_left + len(layout.heights) * layout.bar_width + layout.quiet_right
     view_h = layout.quiet_top + max(layout.heights, default=0) + layout.quiet_bottom
     if layout.labels:
         view_h = max(view_h, ceil(max(label_descent_y(lbl) for lbl in layout.labels)))

@@ -1,6 +1,5 @@
 """Example code for code128 library"""
 
-
 import logging
 import sys
 

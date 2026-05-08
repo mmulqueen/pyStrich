@@ -12,6 +12,7 @@ log = logging.getLogger("code39")
 class CharacterNotAllowedInCode39(PyStrichInvalidInput):
     pass
 
+
 class TextEncoder:
     """Class which encodes a raw text string into a list of
     character codes.
@@ -49,7 +50,6 @@ class TextEncoder:
                         f"{''.join(allowed_chars)}"
                     )
                 encoded_text.append(char)
-
 
         # Last symbol is always the stop code
         encoded_text.append("*")

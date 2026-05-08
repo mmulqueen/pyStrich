@@ -49,9 +49,7 @@ class Bar1DRenderer(ABC):
     def get_pilimage(self, bar_width: int) -> PILImage:
         """Render the symbol as a PIL image."""
 
-    def write_file(
-        self, filename: str | os.PathLike[str], bar_width: int
-    ) -> None:
+    def write_file(self, filename: str | os.PathLike[str], bar_width: int) -> None:
         """Save the symbol as a PNG file."""
         self.get_pilimage(bar_width).save(filename, "PNG")
 
@@ -65,9 +63,7 @@ class Bar1DRenderer(ABC):
         """Return the symbol as an SVG string."""
         return bars_to_svg(self._bar_layout(bar_width))
 
-    def write_svg_file(
-        self, filename: str | os.PathLike[str], bar_width: int
-    ) -> None:
+    def write_svg_file(self, filename: str | os.PathLike[str], bar_width: int) -> None:
         """Save the symbol as an SVG file."""
         with open(filename, "w", encoding="utf-8") as f:
             f.write(self.get_svg(bar_width))
@@ -76,9 +72,7 @@ class Bar1DRenderer(ABC):
         """Return the symbol as an EPS string."""
         return bars_to_eps(self._bar_layout(bar_width))
 
-    def write_eps_file(
-        self, filename: str | os.PathLike[str], bar_width: int
-    ) -> None:
+    def write_eps_file(self, filename: str | os.PathLike[str], bar_width: int) -> None:
         """Save the symbol as an EPS file."""
         with open(filename, "w", encoding="ascii") as f:
             f.write(self.get_eps(bar_width))

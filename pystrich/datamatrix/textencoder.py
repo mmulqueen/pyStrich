@@ -40,7 +40,7 @@ class TextEncoder:
     """Text encoder class for 2D datamatrix"""
 
     def __init__(self):
-        self.codewords = ''
+        self.codewords = ""
         self.size_index = None
         self.mtx_size = 0
         self.regions = None
@@ -57,9 +57,7 @@ class TextEncoder:
 
         self.append_error_codes()
 
-        log.debug(
-            "Codewords: " +
-            ' '.join([str(ord(codeword)) for codeword in self.codewords]))
+        log.debug("Codewords: " + " ".join([str(ord(codeword)) for codeword in self.codewords]))
 
         self.mtx_size = data_region_size[self.size_index]
         self.regions = hv_regions[self.size_index]
@@ -79,7 +77,7 @@ class TextEncoder:
             self.append_codeword(241)
             self.append_codeword(27)
 
-        numbuf = ''
+        numbuf = ""
 
         def flush_numbuf():
             nonlocal numbuf
@@ -87,7 +85,7 @@ class TextEncoder:
                 self.append_digits(numbuf)
             elif numbuf:
                 self.append_ascii_char(numbuf)
-            numbuf = ''
+            numbuf = ""
 
         for segment in data.segments:
             if isinstance(segment, DataMatrixCodeword):
@@ -98,9 +96,7 @@ class TextEncoder:
             # For UTF-8 we work over the byte sequence (each byte rendered as a
             # 1-char string); for everything else, iterate the codepoints directly.
             chars = (
-                (chr(b) for b in segment.encode("utf-8"))
-                if data.encoding == "utf-8"
-                else segment
+                (chr(b) for b in segment.encode("utf-8")) if data.encoding == "utf-8" else segment
             )
 
             for char in chars:

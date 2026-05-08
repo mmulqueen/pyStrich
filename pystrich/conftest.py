@@ -12,9 +12,7 @@ def zbarimg():
         pytest.skip("zbarimg not installed")
 
     def _read(image_path: "str | os.PathLike[str]") -> str:
-        output = subprocess.check_output(
-            [path, "--quiet", "--raw", os.fspath(image_path)]
-        ).decode()
+        output = subprocess.check_output([path, "--quiet", "--raw", os.fspath(image_path)]).decode()
         return output.rstrip("\n")
 
     return _read
@@ -54,14 +52,19 @@ def svg_to_png():
         svg_path: "str | os.PathLike[str]",
         png_path: "str | os.PathLike[str]",
     ) -> None:
-        subprocess.check_call([
-            path,
-            "-background", "white",
-            "-alpha", "remove",
-            "-density", "150",
-            os.fspath(svg_path),
-            os.fspath(png_path),
-        ])
+        subprocess.check_call(
+            [
+                path,
+                "-background",
+                "white",
+                "-alpha",
+                "remove",
+                "-density",
+                "150",
+                os.fspath(svg_path),
+                os.fspath(png_path),
+            ]
+        )
 
     return _convert
 
@@ -76,20 +79,23 @@ def eps_to_png():
         eps_path: "str | os.PathLike[str]",
         png_path: "str | os.PathLike[str]",
     ) -> None:
-        subprocess.check_call([
-            path,
-            "-q",
-            "-dSAFER",
-            "-dBATCH",
-            "-dNOPAUSE",
-            "-dEPSCrop",
-            "-sDEVICE=png16m",
-            "-r150",
-            f"-sOutputFile={os.fspath(png_path)}",
-            os.fspath(eps_path),
-        ])
+        subprocess.check_call(
+            [
+                path,
+                "-q",
+                "-dSAFER",
+                "-dBATCH",
+                "-dNOPAUSE",
+                "-dEPSCrop",
+                "-sDEVICE=png16m",
+                "-r150",
+                f"-sOutputFile={os.fspath(png_path)}",
+                os.fspath(eps_path),
+            ]
+        )
 
     return _convert
+
 
 @pytest.fixture
 def dxf_to_svg():

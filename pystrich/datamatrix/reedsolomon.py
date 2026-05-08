@@ -94,7 +94,9 @@ def get_reed_solomon_code(data, num_code_words):
     of the given length, for the given data"""
 
     cw_factors = factors[num_code_words]
-    code_words = [0, ] * num_code_words
+    code_words = [
+        0,
+    ] * num_code_words
 
     def gfsum(int1, int2):
         """Calculate the Galois field sum of two integers"""
@@ -108,15 +110,13 @@ def get_reed_solomon_code(data, num_code_words):
             return alogval[(logval[int1] + logval[int2]) % 255]
 
     for data_word in data:
-
         tmp = gfsum(ord(data_word), code_words[-1])
 
         for j in range(num_code_words - 1, -1, -1):
-
             code_words[j] = gfproduct(tmp, cw_factors[j])
 
             if j > 0:
                 code_words[j] = gfsum(code_words[j - 1], code_words[j])
 
     code_words.reverse()
-    return ''.join([chr(code_word) for code_word in code_words])
+    return "".join([chr(code_word) for code_word in code_words])

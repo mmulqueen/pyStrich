@@ -17,12 +17,12 @@ ascii_to_code39 = {
     b"\x07": "$G",  # BEL
     b"\x08": "$H",  # BS
     b"\x09": "$I",  # HT
-    b"\x0A": "$J",  # LF
-    b"\x0B": "$K",  # VT
-    b"\x0C": "$L",  # FF
-    b"\x0D": "$M",  # CR
-    b"\x0E": "$N",  # SO
-    b"\x0F": "$O",  # SI
+    b"\x0a": "$J",  # LF
+    b"\x0b": "$K",  # VT
+    b"\x0c": "$L",  # FF
+    b"\x0d": "$M",  # CR
+    b"\x0e": "$N",  # SO
+    b"\x0f": "$O",  # SI
     b"\x10": "$P",  # DLE
     b"\x11": "$Q",  # DC1
     b"\x12": "$R",  # DC2
@@ -33,15 +33,15 @@ ascii_to_code39 = {
     b"\x17": "$W",  # ETB
     b"\x18": "$X",  # CAN
     b"\x19": "$Y",  # EM
-    b"\x1A": "$Z",  # SUB
-    b"\x1B": "%A",  # ESC
-    b"\x1C": "%B",  # FS
-    b"\x1D": "%C",  # GS
-    b"\x1E": "%D",  # RS
-    b"\x1F": "%E",  # US
+    b"\x1a": "$Z",  # SUB
+    b"\x1b": "%A",  # ESC
+    b"\x1c": "%B",  # FS
+    b"\x1d": "%C",  # GS
+    b"\x1e": "%D",  # RS
+    b"\x1f": "%E",  # US
     b" ": " ",  # Space
     b"!": "/A",
-    b"\"": "/B",
+    b'"': "/B",
     b"#": "/C",
     b"$": "/D",
     b"%": "/E",
@@ -134,7 +134,7 @@ ascii_to_code39 = {
     b"|": "%Q",
     b"}": "%R",
     b"~": "%S",
-    b"\x7f": "%T"  # DEL
+    b"\x7f": "%T",  # DEL
 }
 
 ascii_ord_to_code39 = {ord(k): v for k, v in ascii_to_code39.items()}
@@ -188,13 +188,13 @@ code39_bars_and_gaps = {
     "$": ("00000", "1110"),
     "/": ("00000", "1101"),
     "+": ("00000", "1011"),
-    "%": ("00000", "0111")
+    "%": ("00000", "0111"),
 }
 
 
 def build_code39_encodings():
     """Change representations so that 1 represents a narrow bar and 0 represents a narrow gap.
-# (11 = wide bar, 00 = wide gap)"""
+    # (11 = wide bar, 00 = wide gap)"""
     encodings = {}
     for symbol, bars_and_gaps in code39_bars_and_gaps.items():
         bars, gaps = bars_and_gaps
@@ -214,6 +214,5 @@ def build_code39_encodings():
         assert len(encodings[symbol]) == 12  # 3 doubles and 6 singles = 12 total
     return encodings
 
+
 code39_encodings = build_code39_encodings()
-
-

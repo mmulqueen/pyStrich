@@ -49,34 +49,37 @@ def get_background_rect(svg: str) -> Rect:
     return _rect(rect)
 
 
-@pytest.mark.parametrize("matrix, expected_rects", [
-    pytest.param(
-        [[1, 1, 0, 1, 1]],
-        [Rect(0, 0, 2, 1), Rect(3, 0, 2, 1)],
-        id="merge-adjacent-cells",
-    ),
-    pytest.param(
-        [[1, 1, 1]],
-        [Rect(0, 0, 3, 1)],
-        id="run-terminates-at-end-of-row",
-    ),
-    pytest.param(
-        [[1, 1], [1, 1]],
-        [Rect(0, 0, 2, 1), Rect(0, 1, 2, 1)],
-        id="rows-are-independent",
-    ),
-    pytest.param(
-        [[1, 0, 1]],
-        [Rect(0, 0, 1, 1), Rect(2, 0, 1, 1)],
-        id="zero-as-background",
-    ),
-    pytest.param(
-        [[1, None, 1]],
-        [Rect(0, 0, 1, 1), Rect(2, 0, 1, 1)],
-        id="none-as-background",
-    ),
-    pytest.param([[0, 0], [0, 0]], [], id="all-white"),
-])
+@pytest.mark.parametrize(
+    "matrix, expected_rects",
+    [
+        pytest.param(
+            [[1, 1, 0, 1, 1]],
+            [Rect(0, 0, 2, 1), Rect(3, 0, 2, 1)],
+            id="merge-adjacent-cells",
+        ),
+        pytest.param(
+            [[1, 1, 1]],
+            [Rect(0, 0, 3, 1)],
+            id="run-terminates-at-end-of-row",
+        ),
+        pytest.param(
+            [[1, 1], [1, 1]],
+            [Rect(0, 0, 2, 1), Rect(0, 1, 2, 1)],
+            id="rows-are-independent",
+        ),
+        pytest.param(
+            [[1, 0, 1]],
+            [Rect(0, 0, 1, 1), Rect(2, 0, 1, 1)],
+            id="zero-as-background",
+        ),
+        pytest.param(
+            [[1, None, 1]],
+            [Rect(0, 0, 1, 1), Rect(2, 0, 1, 1)],
+            id="none-as-background",
+        ),
+        pytest.param([[0, 0], [0, 0]], [], id="all-white"),
+    ],
+)
 def test_foreground_rects(matrix, expected_rects):
     svg = matrix_to_svg(matrix, cellsize=5)
     assert get_rects_in_group_with_fill(svg, "#000") == expected_rects

@@ -9,17 +9,9 @@ log = logging.getLogger("code128")
 START_A, START_B, START_C = 103, 104, 105
 TO_C, TO_B, TO_A = 99, 100, 101
 
-start_codes = {
-    'A': START_A,
-    'B': START_B,
-    'C': START_C
-}
+start_codes = {"A": START_A, "B": START_B, "C": START_C}
 
-to_values = {
-    TO_A: START_A,
-    TO_B: START_B,
-    TO_C: START_C
-}
+to_values = {TO_A: START_A, TO_B: START_B, TO_C: START_C}
 
 
 class TextEncoder:
@@ -29,26 +21,27 @@ class TextEncoder:
     digits under character set C"""
 
     def __init__(self):
-        self.current_charset = 'B'
+        self.current_charset = "B"
         self.digits = ""
 
     def switch_charset(self, new_charset):
         """Switch to a new character set
         Return a single item list containing the switch code"""
 
-        log.debug("Switching charsets from %c to %c",
-                  self.current_charset, new_charset)
+        log.debug("Switching charsets from %c to %c", self.current_charset, new_charset)
 
-        if new_charset == 'A':
-            switch_code = self.convert_char('TO_A')
-        elif new_charset == 'B':
-            switch_code = self.convert_char('TO_B')
-        elif new_charset == 'C':
-            switch_code = self.convert_char('TO_C')
+        if new_charset == "A":
+            switch_code = self.convert_char("TO_A")
+        elif new_charset == "B":
+            switch_code = self.convert_char("TO_B")
+        elif new_charset == "C":
+            switch_code = self.convert_char("TO_C")
 
         self.current_charset = new_charset
 
-        return [switch_code, ]
+        return [
+            switch_code,
+        ]
 
     def switch_charset_if_necessary(self, char, lookahead):
         """Decide whether we want to switch charsets for the
@@ -67,16 +60,16 @@ class TextEncoder:
             return num_digits > 3
 
         codes = []
-        if self.current_charset == 'C' and not char.isdigit():
+        if self.current_charset == "C" and not char.isdigit():
             # Switch from C - the next char is not a digit
 
             # by default, switch to B
             if char in encoding.charset_b.keys():
-                codes = self.switch_charset('B')
+                codes = self.switch_charset("B")
 
             # but if the character's not in B, switch to A
             elif char in encoding.charset_a.keys():
-                codes = self.switch_charset('A')
+                codes = self.switch_charset("A")
 
             else:
                 log.error("No charset found for character %d", ord(char))
@@ -84,35 +77,35 @@ class TextEncoder:
             # Take care of the odd leftover digit if there is one
             if len(self.digits) == 1:
                 codes.append(self.convert_char(self.digits[0]))
-                self.digits = ''
+                self.digits = ""
 
-        elif self.current_charset == 'B':
+        elif self.current_charset == "B":
             # Do we want to switch from B?
 
             # Lookahead - are there lots of digits coming up?
             # If so, switch to C
             if upcoming_digits():
-                codes = self.switch_charset('C')
+                codes = self.switch_charset("C")
 
             # If B can't handle the next char, switch to A
             elif char not in encoding.charset_b.keys():
                 if char in encoding.charset_a.keys():
-                    codes = self.switch_charset('A')
+                    codes = self.switch_charset("A")
                 else:
                     log.error("No charset found for character %d", ord(char))
 
-        elif self.current_charset == 'A':
+        elif self.current_charset == "A":
             # Do we want to switch from A?
 
             # Lookahead - are there lots of digits coming up?
             # If so, switch to C
             if upcoming_digits():
-                codes = self.switch_charset('C')
+                codes = self.switch_charset("C")
 
             # If A can't handle the next char, switch to B
             elif char not in encoding.charset_a.keys():
                 if char in encoding.charset_b.keys():
-                    codes = self.switch_charset('B')
+                    codes = self.switch_charset("B")
                 else:
                     log.error("No charset found for character %d", ord(char))
 
@@ -125,13 +118,13 @@ class TextEncoder:
         For most cases in C, this involves grouping consecutive digits
         into pairs and adding in each pair as a single character"""
 
-        if self.current_charset == 'A':
+        if self.current_charset == "A":
             return encoding.charset_a[char]
 
-        elif self.current_charset == 'B':
+        elif self.current_charset == "B":
             return encoding.charset_b[char]
 
-        elif self.current_charset == 'C':
+        elif self.current_charset == "C":
             if char in encoding.charset_c.keys():
                 return encoding.charset_c[char]
             elif char.isdigit():
@@ -167,8 +160,7 @@ class TextEncoder:
 
         # Start with charset B
         for i, char in enumerate(text):
-            encoded_text.extend(self.switch_charset_if_necessary(
-                char, text[i:i + 10]))
+            encoded_text.extend(self.switch_charset_if_necessary(char, text[i : i + 10]))
             converted = self.convert_char(char)
             if converted is not None:
                 encoded_text.append(converted)
@@ -177,7 +169,7 @@ class TextEncoder:
         # one from encoding Charset C
         if len(self.digits) == 1:
             # We now force Charset B
-            encoded_text.extend(self.switch_charset('B'))
+            encoded_text.extend(self.switch_charset("B"))
             encoded_text.append(self.convert_char(self.digits[0]))
 
         self.optimize_encoding(encoded_text)

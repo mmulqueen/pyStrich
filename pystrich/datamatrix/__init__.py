@@ -110,7 +110,7 @@ class DataMatrixEncoder(Matrix2DEncoder[int | None]):
         codewords = enc.encode(text)
         self.width = 0
         self.height = 0
-        matrix_size = enc.mtx_size*enc.regions
+        matrix_size = enc.mtx_size * enc.regions
         self.regions = enc.regions
         self.quiet_zone = quiet_zone
 

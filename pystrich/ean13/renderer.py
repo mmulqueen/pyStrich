@@ -27,12 +27,7 @@ QUIET_RIGHT_MODULES = 7
 GUARD_HEIGHT_FRACTION = 0.9
 DATA_HEIGHT_FRACTION = 0.8
 
-font_sizes = {
-    1: 8,
-    2: 14,
-    3: 18,
-    4: 24
-}
+font_sizes = {1: 8, 2: 14, 3: 18, 4: 24}
 
 
 class EAN13RenderOptions(TypedDict, total=False):
@@ -104,6 +99,7 @@ class EAN13Renderer(Bar1DRenderer):
 
     def _bar_layout(self, bar_width: int) -> BarLayout:
         """Pixel-precise layout shared by PNG, SVG and EPS rendering."""
+
         def sum_len(total: int, item: str) -> int:
             return total + len(item)
 
@@ -111,7 +107,7 @@ class EAN13Renderer(Bar1DRenderer):
         left_quiet = bar_width * QUIET_LEFT_MODULES
         right_quiet = bar_width * QUIET_RIGHT_MODULES
         image_width = left_quiet + right_quiet + (num_bars * bar_width)
-        image_height = self.options.get('height') or image_width // 2
+        image_height = self.options.get("height") or image_width // 2
 
         symbol_top = (left_quiet + right_quiet) // 4
         guard_pixel_height = int(image_height * GUARD_HEIGHT_FRACTION) - symbol_top
@@ -132,9 +128,7 @@ class EAN13Renderer(Bar1DRenderer):
 
         font_size = font_sizes.get(bar_width, 24)
         text_y = image_height * 0.8
-        first_digit_y = text_y - image_height * self.options.get(
-            "first_digit_y_offset", 0.1
-        )
+        first_digit_y = text_y - image_height * self.options.get("first_digit_y_offset", 0.1)
         labels = (
             make_text_label(self.code[0], 1 * bar_width, first_digit_y, font_size),
             make_text_label(self.code[1:7], left_quiet + 7 * bar_width, text_y, font_size),
@@ -154,13 +148,11 @@ class EAN13Renderer(Bar1DRenderer):
     def get_pilimage(self, bar_width: int) -> PILImage:
         layout = self._bar_layout(bar_width)
         self.image_width = (
-            layout.quiet_left
-            + len(layout.heights) * layout.bar_width
-            + layout.quiet_right
+            layout.quiet_left + len(layout.heights) * layout.bar_width + layout.quiet_right
         )
         self.image_height = layout.quiet_top + max(layout.heights) + layout.quiet_bottom
 
-        img = Image.new('L', (self.image_width, self.image_height), 255)
+        img = Image.new("L", (self.image_width, self.image_height), 255)
         draw = ImageDraw.Draw(img)
 
         for mark in iter_bar_marks(

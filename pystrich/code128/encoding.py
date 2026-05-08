@@ -59,9 +59,7 @@ charset_b = {
 }
 
 
-charset_c = {
-    'TO_B': 100, 'TO_A': 101, '\xf1': 102
-}
+charset_c = {"TO_B": 100, "TO_A": 101, "\xf1": 102}
 
 encodings = {
     0: "11011001100",

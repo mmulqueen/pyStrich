@@ -51,10 +51,7 @@ def _ops_to_svg_d(operations: list[tuple]) -> str:
             parts.append(f"L{_fmt(x)} {_fmt(y)}")
         elif op == "curveTo":
             (x1, y1), (x2, y2), (x3, y3) = args
-            parts.append(
-                f"C{_fmt(x1)} {_fmt(y1)} {_fmt(x2)} {_fmt(y2)} "
-                f"{_fmt(x3)} {_fmt(y3)}"
-            )
+            parts.append(f"C{_fmt(x1)} {_fmt(y1)} {_fmt(x2)} {_fmt(y2)} {_fmt(x3)} {_fmt(y3)}")
         elif op == "closePath":
             parts.append("Z")
         elif op == "endPath":
@@ -76,8 +73,7 @@ def _ops_to_eps_body(operations: list[tuple]) -> str:
         elif op == "curveTo":
             (x1, y1), (x2, y2), (x3, y3) = args
             parts.append(
-                f"{_fmt(x1)} {_fmt(y1)} {_fmt(x2)} {_fmt(y2)} "
-                f"{_fmt(x3)} {_fmt(y3)} curveto"
+                f"{_fmt(x1)} {_fmt(y1)} {_fmt(x2)} {_fmt(y2)} {_fmt(x3)} {_fmt(y3)} curveto"
             )
         elif op == "closePath":
             parts.append("closepath")
@@ -112,7 +108,7 @@ def _render_module(
 ) -> str:
     if '"""' in ofl_text:
         raise ValueError(
-            "OFL text contains ``\"\"\"`` which would terminate the embedded "
+            'OFL text contains ``"""`` which would terminate the embedded '
             "string literal; adjust the embedding strategy."
         )
     lines = [
@@ -155,9 +151,7 @@ def _render_module(
         "GLYPHS: dict[str, Glyph] = {",
     ]
     for char, svg_d, eps_body in glyphs:
-        lines.append(
-            f"    {char!r}: Glyph(svg_d={svg_d!r}, eps_body={eps_body!r}),"
-        )
+        lines.append(f"    {char!r}: Glyph(svg_d={svg_d!r}, eps_body={eps_body!r}),")
     lines.append("}")
     return "\n".join(lines) + "\n"
 
@@ -202,9 +196,7 @@ def main() -> int:
         return 1
     advance = advances.pop()
 
-    OUT_PATH.write_text(
-        _render_module(em_size, advance, ascent, descent, glyphs, ofl_text)
-    )
+    OUT_PATH.write_text(_render_module(em_size, advance, ascent, descent, glyphs, ofl_text))
     return 0
 
 

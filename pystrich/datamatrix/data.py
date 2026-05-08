@@ -16,10 +16,10 @@ DataMatrixEncoding = Literal["compat", "ascii", "iso-8859-1", "utf-8"]
 
 _ENCODING_RULES: dict[DataMatrixEncoding, tuple[str, int, Literal["warn", "raise"]]] = {
     # encoding name -> (Python codec name, max representable codepoint, on-fail policy)
-    "compat":     ("ascii",      0x7F,     "warn"),
-    "ascii":      ("ascii",      0x7F,     "raise"),
-    "iso-8859-1": ("iso-8859-1", 0xFF,     "raise"),
-    "utf-8":      ("utf-8",      0x10FFFF, "raise"),
+    "compat": ("ascii", 0x7F, "warn"),
+    "ascii": ("ascii", 0x7F, "raise"),
+    "iso-8859-1": ("iso-8859-1", 0xFF, "raise"),
+    "utf-8": ("utf-8", 0x10FFFF, "raise"),
 }
 
 _AUTO_ENCODING_ORDER: tuple[DataMatrixEncoding, ...] = ("ascii", "iso-8859-1", "utf-8")
@@ -27,10 +27,7 @@ _AUTO_ENCODING_ORDER: tuple[DataMatrixEncoding, ...] = ("ascii", "iso-8859-1", "
 
 def get_suitable_encoding_for_codepoint(codepoint: int) -> DataMatrixEncoding:
     """Return the narrowest encoding from the auto-selection order that fits ``codepoint``."""
-    return next(
-        c for c in _AUTO_ENCODING_ORDER
-        if codepoint <= _ENCODING_RULES[c][1]
-    )
+    return next(c for c in _AUTO_ENCODING_ORDER if codepoint <= _ENCODING_RULES[c][1])
 
 
 class DataMatrixData:
@@ -130,10 +127,7 @@ class DataMatrixData:
             new_segments = (*self.segments, other)
             other_auto = False
         elif isinstance(other, DataMatrixData):
-            if (
-                not (self.auto_encoding or other.auto_encoding)
-                and other.encoding != self.encoding
-            ):
+            if not (self.auto_encoding or other.auto_encoding) and other.encoding != self.encoding:
                 raise PyStrichInvalidOption(
                     f"cannot concatenate DataMatrixData with different encodings "
                     f"({self.encoding!r} and {other.encoding!r})"
@@ -152,7 +146,8 @@ class DataMatrixData:
         if not isinstance(other, str):
             return NotImplemented
         return type(self)(
-            other, *self.segments,
+            other,
+            *self.segments,
             encoding=self.encoding,
             auto_encoding=self.auto_encoding,
         )

@@ -41,13 +41,13 @@ MATRIX_REMAIN_BIT = [0, 0, 7, 7, 7, 7, 7, 0,
 
 
 class MatrixInfo:
-    """ Provides QR Code version and Error Correction Level
+    """Provides QR Code version and Error Correction Level
     dependent information necessary for creating matrix"""
 
     def __init__(self, version, ecl):
-        path = os.path.join(os.path.split(__file__)[0], 'qrcode_data')
+        path = os.path.join(os.path.split(__file__)[0], "qrcode_data")
 
-        self.byte_num = (MATRIX_REMAIN_BIT[version] + (MAX_CODEWORDS[version] << 3))
+        self.byte_num = MATRIX_REMAIN_BIT[version] + (MAX_CODEWORDS[version] << 3)
 
         filename = path + "/qrv" + str(version) + "_"
         filename += str(ecl) + ".dat"
@@ -79,9 +79,9 @@ class MatrixInfo:
             for line in frame_data_str.splitlines():
                 frame_line = []
                 for char in line:
-                    if char == '1':
+                    if char == "1":
                         frame_line.append(1)
-                    elif char == '0':
+                    elif char == "0":
                         frame_line.append(0)
                     else:
                         raise PyStrichError(f"Corrupted frame data file, found char: {char}")
@@ -103,7 +103,7 @@ class MatrixInfo:
                 pos_x = self.matrix_d[0][codeword_bits_number]
                 pos_y = self.matrix_d[1][codeword_bits_number]
                 mask = self.matrix_d[2][codeword_bits_number]
-                matrix[pos_x][pos_y] = ((255 * (codeword_i & 1)) ^ mask)
+                matrix[pos_x][pos_y] = (255 * (codeword_i & 1)) ^ mask
                 codeword_i >>= 1
                 j -= 1
             i += 1
@@ -113,7 +113,7 @@ class MatrixInfo:
             pos_x = self.matrix_d[0][remain_bit_temp]
             pos_y = self.matrix_d[1][remain_bit_temp]
             mask = self.matrix_d[2][remain_bit_temp]
-            matrix[pos_x][pos_y] = (255 ^ mask)
+            matrix[pos_x][pos_y] = 255 ^ mask
         return matrix
 
     def put_format_info(self, matrix, format_info_value):
@@ -164,6 +164,7 @@ class MatrixInfo:
         n3_search = bit_r + chr(255) + bit_r * 3 + chr(255) + bit_r
 
         import re
+
         demerit = [0, 0, 0, 0]
         demerit[2] = len(re.findall(n3_search, dem_data[0])) * 40
         demerit[3] = dem_data[1].count(bit_r) * len(bit_r) * 100
@@ -202,15 +203,16 @@ class MatrixInfo:
             dem_data[0] = strings_and(hor_master, bit_mask)
             dem_data[1] = strings_and(ver_master, bit_mask)
             dem_data[2] = strings_and(
-                ((chr(170) * mtx_size) + dem_data[1]),
-                (dem_data[1] + (chr(170) * mtx_size)))
+                ((chr(170) * mtx_size) + dem_data[1]), (dem_data[1] + (chr(170) * mtx_size))
+            )
             dem_data[3] = strings_or(
-                ((chr(170) * mtx_size) + dem_data[1]),
-                (dem_data[1] + (chr(170) * mtx_size)))
+                ((chr(170) * mtx_size) + dem_data[1]), (dem_data[1] + (chr(170) * mtx_size))
+            )
             dem_data = [string_not(x) for x in dem_data]
 
             def str_split(x, a):
-                return [x[p:p + a] for p in range(0, len(x), a)]
+                return [x[p : p + a] for p in range(0, len(x), a)]
+
             dem_data = [chr(170).join(str_split(x, mtx_size)) for x in dem_data]
 
             dem_data[0] += chr(170) + dem_data[1]
@@ -226,7 +228,7 @@ def strings_and(str1, str2):
 
     if len(str1) < len(str2):
         str1, str2 = str2, str1
-    str2 += '\0' * (len(str1) - len(str2))
+    str2 += "\0" * (len(str1) - len(str2))
     return "".join([chr(ord(x1) & ord(x2)) for x1, x2 in zip(str1, str2, strict=False)])
 
 
@@ -235,7 +237,7 @@ def strings_or(str1, str2):
 
     if len(str1) < len(str2):
         str1, str2 = str2, str1
-    str2 += '\0' * (len(str1) - len(str2))
+    str2 += "\0" * (len(str1) - len(str2))
     return "".join([chr(ord(x1) | ord(x2)) for x1, x2 in zip(str1, str2, strict=False)])
 
 

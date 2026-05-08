@@ -14,6 +14,7 @@ http://www.adams1.com/pub/russadam/128code.html
 
 You may use this under a BSD License.
 """
+
 from __future__ import annotations
 
 import logging
@@ -55,9 +56,7 @@ class Code128Encoder(Bar1DEncoder):
     checksum: int
     bars: str
 
-    def __init__(
-        self, text: str, options: BarcodeRenderOptions | None = None
-    ) -> None:
+    def __init__(self, text: str, options: BarcodeRenderOptions | None = None) -> None:
         """Encode ``text`` as Code 128 and compute the checksum.
 
         :param text: The data to encode. Any character in the Code 128 set
@@ -101,7 +100,7 @@ class Code128Encoder(Bar1DEncoder):
 
         for index, char in enumerate(self.encoded_text):
             if index > 0:
-                checksum += (index * char)
+                checksum += index * char
 
         return checksum % 103
 

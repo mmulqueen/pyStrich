@@ -81,9 +81,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
 
         .. versionadded:: 0.12
         """
-        return self.init_renderer().get_svg(
-            cellsize, inverse=inverse, mark_shape=mark_shape
-        )
+        return self.init_renderer().get_svg(cellsize, inverse=inverse, mark_shape=mark_shape)
 
     def save_svg(
         self,
@@ -122,9 +120,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
 
         .. versionadded:: 0.12
         """
-        return self.init_renderer().get_eps(
-            cellsize, inverse=inverse, mark_shape=mark_shape
-        )
+        return self.init_renderer().get_eps(cellsize, inverse=inverse, mark_shape=mark_shape)
 
     def save_eps(
         self,
@@ -198,6 +194,4 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
             ``"m"`` and ``None`` (Unspecified); previously any value other
             than ``"mm"`` was silently treated as unspecified.
         """
-        return self.init_renderer().get_dxf(
-            cellsize, inverse, units, mark_shape=mark_shape
-        )
+        return self.init_renderer().get_dxf(cellsize, inverse, units, mark_shape=mark_shape)

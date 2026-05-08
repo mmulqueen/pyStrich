@@ -1,4 +1,5 @@
 """Sphinx configuration for pyStrich documentation."""
+
 import shutil
 from pathlib import Path
 
@@ -65,15 +66,11 @@ def _generate_example_images(app):
     out = Path(app.srcdir) / "examples"
     out.mkdir(exist_ok=True)
 
-    pystrich_url = DataMatrixData(
-        "https://github.com/mmulqueen/pyStrich", encoding="ascii"
-    )
+    pystrich_url = DataMatrixData("https://github.com/mmulqueen/pyStrich", encoding="ascii")
 
     # Text-only assets used by .. literalinclude:: in every builder.
     (out / "qrcode-terminal.txt").write_text(
-        QRCodeEncoder("https://github.com/mmulqueen/pyStrich").get_terminal_art(
-            ansi_bg=False
-        ),
+        QRCodeEncoder("https://github.com/mmulqueen/pyStrich").get_terminal_art(ansi_bg=False),
         encoding="utf-8",
     )
     (out / "datamatrix-terminal.txt").write_text(
@@ -116,20 +113,16 @@ def _generate_example_images(app):
         str(out / "datamatrix-example-circles.svg"),
         mark_shape=MarkShape.CIRCULAR_CELLS,
     )
-    DataMatrixEncoder(pystrich_url).save(
-        str(out / "datamatrix-large.png"), cellsize=10
+    DataMatrixEncoder(pystrich_url).save(str(out / "datamatrix-large.png"), cellsize=10)
+    DataMatrixEncoder(DataMatrixData(FNC1, "0105050070007664", encoding="ascii")).save(
+        str(out / "datamatrix-gs1.png"), cellsize=8
     )
     DataMatrixEncoder(
-        DataMatrixData(FNC1, "0105050070007664", encoding="ascii")
-    ).save(str(out / "datamatrix-gs1.png"), cellsize=8)
-    DataMatrixEncoder(
-        DataMatrixData(
-            FNC1, "0109501234543213", "17261231", "10ABC123", encoding="ascii"
-        )
+        DataMatrixData(FNC1, "0109501234543213", "17261231", "10ABC123", encoding="ascii")
     ).save(str(out / "datamatrix-gs1-multi-fixed.png"), cellsize=8)
-    DataMatrixEncoder(
-        DataMatrixData(FNC1, "10ABC123", FNC1, "21SERIAL01", encoding="ascii")
-    ).save(str(out / "datamatrix-gs1-multi.png"), cellsize=8)
+    DataMatrixEncoder(DataMatrixData(FNC1, "10ABC123", FNC1, "21SERIAL01", encoding="ascii")).save(
+        str(out / "datamatrix-gs1-multi.png"), cellsize=8
+    )
     DataMatrixEncoder(DataMatrixData("café", encoding="iso-8859-1")).save(
         str(out / "datamatrix-latin1.png"), cellsize=8
     )
@@ -141,12 +134,8 @@ def _generate_example_images(app):
     EAN13Encoder("5050070007664").save(str(out / "ean13-wide.png"), bar_width=6)
     EAN13Encoder("5050070007664").save_svg(str(out / "ean13-example.svg"))
 
-    QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save(
-        str(out / "qrcode-example.png")
-    )
-    QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg(
-        str(out / "qrcode-example.svg")
-    )
+    QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save(str(out / "qrcode-example.png"))
+    QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg(str(out / "qrcode-example.svg"))
     QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg(
         str(out / "qrcode-example-circles.svg"),
         mark_shape=MarkShape.CIRCULAR_CELLS,

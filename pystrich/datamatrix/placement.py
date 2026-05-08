@@ -1,4 +1,5 @@
 """Matrix placement for 2D datamatrix barcode encoder"""
+
 __revision__ = "$Rev$"
 
 
@@ -20,22 +21,22 @@ class DataMatrixPlacer:
         # If out of bounds, wrap around to the other side
         if posx < 0:
             posx += self.rows
-            posy += (4 - ((self.rows + 4) % 8))
+            posy += 4 - ((self.rows + 4) % 8)
 
         if posy < 0:
             posy += self.cols
-            posx += (4 - ((self.cols + 4) % 8))
+            posx += 4 - ((self.cols + 4) % 8)
 
         self.matrix[posx][posy] = bit
 
     def place_special_1(self, codeword):
         """Special corner case 1
-            bottom left corner: |1|2|3|
+        bottom left corner: |1|2|3|
 
-            top right corner:   |4|5|
-                                  |6|
-                                  |7|
-                                  |8| """
+        top right corner:   |4|5|
+                              |6|
+                              |7|
+                              |8|"""
 
         self.place_bit((self.rows - 1, 0), (codeword & (0x01 << 7)) >> 7)
         self.place_bit((self.rows - 1, 1), (codeword & (0x01 << 6)) >> 6)
@@ -48,12 +49,12 @@ class DataMatrixPlacer:
 
     def place_special_2(self, codeword):
         """Special corner case 2
-            bottom left corner: |1|
-                                |2|
-                                |3|
+        bottom left corner: |1|
+                            |2|
+                            |3|
 
-            top right corner:  |4|5|6|7|
-                                     |8| """
+        top right corner:  |4|5|6|7|
+                                 |8|"""
 
         self.place_bit((self.rows - 3, 0), (codeword & (0x01 << 7)) >> 7)
         self.place_bit((self.rows - 2, 0), (codeword & (0x01 << 6)) >> 6)
@@ -66,14 +67,14 @@ class DataMatrixPlacer:
 
     def place_special_3(self, codeword):
         """Special corner case 3
-            bottom left corner: |1|
-                                |2|
-                                |3|
+        bottom left corner: |1|
+                            |2|
+                            |3|
 
-            top right corner:   |4|5|
-                                  |6|
-                                  |7|
-                                  |8| """
+        top right corner:   |4|5|
+                              |6|
+                              |7|
+                              |8|"""
 
         self.place_bit((self.rows - 3, 0), (codeword & (0x01 << 7)) >> 7)
         self.place_bit((self.rows - 2, 0), (codeword & (0x01 << 6)) >> 6)
@@ -86,16 +87,15 @@ class DataMatrixPlacer:
 
     def place_special_4(self, codeword):
         """Special corner case 4
-            bottom left corner: |1|
+        bottom left corner: |1|
 
-            bottom right corner: |2|
+        bottom right corner: |2|
 
-            top right corner: |3|4|5|
-                              |6|7|8| """
+        top right corner: |3|4|5|
+                          |6|7|8|"""
 
         self.place_bit((self.rows - 1, 0), (codeword & (0x01 << 7)) >> 7)
-        self.place_bit((self.rows - 1, self.cols - 1),
-                       (codeword & (0x01 << 6)) >> 6)
+        self.place_bit((self.rows - 1, self.cols - 1), (codeword & (0x01 << 6)) >> 6)
         self.place_bit((0, self.cols - 3), (codeword & (0x01 << 5)) >> 5)
         self.place_bit((0, self.cols - 2), (codeword & (0x01 << 4)) >> 4)
         self.place_bit((0, self.cols - 1), (codeword & (0x01 << 3)) >> 3)
@@ -105,9 +105,9 @@ class DataMatrixPlacer:
 
     def place_standard_shape(self, position, codeword):
         """Standard codeword placement
-            |1|2|
-            |3|4|5|
-            |6|7|8| """
+        |1|2|
+        |3|4|5|
+        |6|7|8|"""
 
         posx, posy = position
 
@@ -134,7 +134,6 @@ class DataMatrixPlacer:
         cw_list = [ord(codeword) for codeword in codewords]
 
         while True:
-
             # Special corner cases
             if row == self.rows and col == 0:
                 self.place_special_1(cw_list.pop(0))

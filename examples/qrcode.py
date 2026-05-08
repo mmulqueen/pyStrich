@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Example code for qrcode library"""
+
 __revision__ = "$Revision$"
 
 import logging

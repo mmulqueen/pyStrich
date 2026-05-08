@@ -1,4 +1,5 @@
 """Example code for datamatrix library"""
+
 __revision__ = "$Revision$"
 
 import logging

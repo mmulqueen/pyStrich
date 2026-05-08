@@ -1,4 +1,5 @@
 """Example code for ean13 library"""
+
 __revision__ = "$Revision$"
 
 import logging
