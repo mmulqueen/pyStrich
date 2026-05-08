@@ -11,6 +11,7 @@ from .reedsolomon import get_reed_solomon_code
 
 log = logging.getLogger("datamatrix")
 
+# fmt: off
 data_word_length = (3, 5, 8, 12, 18, 22, 30, 36, 44,
                     62, 86, 114, 144, 174, 204,
                     280, 368, 456, 576, 696, 816,
@@ -30,6 +31,7 @@ hv_regions = (1, 1, 1, 1, 1, 1, 1, 1, 1,
               2, 2, 2, 2, 2, 2,
               4, 4, 4, 4, 4, 4,
               6, 6, 6)
+# fmt: on
 
 
 class DataTooLongForImplementation(PyStrichInvalidInput):

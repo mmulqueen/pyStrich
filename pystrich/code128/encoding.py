@@ -1,5 +1,6 @@
 """Encoding data tables for code128 barcode encoder"""
 
+# fmt: off
 charset_a = {
     ' ': 0, '!': 1, '"': 2, '#': 3,
     '$': 4, '%': 5, '&': 6, '\'': 7,
@@ -57,6 +58,7 @@ charset_b = {
     '\xf3': 96, '\xf2': 97, 'SHIFT': 98, 'TO_C': 99,
     '\xf4': 100, 'TO_A': 101, '\xf1': 102
 }
+# fmt: on
 
 
 charset_c = {"TO_B": 100, "TO_A": 101, "\xf1": 102}

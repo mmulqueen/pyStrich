@@ -4,6 +4,7 @@ import os.path
 
 from pystrich.exceptions import PyStrichError
 
+# fmt: off
 MAX_DATA_BITS = [
     128, 224, 352, 512, 688, 864, 992, 1232, 1456, 1728,
     2032, 2320, 2672, 2920, 3320, 3624, 4056, 4504, 5016, 5352,
@@ -38,6 +39,7 @@ MATRIX_REMAIN_BIT = [0, 0, 7, 7, 7, 7, 7, 0,
                      3, 3, 3, 3, 3, 4, 4, 4,
                      4, 4, 4, 4, 3, 3, 3, 3,
                      3, 3, 3, 0, 0, 0, 0, 0, 0]
+# fmt: on
 
 
 class MatrixInfo:
@@ -119,6 +121,7 @@ class MatrixInfo:
     def put_format_info(self, matrix, format_info_value):
         """Put format information into the matrix"""
 
+        # fmt: off
         format_info = ["101010000010010", "101000100100101",
                        "101111001111100", "101101101001011",
                        "100010111111001", "100000011001110",
@@ -135,6 +138,7 @@ class MatrixInfo:
                        "011111100110001", "011101000000110",
                        "010010010110100", "010000110000011",
                        "010111011011010", "010101111101101"]
+        # fmt: on
 
         format_info_x1 = [0, 1, 2, 3, 4, 5, 7, 8, 8, 8, 8, 8, 8, 8, 8]
         format_info_y1 = [8, 8, 8, 8, 8, 8, 8, 8, 7, 5, 4, 3, 2, 1, 0]

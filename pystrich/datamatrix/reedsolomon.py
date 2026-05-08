@@ -2,6 +2,7 @@
 
 __revision__ = "$Rev$"
 
+# fmt: off
 # Factor table
 factors = {
     5: (228, 48, 15, 111, 62),
@@ -87,6 +88,7 @@ alogval = (
     148, 5, 10, 20, 40, 80, 160, 109, 218, 153, 31, 62, 124, 248,
     221, 151, 3, 6, 12, 24, 48, 96, 192, 173, 119, 238, 241, 207,
     179, 75, 150, 1)
+# fmt: on
 
 
 def get_reed_solomon_code(data, num_code_words):
