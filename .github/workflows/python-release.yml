@@ -28,7 +28,7 @@ jobs:
       uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
     - name: Install system dependencies
       run: |
-        sudo apt-get update && sudo apt-get install -y dmtx-utils zbar-tools imagemagick librsvg2-bin
+        sudo apt-get update && sudo apt-get install -y dmtx-utils zbar-tools imagemagick librsvg2-bin ghostscript
     - name: Install Python dependencies
       run: uv sync --frozen --group dev
     - name: Lint with ruff

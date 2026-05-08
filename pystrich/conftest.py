@@ -44,9 +44,9 @@ def dmtxread():
 
 @pytest.fixture
 def svg_to_png():
-    path = which("convert")
+    path = which("rsvg-convert")
     if not path:
-        pytest.skip("ImageMagick `convert` not installed")
+        pytest.skip("librsvg `rsvg-convert` not installed")
 
     def _convert(
         svg_path: "str | os.PathLike[str]",
@@ -55,14 +55,12 @@ def svg_to_png():
         subprocess.check_call(
             [
                 path,
-                "-background",
-                "white",
-                "-alpha",
-                "remove",
-                "-density",
-                "150",
-                os.fspath(svg_path),
+                "--background-color=white",
+                "--dpi-x=150",
+                "--dpi-y=150",
+                "--output",
                 os.fspath(png_path),
+                os.fspath(svg_path),
             ]
         )
 
