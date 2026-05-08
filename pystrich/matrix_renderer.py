@@ -80,6 +80,46 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
             for row in self.matrix
         ) + '\n'
 
+    def get_terminal_art(self, *, ansi_bg: bool = True) -> str:
+        """Render the matrix using Unicode half-block characters.
+
+        Each terminal character represents two matrix rows and one column,
+        producing approximately square cells in a typical fixed-width
+        font and yielding a result that is scannable on screen.
+
+        :param ansi_bg: If ``True`` (the default), wrap each line in ANSI
+            escape codes that force a white background and black
+            foreground, making the symbol scannable regardless of the
+            terminal's colour scheme. Set to ``False`` for plain output
+            (correct only on a light-themed terminal).
+        :rtype: str
+
+        .. versionadded:: 0.12
+        """
+        # Top cell, bottom cell.
+        blocks = {
+            (True, True): "█",   # Full block
+            (True, False): "▀",  # Upper half block
+            (False, True): "▄",  # Lower half block
+            (False, False): " ",
+        }
+        rows = self.matrix
+        width = len(rows[0]) if rows else 0
+        empty_row = [0] * width
+
+        lines: list[str] = []
+        for i in range(0, len(rows), 2):
+            top = rows[i]
+            bottom = rows[i + 1] if i + 1 < len(rows) else empty_row
+            line = "".join(
+                blocks[(bool(t), bool(b))] for t, b in zip(top, bottom)
+            )
+            if ansi_bg:
+                # 107 = bright white background, 30 = black foreground, 0 = reset.
+                line = f"\033[107;30m{line}\033[0m"
+            lines.append(line)
+        return "\n".join(lines) + "\n"
+
     def get_svg(
         self, cellsize: int, *, inverse: bool, mark_shape: MarkShape
     ) -> str:

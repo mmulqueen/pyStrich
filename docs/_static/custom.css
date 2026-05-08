@@ -1,0 +1,13 @@
+/* Force white background and black foreground for terminal-art code blocks
+   so the half-block characters scan correctly in either Furo theme. */
+.terminal-art,
+.terminal-art pre,
+.terminal-art .highlight {
+    background: #ffffff !important;
+    color: #000000 !important;
+}
+
+.terminal-art pre {
+    /* Tight line spacing so the half-block glyphs join without gaps. */
+    line-height: 1 !important;
+}

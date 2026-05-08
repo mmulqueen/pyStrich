@@ -119,6 +119,29 @@ points (1 point = 1/72 inch).
 
 .. versionadded:: 0.12
 
+Terminal output
+---------------
+
+For quick on-screen display, :meth:`~DataMatrixEncoder.get_terminal_art`
+returns a scannable rendering using Unicode half-block characters. Each
+character represents two matrix rows and one column, so cells appear
+roughly square in a typical fixed-width terminal font.
+
+.. code-block:: python
+
+   print(DataMatrixEncoder(payload).get_terminal_art())
+
+.. literalinclude:: examples/datamatrix-terminal.txt
+   :language: text
+   :class: terminal-art
+
+By default the output is wrapped in ANSI escape codes that force a white
+background and black foreground, so the symbol scans regardless of the
+terminal's colour scheme. Pass ``ansi_bg=False`` for plain output (correct
+only on a light-themed terminal).
+
+.. versionadded:: 0.12
+
 DXF (CAD) output
 ----------------
 

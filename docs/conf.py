@@ -49,17 +49,11 @@ html_theme = "furo"
 html_title = f"pyStrich {release}"
 html_logo = "logo.svg"
 html_favicon = "favicon.svg"
+html_static_path = ["_static"]
+html_css_files = ["custom.css"]
 
 
 def _generate_example_images(app):
-    if app.builder.name != "html":
-        # Non-HTML builders parse .. image:: directives but don't render the
-        # bytes, so missing example PNGs are a non-issue. Suppress the
-        # corresponding warning so we can skip generation here without
-        # breaking -W.
-        app.config.suppress_warnings.append("image.not_readable")
-        return
-
     from pystrich.code39 import Code39Encoder
     from pystrich.code128 import Code128Encoder
     from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder, FNC1
@@ -70,16 +64,36 @@ def _generate_example_images(app):
     out = Path(app.srcdir) / "examples"
     out.mkdir(exist_ok=True)
 
+    pystrich_url = DataMatrixData(
+        "https://github.com/mmulqueen/pyStrich", encoding="ascii"
+    )
+
+    # Text-only assets used by .. literalinclude:: in every builder.
+    (out / "qrcode-terminal.txt").write_text(
+        QRCodeEncoder("https://github.com/mmulqueen/pyStrich").get_terminal_art(
+            ansi_bg=False
+        ),
+        encoding="utf-8",
+    )
+    (out / "datamatrix-terminal.txt").write_text(
+        DataMatrixEncoder(pystrich_url).get_terminal_art(ansi_bg=False),
+        encoding="utf-8",
+    )
+
+    if app.builder.name != "html":
+        # Non-HTML builders parse .. image:: directives but don't render the
+        # bytes, so missing example PNGs are a non-issue. Suppress the
+        # corresponding warning so we can skip generation here without
+        # breaking -W.
+        app.config.suppress_warnings.append("image.not_readable")
+        return
+
     label_options = {
         "height": 200,
         "label_border": 10,
         "bottom_border": 10,
         "ttf_fontsize": 24,
     }
-
-    pystrich_url = DataMatrixData(
-        "https://github.com/mmulqueen/pyStrich", encoding="ascii"
-    )
 
     Code39Encoder("PART-1234").save(str(out / "code39-example.png"))
     Code39Encoder("PART-1234").save(str(out / "code39-wide.png"), bar_width=6)

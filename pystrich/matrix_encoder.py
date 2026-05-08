@@ -154,6 +154,24 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         """
         return self.init_renderer().get_ascii()
 
+    def get_terminal_art(self, *, ansi_bg: bool = True) -> str:
+        """Render the symbol using Unicode half-block characters for terminals.
+
+        Each character represents two matrix rows and one column, producing
+        approximately square cells in a typical fixed-width font and yielding
+        a result that is scannable on screen.
+
+        :param ansi_bg: If ``True`` (the default), wrap each line in ANSI
+            escape codes that force a white background and black foreground,
+            making the symbol scannable regardless of the terminal's colour
+            scheme. Set to ``False`` for plain output (correct only on a
+            light-themed terminal).
+        :rtype: str
+
+        .. versionadded:: 0.12
+        """
+        return self.init_renderer().get_terminal_art(ansi_bg=ansi_bg)
+
     def get_dxf(
         self,
         cellsize: float = 1.0,

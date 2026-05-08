@@ -37,6 +37,11 @@ Changelog
 - Tests: round-trip DXF coverage for QR Code and Data Matrix -- the
   rendered DXF is read with ``ezdxf``, rasterised, and decoded back to
   the original string.
+- New ``get_terminal_art`` method on :class:`~pystrich.qrcode.QRCodeEncoder`
+  and :class:`~pystrich.datamatrix.DataMatrixEncoder`, rendering the
+  symbol with Unicode half-block characters so it scans on screen. ANSI
+  background/foreground codes are applied by default for readability on
+  any terminal theme; pass ``ansi_bg=False`` for plain output.
 
 0.11 — 2026-05-07
 -----------------

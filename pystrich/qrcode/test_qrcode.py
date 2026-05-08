@@ -148,3 +148,30 @@ def test_total_codewords_equals_max_codewords(text, ecl):
     enc = TextEncoder()
     enc.encode(text, ecl=ecl)
     assert len(enc.codewords) == isodata.MAX_CODEWORDS[enc.version]
+
+
+_BLOCK_CHARS = set("█▀▄ ")
+
+
+def test_get_terminal_art_uses_only_block_chars_and_newlines():
+    text = QRCodeEncoder("hi").get_terminal_art(ansi_bg=False)
+    assert set(text) <= _BLOCK_CHARS | {"\n"}
+
+
+def test_get_terminal_art_collapses_two_rows_per_line():
+    enc = QRCodeEncoder("hi")
+    matrix_height = enc.init_renderer().height
+    plain = enc.get_terminal_art(ansi_bg=False).rstrip("\n").splitlines()
+    assert len(plain) == -(-matrix_height // 2)
+
+
+def test_get_terminal_art_ansi_wraps_each_line():
+    text = QRCodeEncoder("hi").get_terminal_art()
+    for line in text.rstrip("\n").splitlines():
+        assert line.startswith("\033[107;30m")
+        assert line.endswith("\033[0m")
+
+
+def test_get_terminal_art_ansi_off_has_no_escape_codes():
+    text = QRCodeEncoder("hi").get_terminal_art(ansi_bg=False)
+    assert "\033" not in text
