@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-import os
 from functools import reduce
 from typing import TYPE_CHECKING, TypedDict
 
 from PIL import Image, ImageDraw
 
+from pystrich._vector_text import make_text_label
 from pystrich.bar_renderer import Bar1DRenderer
 from pystrich.fonts import get_font
 from pystrich.marks import BarLayout, iter_bar_marks
@@ -130,6 +130,17 @@ class EAN13Renderer(Bar1DRenderer):
         # left blank in SVG/EPS so total canvas height matches.
         quiet_bottom = image_height - symbol_top - guard_pixel_height
 
+        font_size = font_sizes.get(bar_width, 24)
+        text_y = image_height * 0.8
+        first_digit_y = text_y - image_height * self.options.get(
+            "first_digit_y_offset", 0.1
+        )
+        labels = (
+            make_text_label(self.code[0], 1 * bar_width, first_digit_y, font_size),
+            make_text_label(self.code[1:7], left_quiet + 7 * bar_width, text_y, font_size),
+            make_text_label(self.code[7:], left_quiet + 54 * bar_width, text_y, font_size),
+        )
+
         return BarLayout(
             heights=heights,
             bar_width=bar_width,
@@ -137,6 +148,7 @@ class EAN13Renderer(Bar1DRenderer):
             quiet_right=right_quiet,
             quiet_top=symbol_top,
             quiet_bottom=quiet_bottom,
+            labels=labels,
         )
 
     def get_pilimage(self, bar_width: int) -> PILImage:
@@ -162,15 +174,7 @@ class EAN13Renderer(Bar1DRenderer):
                 fill=0,
             )
 
-        # Draw the digits
-        font_size = font_sizes.get(bar_width, 24)
-        font = get_font("courR", font_size)
-        text_y = 0.8
-        first_digit_y = text_y - self.options.get("first_digit_y_offset", 0.1)
-        draw.text((1 * bar_width, int(self.image_height * first_digit_y)),
-                  self.code[0], font=font)
-        draw.text((layout.quiet_left + 7 * bar_width, int(self.image_height * text_y)),
-                  self.code[1:7], font=font)
-        draw.text((layout.quiet_left + 54 * bar_width, int(self.image_height * text_y)),
-                  self.code[7:], font=font)
+        for label in layout.labels:
+            font = get_font("courR", label.font_size)
+            draw.text((label.x, int(label.y)), label.text, font=font)
         return img

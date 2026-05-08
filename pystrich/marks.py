@@ -83,6 +83,23 @@ def iter_marks(
     raise ValueError(f"Unknown MarkShape: {mark_shape!r}")
 
 
+class TextLabel(NamedTuple):
+    """A run of text to render below the bars in vector output.
+
+    Coordinates are in pixels (= user units for SVG/EPS at default DPI),
+    and ``y`` is the *top* edge of the text — matching the convention used
+    by ``PIL.ImageDraw.text(xy, ...)`` for the corresponding raster path.
+    ``anchor`` controls how ``x`` relates to the text run: ``"start"`` is
+    the left edge, ``"middle"`` the centre, ``"end"`` the right edge.
+    """
+
+    text: str
+    x: float
+    y: float
+    font_size: int
+    anchor: str = "start"
+
+
 class BarLayout(NamedTuple):
     """Pixel-precise layout of a 1D barcode for any output format.
 
@@ -91,6 +108,9 @@ class BarLayout(NamedTuple):
     gap). Each column is ``bar_width`` pixels wide. The four quiet zones
     frame the symbol; ``quiet_left`` and ``quiet_top`` shift the bars,
     while ``quiet_right`` and ``quiet_bottom`` only enlarge the canvas.
+    ``labels`` carries the human-readable text drawn beneath the bars by
+    SVG/EPS renderers; the PNG path renders text via PIL directly and
+    ignores this field.
     """
 
     heights: Sequence[int]
@@ -99,6 +119,7 @@ class BarLayout(NamedTuple):
     quiet_right: int = 0
     quiet_top: int = 0
     quiet_bottom: int = 0
+    labels: Sequence[TextLabel] = ()
 
 
 def iter_bar_marks(

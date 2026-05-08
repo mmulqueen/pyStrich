@@ -21,3 +21,9 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+Courier Prime (used to generate the glyph outlines embedded in
+pystrich/_courier_glyphs.py for SVG/EPS labels) is distributed under the
+SIL Open Font License, Version 1.1. The upstream license text is bundled
+inline as the OFL_LICENSE constant in pystrich/_courier_glyphs.py and is
+also available at courier_prime/OFL.txt in the source repository.

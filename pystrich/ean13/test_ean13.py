@@ -90,6 +90,36 @@ def test_svg_round_trip(string, decoded, bar_width, tmp_path, svg_to_png, zbarim
     assert zbarimg(png) == decoded
 
 
+@pytest.mark.parametrize("string, full_code", [
+    ("012345678901", "0123456789012"),
+    ("007567816412", "0075678164125"),
+    ("750103131130", "7501031311309"),
+])
+def test_svg_label_glyphs(string, full_code):
+    """SVG output defines one ``<symbol>`` per unique digit (incl. check digit) and ``<use>``-s it once per occurrence in the printed code."""
+    svg = EAN13Encoder(string).get_svg(3)
+    for digit in set(full_code):
+        assert f'id="g_{ord(digit):02X}"' in svg
+    assert svg.count("<use href=") == len(full_code)
+
+
+@pytest.mark.parametrize("string, full_code", [
+    ("012345678901", "0123456789012"),
+    ("007567816412", "0075678164125"),
+    ("750103131130", "7501031311309"),
+])
+def test_eps_label_glyphs(string, full_code):
+    """EPS output defines one ``/g_NN`` proc per unique digit and invokes it once per occurrence in the printed code."""
+    eps = EAN13Encoder(string).get_eps(3)
+    for digit in set(full_code):
+        assert f"/g_{ord(digit):02X} " in eps
+    invocations = sum(
+        eps.count(f"g_{ord(d):02X}") - eps.count(f"/g_{ord(d):02X}")
+        for d in set(full_code)
+    )
+    assert invocations == len(full_code)
+
+
 @pytest.mark.parametrize("bar_width", [3, 5])
 @pytest.mark.parametrize("string, decoded", [
     ("012345678901", "0123456789012"),

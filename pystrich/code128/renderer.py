@@ -7,9 +7,10 @@ from typing import TYPE_CHECKING
 
 from PIL import Image, ImageFont, ImageDraw
 
+from pystrich._vector_text import make_text_label
 from pystrich.bar_renderer import Bar1DRenderer
 from pystrich.fonts import get_font
-from pystrich.marks import BarLayout, iter_bar_marks
+from pystrich.marks import BarLayout, TextLabel, iter_bar_marks
 from pystrich.types import BarcodeRenderOptions
 
 if TYPE_CHECKING:
@@ -69,6 +70,17 @@ class Code128Renderer(Bar1DRenderer):
         bar_pixel_height = image_height - label_border - fontsize - symbol_top
         quiet_width = bar_width * QUIET_ZONE_MODULES
         heights = [bar_pixel_height if c == "1" else 0 for c in self.bars]
+        labels: tuple[TextLabel, ...] = ()
+        if fontsize > 0:
+            labels = (
+                make_text_label(
+                    self.text,
+                    image_width / 2,
+                    symbol_top + bar_pixel_height + label_border,
+                    fontsize,
+                    anchor="middle",
+                ),
+            )
         return BarLayout(
             heights=heights,
             bar_width=bar_width,
@@ -76,6 +88,7 @@ class Code128Renderer(Bar1DRenderer):
             quiet_right=quiet_width,
             quiet_top=symbol_top,
             quiet_bottom=label_border + fontsize + bottom_border,
+            labels=labels,
         )
 
     def get_pilimage(self, bar_width: int) -> PILImage:

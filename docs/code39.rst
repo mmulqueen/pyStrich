@@ -84,8 +84,7 @@ SVG output
 
 For embedding in web pages or any workflow that benefits from
 resolution-independent output, use :meth:`~Code39Encoder.save_svg` (or
-:meth:`~Code39Encoder.get_svg` to receive the SVG as a string). The
-human-readable label is not currently rendered into the SVG output.
+:meth:`~Code39Encoder.get_svg` to receive the SVG as a string).
 
 .. code-block:: python
 

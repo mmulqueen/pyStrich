@@ -14,15 +14,15 @@ Changelog
 - SVG output for the 1D barcodes via the same ``save_svg`` / ``get_svg``
   methods on :class:`~pystrich.code39.Code39Encoder`,
   :class:`~pystrich.code128.Code128Encoder` and
-  :class:`~pystrich.ean13.EAN13Encoder`. The human-readable label is not
-  rendered into the SVG.
+  :class:`~pystrich.ean13.EAN13Encoder`.
 - EPS output for QR Code and Data Matrix via new ``save_eps`` /
   ``get_eps`` methods on the same classes.
 - EPS output for the 1D barcodes via the same ``save_eps`` / ``get_eps``
   methods on :class:`~pystrich.code39.Code39Encoder`,
   :class:`~pystrich.code128.Code128Encoder` and
-  :class:`~pystrich.ean13.EAN13Encoder`. The human-readable label is not
-  rendered into the EPS.
+  :class:`~pystrich.ean13.EAN13Encoder`.
+- The human-readable labels for 1D barcodes are rendered with bundled Courier Prime glyph outlines (SIL Open
+  Font License).
 - DXF: :meth:`~pystrich.qrcode.QRCodeEncoder.get_dxf` and
   :meth:`~pystrich.datamatrix.DataMatrixEncoder.get_dxf` now write the
   correct ``$INSUNITS`` value for ``"in"``, ``"ft"``, ``"mi"``,

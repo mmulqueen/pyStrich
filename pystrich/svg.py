@@ -9,8 +9,59 @@ values; ``matrix_to_svg`` renders that. The 1D encoders (Code 39, Code
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
+from math import ceil
 
-from pystrich.marks import BarLayout, MarkShape, MatrixMark, iter_bar_marks, iter_marks
+from pystrich._courier_glyphs import ADVANCE, GLYPHS
+from pystrich._vector_text import (
+    fmt as _fmt,
+    glyph_id,
+    label_descent_y,
+    label_geometry,
+    used_chars,
+)
+from pystrich.marks import (
+    BarLayout,
+    MarkShape,
+    MatrixMark,
+    TextLabel,
+    iter_bar_marks,
+    iter_marks,
+)
+
+
+def _label_defs(chars: Iterable[str]) -> list[str]:
+    """Render a ``<defs>`` block defining one ``<symbol>`` per used glyph."""
+    parts: list[str] = ["<defs>"]
+    for char in sorted(chars):
+        glyph = GLYPHS[char]
+        parts.append(
+            f'<symbol id="{glyph_id(char)}" overflow="visible">'
+            f'<path d="{glyph.svg_d}"/></symbol>'
+        )
+    parts.append("</defs>")
+    return parts
+
+
+def _label_groups(labels: Sequence[TextLabel]) -> list[str]:
+    """Render each label as a transformed ``<g>`` of ``<use>`` references.
+
+    The wrapping group flips y (font is y-up, SVG is y-down) and scales
+    em-units to pixels; glyphs are placed via per-character ``<use x=...>``
+    in em-space.
+    """
+    parts: list[str] = ['<g shape-rendering="geometricPrecision">']
+    for label in labels:
+        scale, x_start, baseline_y = label_geometry(label)
+        uses = "".join(
+            f'<use href="#{glyph_id(c)}" x="{i * ADVANCE}"/>'
+            for i, c in enumerate(label.text)
+        )
+        parts.append(
+            f'<g transform="translate({_fmt(x_start)} {_fmt(baseline_y)}) '
+            f'scale({_fmt(scale)} {_fmt(-scale)})">{uses}</g>'
+        )
+    parts.append("</g>")
+    return parts
 
 
 def _wrap_svg(
@@ -86,11 +137,12 @@ def matrix_to_svg(
 
 
 def bars_to_svg(layout: BarLayout) -> str:
-    """Render a 1D bar layout as an SVG string.
+    """Render a 1D bar layout (with optional human-readable labels) as SVG.
 
     The ``viewBox`` and ``width``/``height`` are in pixels (= user units
-    at default DPI), matching the dimensions a PNG renderer would
-    produce for the same :class:`BarLayout`.
+    at default DPI). When ``layout.labels`` includes glyphs whose font
+    descent extends below the natural canvas height, the canvas is
+    enlarged just enough to keep them inside the ``viewBox``.
     """
     view_w = (
         layout.quiet_left
@@ -98,12 +150,23 @@ def bars_to_svg(layout: BarLayout) -> str:
         + layout.quiet_right
     )
     view_h = layout.quiet_top + max(layout.heights, default=0) + layout.quiet_bottom
+    if layout.labels:
+        view_h = max(view_h, ceil(max(label_descent_y(l) for l in layout.labels)))
 
-    body = marks_to_svg_rects(iter_bar_marks(
-        layout.heights,
-        layout.bar_width,
-        quiet_left=layout.quiet_left,
-        quiet_top=layout.quiet_top,
-    ))
+    body: list[str] = []
+    if layout.labels:
+        body.extend(_label_defs(used_chars(layout.labels)))
+    body.extend(
+        marks_to_svg_rects(
+            iter_bar_marks(
+                layout.heights,
+                layout.bar_width,
+                quiet_left=layout.quiet_left,
+                quiet_top=layout.quiet_top,
+            )
+        )
+    )
+    if layout.labels:
+        body.extend(_label_groups(layout.labels))
 
     return _wrap_svg(view_w, view_h, 1, shape_rendering="crispEdges", body=body)

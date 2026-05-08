@@ -108,9 +108,7 @@ SVG output
 
 For embedding in web pages or any workflow that benefits from
 resolution-independent output, use :meth:`~EAN13Encoder.save_svg` (or
-:meth:`~EAN13Encoder.get_svg` to receive the SVG as a string). The
-human-readable digit groups below the bars are not currently rendered into
-the SVG output.
+:meth:`~EAN13Encoder.get_svg` to receive the SVG as a string).
 
 .. code-block:: python
 

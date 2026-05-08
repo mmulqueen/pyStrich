@@ -18,11 +18,14 @@ class BarcodeRenderOptions(TypedDict, total=False):
     Defaults to ``True``; set to ``False`` to suppress it."""
 
     ttf_font: str
-    """Absolute path to a TrueType font file used for the label. Defaults
-    to a bundled bitmap font if unset."""
+    """Absolute path to a TrueType font file used for the label in PNG
+    output. Defaults to a bundled bitmap font if unset. SVG and EPS
+    output always render the label using the bundled Courier Prime
+    glyph paths and ignore this option."""
 
     ttf_fontsize: int
-    """Font size in points."""
+    """Font size in points (PNG output only — SVG/EPS use the bundled
+    Courier Prime glyph paths)."""
 
     height: int
     """Total image height in pixels. Defaults to roughly a third of the

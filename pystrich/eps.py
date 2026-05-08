@@ -9,8 +9,64 @@ values; ``matrix_to_eps`` renders that. The 1D encoders (Code 39, Code
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
+from math import ceil
 
-from pystrich.marks import BarLayout, MarkShape, MatrixMark, iter_bar_marks, iter_marks
+from pystrich._courier_glyphs import ADVANCE, GLYPHS
+from pystrich._vector_text import (
+    fmt as _fmt,
+    glyph_id,
+    label_descent_y,
+    label_geometry,
+    used_chars,
+)
+from pystrich.marks import (
+    BarLayout,
+    MarkShape,
+    MatrixMark,
+    TextLabel,
+    iter_bar_marks,
+    iter_marks,
+)
+
+
+def _label_procs(chars: Iterable[str]) -> list[str]:
+    """Define one PostScript procedure per used glyph (e.g. ``/g_30``)."""
+    parts: list[str] = []
+    for char in sorted(chars):
+        glyph = GLYPHS[char]
+        body = glyph.eps_body
+        # An empty body (e.g. the space glyph) still needs to be a defined
+        # procedure so callers can invoke it unconditionally.
+        body_clause = f"newpath {body} fill" if body else ""
+        parts.append(f"/{glyph_id(char)} {{ {body_clause} }} def")
+    return parts
+
+
+def _label_blocks(labels: Sequence[TextLabel], view_h: int) -> list[str]:
+    """Render each label as a ``gsave``/``translate``/``scale`` block.
+
+    Inside the block, glyphs are drawn at successive em-unit advances. The
+    page-level y-flip is applied by the initial ``translate`` (PostScript's
+    y-axis points up, while ``TextLabel.y`` is y-down); within the block,
+    coordinates are in em-space (font is also y-up), so no y-axis flip is
+    needed when drawing the glyph itself.
+    """
+    parts: list[str] = []
+    for label in labels:
+        scale, x_start, baseline_y = label_geometry(label)
+        eps_baseline = view_h - baseline_y
+        block = [
+            "gsave",
+            f"{_fmt(x_start)} {_fmt(eps_baseline)} translate",
+            f"{_fmt(scale)} {_fmt(scale)} scale",
+        ]
+        for i, char in enumerate(label.text):
+            if i > 0:
+                block.append(f"{ADVANCE} 0 translate")
+            block.append(glyph_id(char))
+        block.append("grestore")
+        parts.append(" ".join(block))
+    return parts
 
 
 def _wrap_eps(
@@ -91,11 +147,12 @@ def matrix_to_eps(
 
 
 def bars_to_eps(layout: BarLayout) -> str:
-    """Render a 1D bar layout as an EPS string.
+    """Render a 1D bar layout (with optional human-readable labels) as EPS.
 
-    The ``%%BoundingBox`` is in PostScript points (1 pt = 1/72 in) and
-    matches the pixel dimensions a PNG renderer would produce for the
-    same :class:`BarLayout`.
+    The ``%%BoundingBox`` is in PostScript points (1 pt = 1/72 in). When
+    ``layout.labels`` includes glyphs whose font descent extends below the
+    natural canvas height, the canvas is enlarged just enough to keep them
+    inside the bounding box.
     """
     view_w = (
         layout.quiet_left
@@ -103,15 +160,24 @@ def bars_to_eps(layout: BarLayout) -> str:
         + layout.quiet_right
     )
     view_h = layout.quiet_top + max(layout.heights, default=0) + layout.quiet_bottom
+    if layout.labels:
+        view_h = max(view_h, ceil(max(label_descent_y(l) for l in layout.labels)))
 
-    body = marks_to_eps_rects(
-        iter_bar_marks(
-            layout.heights,
-            layout.bar_width,
-            quiet_left=layout.quiet_left,
-            quiet_top=layout.quiet_top,
-        ),
-        view_h,
+    body: list[str] = []
+    if layout.labels:
+        body.extend(_label_procs(used_chars(layout.labels)))
+    body.extend(
+        marks_to_eps_rects(
+            iter_bar_marks(
+                layout.heights,
+                layout.bar_width,
+                quiet_left=layout.quiet_left,
+                quiet_top=layout.quiet_top,
+            ),
+            view_h,
+        )
     )
+    if layout.labels:
+        body.extend(_label_blocks(layout.labels, view_h))
 
     return _wrap_eps(view_w, view_h, 1, body=body)
