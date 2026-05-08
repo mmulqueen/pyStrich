@@ -2,11 +2,11 @@
 
 import logging
 
-log = logging.getLogger("code39")
-
 from pystrich.exceptions import PyStrichInvalidInput
 
 from . import encoding
+
+log = logging.getLogger("code39")
 
 
 class CharacterNotAllowedInCode39(PyStrichInvalidInput):
@@ -25,13 +25,14 @@ class TextEncoder:
         """Encode the given text and return a
         list of character codes"""
 
-        encoded_text = list()
+        encoded_text = []
 
         # First symbol is always the start code
         encoded_text.append("*")
 
-        # MIL-STD-1189 defines a full ASCII encoding, but permits its use only in closed loop applications (i.e.
-        # where the whole system is controlled by one authority). Otherwise we are limited to a smaller subset.
+        # MIL-STD-1189 defines a full ASCII encoding, but permits its use only in closed-loop
+        # applications (i.e. where the whole system is controlled by one authority). Otherwise
+        # we are limited to a smaller subset.
         if full_ascii:
             # Ensure the text can be encoded into ASCII first
             ascii_text = text.encode("ascii")
@@ -42,9 +43,11 @@ class TextEncoder:
             allowed_chars = encoding.code39_encodings.keys()
             for char in text:
                 if char not in allowed_chars:
-                    raise CharacterNotAllowedInCode39("{} is not allowed in code 39 unless you've enabled full "
-                                                      "ASCII mode (not suitable for all software/hardware). You may "
-                                                      "use {}".format(char, "".join(allowed_chars)))
+                    raise CharacterNotAllowedInCode39(
+                        f"{char} is not allowed in code 39 unless you've enabled full ASCII "
+                        f"mode (not suitable for all software/hardware). You may use "
+                        f"{''.join(allowed_chars)}"
+                    )
                 encoded_text.append(char)
 
 

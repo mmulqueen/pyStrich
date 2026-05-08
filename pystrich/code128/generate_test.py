@@ -5,4 +5,4 @@ if __name__ == "__main__":
 
     for index, string in enumerate(Code128Test.test_strings):
         enc = Code128Encoder(string)
-        enc.save("pystrich/code128/test_img/%d.png" % (index + 1))
+        enc.save(f"pystrich/code128/test_img/{index + 1}.png")

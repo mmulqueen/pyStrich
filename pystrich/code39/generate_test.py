@@ -5,4 +5,4 @@ if __name__ == "__main__":
 
     for index, text in enumerate(test_strings):
         enc = Code39Encoder(text)
-        enc.save("pystrich/code39/test_img/%d.png" % (index + 1))
+        enc.save(f"pystrich/code39/test_img/{index + 1}.png")

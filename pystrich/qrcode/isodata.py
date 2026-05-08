@@ -209,7 +209,8 @@ class MatrixInfo:
                 (dem_data[1] + (chr(170) * mtx_size)))
             dem_data = [string_not(x) for x in dem_data]
 
-            str_split = lambda x, a: [x[p:p + a] for p in range(0, len(x), a)]
+            def str_split(x, a):
+                return [x[p:p + a] for p in range(0, len(x), a)]
             dem_data = [chr(170).join(str_split(x, mtx_size)) for x in dem_data]
 
             dem_data[0] += chr(170) + dem_data[1]
@@ -226,7 +227,7 @@ def strings_and(str1, str2):
     if len(str1) < len(str2):
         str1, str2 = str2, str1
     str2 += '\0' * (len(str1) - len(str2))
-    return "".join([chr(ord(x1) & ord(x2)) for x1, x2 in zip(str1, str2)])
+    return "".join([chr(ord(x1) & ord(x2)) for x1, x2 in zip(str1, str2, strict=False)])
 
 
 def strings_or(str1, str2):
@@ -235,7 +236,7 @@ def strings_or(str1, str2):
     if len(str1) < len(str2):
         str1, str2 = str2, str1
     str2 += '\0' * (len(str1) - len(str2))
-    return "".join([chr(ord(x1) | ord(x2)) for x1, x2 in zip(str1, str2)])
+    return "".join([chr(ord(x1) | ord(x2)) for x1, x2 in zip(str1, str2, strict=False)])
 
 
 def string_not(str1):

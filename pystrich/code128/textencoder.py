@@ -2,10 +2,9 @@
 
 import logging
 
-log = logging.getLogger("code128")
-
-
 from . import encoding
+
+log = logging.getLogger("code128")
 
 START_A, START_B, START_C = 103, 104, 105
 TO_C, TO_B, TO_A = 99, 100, 101
@@ -80,7 +79,7 @@ class TextEncoder:
                 codes = self.switch_charset('A')
 
             else:
-                log.error("No charset found for character %d" % ord(char))
+                log.error("No charset found for character %d", ord(char))
 
             # Take care of the odd leftover digit if there is one
             if len(self.digits) == 1:
@@ -100,7 +99,7 @@ class TextEncoder:
                 if char in encoding.charset_a.keys():
                     codes = self.switch_charset('A')
                 else:
-                    log.error("No charset found for character %d" % ord(char))
+                    log.error("No charset found for character %d", ord(char))
 
         elif self.current_charset == 'A':
             # Do we want to switch from A?
@@ -115,7 +114,7 @@ class TextEncoder:
                 if char in encoding.charset_b.keys():
                     codes = self.switch_charset('B')
                 else:
-                    log.error("No charset found for character %d" % ord(char))
+                    log.error("No charset found for character %d", ord(char))
 
         return codes
 
@@ -190,7 +189,7 @@ class TextEncoder:
         representing the given encoded text and checksum digit.
         Stop code and termination bars are added onto the end"""
 
-        full_code = encoded_text + [checksum, ]
+        full_code = [*encoded_text, checksum]
         bars = ""
         for char in full_code:
             bars += encoding.encodings[char]

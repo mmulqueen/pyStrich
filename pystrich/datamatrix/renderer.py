@@ -91,13 +91,13 @@ class DataMatrixRenderer(Matrix2DRenderer[int | None]):
         self.height += a_gap*2 + self.quiet_zone*2 + (self.regions-1)*a_gap*2
 
         new_matrix: list[list[int | None]] = []
-        for i in range(a_gap+self.quiet_zone):
+        for _ in range(a_gap+self.quiet_zone):
             new_matrix += [[colour]*self.width]
 
         for row_n, row in enumerate(self.matrix):
             if row_n > 0 and row_n % self.region_size == 0:
                 # Vertical gap between regions
-                for j in range(a_gap*2):
+                for _ in range(a_gap*2):
                     new_matrix += [[colour]*self.width]
             # Left gap
             new_row: list[int | None] = [colour]*(a_gap+self.quiet_zone)
@@ -112,6 +112,6 @@ class DataMatrixRenderer(Matrix2DRenderer[int | None]):
             new_row += [colour]*(a_gap+self.quiet_zone)
             new_matrix.append(new_row)
 
-        for i in range(a_gap+self.quiet_zone):
+        for _ in range(a_gap+self.quiet_zone):
             new_matrix += [[colour]*self.width]
         self.matrix = new_matrix

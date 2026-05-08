@@ -85,6 +85,10 @@ select = [
     "RUF", # ruff-specific
 ]
 
+[tool.ruff.lint.per-file-ignores]
+# Test fixtures contain long expected hex/encoded strings that don't wrap cleanly.
+"**/test_*.py" = ["E501"]
+
 [tool.mypy]
 files = ["pystrich"]
 python_version = "3.10"

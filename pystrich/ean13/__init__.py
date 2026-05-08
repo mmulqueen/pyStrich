@@ -97,7 +97,7 @@ class EAN13Encoder(Bar1DEncoder):
 
         # Exclude the first number system digit, this was
         # for determining the left parity
-        for parity, digit in zip(parity_values, self.full_code[1:7]):
+        for parity, digit in zip(parity_values, self.full_code[1:7], strict=False):
             self.left_bars += encoding.get_left_encoded(int(digit), parity)
         for digit in self.full_code[7:]:
             self.right_bars += encoding.get_right_encoded(int(digit))

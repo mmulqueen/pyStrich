@@ -42,6 +42,13 @@ from .placement import DataMatrixPlacer
 from .renderer import DATAMATRIX_DEFAULT_QUIET_ZONE, DataMatrixRenderer
 from .textencoder import TextEncoder
 
+__all__ = [
+    "FNC1",
+    "DataMatrixCodeword",
+    "DataMatrixData",
+    "DataMatrixEncoder",
+]
+
 
 class DataMatrixEncoder(Matrix2DEncoder[int | None]):
     """Encode text as a Data Matrix (ECC 200) 2D barcode.

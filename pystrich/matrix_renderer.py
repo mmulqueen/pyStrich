@@ -112,7 +112,7 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
             top = rows[i]
             bottom = rows[i + 1] if i + 1 < len(rows) else empty_row
             line = "".join(
-                blocks[(bool(t), bool(b))] for t, b in zip(top, bottom)
+                blocks[(bool(t), bool(b))] for t, b in zip(top, bottom, strict=False)
             )
             if ansi_bg:
                 # 107 = bright white background, 30 = black foreground, 0 = reset.

@@ -97,7 +97,11 @@ class TextEncoder:
 
             # For UTF-8 we work over the byte sequence (each byte rendered as a
             # 1-char string); for everything else, iterate the codepoints directly.
-            chars = (chr(b) for b in segment.encode("utf-8")) if data.encoding == "utf-8" else segment
+            chars = (
+                (chr(b) for b in segment.encode("utf-8"))
+                if data.encoding == "utf-8"
+                else segment
+            )
 
             for char in chars:
                 if data.encoding in ("iso-8859-1", "utf-8") and ord(char) > 127:
@@ -125,8 +129,10 @@ class TextEncoder:
                 break
 
         if self.size_index > 13:
-            raise DataTooLongForImplementation("PyStrich does not currently support encoding beyond 174 characters. "
-                                               "See https://github.com/mmulqueen/pyStrich/issues/2")
+            raise DataTooLongForImplementation(
+                "PyStrich does not currently support encoding beyond 174 characters. "
+                "See https://github.com/mmulqueen/pyStrich/issues/2"
+            )
 
         # Number of characters with which the data will be padded
         padsize = length - unpadded_len

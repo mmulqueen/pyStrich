@@ -22,7 +22,7 @@ class BitStream:
         """Append 'bitsnum' bits to the end of bit stream"""
 
         if bitsnum < 1:
-            raise PyStrichError("Wrong value for number of bits (%d)" % bitsnum)
+            raise PyStrichError(f"Wrong value for number of bits ({bitsnum})")
         for i in range(bitsnum - 1, -1, -1):
             self.data.append((value >> i) & 0x01)
 
@@ -30,7 +30,7 @@ class BitStream:
         """Prepend 'bitsnum' bits to the begining of bit stream"""
 
         if bitsnum < 1:
-            raise PyStrichError("Wrong value for number of bits (%d)" % bitsnum)
+            raise PyStrichError(f"Wrong value for number of bits ({bitsnum})")
         for i in range(0, bitsnum, 1):
             self.data.insert(0, (value >> i) & 0x01)
 
@@ -84,7 +84,7 @@ class TextEncoder:
                 char_count_num = 16
                 result_len += 8
             elif self.version == 41:
-                raise PyStrichInvalidInput("QRCode cannot store %d bits" % result_len)
+                raise PyStrichInvalidInput(f"QRCode cannot store {result_len} bits")
 
             max_bits = isodata.MAX_DATA_BITS[self.version - 1 + 40 * self.ecl]
             if max_bits >= result_len:
@@ -159,7 +159,7 @@ class TextEncoder:
                     if len(rstemp) < len(cal):
                         rstemp, cal = cal, rstemp
                     cal += [0] * (len(rstemp) - len(cal))
-                    rstemp = [x1 ^ x2 for x1, x2 in zip(rstemp, cal)]
+                    rstemp = [x1 ^ x2 for x1, x2 in zip(rstemp, cal, strict=False)]
                 else:
                     rstemp = rstemp[1:]
                 j -= 1

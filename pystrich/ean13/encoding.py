@@ -50,9 +50,9 @@ def get_left_encoded(digit, parity):
     the given parity (0=even or 1=odd)"""
 
     if parity not in (0, 1):
-        raise PyStrichError("Invalid parity '%s'" % parity)
+        raise PyStrichError(f"Invalid parity '{parity}'")
     elif digit not in list(range(0, 10)):
-        raise PyStrichError("Invalid digit '%s'" % digit)
+        raise PyStrichError(f"Invalid digit '{digit}'")
     else:
         return encoding_table[digit][1 - parity]
 
@@ -61,6 +61,6 @@ def get_right_encoded(digit):
     """Get the right hand encoding of the given digit"""
 
     if digit not in list(range(0, 10)):
-        raise PyStrichError("Invalid digit '%s'" % digit)
+        raise PyStrichError(f"Invalid digit '{digit}'")
     else:
         return encoding_table[digit][2]

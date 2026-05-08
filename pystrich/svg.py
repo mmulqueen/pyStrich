@@ -153,7 +153,7 @@ def bars_to_svg(layout: BarLayout) -> str:
     )
     view_h = layout.quiet_top + max(layout.heights, default=0) + layout.quiet_bottom
     if layout.labels:
-        view_h = max(view_h, ceil(max(label_descent_y(l) for l in layout.labels)))
+        view_h = max(view_h, ceil(max(label_descent_y(lbl) for lbl in layout.labels)))
 
     body: list[str] = []
     if layout.labels:

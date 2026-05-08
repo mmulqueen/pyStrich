@@ -2,7 +2,8 @@
 
 Source: MIL-STD-1189B, via: http://quicksearch.dla.mil/qsDocDetails.aspx?ident_number=36123"""
 
-# Code39 encoding is deliberately represented in strings instead of bytestrings for ease of iteration.
+# Code39 encoding is deliberately represented in strings instead of bytestrings for ease of
+# iteration.
 
 # MIL-STD-1189B, page 21, Table VI
 ascii_to_code39 = {
