@@ -39,6 +39,11 @@ run_mypy() {
     podman run --rm "$tag" uv run --frozen mypy
 }
 
+run_ruff() {
+    local tag="pystrich-test:${VERSIONS[-1]}"
+    podman run --rm "$tag" uv run --frozen ruff check
+}
+
 status=0
 for v in "${VERSIONS[@]}"; do
     if (( verbose )); then
@@ -73,6 +78,24 @@ else
         echo "mypy: PASS"
     else
         echo "mypy: FAIL"
+        echo "$output"
+        status=1
+    fi
+fi
+
+if (( verbose )); then
+    echo "=== ruff ==="
+    if run_ruff; then
+        echo "ruff: PASS"
+    else
+        echo "ruff: FAIL"
+        status=1
+    fi
+else
+    if output=$(run_ruff 2>&1); then
+        echo "ruff: PASS"
+    else
+        echo "ruff: FAIL"
         echo "$output"
         status=1
     fi

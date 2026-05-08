@@ -28,6 +28,8 @@ jobs:
         sudo apt-get update && sudo apt-get install -y dmtx-utils zbar-tools imagemagick librsvg2-bin
     - name: Install Python dependencies
       run: uv sync --frozen --group dev
+    - name: Lint with ruff
+      run: uv run --frozen ruff check
     - name: Test with pytest
       run: uv run --frozen pytest
     - name: Type-check with mypy

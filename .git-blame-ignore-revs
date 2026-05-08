@@ -1,0 +1,6 @@
+# Mechanical reformats. Run `git config blame.ignoreRevsFile .git-blame-ignore-revs`
+# locally so `git blame` skips these by default. GitHub honors this file too.
+
+# Reformat code with ruff (safe autofixes: import sort, modernizations, trailing
+# newlines, redundant aliases).
+acc1bf51a1e4178a4403dcf3eaf970a4cc546248
