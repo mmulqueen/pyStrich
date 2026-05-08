@@ -9,3 +9,4 @@ OUTPUT="$ROOT/docs/_build"
 
 rm -rf "$OUTPUT/html" "$OUTPUT/text"
 podman build -f "$DOCKERFILE" --target export -o "$OUTPUT" "$ROOT"
+podman image prune -f --filter "label=org.opencontainers.image.title=pystrich-docs" >/dev/null

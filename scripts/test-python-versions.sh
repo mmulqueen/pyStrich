@@ -78,4 +78,12 @@ else
     fi
 fi
 
+# Drop pystrich-test tags not in the current VERSIONS set, then prune any
+# dangling pystrich-test images (identified by the OCI title label).
+keep=" ${VERSIONS[*]} "
+while read -r tag id; do
+    [[ "$keep" == *" $tag "* ]] || podman rmi -f "$id" >/dev/null 2>&1 || true
+done < <(podman images --filter "reference=pystrich-test" --format '{{.Tag}} {{.ID}}')
+podman image prune -f --filter "label=org.opencontainers.image.title=pystrich-test" >/dev/null
+
 exit $status

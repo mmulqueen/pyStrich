@@ -1,5 +1,7 @@
 FROM python:3.13-slim AS build
 
+LABEL org.opencontainers.image.title=pystrich-docs
+
 RUN pip install --no-cache-dir poetry
 
 WORKDIR /src

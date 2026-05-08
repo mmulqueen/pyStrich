@@ -1,6 +1,8 @@
 ARG PYTHON_VERSION=3.13
 FROM python:${PYTHON_VERSION}-slim
 
+LABEL org.opencontainers.image.title=pystrich-test
+
 RUN apt-get update \
  && apt-get install -y --no-install-recommends dmtx-utils zbar-tools imagemagick librsvg2-bin ghostscript \
  && rm -rf /var/lib/apt/lists/*
