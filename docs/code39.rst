@@ -5,6 +5,10 @@ Code 39 is a 1D symbology widely used for industrial labelling. The default
 character set is uppercase letters, digits, space and ``-.$/+%``; pass
 ``full_ascii=True`` to encode any 7-bit character as a pair of symbols.
 
+.. code-block:: python
+
+   Code39Encoder("17 E North 32 St", full_ascii=True).save("code39-address.png")
+
 .. seealso::
 
    `Code 39 on Wikipedia <https://en.wikipedia.org/wiki/Code_39>`_ for
@@ -17,34 +21,18 @@ Example
 
    from pystrich.code39 import Code39Encoder
 
-   encoder = Code39Encoder("PART-1234")
-   encoder.save("code39-example.png")
+   encoder = Code39Encoder("64755")
+   encoder.save_svg("code39-example.svg")
 
-.. image:: examples/code39-example.png
-   :alt: Code 39 barcode encoding "PART-1234".
+.. image:: examples/code39-example.svg
+   :alt: Code 39 barcode encoding "64755".
 
-Sizing
-------
+Sizing, label, font and layout
+------------------------------
 
 The ``bar_width`` argument to :meth:`~Code39Encoder.save` and
 :meth:`~Code39Encoder.get_imagedata` sets the pixel width of the narrowest
 bar (default ``3``).
-
-.. code-block:: python
-
-   encoder = Code39Encoder("PART-1234")
-   encoder.save("code39-wide.png", bar_width=6)
-
-.. image:: examples/code39-wide.png
-   :alt: Code 39 barcode encoding "PART-1234" rendered with bar_width=6.
-
-.. seealso::
-
-   :doc:`printing` for guidance on selecting ``bar_width`` for printed
-   output.
-
-Label, font and layout
-----------------------
 
 The ``options`` dict passed to :class:`Code39Encoder` controls the
 human-readable label and the surrounding layout. All keys are optional.
@@ -64,6 +52,11 @@ human-readable label and the surrounding layout. All keys are optional.
 ``bottom_border``
    Pixels of vertical space between the label and the bottom edge.
 
+.. seealso::
+
+   :doc:`printing` for guidance on selecting ``bar_width`` for printed
+   output.
+
 .. code-block:: python
 
    options = {
@@ -73,14 +66,17 @@ human-readable label and the surrounding layout. All keys are optional.
        "ttf_fontsize": 24,
        # "ttf_font": "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
    }
-   encoder = Code39Encoder("PART-1234", options=options)
+   encoder = Code39Encoder("64755", options=options)
    encoder.save("code39-custom.png", bar_width=4)
 
 .. image:: examples/code39-custom.png
-   :alt: Code 39 barcode encoding "PART-1234" with a taller image and larger label.
+   :alt: Code 39 barcode encoding "64755" with a taller image and larger label.
+
+Output formats
+--------------
 
 SVG output
-----------
+~~~~~~~~~~
 
 For embedding in web pages or any workflow that benefits from
 resolution-independent output, use :meth:`~Code39Encoder.save_svg` (or
@@ -88,10 +84,10 @@ resolution-independent output, use :meth:`~Code39Encoder.save_svg` (or
 
 .. code-block:: python
 
-   Code39Encoder("PART-1234").save_svg("code39.svg")
+   Code39Encoder("64755").save_svg("code39.svg")
 
 .. image:: examples/code39-example.svg
-   :alt: SVG Code 39 barcode encoding "PART-1234".
+   :alt: SVG Code 39 barcode encoding "64755".
 
 The SVG's ``viewBox`` is in module units (one narrow bar = one unit), while
 ``width`` and ``height`` scale by ``bar_width``. The 10-module quiet zones
@@ -99,8 +95,18 @@ mandated by the standard are applied automatically on each side.
 
 .. versionadded:: 0.12
 
+PNG output
+~~~~~~~~~~
+
+For raster output, use :meth:`~Code39Encoder.save` to write a PNG file or
+:meth:`~Code39Encoder.get_imagedata` to receive the raw PNG bytes.
+
+.. code-block:: python
+
+   Code39Encoder("64755").save("code39.png")
+
 EPS output
-----------
+~~~~~~~~~~
 
 For embedding in LaTeX (``\includegraphics``) or other vector print
 workflows, use :meth:`~Code39Encoder.save_eps` (or
@@ -108,7 +114,7 @@ workflows, use :meth:`~Code39Encoder.save_eps` (or
 
 .. code-block:: python
 
-   Code39Encoder("PART-1234").save_eps("code39.eps")
+   Code39Encoder("64755").save_eps("code39.eps")
 
 The ``bar_width`` argument is the width of the narrowest bar in PostScript
 points (1 point = 1/72 inch). The 10-module quiet zones are applied

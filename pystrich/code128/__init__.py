@@ -36,7 +36,7 @@ class Code128Encoder(Bar1DEncoder):
 
     Typical use::
 
-        encoder = Code128Encoder("ABC-12345")
+        encoder = Code128Encoder("nm0000385")
         encoder.save("barcode.png")
 
     :ivar text: The original input text.

@@ -13,10 +13,9 @@ QR Code is a 2D symbology widely used for URLs and contact details.
    The QR support in pyStrich is less actively maintained than the other
    symbologies. If your project's main need is QR codes, consider whether
    `python-qrcode <https://github.com/lincolnloop/python-qrcode>`_ is a
-   better fit -- it has a larger feature set (logos, styled modules, SVG
-   output) and a more active maintainer base. pyStrich's QR support is most
-   useful when you also need one of its other symbologies and want a single
-   dependency.
+   better fit -- it has a larger feature set (logos, styled modules).
+   pyStrich's QR support is most useful when you also need one of its other
+   symbologies and want a single dependency.
 
 Example
 -------
@@ -26,17 +25,22 @@ Example
    from pystrich.qrcode import QRCodeEncoder
 
    encoder = QRCodeEncoder("https://github.com/mmulqueen/pyStrich")
-   encoder.save("qrcode-example.png")
+   encoder.save_svg("qrcode-example.svg")
 
-.. image:: examples/qrcode-example.png
+.. image:: examples/qrcode-example.svg
    :alt: QR code encoding the pyStrich GitHub URL.
 
-Sizing
-------
+Sizing and quiet zone
+---------------------
 
 The ``cellsize`` argument to :meth:`~QRCodeEncoder.save` and
 :meth:`~QRCodeEncoder.get_imagedata` sets the pixel side length of one
 module (default ``5``).
+
+.. seealso::
+
+   :doc:`printing` for guidance on selecting ``cellsize`` for printed
+   output.
 
 .. code-block:: python
 
@@ -46,13 +50,11 @@ module (default ``5``).
 .. image:: examples/qrcode-large.png
    :alt: QR code encoding the pyStrich GitHub URL rendered with cellsize=10.
 
-.. seealso::
-
-   :doc:`printing` for guidance on selecting ``cellsize`` for printed
-   output.
+Output formats
+--------------
 
 SVG output
-----------
+~~~~~~~~~~
 
 For embedding in web pages or any workflow that benefits from
 resolution-independent output, use :meth:`~QRCodeEncoder.save_svg` (or
@@ -67,16 +69,18 @@ resolution-independent output, use :meth:`~QRCodeEncoder.save_svg` (or
        "qr-circles.svg", mark_shape=MarkShape.CIRCULAR_CELLS
    )
 
-.. list-table::
-   :widths: 50 50
-   :header-rows: 1
+.. only:: not text
 
-   * - Default
-     - ``mark_shape=MarkShape.CIRCULAR_CELLS``
-   * - .. image:: examples/qrcode-example.svg
-          :alt: SVG QR code with the default rectangular cells.
-     - .. image:: examples/qrcode-example-circles.svg
-          :alt: SVG QR code with circular cells.
+   .. list-table::
+      :widths: 50 50
+      :header-rows: 1
+
+      * - Default
+        - ``mark_shape=MarkShape.CIRCULAR_CELLS``
+      * - .. image:: examples/qrcode-example.svg
+             :alt: SVG QR code with the default rectangular cells.
+        - .. image:: examples/qrcode-example-circles.svg
+             :alt: SVG QR code with circular cells.
 
 The SVG's ``viewBox`` is in module units, while ``width`` and ``height``
 scale by ``cellsize``. The ``mark_shape`` keyword selects how matched
@@ -90,8 +94,18 @@ filled circle per cell.
 
 .. versionadded:: 0.12
 
+PNG output
+~~~~~~~~~~
+
+For raster output, use :meth:`~QRCodeEncoder.save` to write a PNG file or
+:meth:`~QRCodeEncoder.get_imagedata` to receive the raw PNG bytes.
+
+.. code-block:: python
+
+   QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save("qrcode.png")
+
 EPS output
-----------
+~~~~~~~~~~
 
 For embedding in LaTeX (``\includegraphics``) or other vector print
 workflows, use :meth:`~QRCodeEncoder.save_eps` (or
@@ -107,7 +121,7 @@ points (1 point = 1/72 inch).
 .. versionadded:: 0.12
 
 Terminal output
----------------
+~~~~~~~~~~~~~~~
 
 For quick on-screen display, :meth:`~QRCodeEncoder.get_terminal_art`
 returns a scannable rendering using Unicode half-block characters. Each
@@ -130,7 +144,7 @@ only on a light-themed terminal).
 .. versionadded:: 0.12
 
 DXF (CAD) output
-----------------
+~~~~~~~~~~~~~~~~
 
 For direct part marking applications, :meth:`~QRCodeEncoder.get_dxf`
 returns a DXF representation of the symbol that CAD and CAM tools can read
@@ -139,7 +153,7 @@ rather than pixels.
 
 .. code-block:: python
 
-   encoder = QRCodeEncoder("https://example.com/PART-001234")
+   encoder = QRCodeEncoder("WDBCA45D2HA327260")
    with open("part.dxf", "w") as f:
        f.write(encoder.get_dxf(cellsize=0.5, units="mm"))
 
@@ -171,7 +185,7 @@ to be scratched, smudged or torn.
 
 .. code-block:: python
 
-   QRCodeEncoder("https://example.com", ecl="H").save("qr-high.png")
+   QRCodeEncoder("https://en.wikipedia.org/wiki/Kings_River_(California)", ecl="H").save("qr-high.png")
 
 GS1 Digital Link
 ----------------
@@ -182,7 +196,7 @@ It's just a URL -- pass it to :class:`QRCodeEncoder` directly:
 
 .. code-block:: python
 
-   QRCodeEncoder("https://id.gs1.org/01/05050070007664/10/ABC123").save("dl.png")
+   QRCodeEncoder("https://id.gs1.org/01/05050070007664/10/W126").save("dl.png")
 
 Raw AI-syntax GS1 QR (FNC1 mode indicator) is not supported; for that,
 use :doc:`datamatrix`.

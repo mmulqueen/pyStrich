@@ -1,27 +1,12 @@
 Printing barcodes
 =================
 
-The most common cause of "my barcode does not scan" is not encoding -- it
-is print resolution. pyStrich emits PNG images sized in pixels; you have to
-choose a pixel size that, once printed at your printer's DPI, produces a
-physical bar (or module) wide enough for your scanner to resolve.
-
-X-dimension
------------
-
-The *X-dimension* is the width of the narrowest bar (1D) or one module
-(2D) in the printed symbol. Most barcode standards specify a minimum and
-recommended X-dimension for each application.
-
-For ``bar_width`` (1D) and ``cellsize`` (2D), the relationship is:
-
-.. code-block:: text
-
-   X-dimension (mm) = bar_width (px) * 25.4 / DPI
-
-So at 300 DPI, the default ``bar_width=3`` produces an X-dimension of
-roughly 0.25 mm; at 600 DPI, the same default produces 0.13 mm. The
-following table summarises typical X-dimension targets:
+The most common cause of "my barcode does not scan" is not encoding -- the
+bars are too small. Scanners need the narrowest bar (1D) or one module
+(2D) -- the *X-dimension* -- to be wide enough for their optics to
+resolve. As features shrink below that threshold, read rates drop like a
+stone. Most barcode standards specify a minimum and recommended
+X-dimension for each application:
 
 ================  ======================  ================================
 Symbology         X-dimension (typical)   Notes
@@ -41,33 +26,65 @@ QR Code           0.25 - 0.50 mm          Mobile phone cameras typically
                                           need >=0.4 mm at arm's length.
 ================  ======================  ================================
 
-These are guidance values, not specifications -- always confirm against the
-relevant standard for your application (GS1 General Specifications for
-retail and supply-chain symbols; ISO/IEC 15415 / 15416 for print quality
-verification).
+These are guidance values, not specifications -- always confirm against
+the relevant standard for your application (GS1 General Specifications
+for retail and supply-chain symbols; ISO/IEC 15415 / 15416 for print
+quality verification).
 
-Choosing bar_width / cellsize
------------------------------
+.. tip::
 
-Working back from a target X-dimension and printer DPI:
+   Reach for SVG or EPS where your toolchain supports them. Vector
+   output scales losslessly, so you size the symbol at layout time
+   rather than locking in a physical size at encode time.
+
+Vector output (SVG / EPS)
+-------------------------
+
+For SVG and EPS, pyStrich doesn't determine the print size at all. The
+output is resolution-independent -- pick any ``bar_width`` (or
+``cellsize``), and let the consuming layout tool scale to the X-dimension
+you need:
+
+* **SVG**: set ``width`` and ``height`` in HTML / CSS, or via the
+  ``viewBox`` in your design tool.
+* **EPS**: scale at inclusion time -- ``\includegraphics[width=40mm]{...}``
+  in LaTeX, or via the placement size in Illustrator / InDesign.
+
+The EPS ``bar_width`` is in PostScript points (1 pt = 1/72 inch ≈
+0.353 mm), so the default already produces a physically sensible size if
+you don't override it at inclusion time.
+
+.. tip::
+
+   For PDF output, embed the SVG in an HTML template and render with
+   `WeasyPrint <https://weasyprint.org/>`_. This is a clean route to
+   multi-up label sheets, packing slips and similar print-ready
+   documents.
+
+Raster output (PNG)
+-------------------
+
+PNG is the only output format where ``bar_width`` / ``cellsize`` fixes
+the print size, because raster images don't scale losslessly. Working
+back from a target X-dimension and printer DPI:
 
 .. code-block:: text
 
    bar_width (px) = X-dimension (mm) * DPI / 25.4
 
-At 300 DPI, an X-dimension of 0.25 mm requires ``bar_width=3`` (rounded up
-from 2.95). At 600 DPI, the same X-dimension requires ``bar_width=6``.
+At 300 DPI, an X-dimension of 0.25 mm requires ``bar_width=3`` (rounded
+up from 2.95). At 600 DPI, the same X-dimension requires ``bar_width=6``.
 
-Round *up* to the nearest integer pixel; rounding down may push the
+Round *up* to the nearest integer pixel; rounding down pushes the
 X-dimension below the readable limit.
 
 Quiet zones
 -----------
 
-Every symbology in pyStrich requires white space ("quiet zone") around the
-symbol so that scanners can locate its boundaries. pyStrich emits a quiet
-zone automatically; do not crop into the white margin when compositing the
-output into another image.
+Every symbology requires white space (the *quiet zone*) around the
+symbol so scanners can locate its boundaries. pyStrich emits a quiet
+zone automatically; do not crop into the white margin when compositing
+the output into another image.
 
 =============  =====================================================
 Symbology      Quiet zone applied by pyStrich
@@ -83,20 +100,18 @@ QR Code        4 modules on each side (mandated by spec).
 Verification
 ------------
 
-If a printed barcode does not scan reliably, verify in this order:
+If a printed barcode does not scan reliably:
 
-1. Open the PNG on screen and try to scan it with a phone or handheld
-   scanner. If it fails on screen, the encoding (or sizing) is wrong; if
-   it succeeds on screen but fails in print, the print process is the
-   issue.
-2. Check the X-dimension with a ruler or loupe and compare against the
-   table above.
-3. Check the quiet zone has not been cropped or printed against a coloured
+1. Try to scan it on screen first. If it fails on screen, the encoding
+   or sizing is wrong; if it succeeds on screen but fails in print, the
+   print process is the issue.
+2. Measure the X-dimension with a ruler or loupe and verify the quiet
+   zone is intact -- not cropped, not printed against a coloured
    background.
-4. Check print contrast -- low-DPI thermal printers or worn ribbons can
+3. Check print contrast -- low-DPI thermal printers or worn ribbons can
    produce bars that are too grey to be read.
 
 For production deployments printing barcodes at scale, consider using a
-print-quality verifier (an instrument that scores symbols against ISO/IEC
-15415 / 15416). A passing grade once during integration is worth more than
-re-printing a thousand failed labels.
+print-quality verifier (an instrument that scores symbols against
+ISO/IEC 15415 / 15416). A passing grade once during integration is
+worth more than re-printing a thousand failed labels.

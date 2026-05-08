@@ -17,38 +17,21 @@ Example
 
    from pystrich.code128 import Code128Encoder
 
-   encoder = Code128Encoder("PyStrich-2026")
-   encoder.save("code128-example.png")
+   encoder = Code128Encoder("WDBCA45D2HA327260")
+   encoder.save_svg("code128-example.svg")
 
-.. image:: examples/code128-example.png
-   :alt: Code 128 barcode encoding "PyStrich-2026".
+.. image:: examples/code128-example.svg
+   :alt: Code 128 barcode encoding "WDBCA45D2HA327260".
 
-Sizing
-------
+Sizing, label, font and layout
+------------------------------
 
 The ``bar_width`` argument to :meth:`~Code128Encoder.save` and
 :meth:`~Code128Encoder.get_imagedata` sets the pixel width of the narrowest
 bar (default ``3``).
 
-.. code-block:: python
-
-   encoder = Code128Encoder("PyStrich-2026")
-   encoder.save("code128-wide.png", bar_width=6)
-
-.. image:: examples/code128-wide.png
-   :alt: Code 128 barcode encoding "PyStrich-2026" rendered with bar_width=6.
-
-.. seealso::
-
-   :doc:`printing` for guidance on selecting ``bar_width`` for printed
-   output.
-
-Label, font and layout
-----------------------
-
 The ``options`` dict passed to :class:`Code128Encoder` controls the
-human-readable label and the surrounding layout (see also the identical
-options on :doc:`code39`). All keys are optional.
+human-readable label and the surrounding layout. All keys are optional.
 
 ``show_label``
    Whether to render the human-readable label underneath the bars. Defaults
@@ -66,6 +49,11 @@ options on :doc:`code39`). All keys are optional.
 ``bottom_border``
    Pixels of vertical space between the label and the bottom edge.
 
+.. seealso::
+
+   :doc:`printing` for guidance on selecting ``bar_width`` for printed
+   output.
+
 .. code-block:: python
 
    options = {
@@ -75,14 +63,17 @@ options on :doc:`code39`). All keys are optional.
        "ttf_fontsize": 24,
        # "ttf_font": "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
    }
-   encoder = Code128Encoder("PyStrich-2026", options=options)
+   encoder = Code128Encoder("WDBCA45D2HA327260", options=options)
    encoder.save("code128-custom.png", bar_width=4)
 
 .. image:: examples/code128-custom.png
-   :alt: Code 128 barcode encoding "PyStrich-2026" with a taller image and larger label.
+   :alt: Code 128 barcode encoding "WDBCA45D2HA327260" with a taller image and larger label.
+
+Output formats
+--------------
 
 SVG output
-----------
+~~~~~~~~~~
 
 For embedding in web pages or any workflow that benefits from
 resolution-independent output, use :meth:`~Code128Encoder.save_svg` (or
@@ -90,10 +81,10 @@ resolution-independent output, use :meth:`~Code128Encoder.save_svg` (or
 
 .. code-block:: python
 
-   Code128Encoder("PyStrich-2026").save_svg("code128.svg")
+   Code128Encoder("WDBCA45D2HA327260").save_svg("code128.svg")
 
 .. image:: examples/code128-example.svg
-   :alt: SVG Code 128 barcode encoding "PyStrich-2026".
+   :alt: SVG Code 128 barcode encoding "WDBCA45D2HA327260".
 
 The SVG's ``viewBox`` is in module units (one narrow bar = one unit), while
 ``width`` and ``height`` scale by ``bar_width``. The 10-module quiet zones
@@ -101,8 +92,18 @@ mandated by the standard are applied automatically on each side.
 
 .. versionadded:: 0.12
 
+PNG output
+~~~~~~~~~~
+
+For raster output, use :meth:`~Code128Encoder.save` to write a PNG file or
+:meth:`~Code128Encoder.get_imagedata` to receive the raw PNG bytes.
+
+.. code-block:: python
+
+   Code128Encoder("WDBCA45D2HA327260").save("code128.png")
+
 EPS output
-----------
+~~~~~~~~~~
 
 For embedding in LaTeX (``\includegraphics``) or other vector print
 workflows, use :meth:`~Code128Encoder.save_eps` (or
@@ -110,7 +111,7 @@ workflows, use :meth:`~Code128Encoder.save_eps` (or
 
 .. code-block:: python
 
-   Code128Encoder("PyStrich-2026").save_eps("code128.eps")
+   Code128Encoder("WDBCA45D2HA327260").save_eps("code128.eps")
 
 The ``bar_width`` argument is the width of the narrowest bar in PostScript
 points (1 point = 1/72 inch). The 10-module quiet zones are applied

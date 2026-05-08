@@ -62,11 +62,11 @@ class DataMatrixEncoder(Matrix2DEncoder[int | None]):
 
     Typical use::
 
-        encoder = DataMatrixEncoder(DataMatrixData("Hello", encoding="ascii"))
-        encoder.save("hello.png")
+        encoder = DataMatrixEncoder(DataMatrixData("Hallo", encoding="ascii"))
+        encoder.save("hallo.png")
 
         # Or, let DataMatrixData pick the encoding:
-        encoder = DataMatrixEncoder(DataMatrixData("café", auto_encoding=True))
+        encoder = DataMatrixEncoder(DataMatrixData("Rausschmeißer", auto_encoding=True))
 
     Plain ``str`` input is also accepted but falls back to a deprecated
     ``"compat"`` encoding that warns on non-ASCII bytes and produces output

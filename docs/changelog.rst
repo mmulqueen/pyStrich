@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.12 — unreleased
+0.12 — 2026-05-09
 -----------------
 
 - New ``pystrich`` console script with a subcommand per format and PNG /
@@ -25,12 +25,13 @@ Changelog
   :class:`~pystrich.ean13.EAN13Encoder`.
 - The human-readable labels for 1D barcodes are rendered with bundled Courier Prime glyph outlines (SIL Open
   Font License).
-- DXF: :meth:`~pystrich.qrcode.QRCodeEncoder.get_dxf` and
-  :meth:`~pystrich.datamatrix.DataMatrixEncoder.get_dxf` now write the
-  correct ``$INSUNITS`` value for ``"in"``, ``"ft"``, ``"mi"``,
-  ``"cm"`` and ``"m"`` (previously any value other than ``"mm"`` was
-  silently treated as unspecified); you should now pass ``units=None``
-  if unspecified is desired.
+- DXF: ``get_dxf()`` on
+  :class:`~pystrich.qrcode.QRCodeEncoder` and
+  :class:`~pystrich.datamatrix.DataMatrixEncoder` now writes the correct
+  ``$INSUNITS`` value for ``"in"``, ``"ft"``, ``"mi"``, ``"cm"`` and
+  ``"m"`` (previously any value other than ``"mm"`` was silently treated
+  as unspecified); you should now pass ``units=None`` if unspecified is
+  desired.
 - All vector outputs accept a ``mark_shape`` keyword argument
   (:class:`~pystrich.marks.MarkShape`) selecting how matched cells are
   grouped and drawn: horizontal runs (the SVG / EPS default), one
@@ -50,13 +51,13 @@ Changelog
 
 .. note::
 
-   Erratum: the
-   :meth:`~pystrich.qrcode.QRCodeEncoder.get_dxf` and
-   :meth:`~pystrich.datamatrix.DataMatrixEncoder.get_dxf` docstrings
-   stated that ``inverse=True`` (the default) draws dark modules as
-   filled cells. In fact ``inverse=True`` draws the *light* modules;
-   ``inverse=False`` draws the dark ones. Behaviour is unchanged --
-   only the description was wrong. Corrected in 0.12.
+   Erratum: the ``get_dxf()`` docstrings on
+   :class:`~pystrich.qrcode.QRCodeEncoder` and
+   :class:`~pystrich.datamatrix.DataMatrixEncoder` stated that
+   ``inverse=True`` (the default) draws dark modules as filled cells.
+   In fact ``inverse=True`` draws the *light* modules; ``inverse=False``
+   draws the dark ones. Behaviour is unchanged -- only the description
+   was wrong. Corrected in 0.12.
 
 - Documentation: full Sphinx-built docs are now published at
   https://www.method-b.uk/pyStrich/docs/, covering each symbology, recipes

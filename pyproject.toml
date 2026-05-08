@@ -1,6 +1,6 @@
 [project]
 name = "pyStrich"
-version = "0.11"
+version = "0.12"
 description = "PyStrich is a Python module to generate 1D and 2D barcodes (Code 39, Code 128, DataMatrix, QRCode and EAN13). Forked from huBarcode."
 readme = "README.md"
 license = "Apache-2.0"
@@ -42,7 +42,7 @@ pystrich = "pystrich.cli:main"
 
 [dependency-groups]
 dev = [
-    "pytest>=8.2.2",
+    "pytest>=9.0.3",
     "mypy>=1.13",
     "ezdxf>=1.3",
     "fonttools>=4.55",

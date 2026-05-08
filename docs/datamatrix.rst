@@ -24,25 +24,17 @@ see :ref:`datamatrix-non-ascii` below.
    from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder
 
    payload = DataMatrixData("https://github.com/mmulqueen/pyStrich", auto_encoding=True)
-   DataMatrixEncoder(payload).save("datamatrix-example.png")
+   DataMatrixEncoder(payload).save_svg("datamatrix-example.svg")
 
-.. image:: examples/datamatrix-example.png
+.. image:: examples/datamatrix-example.svg
    :alt: Data Matrix encoding the pyStrich GitHub URL.
 
-Sizing
-------
+Sizing and quiet zone
+---------------------
 
 The ``cellsize`` argument to :meth:`~DataMatrixEncoder.save` and
 :meth:`~DataMatrixEncoder.get_imagedata` sets the pixel side length of one
 module (default ``5``).
-
-.. code-block:: python
-
-   payload = DataMatrixData("https://github.com/mmulqueen/pyStrich", encoding="ascii")
-   DataMatrixEncoder(payload).save("datamatrix-large.png", cellsize=10)
-
-.. image:: examples/datamatrix-large.png
-   :alt: Data Matrix encoding the pyStrich GitHub URL rendered with cellsize=10.
 
 The ``quiet_zone`` argument to :class:`DataMatrixEncoder` sets the width
 (in modules) of the white border applied at render time. The Data Matrix
@@ -52,18 +44,24 @@ pyStrich defaults to ``2`` (set
 to ``1`` for the most compact symbol; increase if your printing process
 tends to bleed into the margin.
 
-.. code-block:: python
-
-   payload = DataMatrixData("https://github.com/mmulqueen/pyStrich", encoding="ascii")
-   DataMatrixEncoder(payload, quiet_zone=4)
-
 .. seealso::
 
    :doc:`printing` for guidance on selecting ``cellsize`` for printed
    output.
 
+.. code-block:: python
+
+   payload = DataMatrixData("https://github.com/mmulqueen/pyStrich", encoding="ascii")
+   DataMatrixEncoder(payload).save("datamatrix-large.png", cellsize=10)
+
+.. image:: examples/datamatrix-large.png
+   :alt: Data Matrix encoding the pyStrich GitHub URL rendered with cellsize=10.
+
+Output formats
+--------------
+
 SVG output
-----------
+~~~~~~~~~~
 
 For embedding in web pages or any workflow that benefits from
 resolution-independent output, use :meth:`~DataMatrixEncoder.save_svg` (or
@@ -79,16 +77,18 @@ resolution-independent output, use :meth:`~DataMatrixEncoder.save_svg` (or
        "datamatrix-circles.svg", mark_shape=MarkShape.CIRCULAR_CELLS
    )
 
-.. list-table::
-   :widths: 50 50
-   :header-rows: 1
+.. only:: not text
 
-   * - Default
-     - ``mark_shape=MarkShape.CIRCULAR_CELLS``
-   * - .. image:: examples/datamatrix-example.svg
-          :alt: SVG Data Matrix with the default rectangular cells.
-     - .. image:: examples/datamatrix-example-circles.svg
-          :alt: SVG Data Matrix with circular cells.
+   .. list-table::
+      :widths: 50 50
+      :header-rows: 1
+
+      * - Default
+        - ``mark_shape=MarkShape.CIRCULAR_CELLS``
+      * - .. image:: examples/datamatrix-example.svg
+             :alt: SVG Data Matrix with the default rectangular cells.
+        - .. image:: examples/datamatrix-example-circles.svg
+             :alt: SVG Data Matrix with circular cells.
 
 The SVG's ``viewBox`` is in module units, while ``width`` and ``height``
 scale by ``cellsize``. The ``mark_shape`` keyword selects how matched
@@ -102,8 +102,19 @@ filled circle per cell.
 
 .. versionadded:: 0.12
 
+PNG output
+~~~~~~~~~~
+
+For raster output, use :meth:`~DataMatrixEncoder.save` to write a PNG file
+or :meth:`~DataMatrixEncoder.get_imagedata` to receive the raw PNG bytes.
+
+.. code-block:: python
+
+   payload = DataMatrixData("https://github.com/mmulqueen/pyStrich", encoding="ascii")
+   DataMatrixEncoder(payload).save("datamatrix.png")
+
 EPS output
-----------
+~~~~~~~~~~
 
 For embedding in LaTeX (``\includegraphics``) or other vector print
 workflows, use :meth:`~DataMatrixEncoder.save_eps` (or
@@ -120,7 +131,7 @@ points (1 point = 1/72 inch).
 .. versionadded:: 0.12
 
 Terminal output
----------------
+~~~~~~~~~~~~~~~
 
 For quick on-screen display, :meth:`~DataMatrixEncoder.get_terminal_art`
 returns a scannable rendering using Unicode half-block characters. Each
@@ -143,7 +154,7 @@ only on a light-themed terminal).
 .. versionadded:: 0.12
 
 DXF (CAD) output
-----------------
+~~~~~~~~~~~~~~~~
 
 For direct part marking applications -- where the symbol is engraved or
 laser-etched onto a physical part -- :meth:`~DataMatrixEncoder.get_dxf`
@@ -154,7 +165,7 @@ etching tool. The ``cellsize`` is in your chosen ``units`` (default
 
 .. code-block:: python
 
-   payload = DataMatrixData("PART-001234", encoding="ascii")
+   payload = DataMatrixData("A1268172415", encoding="ascii")
    encoder = DataMatrixEncoder(payload)
    with open("part.dxf", "w") as f:
        f.write(encoder.get_dxf(cellsize=0.5, units="mm"))
@@ -202,12 +213,12 @@ required either:
 
    # (01) GTIN + (17) expiry YYMMDD + (10) batch
    payload = DataMatrixData(
-       FNC1, "0109501234543213", "17261231", "10ABC123", encoding="ascii"
+       FNC1, "0109501234543213", "17261231", "10BF07", encoding="ascii"
    )
    DataMatrixEncoder(payload).save("gs1-multi-fixed.png")
 
 .. image:: examples/datamatrix-gs1-multi-fixed.png
-   :alt: GS1 Data Matrix encoding (01) GTIN 09501234543213, (17) expiry 261231, (10) batch ABC123.
+   :alt: GS1 Data Matrix encoding (01) GTIN 09501234543213, (17) expiry 261231, (10) batch BF07.
 
 When a variable-length AI is followed by another AI, separate them with a
 further :data:`FNC1`:
@@ -217,12 +228,12 @@ further :data:`FNC1`:
    # (10) batch + (21) serial -- (10) is variable-length and not last,
    # so an FNC1 separator is required between the two AIs.
    payload = DataMatrixData(
-       FNC1, "10ABC123", FNC1, "21SERIAL01", encoding="ascii"
+       FNC1, "10BF07", FNC1, "2119890519", encoding="ascii"
    )
    DataMatrixEncoder(payload).save("gs1-multi.png")
 
 .. image:: examples/datamatrix-gs1-multi.png
-   :alt: GS1 Data Matrix encoding (10) batch ABC123 and (21) serial SERIAL01 separated by FNC1.
+   :alt: GS1 Data Matrix encoding (10) batch BF07 and (21) serial SERIAL01 separated by FNC1.
 
 .. note::
 
@@ -281,18 +292,18 @@ Encoding          Behaviour
    from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder
 
    # Latin-1: smaller symbol if all your input fits in one byte per char.
-   DataMatrixEncoder(DataMatrixData("café", encoding="iso-8859-1")).save("latin1.png")
+   DataMatrixEncoder(DataMatrixData("Ich dachte, Sie wären kräftiger", encoding="iso-8859-1")).save("latin1.png")
 
 .. image:: examples/datamatrix-latin1.png
-   :alt: Data Matrix encoding "café" as Latin-1.
+   :alt: Data Matrix encoding "Ich dachte, Sie wären kräftiger" as Latin-1.
 
 .. code-block:: python
 
    # UTF-8: required for anything outside Latin-1 (€, CJK, emoji).
-   DataMatrixEncoder(DataMatrixData("€5 親切にしろ 🙂", encoding="utf-8")).save("utf8.png")
+   DataMatrixEncoder(DataMatrixData("€5 親切にしろ 🐻‍❄️", encoding="utf-8")).save("utf8.png")
 
 .. image:: examples/datamatrix-utf8.png
-   :alt: Data Matrix encoding "€5 親切にしろ 🙂" as UTF-8 (ECI 26).
+   :alt: Data Matrix encoding "€5 親切にしろ 🐻‍❄️" as UTF-8 (ECI 26).
 
 If you pass a string with the wrong encoding, the raised error names the
 offending character and suggests the encoding that *would* have worked:
@@ -300,10 +311,10 @@ offending character and suggests the encoding that *would* have worked:
 .. doctest::
 
    >>> from pystrich.datamatrix import DataMatrixData
-   >>> DataMatrixData("café", encoding="ascii")
+   >>> DataMatrixData("Ich dachte, Sie wären kräftiger", encoding="ascii")
    Traceback (most recent call last):
        ...
-   pystrich.exceptions.PyStrichInvalidInput: DataMatrix encoding 'ascii' expects ASCII; got 'é'. Try DataMatrixData('café', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
+   pystrich.exceptions.PyStrichInvalidInput: DataMatrix encoding 'ascii' expects ASCII; got 'ä'. Try DataMatrixData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
 
 API
 ---

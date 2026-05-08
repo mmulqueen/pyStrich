@@ -1,13 +1,17 @@
+<img src="https://raw.githubusercontent.com/mmulqueen/pyStrich/main/docs/logo.png" alt="pyStrich" width="200">
+
 pyStrich
 ========
-pyStrich is a Python module to generate 1D and 2D barcodes. Currently it
-supports
+pyStrich is a Python module to generate 1D and 2D barcodes in PNG, SVG and other image formats. Currently it
+supports:
 
  * code39
  * code128
  * ean13
  * datamatrix
  * qrcode
+
+pyStrich only depends on Pillow and has no other dependencies.
 
 Available from PyPI: https://pypi.org/project/pyStrich/
 

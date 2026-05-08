@@ -27,7 +27,7 @@ class QRCodeEncoder(Matrix2DEncoder[int]):
 
     Typical use::
 
-        encoder = QRCodeEncoder("https://example.com")
+        encoder = QRCodeEncoder("https://d-nb.info/gnd/135514053")
         encoder.save("qr.png")
 
     :ivar matrix: 2D list describing the symbol prior to rendering.

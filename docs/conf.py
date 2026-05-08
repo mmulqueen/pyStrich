@@ -35,9 +35,7 @@ autodoc_member_order = "bysource"
 autodoc_default_options = {
     "members": True,
     "show-inheritance": True,
-    # TypedDicts subclass dict and our exception classes subclass
-    # BaseException; exclude their built-in methods from autoclass output.
-    "inherited-members": "object, dict, BaseException",
+    "inherited-members": "object, dict, BaseException, tuple",
 }
 autodoc_type_aliases = {
     "PILImage": "PIL.Image.Image",
@@ -79,9 +77,9 @@ def _generate_example_images(app):
         encoding="utf-8",
     )
     (out / "datamatrix-rausschmeisser-terminal.txt").write_text(
-        DataMatrixEncoder(
-            DataMatrixData("Rausschmeißer", auto_encoding=True)
-        ).get_terminal_art(ansi_bg=False),
+        DataMatrixEncoder(DataMatrixData("Rausschmeißer", auto_encoding=True)).get_terminal_art(
+            ansi_bg=False
+        ),
         encoding="utf-8",
     )
 
@@ -100,19 +98,17 @@ def _generate_example_images(app):
         "ttf_fontsize": 24,
     }
 
-    Code39Encoder("PART-1234").save(str(out / "code39-example.png"))
-    Code39Encoder("PART-1234").save(str(out / "code39-wide.png"), bar_width=6)
-    Code39Encoder("PART-1234", options=label_options).save(
-        str(out / "code39-custom.png"), bar_width=4
-    )
-    Code39Encoder("PART-1234").save_svg(str(out / "code39-example.svg"))
+    Code39Encoder("64755").save(str(out / "code39-example.png"))
+    Code39Encoder("64755").save(str(out / "code39-wide.png"), bar_width=6)
+    Code39Encoder("64755", options=label_options).save(str(out / "code39-custom.png"), bar_width=4)
+    Code39Encoder("64755").save_svg(str(out / "code39-example.svg"))
 
-    Code128Encoder("PyStrich-2026").save(str(out / "code128-example.png"))
-    Code128Encoder("PyStrich-2026").save(str(out / "code128-wide.png"), bar_width=6)
-    Code128Encoder("PyStrich-2026", options=label_options).save(
+    Code128Encoder("WDBCA45D2HA327260").save(str(out / "code128-example.png"))
+    Code128Encoder("WDBCA45D2HA327260").save(str(out / "code128-wide.png"), bar_width=6)
+    Code128Encoder("WDBCA45D2HA327260", options=label_options).save(
         str(out / "code128-custom.png"), bar_width=4
     )
-    Code128Encoder("PyStrich-2026").save_svg(str(out / "code128-example.svg"))
+    Code128Encoder("WDBCA45D2HA327260").save_svg(str(out / "code128-example.svg"))
 
     DataMatrixEncoder(pystrich_url).save(str(out / "datamatrix-example.png"))
     DataMatrixEncoder(pystrich_url).save_svg(str(out / "datamatrix-example.svg"))
@@ -125,20 +121,23 @@ def _generate_example_images(app):
         str(out / "datamatrix-gs1.png"), cellsize=8
     )
     DataMatrixEncoder(
-        DataMatrixData(FNC1, "0109501234543213", "17261231", "10ABC123", encoding="ascii")
+        DataMatrixData(FNC1, "0109501234543213", "17261231", "10BF07", encoding="ascii")
     ).save(str(out / "datamatrix-gs1-multi-fixed.png"), cellsize=8)
-    DataMatrixEncoder(DataMatrixData(FNC1, "10ABC123", FNC1, "21SERIAL01", encoding="ascii")).save(
+    DataMatrixEncoder(DataMatrixData(FNC1, "10BF07", FNC1, "2119890519", encoding="ascii")).save(
         str(out / "datamatrix-gs1-multi.png"), cellsize=8
     )
-    DataMatrixEncoder(DataMatrixData("café", encoding="iso-8859-1")).save(
-        str(out / "datamatrix-latin1.png"), cellsize=8
-    )
-    DataMatrixEncoder(DataMatrixData("€5 親切にしろ 🙂", encoding="utf-8")).save(
+    DataMatrixEncoder(
+        DataMatrixData("Ich dachte, Sie wären kräftiger", encoding="iso-8859-1")
+    ).save(str(out / "datamatrix-latin1.png"), cellsize=8)
+    DataMatrixEncoder(DataMatrixData("€5 親切にしろ 🐻‍❄️", encoding="utf-8")).save(
         str(out / "datamatrix-utf8.png"), cellsize=8
     )
 
     EAN13Encoder("5050070007664").save(str(out / "ean13-example.png"))
     EAN13Encoder("5050070007664").save(str(out / "ean13-wide.png"), bar_width=6)
+    EAN13Encoder("5050070007664", options={"first_digit_y_offset": 0}).save(
+        str(out / "ean13-level.png"), bar_width=4
+    )
     EAN13Encoder("5050070007664").save_svg(str(out / "ean13-example.svg"))
 
     QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save(str(out / "qrcode-example.png"))

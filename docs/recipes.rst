@@ -44,7 +44,7 @@ between calls. To generate many barcodes, loop over your inputs:
    out = Path("labels")
    out.mkdir(exist_ok=True)
 
-   for sku in ["ABC-001", "ABC-002", "ABC-003"]:
+   for sku in ["A1266470501", "A1268206342", "A0001513255"]:
        Code128Encoder(sku).save(out / f"{sku}.png")
 
 Loading the output into PIL for further processing
@@ -58,22 +58,26 @@ To composite a barcode onto a label template, call
    from PIL import Image
    from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder
 
-   payload = DataMatrixData("PART-1234", encoding="ascii")
+   payload = DataMatrixData("EMMETT", encoding="ascii")
    barcode = DataMatrixEncoder(payload).get_pilimage(cellsize=8)
 
    label = Image.new("RGB", (400, 200), "white")
    label.paste(barcode, (20, 20))
    label.save("label.png")
 
-Saving to memory only
----------------------
+In-memory output
+----------------
 
-There is no separate "to memory" entry point: :meth:`get_imagedata` is the
-in-memory equivalent of :meth:`save`. The two paths share the same
-renderer; saving the bytes yourself afterwards is identical to calling
-:meth:`save` directly.
+Every encoder has both raster and vector in-memory methods.
+:meth:`get_imagedata` returns PNG bytes (the in-memory equivalent of
+:meth:`save`); :meth:`get_svg` returns an SVG string (the in-memory
+equivalent of :meth:`save_svg`).
 
 .. code-block:: python
 
-   data = Code128Encoder("ABC-12345").get_imagedata()
-   # ... do something with `data`, e.g. attach to an email or upload.
+   from pystrich.qrcode import QRCodeEncoder
+
+   encoder = QRCodeEncoder('{"institution": "New York University", "major": "Philosophy"}')
+
+   png_data = encoder.get_imagedata()   # bytes -- attach to an email, store in a database
+   svg_markup = encoder.get_svg()       # str  -- embed directly in an HTML response

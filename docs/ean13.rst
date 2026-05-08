@@ -25,7 +25,7 @@ Input must be exactly 12 or 13 digits, ASCII ``0``-``9``. Anything else
 raises :class:`~pystrich.exceptions.PyStrichInvalidInput`. The human-readable
 label below the bars is mandated by the EAN-13 specification and always
 rendered; the only customisation hook is the cosmetic
-:class:`EAN13RenderOptions` dict (see `Label baseline`_ below).
+:class:`EAN13RenderOptions` dict (see `Sizing, label, font and layout`_ below).
 
 The check digit is always computed by pyStrich; pass either 12 digits (it
 is appended) or 13 digits (the supplied final digit is discarded and
@@ -47,25 +47,17 @@ Example
    from pystrich.ean13 import EAN13Encoder
 
    encoder = EAN13Encoder("5050070007664")
-   encoder.save("ean13-example.png")
+   encoder.save_svg("ean13-example.svg")
 
-.. image:: examples/ean13-example.png
+.. image:: examples/ean13-example.svg
    :alt: EAN-13 barcode encoding "5050070007664".
 
-Sizing and quiet zones
-----------------------
+Sizing, label, font and layout
+------------------------------
 
 The ``bar_width`` argument to :meth:`~EAN13Encoder.save` and
 :meth:`~EAN13Encoder.get_imagedata` sets the pixel width of the narrowest
 bar (default ``3``).
-
-.. code-block:: python
-
-   encoder = EAN13Encoder("5050070007664")
-   encoder.save("ean13-wide.png", bar_width=6)
-
-.. image:: examples/ean13-wide.png
-   :alt: EAN-13 barcode encoding "5050070007664" rendered with bar_width=6.
 
 The GS1 specification mandates an asymmetric quiet zone (white space) of
 11 modules on the left and 7 modules on the right of the symbol; pyStrich
@@ -77,24 +69,9 @@ retail scanners may fail to read the symbol.
    The quiet zone was previously 9 modules on each side, which is below
    spec on the left.
 
-.. seealso::
-
-   :doc:`printing` for guidance on selecting ``bar_width`` for printed
-   output.
-
-Label baseline
---------------
-
 By default pyStrich draws the leading number-system digit slightly higher
-than the two main digit groups. To draw all three groups on a level baseline instead, pass an
-``options`` dict with ``first_digit_y_offset`` set to ``0``:
-
-.. code-block:: python
-
-   encoder = EAN13Encoder(
-       "5050070007664", options={"first_digit_y_offset": 0}
-   )
-   encoder.save("ean13-level.png")
+than the two main digit groups. To draw all three groups on a level baseline
+instead, pass an ``options`` dict with ``first_digit_y_offset`` set to ``0``:
 
 The value is the gap between the first digit and the others, expressed as
 a fraction of image height. ``0.1`` (the default) preserves the classic
@@ -103,8 +80,26 @@ look; ``0`` aligns all three groups.
 .. versionadded:: 0.11
    The ``options`` dict and ``first_digit_y_offset`` key.
 
+.. seealso::
+
+   :doc:`printing` for guidance on selecting ``bar_width`` for printed
+   output.
+
+.. code-block:: python
+
+   encoder = EAN13Encoder(
+       "5050070007664", options={"first_digit_y_offset": 0}
+   )
+   encoder.save("ean13-level.png", bar_width=4)
+
+.. image:: examples/ean13-level.png
+   :alt: EAN-13 barcode encoding "5050070007664" with a level label baseline.
+
+Output formats
+--------------
+
 SVG output
-----------
+~~~~~~~~~~
 
 For embedding in web pages or any workflow that benefits from
 resolution-independent output, use :meth:`~EAN13Encoder.save_svg` (or
@@ -124,8 +119,18 @@ below the data-bar baseline, also per the GS1 General Specifications.
 
 .. versionadded:: 0.12
 
+PNG output
+~~~~~~~~~~
+
+For raster output, use :meth:`~EAN13Encoder.save` to write a PNG file or
+:meth:`~EAN13Encoder.get_imagedata` to receive the raw PNG bytes.
+
+.. code-block:: python
+
+   EAN13Encoder("5050070007664").save("ean13.png")
+
 EPS output
-----------
+~~~~~~~~~~
 
 For embedding in LaTeX (``\includegraphics``) or other vector print
 workflows, use :meth:`~EAN13Encoder.save_eps` (or
