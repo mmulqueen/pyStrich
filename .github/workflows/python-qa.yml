@@ -18,19 +18,17 @@ jobs:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     steps:
-    - uses: actions/checkout@v5
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v6
+    - uses: actions/checkout@v6
+    - name: Install uv
+      uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Install system dependencies
       run: |
         sudo apt-get update && sudo apt-get install -y dmtx-utils zbar-tools imagemagick librsvg2-bin
-        python -m pip install --upgrade pip poetry
-        poetry install --with dev
+    - name: Install Python dependencies
+      run: uv sync --frozen --group dev
     - name: Test with pytest
-      run: |
-        poetry run pytest
+      run: uv run --frozen pytest
     - name: Type-check with mypy
-      run: |
-        poetry run mypy
+      run: uv run --frozen mypy

@@ -8,7 +8,7 @@ _pyproject = tomllib.loads((Path(__file__).parent.parent / "pyproject.toml").rea
 project = "pyStrich"
 author = "Michael Mulqueen"
 copyright = "pyStrich contributors"
-release = _pyproject["tool"]["poetry"]["version"]
+release = _pyproject["project"]["version"]
 version = release
 
 extensions = [

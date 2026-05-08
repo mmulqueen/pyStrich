@@ -36,7 +36,7 @@ run_version() {
 run_mypy() {
     # Reuse one of the built images; mypy only needs to run once.
     local tag="pystrich-test:${VERSIONS[-1]}"
-    podman run --rm "$tag" poetry run mypy
+    podman run --rm "$tag" uv run --frozen mypy
 }
 
 status=0
