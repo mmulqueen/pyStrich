@@ -13,7 +13,7 @@ Conventions:
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable
 
 from pystrich._courier_glyphs import ADVANCE, ASCENT, DESCENT, EM_SIZE, GLYPHS
 from pystrich.marks import TextLabel

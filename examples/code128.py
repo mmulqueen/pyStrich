@@ -3,6 +3,7 @@
 
 import logging
 import sys
+
 from pystrich.code128 import Code128Encoder
 
 logging.getLogger("code128").setLevel(logging.DEBUG)

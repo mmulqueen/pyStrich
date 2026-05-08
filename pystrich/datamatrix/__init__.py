@@ -37,10 +37,10 @@ from __future__ import annotations
 
 from pystrich.matrix_encoder import Matrix2DEncoder
 
-from .data import DataMatrixCodeword, DataMatrixData, FNC1
-from .textencoder import TextEncoder
+from .data import FNC1, DataMatrixCodeword, DataMatrixData
 from .placement import DataMatrixPlacer
-from .renderer import DataMatrixRenderer, DATAMATRIX_DEFAULT_QUIET_ZONE
+from .renderer import DATAMATRIX_DEFAULT_QUIET_ZONE, DataMatrixRenderer
+from .textencoder import TextEncoder
 
 
 class DataMatrixEncoder(Matrix2DEncoder[int | None]):

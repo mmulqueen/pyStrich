@@ -2,9 +2,10 @@
 """Example code for qrcode library"""
 __revision__ = "$Revision$"
 
-from pystrich.qrcode import QRCodeEncoder
-import sys
 import logging
+import sys
+
+from pystrich.qrcode import QRCodeEncoder
 
 logging.getLogger("qrcode").setLevel(logging.DEBUG)
 logging.getLogger("qrcode").addHandler(logging.StreamHandler(sys.stdout))

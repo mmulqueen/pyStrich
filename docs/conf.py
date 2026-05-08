@@ -1,7 +1,8 @@
 """Sphinx configuration for pyStrich documentation."""
 import shutil
-import tomllib
 from pathlib import Path
+
+import tomllib
 
 _pyproject = tomllib.loads((Path(__file__).parent.parent / "pyproject.toml").read_text())
 
@@ -56,7 +57,7 @@ html_css_files = ["custom.css"]
 def _generate_example_images(app):
     from pystrich.code39 import Code39Encoder
     from pystrich.code128 import Code128Encoder
-    from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder, FNC1
+    from pystrich.datamatrix import FNC1, DataMatrixData, DataMatrixEncoder
     from pystrich.ean13 import EAN13Encoder
     from pystrich.marks import MarkShape
     from pystrich.qrcode import QRCodeEncoder

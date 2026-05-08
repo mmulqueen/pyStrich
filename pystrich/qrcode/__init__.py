@@ -16,9 +16,8 @@ from typing import Literal
 
 from pystrich.matrix_encoder import Matrix2DEncoder
 
-from .textencoder import TextEncoder
 from .renderer import QRCodeRenderer
-
+from .textencoder import TextEncoder
 
 QRErrorCorrectionLevel = Literal["L", "M", "Q", "H"]
 

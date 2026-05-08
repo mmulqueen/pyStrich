@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 from pystrich._vector_text import make_text_label
 from pystrich.bar_renderer import Bar1DRenderer

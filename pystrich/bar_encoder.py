@@ -12,7 +12,8 @@ from __future__ import annotations
 
 import os
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Mapping
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from PIL.Image import Image as PILImage

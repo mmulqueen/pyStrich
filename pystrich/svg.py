@@ -14,6 +14,8 @@ from math import ceil
 from pystrich._courier_glyphs import ADVANCE, GLYPHS
 from pystrich._vector_text import (
     fmt as _fmt,
+)
+from pystrich._vector_text import (
     glyph_id,
     label_descent_y,
     label_geometry,

@@ -2,8 +2,9 @@
 
 import logging
 
-from . import isodata
 from pystrich.exceptions import PyStrichError, PyStrichInvalidInput
+
+from . import isodata
 
 LOG = logging.getLogger("qrcode")
 

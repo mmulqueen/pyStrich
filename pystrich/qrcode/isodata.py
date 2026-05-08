@@ -73,7 +73,7 @@ class MatrixInfo:
                 self.rs_cal_table.append(unpack(fhndl.read(self.rs_ecc_codewords)))
 
         filename = path + "/qrvfr" + str(version) + ".dat"
-        with open(filename, "r") as fhndl:
+        with open(filename) as fhndl:
             frame_data_str = fhndl.read(65535)
             self.frame_data = []
             for line in frame_data_str.splitlines():
@@ -84,7 +84,7 @@ class MatrixInfo:
                     elif char == '0':
                         frame_line.append(0)
                     else:
-                        raise PyStrichError("Corrupted frame data file, found char: {}".format(char))
+                        raise PyStrichError(f"Corrupted frame data file, found char: {char}")
                 self.frame_data.append(frame_line)
 
     def create_matrix(self, version, codewords):

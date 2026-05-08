@@ -2,10 +2,12 @@
 
 __revision__ = "$Rev$"
 
-from .reedsolomon import get_reed_solomon_code
-from .data import DataMatrixData, DataMatrixCodeword, fnc1_workaround_compat
-from pystrich.exceptions import PyStrichInvalidInput
 import logging
+
+from pystrich.exceptions import PyStrichInvalidInput
+
+from .data import DataMatrixCodeword, DataMatrixData, fnc1_workaround_compat
+from .reedsolomon import get_reed_solomon_code
 
 log = logging.getLogger("datamatrix")
 

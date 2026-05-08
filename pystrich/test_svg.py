@@ -12,7 +12,6 @@ import pytest
 
 from pystrich.svg import matrix_to_svg
 
-
 SVG_NS = "http://www.w3.org/2000/svg"
 
 

@@ -11,8 +11,9 @@ from __future__ import annotations
 
 import os
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, Mapping
+from typing import TYPE_CHECKING, Any
 
 from pystrich.eps import bars_to_eps
 from pystrich.marks import BarLayout

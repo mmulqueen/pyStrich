@@ -3,6 +3,7 @@
 
 import logging
 import sys
+
 from pystrich.code39 import Code39Encoder
 
 logging.getLogger("code39").setLevel(logging.DEBUG)

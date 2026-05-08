@@ -24,7 +24,6 @@ from pystrich.exceptions import PyStrichInvalidInput
 from . import encoding
 from .renderer import EAN13Renderer, EAN13RenderOptions
 
-
 GUARDS = ("101", "01010", "101")
 
 

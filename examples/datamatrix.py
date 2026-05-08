@@ -1,10 +1,12 @@
 """Example code for datamatrix library"""
 __revision__ = "$Revision$"
 
-from pystrich.datamatrix import DataMatrixEncoder
-import sys
 import logging
 import os.path
+import sys
+
+from pystrich.datamatrix import DataMatrixEncoder
+
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
 
 logging.getLogger("datamatrix").setLevel(logging.DEBUG)

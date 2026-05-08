@@ -5,15 +5,13 @@ import warnings
 import pytest
 
 from pystrich.datamatrix import (
-    DataMatrixCodeword,
+    FNC1,
     DataMatrixData,
     DataMatrixEncoder,
-    FNC1,
 )
 from pystrich.datamatrix.data import fnc1_workaround_compat
 from pystrich.datamatrix.renderer import DATAMATRIX_DEFAULT_QUIET_ZONE
 from pystrich.datamatrix.textencoder import TextEncoder
-from pystrich.marks import MarkShape
 from pystrich.exceptions import (
     DataMatrixNonAsciiWarning,
     Fnc1WorkaroundCompatWarning,
@@ -21,7 +19,7 @@ from pystrich.exceptions import (
     PyStrichInvalidOption,
     PyStrichWarning,
 )
-
+from pystrich.marks import MarkShape
 
 _API_FORMS = [
     pytest.param(lambda s: s, id="compat"),

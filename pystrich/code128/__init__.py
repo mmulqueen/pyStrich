@@ -21,8 +21,8 @@ import logging
 from pystrich.bar_encoder import Bar1DEncoder
 from pystrich.types import BarcodeRenderOptions
 
-from .textencoder import TextEncoder
 from .renderer import Code128Renderer
+from .textencoder import TextEncoder
 
 log = logging.getLogger("code128")
 

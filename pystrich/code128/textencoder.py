@@ -1,6 +1,7 @@
 """Text encoder for code128 barcode encoder"""
 
 import logging
+
 log = logging.getLogger("code128")
 
 

@@ -13,7 +13,6 @@ from typing import Literal
 from pystrich.exceptions import PyStrichInvalidOption
 from pystrich.marks import MarkShape, iter_marks
 
-
 DxfUnit = Literal["in", "ft", "mi", "mm", "cm", "m"]
 
 # AutoCAD $INSUNITS magic numbers; ``None`` (Unspecified / No units) maps to 0.

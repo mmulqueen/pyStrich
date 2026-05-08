@@ -1,11 +1,13 @@
 """Text encoder for code39 barcode encoder"""
 
 import logging
-import string
+
 log = logging.getLogger("code39")
 
-from . import encoding
 from pystrich.exceptions import PyStrichInvalidInput
+
+from . import encoding
+
 
 class CharacterNotAllowedInCode39(PyStrichInvalidInput):
     pass

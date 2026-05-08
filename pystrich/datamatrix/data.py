@@ -12,7 +12,6 @@ from pystrich.exceptions import (
     PyStrichInvalidOption,
 )
 
-
 DataMatrixEncoding = Literal["compat", "ascii", "iso-8859-1", "utf-8"]
 
 _ENCODING_RULES: dict[DataMatrixEncoding, tuple[str, int, Literal["warn", "raise"]]] = {
@@ -62,7 +61,7 @@ class DataMatrixData:
        or use ``auto_encoding=True``.
     """
 
-    __slots__ = ("segments", "encoding", "auto_encoding")
+    __slots__ = ("auto_encoding", "encoding", "segments")
 
     segments: tuple[str | DataMatrixCodeword, ...]
     encoding: DataMatrixEncoding

@@ -1,9 +1,10 @@
 """Example code for ean13 library"""
 __revision__ = "$Revision$"
 
-from pystrich.ean13 import EAN13Encoder
-import sys
 import logging
+import sys
+
+from pystrich.ean13 import EAN13Encoder
 
 logging.getLogger("ean13").setLevel(logging.DEBUG)
 logging.getLogger("ean13").addHandler(logging.StreamHandler(sys.stdout))
