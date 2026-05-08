@@ -4,16 +4,29 @@ from __future__ import annotations
 
 import os
 from functools import reduce
-from io import BytesIO
 from typing import TYPE_CHECKING, TypedDict
 
-from PIL import Image, ImageFont, ImageDraw
+from PIL import Image, ImageDraw
 
+from pystrich.bar_renderer import Bar1DRenderer
 from pystrich.fonts import get_font
+from pystrich.marks import BarLayout, iter_bar_marks
 
 if TYPE_CHECKING:
     from PIL.Image import Image as PILImage
-# maps bar width against font size
+
+# GS1 specifies an asymmetric quiet zone for EAN-13: 11 modules on the left
+# and 7 on the right.
+QUIET_LEFT_MODULES = 11
+QUIET_RIGHT_MODULES = 7
+
+# Long-standing pyStrich proportions: guards extend to 90% of the image
+# height, data bars to 80%. The remaining 10% accommodates the digit
+# baseline. Roughly approximates the GS1 nominal of guards extending 5
+# modules below the data baseline.
+GUARD_HEIGHT_FRACTION = 0.9
+DATA_HEIGHT_FRACTION = 0.8
+
 font_sizes = {
     1: 8,
     2: 14,
@@ -32,6 +45,12 @@ class EAN13RenderOptions(TypedDict, total=False):
     .. versionadded:: 0.11
     """
 
+    height: int
+    """Total image height in pixels (= user units for SVG/EPS at default
+    DPI). Defaults to half the symbol's pixel width.
+
+    .. versionadded:: 0.12"""
+
     first_digit_y_offset: float
     """How far above the other text the first digit sits, as a fraction of
     image height. Defaults to ``0.1`` (the long-standing pyStrich look,
@@ -40,18 +59,16 @@ class EAN13RenderOptions(TypedDict, total=False):
     groups."""
 
 
-class EAN13Renderer:
+class EAN13Renderer(Bar1DRenderer):
     """Rendering class - given the code and corresponding
     bar encodings and guard bars,
     it will add edge zones and render to an image"""
 
-    width: int
-    height: int
+    options: EAN13RenderOptions
     code: str
     left_bars: str
     right_bars: str
     guards: tuple[str, str, str]
-    options: EAN13RenderOptions
 
     def __init__(
         self,
@@ -61,91 +78,99 @@ class EAN13Renderer:
         guards: tuple[str, str, str],
         options: EAN13RenderOptions | None = None,
     ) -> None:
+        super().__init__(options)
         self.code = code
         self.left_bars = left_bars
         self.right_bars = right_bars
         self.guards = guards
-        self.options = options or {}
-        self.width = 0
-        self.height = 0
 
-    def get_pilimage(self, bar_width: int) -> PILImage:
+    @property
+    def width(self) -> int:
+        """Backwards-compatible alias for :attr:`image_width`.
+
+        .. deprecated:: 0.12
+           Use :attr:`image_width` for parity with the other 1D renderers.
+        """
+        return self.image_width
+
+    @property
+    def height(self) -> int:
+        """Backwards-compatible alias for :attr:`image_height`.
+
+        .. deprecated:: 0.12
+           Use :attr:`image_height` for parity with the other 1D renderers.
+        """
+        return self.image_height
+
+    def _bar_layout(self, bar_width: int) -> BarLayout:
+        """Pixel-precise layout shared by PNG, SVG and EPS rendering."""
         def sum_len(total: int, item: str) -> int:
-            """add the length of a given item to the total"""
             return total + len(item)
 
         num_bars = (7 * 12) + reduce(sum_len, self.guards, 0)
-
-        # GS1 mandates an asymmetric quiet zone: 11 modules on the left,
-        # 7 on the right. Anything narrower on the left risks rejection by
-        # retail scanners.
-        left_quiet = bar_width * 11
-        right_quiet = bar_width * 7
+        left_quiet = bar_width * QUIET_LEFT_MODULES
+        right_quiet = bar_width * QUIET_RIGHT_MODULES
         image_width = left_quiet + right_quiet + (num_bars * bar_width)
-        image_height = image_width // 2
+        image_height = self.options.get('height') or image_width // 2
 
-        img = Image.new('L', (image_width, image_height), 255)
+        symbol_top = (left_quiet + right_quiet) // 4
+        guard_pixel_height = int(image_height * GUARD_HEIGHT_FRACTION) - symbol_top
+        data_pixel_height = int(image_height * DATA_HEIGHT_FRACTION) - symbol_top
 
-        class BarWriter:
-            """Class which moves across the image, writing out bars"""
-            def __init__(self, img):
-                self.img = img
-                self.current_x = left_quiet
-                self.symbol_top = (left_quiet + right_quiet) // 4
+        segments: list[tuple[str, int]] = [
+            (self.guards[0], guard_pixel_height),
+            (self.left_bars, data_pixel_height),
+            (self.guards[1], guard_pixel_height),
+            (self.right_bars, data_pixel_height),
+            (self.guards[2], guard_pixel_height),
+        ]
+        heights = [h if c == "1" else 0 for bars, h in segments for c in bars]
 
-            def write_bar(self, value, full=False):
-                """Draw a bar at the current position,
-                if the value is 1, otherwise move on silently"""
+        # Space below tallest bars: where the digit baseline goes in PNG;
+        # left blank in SVG/EPS so total canvas height matches.
+        quiet_bottom = image_height - symbol_top - guard_pixel_height
 
-                # only write anything to the image if bar value is 1
-                bar_height = int(image_height * (full and 0.9 or 0.8))
-                if value == 1:
-                    for ypos in range(self.symbol_top, bar_height):
-                        for xpos in range(self.current_x,
-                                          self.current_x + bar_width):
-                            img.putpixel((xpos, ypos), 0)
-                self.current_x += bar_width
+        return BarLayout(
+            heights=heights,
+            bar_width=bar_width,
+            quiet_left=left_quiet,
+            quiet_right=right_quiet,
+            quiet_top=symbol_top,
+            quiet_bottom=quiet_bottom,
+        )
 
-            def write_bars(self, bars, full=False):
-                """write all bars to the image"""
-                for bar in bars:
-                    self.write_bar(int(bar), full)
+    def get_pilimage(self, bar_width: int) -> PILImage:
+        layout = self._bar_layout(bar_width)
+        self.image_width = (
+            layout.quiet_left
+            + len(layout.heights) * layout.bar_width
+            + layout.quiet_right
+        )
+        self.image_height = layout.quiet_top + max(layout.heights) + layout.quiet_bottom
 
-        # Draw the bars
-        writer = BarWriter(img)
-        writer.write_bars(self.guards[0], full=True)
-        writer.write_bars(self.left_bars)
-        writer.write_bars(self.guards[1], full=True)
-        writer.write_bars(self.right_bars)
-        writer.write_bars(self.guards[2], full=True)
-
-        # Draw the text
-        font_size = font_sizes.get(bar_width, 24)
-
-        font = get_font("courR", font_size)
+        img = Image.new('L', (self.image_width, self.image_height), 255)
         draw = ImageDraw.Draw(img)
+
+        for mark in iter_bar_marks(
+            layout.heights,
+            layout.bar_width,
+            quiet_left=layout.quiet_left,
+            quiet_top=layout.quiet_top,
+        ):
+            draw.rectangle(
+                (mark.x, mark.y, mark.x + mark.width - 1, mark.y + mark.height - 1),
+                fill=0,
+            )
+
+        # Draw the digits
+        font_size = font_sizes.get(bar_width, 24)
+        font = get_font("courR", font_size)
         text_y = 0.8
         first_digit_y = text_y - self.options.get("first_digit_y_offset", 0.1)
-        draw.text((1 * bar_width, int(image_height * first_digit_y)),
+        draw.text((1 * bar_width, int(self.image_height * first_digit_y)),
                   self.code[0], font=font)
-        draw.text((left_quiet + 7 * bar_width, int(image_height * text_y)),
+        draw.text((layout.quiet_left + 7 * bar_width, int(self.image_height * text_y)),
                   self.code[1:7], font=font)
-        draw.text((left_quiet + 54 * bar_width, int(image_height * text_y)),
+        draw.text((layout.quiet_left + 54 * bar_width, int(self.image_height * text_y)),
                   self.code[7:], font=font)
-        self.width = image_width
-        self.height = image_height
         return img
-
-    def write_file(self, filename: str | os.PathLike[str], bar_width: int) -> None:
-        """Write barcode data out to image file
-        filename - the name of the image file
-        bar_width - the desired width of each bar"""
-        img = self.get_pilimage(bar_width)
-        img.save(filename, "PNG")
-
-    def get_imagedata(self, bar_width: int) -> bytes:
-        """Write the matrix out as PNG to a bytestream"""
-        buffer = BytesIO()
-        img = self.get_pilimage(bar_width)
-        img.save(buffer, "PNG")
-        return buffer.getvalue()

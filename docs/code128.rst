@@ -81,6 +81,44 @@ options on :doc:`code39`). All keys are optional.
 .. image:: examples/code128-custom.png
    :alt: Code 128 barcode encoding "PyStrich-2026" with a taller image and larger label.
 
+SVG output
+----------
+
+For embedding in web pages or any workflow that benefits from
+resolution-independent output, use :meth:`~Code128Encoder.save_svg` (or
+:meth:`~Code128Encoder.get_svg` to receive the SVG as a string). The
+human-readable label is not currently rendered into the SVG output.
+
+.. code-block:: python
+
+   Code128Encoder("PyStrich-2026").save_svg("code128.svg")
+
+.. image:: examples/code128-example.svg
+   :alt: SVG Code 128 barcode encoding "PyStrich-2026".
+
+The SVG's ``viewBox`` is in module units (one narrow bar = one unit), while
+``width`` and ``height`` scale by ``bar_width``. The 10-module quiet zones
+mandated by the standard are applied automatically on each side.
+
+.. versionadded:: 0.12
+
+EPS output
+----------
+
+For embedding in LaTeX (``\includegraphics``) or other vector print
+workflows, use :meth:`~Code128Encoder.save_eps` (or
+:meth:`~Code128Encoder.get_eps` to receive the EPS as a string).
+
+.. code-block:: python
+
+   Code128Encoder("PyStrich-2026").save_eps("code128.eps")
+
+The ``bar_width`` argument is the width of the narrowest bar in PostScript
+points (1 point = 1/72 inch). The 10-module quiet zones are applied
+automatically.
+
+.. versionadded:: 0.12
+
 API
 ---
 

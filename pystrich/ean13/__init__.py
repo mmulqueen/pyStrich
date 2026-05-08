@@ -16,22 +16,19 @@ You may use this under a BSD License.
 
 from __future__ import annotations
 
-import os
 from functools import reduce
-from typing import TYPE_CHECKING
+
+from pystrich.bar_encoder import Bar1DEncoder
+from pystrich.exceptions import PyStrichInvalidInput
 
 from . import encoding
 from .renderer import EAN13Renderer, EAN13RenderOptions
-from pystrich.exceptions import PyStrichInvalidInput
-
-if TYPE_CHECKING:
-    from PIL.Image import Image as PILImage
 
 
 GUARDS = ("101", "01010", "101")
 
 
-class EAN13Encoder:
+class EAN13Encoder(Bar1DEncoder):
     """Encode a 12- or 13-digit code as an EAN-13 1D barcode.
 
     The check digit is computed for you. If a 13-digit code is supplied, its
@@ -52,14 +49,12 @@ class EAN13Encoder:
     :ivar height: Pixel height of the most recently rendered image.
     """
 
+    options: EAN13RenderOptions
     code: str
     check_digit: int
     full_code: str
     left_bars: str
     right_bars: str
-    options: EAN13RenderOptions
-    width: int
-    height: int
 
     def __init__(
         self,
@@ -77,23 +72,20 @@ class EAN13Encoder:
         :raises pystrich.exceptions.PyStrichInvalidInput: if ``code`` is not
             exactly 12 (or 13) digits.
         """
+        super().__init__(options)
 
         # Normalise to 12 digits: a 13-digit input has its trailing check
         # digit dropped (we recompute it below).
         if len(code) == 13:
             code = code[:-1]
-        if code.isdigit() and len(code) == 12:
-            self.code = code
-            self.check_digit = self.calculate_check_digit()
-            self.full_code = self.code + str(self.check_digit)
-            self.left_bars = ""
-            self.right_bars = ""
-            self.options = options or {}
-            self.height = 0
-            self.width = 0
-            self.encode()
-        else:
+        if not (code.isdigit() and len(code) == 12):
             raise PyStrichInvalidInput("code must be 12 or 13 digits long")
+        self.code = code
+        self.check_digit = self.calculate_check_digit()
+        self.full_code = self.code + str(self.check_digit)
+        self.left_bars = ""
+        self.right_bars = ""
+        self.encode()
 
     def encode(self) -> tuple[str, str]:
         """Encode the barcode number and return the left and right
@@ -142,46 +134,15 @@ class EAN13Encoder:
         # to get to a multiple of 10
         return (10 - (total % 10)) % 10
 
-    def get_imagedata(self, bar_width: int = 3) -> bytes:
-        """Render the barcode and return PNG bytes.
+    def init_renderer(self) -> EAN13Renderer:
+        """Construct an :class:`EAN13Renderer` for the encoded code.
 
-        :param bar_width: Width in pixels of the narrowest bar.
-        :returns: PNG-encoded image data.
-        :rtype: bytes
+        :rtype: :class:`EAN13Renderer`
         """
-        barcode = EAN13Renderer(
-            self.full_code, self.left_bars, self.right_bars, GUARDS,
-            self.options)
-        imagedata = barcode.get_imagedata(bar_width)
-        self.height = barcode.height
-        self.width = barcode.width
-        return imagedata
-
-    def get_pilimage(self, bar_width: int = 3) -> PILImage:
-        """Render the barcode and return a Pillow image.
-
-        :param bar_width: Width in pixels of the narrowest bar.
-        :returns: The rendered barcode.
-        :rtype: PIL.Image.Image
-
-        .. versionadded:: 0.11
-        """
-        barcode = EAN13Renderer(
-            self.full_code, self.left_bars, self.right_bars, GUARDS,
-            self.options)
-        img = barcode.get_pilimage(bar_width)
-        self.height = barcode.height
-        self.width = barcode.width
-        return img
-
-    def save(self, filename: str | os.PathLike[str], bar_width: int = 3) -> None:
-        """Render the barcode to a PNG file.
-
-        :param filename: Path to write the PNG to.
-        :param bar_width: Width in pixels of the narrowest bar.
-        """
-        EAN13Renderer(self.full_code,
-                      self.left_bars,
-                      self.right_bars,
-                      GUARDS,
-                      self.options).write_file(filename, bar_width)
+        return EAN13Renderer(
+            self.full_code,
+            self.left_bars,
+            self.right_bars,
+            GUARDS,
+            self.options,
+        )

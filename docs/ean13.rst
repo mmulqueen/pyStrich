@@ -103,6 +103,47 @@ look; ``0`` aligns all three groups.
 .. versionadded:: 0.11
    The ``options`` dict and ``first_digit_y_offset`` key.
 
+SVG output
+----------
+
+For embedding in web pages or any workflow that benefits from
+resolution-independent output, use :meth:`~EAN13Encoder.save_svg` (or
+:meth:`~EAN13Encoder.get_svg` to receive the SVG as a string). The
+human-readable digit groups below the bars are not currently rendered into
+the SVG output.
+
+.. code-block:: python
+
+   EAN13Encoder("5050070007664").save_svg("ean13.svg")
+
+.. image:: examples/ean13-example.svg
+   :alt: SVG EAN-13 barcode encoding "5050070007664".
+
+The SVG's ``viewBox`` is in module units, while ``width`` and ``height``
+scale by ``bar_width``. The 11-module left and 7-module right quiet zones
+required by GS1 are applied automatically. Guard bars extend 5 modules
+below the data-bar baseline, also per the GS1 General Specifications.
+
+.. versionadded:: 0.12
+
+EPS output
+----------
+
+For embedding in LaTeX (``\includegraphics``) or other vector print
+workflows, use :meth:`~EAN13Encoder.save_eps` (or
+:meth:`~EAN13Encoder.get_eps` to receive the EPS as a string).
+
+.. code-block:: python
+
+   EAN13Encoder("5050070007664").save_eps("ean13.eps")
+
+The ``bar_width`` argument is the width of the narrowest bar in PostScript
+points (1 point = 1/72 inch). The GS1 quiet zones (11 modules left, 7
+modules right) and the 5-module guard-bar offset are applied
+automatically.
+
+.. versionadded:: 0.12
+
 API
 ---
 

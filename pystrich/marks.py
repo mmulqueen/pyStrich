@@ -81,3 +81,66 @@ def iter_marks(
     if mark_shape in (MarkShape.SQUARE_CELLS, MarkShape.CIRCULAR_CELLS):
         return iter_cells(matrix, mark_values_when=mark_values_when)
     raise ValueError(f"Unknown MarkShape: {mark_shape!r}")
+
+
+class BarLayout(NamedTuple):
+    """Pixel-precise layout of a 1D barcode for any output format.
+
+    All values are in pixels (= user units for SVG/EPS at default DPI).
+    ``heights[i]`` is the bar's pixel height at column ``i`` (``0`` is a
+    gap). Each column is ``bar_width`` pixels wide. The four quiet zones
+    frame the symbol; ``quiet_left`` and ``quiet_top`` shift the bars,
+    while ``quiet_right`` and ``quiet_bottom`` only enlarge the canvas.
+    """
+
+    heights: Sequence[int]
+    bar_width: int
+    quiet_left: int = 0
+    quiet_right: int = 0
+    quiet_top: int = 0
+    quiet_bottom: int = 0
+
+
+def iter_bar_marks(
+    heights: Sequence[int],
+    bar_width: int,
+    *,
+    quiet_left: int = 0,
+    quiet_top: int = 0,
+) -> Iterator[MatrixMark]:
+    """Yield a ``MatrixMark`` per maximal run of equal positive heights.
+
+    Coordinates and dimensions are in pixels. ``heights[i]`` is the bar's
+    pixel height at column ``i`` (``0`` is a gap; positive values are bars
+    sharing a top edge at ``y = quiet_top``). Each column is ``bar_width``
+    pixels wide. Adjacent columns with the same positive height collapse
+    into one mark.
+
+    Only ``quiet_left`` and ``quiet_top`` are accepted because they are
+    the only offsets that affect mark coordinates; the right and bottom
+    quiet zones are a renderer concern (canvas / viewBox sizing).
+    """
+    run_start: int | None = None
+    run_height = 0
+    for col, h in enumerate(heights):
+        if h == run_height and run_start is not None:
+            continue
+        if run_start is not None:
+            yield MatrixMark(
+                quiet_left + run_start * bar_width,
+                quiet_top,
+                (col - run_start) * bar_width,
+                run_height,
+            )
+            run_start = None
+            run_height = 0
+        if h > 0:
+            run_start = col
+            run_height = h
+    if run_start is not None:
+        yield MatrixMark(
+            quiet_left + run_start * bar_width,
+            quiet_top,
+            (len(heights) - run_start) * bar_width,
+            run_height,
+        )

@@ -17,21 +17,17 @@ You may use this under a BSD License.
 from __future__ import annotations
 
 import logging
-import os
-from typing import TYPE_CHECKING
 
+from pystrich.bar_encoder import Bar1DEncoder
 from pystrich.types import BarcodeRenderOptions
 
 from .textencoder import TextEncoder
 from .renderer import Code128Renderer
 
-if TYPE_CHECKING:
-    from PIL.Image import Image as PILImage
-
 log = logging.getLogger("code128")
 
 
-class Code128Encoder:
+class Code128Encoder(Bar1DEncoder):
     """Encode a string as a Code 128 1D barcode.
 
     Code sets A, B and C are switched between automatically to minimise symbol
@@ -53,13 +49,11 @@ class Code128Encoder:
     :ivar height: Pixel height of the most recently rendered image.
     """
 
+    options: BarcodeRenderOptions
     text: str
     encoded_text: list[int]
     checksum: int
     bars: str
-    options: BarcodeRenderOptions
-    width: int
-    height: int
 
     def __init__(
         self, text: str, options: BarcodeRenderOptions | None = None
@@ -83,11 +77,8 @@ class Code128Encoder:
             * ``bottom_border`` -- pixels of space between label and the
               bottom edge.
         """
-
-        self.options = options or {}
+        super().__init__(options)
         self.text = text
-        self.height = 0
-        self.width = 0
         encoder = TextEncoder()
 
         self.encoded_text = encoder.encode(self.text)
@@ -114,40 +105,9 @@ class Code128Encoder:
 
         return checksum % 103
 
-    def get_imagedata(self, bar_width: int = 3) -> bytes:
-        """Render the barcode and return PNG bytes.
+    def init_renderer(self) -> Code128Renderer:
+        """Construct a :class:`Code128Renderer` for the encoded bars.
 
-        :param bar_width: Width in pixels of the narrowest bar.
-        :returns: PNG-encoded image data.
-        :rtype: bytes
+        :rtype: :class:`Code128Renderer`
         """
-
-        barcode = Code128Renderer(self.bars, self.text, self.options)
-        imagedata = barcode.get_imagedata(bar_width)
-        self.width = barcode.image_width
-        self.height = barcode.image_height
-        return imagedata
-
-    def get_pilimage(self, bar_width: int = 3) -> PILImage:
-        """Render the barcode and return a Pillow image.
-
-        :param bar_width: Width in pixels of the narrowest bar.
-        :returns: The rendered barcode.
-        :rtype: PIL.Image.Image
-
-        .. versionadded:: 0.11
-        """
-        barcode = Code128Renderer(self.bars, self.text, self.options)
-        img = barcode.get_pilimage(bar_width)
-        self.width = barcode.image_width
-        self.height = barcode.image_height
-        return img
-
-    def save(self, filename: str | os.PathLike[str], bar_width: int = 3) -> None:
-        """Render the barcode to a PNG file.
-
-        :param filename: Path to write the PNG to.
-        :param bar_width: Width in pixels of the narrowest bar.
-        """
-        Code128Renderer(
-            self.bars, self.text, self.options).write_file(filename, bar_width)
+        return Code128Renderer(self.bars, self.text, self.options)

@@ -32,6 +32,9 @@ autodoc_member_order = "bysource"
 autodoc_default_options = {
     "members": True,
     "show-inheritance": True,
+    # TypedDicts subclass dict and our exception classes subclass
+    # BaseException; exclude their built-in methods from autoclass output.
+    "inherited-members": "object, dict, BaseException",
 }
 autodoc_type_aliases = {
     "PILImage": "PIL.Image.Image",
@@ -83,12 +86,14 @@ def _generate_example_images(app):
     Code39Encoder("PART-1234", options=label_options).save(
         str(out / "code39-custom.png"), bar_width=4
     )
+    Code39Encoder("PART-1234").save_svg(str(out / "code39-example.svg"))
 
     Code128Encoder("PyStrich-2026").save(str(out / "code128-example.png"))
     Code128Encoder("PyStrich-2026").save(str(out / "code128-wide.png"), bar_width=6)
     Code128Encoder("PyStrich-2026", options=label_options).save(
         str(out / "code128-custom.png"), bar_width=4
     )
+    Code128Encoder("PyStrich-2026").save_svg(str(out / "code128-example.svg"))
 
     DataMatrixEncoder(pystrich_url).save(str(out / "datamatrix-example.png"))
     DataMatrixEncoder(pystrich_url).save_svg(str(out / "datamatrix-example.svg"))
@@ -119,6 +124,7 @@ def _generate_example_images(app):
 
     EAN13Encoder("5050070007664").save(str(out / "ean13-example.png"))
     EAN13Encoder("5050070007664").save(str(out / "ean13-wide.png"), bar_width=6)
+    EAN13Encoder("5050070007664").save_svg(str(out / "ean13-example.svg"))
 
     QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save(
         str(out / "qrcode-example.png")

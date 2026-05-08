@@ -73,3 +73,33 @@ def test_first_digit_y_offset_zero(tmp_path, zbarimg):
         "750103131130", options={"first_digit_y_offset": 0}
     ).save(str(img))
     assert zbarimg(img) == "7501031311309"
+
+
+@pytest.mark.parametrize("bar_width", [3, 5])
+@pytest.mark.parametrize("string, decoded", [
+    ("012345678901", "0123456789012"),
+    ("007567816412", "0075678164125"),
+    ("750103131130", "7501031311309"),
+])
+def test_svg_round_trip(string, decoded, bar_width, tmp_path, svg_to_png, zbarimg):
+    """SVG output rasterised with ImageMagick decodes to the input plus check digit."""
+    svg = tmp_path / "ean13.svg"
+    png = tmp_path / "ean13.png"
+    EAN13Encoder(string).save_svg(str(svg), bar_width)
+    svg_to_png(svg, png)
+    assert zbarimg(png) == decoded
+
+
+@pytest.mark.parametrize("bar_width", [3, 5])
+@pytest.mark.parametrize("string, decoded", [
+    ("012345678901", "0123456789012"),
+    ("007567816412", "0075678164125"),
+    ("750103131130", "7501031311309"),
+])
+def test_eps_round_trip(string, decoded, bar_width, tmp_path, eps_to_png, zbarimg):
+    """EPS output rasterised with Ghostscript decodes to the input plus check digit."""
+    eps = tmp_path / "ean13.eps"
+    png = tmp_path / "ean13.png"
+    EAN13Encoder(string).save_eps(str(eps), bar_width)
+    eps_to_png(eps, png)
+    assert zbarimg(png) == decoded

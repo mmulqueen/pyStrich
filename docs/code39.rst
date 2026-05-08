@@ -79,6 +79,44 @@ human-readable label and the surrounding layout. All keys are optional.
 .. image:: examples/code39-custom.png
    :alt: Code 39 barcode encoding "PART-1234" with a taller image and larger label.
 
+SVG output
+----------
+
+For embedding in web pages or any workflow that benefits from
+resolution-independent output, use :meth:`~Code39Encoder.save_svg` (or
+:meth:`~Code39Encoder.get_svg` to receive the SVG as a string). The
+human-readable label is not currently rendered into the SVG output.
+
+.. code-block:: python
+
+   Code39Encoder("PART-1234").save_svg("code39.svg")
+
+.. image:: examples/code39-example.svg
+   :alt: SVG Code 39 barcode encoding "PART-1234".
+
+The SVG's ``viewBox`` is in module units (one narrow bar = one unit), while
+``width`` and ``height`` scale by ``bar_width``. The 10-module quiet zones
+mandated by the standard are applied automatically on each side.
+
+.. versionadded:: 0.12
+
+EPS output
+----------
+
+For embedding in LaTeX (``\includegraphics``) or other vector print
+workflows, use :meth:`~Code39Encoder.save_eps` (or
+:meth:`~Code39Encoder.get_eps` to receive the EPS as a string).
+
+.. code-block:: python
+
+   Code39Encoder("PART-1234").save_eps("code39.eps")
+
+The ``bar_width`` argument is the width of the narrowest bar in PostScript
+points (1 point = 1/72 inch). The 10-module quiet zones are applied
+automatically.
+
+.. versionadded:: 0.12
+
 API
 ---
 

@@ -69,3 +69,35 @@ def test_zbarimg_round_trip(string, tmp_path, zbarimg):
     img = tmp_path / "code128.png"
     Code128Encoder(string).save(str(img))
     assert zbarimg(img) == string
+
+
+@pytest.mark.parametrize("bar_width", [3, 5])
+@pytest.mark.parametrize("string", [
+    pytest.param("1234", id="dense-C"),
+    pytest.param("hello", id="B-only"),
+    pytest.param("HI345678", id="B-to-C"),
+    pytest.param("BarCode 1", id="B-mixed"),
+])
+def test_svg_round_trip(string, bar_width, tmp_path, svg_to_png, zbarimg):
+    """SVG output rasterised with ImageMagick decodes back to the original string."""
+    svg = tmp_path / "code128.svg"
+    png = tmp_path / "code128.png"
+    Code128Encoder(string).save_svg(str(svg), bar_width)
+    svg_to_png(svg, png)
+    assert zbarimg(png) == string
+
+
+@pytest.mark.parametrize("bar_width", [3, 5])
+@pytest.mark.parametrize("string", [
+    pytest.param("1234", id="dense-C"),
+    pytest.param("hello", id="B-only"),
+    pytest.param("HI345678", id="B-to-C"),
+    pytest.param("BarCode 1", id="B-mixed"),
+])
+def test_eps_round_trip(string, bar_width, tmp_path, eps_to_png, zbarimg):
+    """EPS output rasterised with Ghostscript decodes back to the original string."""
+    eps = tmp_path / "code128.eps"
+    png = tmp_path / "code128.png"
+    Code128Encoder(string).save_eps(str(eps), bar_width)
+    eps_to_png(eps, png)
+    assert zbarimg(png) == string
