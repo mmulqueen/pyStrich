@@ -53,7 +53,7 @@ def test_zbarimg_round_trip(string, tmp_path, zbarimg):
 )
 @pytest.mark.parametrize("options", [{}, {"show_label": False}])
 def test_svg_round_trip(string, bar_width, options, tmp_path, svg_to_png, zbarimg):
-    """SVG output rasterised with ImageMagick decodes back to the original string."""
+    """SVG output rasterised with librsvg decodes back to the original string."""
     svg = tmp_path / "code39.svg"
     png = tmp_path / "code39.png"
     Code39Encoder(string, options=options).save_svg(str(svg), bar_width)

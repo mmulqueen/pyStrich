@@ -92,7 +92,7 @@ def test_first_digit_y_offset_zero(tmp_path, zbarimg):
     ],
 )
 def test_svg_round_trip(string, decoded, bar_width, tmp_path, svg_to_png, zbarimg):
-    """SVG output rasterised with ImageMagick decodes to the input plus check digit."""
+    """SVG output rasterised with librsvg decodes to the input plus check digit."""
     svg = tmp_path / "ean13.svg"
     png = tmp_path / "ean13.png"
     EAN13Encoder(string).save_svg(str(svg), bar_width)

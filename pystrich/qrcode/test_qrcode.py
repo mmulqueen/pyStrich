@@ -182,7 +182,7 @@ def test_encode_decode(string, ecl, tmp_path, zbarimg):
     ],
 )
 def test_svg_round_trip(string, ecl, cellsize, tmp_path, svg_to_png, zbarimg):
-    """SVG output rasterised with ImageMagick decodes back to the original string."""
+    """SVG output rasterised with librsvg decodes back to the original string."""
     svg = tmp_path / "qrcode-test.svg"
     png = tmp_path / "qrcode-test.png"
     QRCodeEncoder(string, ecl).save_svg(str(svg), cellsize=cellsize)

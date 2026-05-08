@@ -74,7 +74,7 @@ def test_encode_decode(string, wrap, tmp_path, dmtxread):
     ],
 )
 def test_svg_round_trip(string, wrap, cellsize, tmp_path, svg_to_png, dmtxread):
-    """SVG output rasterised with ImageMagick decodes back to the original string."""
+    """SVG output rasterised with librsvg decodes back to the original string."""
     svg = tmp_path / "datamatrix-test.svg"
     png = tmp_path / "datamatrix-test.png"
     DataMatrixEncoder(wrap(string)).save_svg(str(svg), cellsize=cellsize)
