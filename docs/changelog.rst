@@ -4,6 +4,8 @@ Changelog
 0.12 — unreleased
 -----------------
 
+- New ``pystrich`` console script with a subcommand per format and PNG /
+  SVG / EPS / ASCII / terminal / DXF output. See :doc:`cli`.
 - Data Matrix: :class:`~pystrich.datamatrix.DataMatrixData` now expects
   either an ``encoding=`` argument or ``auto_encoding=True`` to be set
   on construction. The new ``auto_encoding=True`` flag picks the

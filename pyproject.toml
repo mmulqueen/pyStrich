@@ -37,6 +37,9 @@ Homepage = "https://github.com/mmulqueen/pyStrich"
 Repository = "https://github.com/mmulqueen/pyStrich"
 Documentation = "https://www.method-b.uk/pyStrich/docs/"
 
+[project.scripts]
+pystrich = "pystrich.cli:main"
+
 [dependency-groups]
 dev = [
     "pytest>=8.2.2",
@@ -49,6 +52,7 @@ docs = [
     "sphinx>=8.1",
     "furo>=2024.8.6",
     "sphinx-copybutton>=0.5",
+    "sphinx-argparse>=0.5",
 ]
 
 [build-system]

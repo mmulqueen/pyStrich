@@ -20,6 +20,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
+    "sphinxarg.ext",
 ]
 
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
@@ -75,6 +76,12 @@ def _generate_example_images(app):
     )
     (out / "datamatrix-terminal.txt").write_text(
         DataMatrixEncoder(pystrich_url).get_terminal_art(ansi_bg=False),
+        encoding="utf-8",
+    )
+    (out / "datamatrix-rausschmeisser-terminal.txt").write_text(
+        DataMatrixEncoder(
+            DataMatrixData("Rausschmeißer", auto_encoding=True)
+        ).get_terminal_art(ansi_bg=False),
         encoding="utf-8",
     )
 

@@ -74,6 +74,7 @@ Guides
 .. toctree::
    :maxdepth: 1
 
+   cli
    recipes
    printing
 

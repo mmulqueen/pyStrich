@@ -3,6 +3,8 @@ Recipes
 
 Common patterns for using pyStrich in real applications.
 
+For one-off generation from a shell, see :doc:`cli`.
+
 Serving barcodes from a web request
 -----------------------------------
 
