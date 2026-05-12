@@ -1,0 +1,131 @@
+"""Tests for the unified Reed-Solomon module.
+
+Reed-Solomon error correction is built in two layers, and the tests below
+mirror that split:
+
+1. **A Galois field GF(256)** — arithmetic on bytes where addition is XOR and
+   multiplication wraps via a "primitive" polynomial that fixes how values
+   behave past 255. The field tests verify this arithmetic obeys the algebraic
+   laws the encoder relies on (zero is absorbing, one is the identity, addition
+   distributes over multiplication, the wraparound matches the chosen primitive,
+   and the precomputed log/exp tables are consistent).
+
+2. **The encoder** — produces error-correction bytes by polynomial long
+   division over the field. ``test_codeword_is_zero_at_generator_roots``
+   verifies the defining property of a Reed-Solomon codeword, so the encoder is
+   checked against the spec definition rather than against its own output.
+"""
+
+import random
+
+import pytest
+
+from pystrich.reedsolomon import (
+    BinaryExtensionGaloisField,
+    GF256_0x11D,
+    GF256_0x12D,
+    reed_solomon_encode,
+)
+
+
+@pytest.mark.parametrize("primitive", [0x11D, 0x12D])
+def test_galois_field_log_exp_round_trip(primitive):
+    """The exp and log lookup tables are inverses for every non-zero byte."""
+    field = BinaryExtensionGaloisField(primitive)
+    for x in range(1, field.size):
+        assert field._exp[field._log[x]] == x
+
+
+@pytest.mark.parametrize("field", [GF256_0x11D, GF256_0x12D])
+@pytest.mark.parametrize("a", [0, 1, 2, 7, 128, 255])
+def test_galois_field_mul_by_zero(field, a):
+    """Anything multiplied by zero is zero."""
+    assert field.mul(a, 0) == 0
+    assert field.mul(0, a) == 0
+
+
+@pytest.mark.parametrize("field", [GF256_0x11D, GF256_0x12D])
+@pytest.mark.parametrize("a", [1, 2, 7, 128, 255])
+def test_galois_field_mul_identity(field, a):
+    """Anything multiplied by one is itself."""
+    assert field.mul(a, 1) == a
+    assert field.mul(1, a) == a
+
+
+@pytest.mark.parametrize(
+    "field, expected",
+    [
+        pytest.param(GF256_0x11D, 0x1D, id="GF256_0x11D"),
+        pytest.param(GF256_0x12D, 0x2D, id="GF256_0x12D"),
+    ],
+)
+def test_galois_field_wraps_via_primitive_polynomial(field, expected):
+    """Multiplications that overflow a byte wrap using the primitive polynomial.
+
+    ``2 * 128 = 256`` doesn't fit in 8 bits, so the field replaces the overflowed
+    bit with the primitive polynomial's low byte (``0x1D`` or ``0x2D`` depending
+    on which polynomial defines the field). This is the whole reason the
+    primitive polynomial is a constructor parameter.
+    """
+    assert field.mul(2, 128) == expected
+    assert field.mul(128, 2) == expected
+
+
+@pytest.mark.parametrize("field", [GF256_0x11D, GF256_0x12D])
+def test_galois_field_distributivity(field):
+    """Multiplication distributes over addition: ``a * (b + c) == a*b + a*c``.
+
+    Addition here is XOR, so the property reads
+    ``mul(a, b ^ c) == mul(a, b) ^ mul(a, c)``. Sampled on random triples.
+    """
+    rng = random.Random(0)
+    for _ in range(200):
+        a, b, c = rng.randrange(256), rng.randrange(256), rng.randrange(256)
+        assert field.mul(a, b ^ c) == field.mul(a, b) ^ field.mul(a, c)
+
+
+def test_reed_solomon_encode_zero_data_returns_zero_ec():
+    """Encoding all-zero data produces all-zero error-correction bytes."""
+    assert reed_solomon_encode([0] * 10, GF256_0x11D, num_ec=5) == [0] * 5
+
+
+def _eval_poly(coeffs, x, field):
+    """Evaluate the polynomial with these coefficients at ``x`` (Horner's method).
+
+    ``coeffs`` is highest-degree-first: ``[c_n, ..., c_1, c_0]`` represents
+    ``c_n * x^n + ... + c_1 * x + c_0``. Returns the single value of the
+    polynomial at ``x``, computed using field arithmetic.
+    """
+    result = 0
+    for c in coeffs:
+        result = field.mul(result, x) ^ c
+    return result
+
+
+@pytest.mark.parametrize(
+    "field, first_root",
+    [
+        pytest.param(GF256_0x11D, 0, id="QR-GF256_0x11D"),
+        pytest.param(GF256_0x12D, 1, id="DM-GF256_0x12D"),
+    ],
+)
+@pytest.mark.parametrize("num_ec", [5, 10, 14, 28, 68])
+def test_codeword_is_zero_at_generator_roots(field, first_root, num_ec):
+    """Encoded codewords satisfy the defining equation of a Reed-Solomon code.
+
+    A Reed-Solomon codeword is the polynomial
+    ``c(x) = data(x) * x^num_ec + ec(x)``, and it is defined by the property
+    that ``c`` evaluates to zero at every root of the generator polynomial.
+    Those roots are ``a^first_root, a^(first_root+1), ...``, where ``a = 2`` is
+    the field's primitive element.
+
+    This check is non-circular: the encoder produces ``ec`` by polynomial long
+    division, while this test evaluates the resulting codeword (a different
+    computation) at the roots. The two agree only if the encoder is correct.
+    """
+    rng = random.Random(0)
+    data = [rng.randrange(256) for _ in range(50)]
+    codeword = data + reed_solomon_encode(data, field, num_ec, first_root=first_root)
+    for k in range(num_ec):
+        root = field._exp[(first_root + k) % (field.size - 1)]
+        assert _eval_poly(codeword, root, field) == 0

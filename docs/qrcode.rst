@@ -201,7 +201,60 @@ It's just a URL -- pass it to :class:`QRCodeEncoder` directly:
 Raw AI-syntax GS1 QR (FNC1 mode indicator) is not supported; for that,
 use :doc:`datamatrix`.
 
+.. _qrcode-non-ascii:
+
+Non-ASCII text
+--------------
+
+:class:`QRCodeEncoder` accepts any Unicode string directly and picks the
+narrowest character set that fits. Wrap the input in :class:`QRCodeData`
+only when you want to constrain that choice -- for example, to enforce
+``"ascii"`` so a stray non-ASCII character raises instead of silently
+growing the symbol:
+
+================  ===================================================================
+Encoding          Behaviour
+================  ===================================================================
+``"ascii"``       Raises :class:`~pystrich.exceptions.PyStrichInvalidInput` on any
+                  byte > 127.
+``"iso-8859-1"``  Latin-1. Declares ECI 3 at the start of the symbol so decoders
+                  do not fall back to Shift-JIS heuristics on high bytes.
+``"utf-8"``       Declares ECI 26 and byte-encodes the input. Conformant decoders
+                  pick up the encoding automatically.
+================  ===================================================================
+
+.. tip::
+
+   The auto-selected encoding is always the narrowest one that fits, so
+   passing a plain ``str`` already gives you the smallest symbol. Picking
+   an encoding by hand is mostly useful for input validation -- e.g.
+   reject anything outside ASCII at the boundary.
+
+.. code-block:: python
+
+   # Plain str: Latin-1 picked automatically, ECI 3 emitted.
+   QRCodeEncoder("Ich dachte, Sie wären kräftiger").save("latin1.png")
+
+.. code-block:: python
+
+   # Plain str: UTF-8 picked automatically, ECI 26 emitted.
+   QRCodeEncoder("€5 親切にしろ 🐻‍❄️").save("utf8.png")
+
+If you pin an encoding that does not fit the input, the raised error
+names the offending character and suggests the encoding that *would*
+have worked:
+
+.. doctest::
+
+   >>> from pystrich.qrcode import QRCodeData
+   >>> QRCodeData("Ich dachte, Sie wären kräftiger", encoding="ascii")
+   Traceback (most recent call last):
+       ...
+   pystrich.exceptions.PyStrichInvalidInput: QRCodeData encoding 'ascii' expects ASCII; got 'ä'. Try QRCodeData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
+
 API
 ---
 
 .. autoclass:: pystrich.qrcode.QRCodeEncoder
+
+.. autoclass:: pystrich.qrcode.QRCodeData

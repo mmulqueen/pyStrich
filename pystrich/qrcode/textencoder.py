@@ -2,37 +2,22 @@
 
 import logging
 
-from pystrich.exceptions import PyStrichError, PyStrichInvalidInput
+from pystrich.bitstream import BitStream
+from pystrich.exceptions import PyStrichInvalidInput
+from pystrich.reedsolomon import GF256_0x11D, reed_solomon_encode
 
 from . import isodata
+from .data import QRCodeData
 
 LOG = logging.getLogger("qrcode")
 
 STR2ECL = {"L": 1, "l": 1, "M": 0, "m": 0, "Q": 3, "q": 3, "H": 2, "h": 2}
 
-
-class BitStream:
-    """Simple Bit stream implementation"""
-
-    def __init__(self):
-
-        self.data = []
-
-    def append(self, value, bitsnum):
-        """Append 'bitsnum' bits to the end of bit stream"""
-
-        if bitsnum < 1:
-            raise PyStrichError(f"Wrong value for number of bits ({bitsnum})")
-        for i in range(bitsnum - 1, -1, -1):
-            self.data.append((value >> i) & 0x01)
-
-    def prepend(self, value, bitsnum):
-        """Prepend 'bitsnum' bits to the begining of bit stream"""
-
-        if bitsnum < 1:
-            raise PyStrichError(f"Wrong value for number of bits ({bitsnum})")
-        for i in range(0, bitsnum, 1):
-            self.data.insert(0, (value >> i) & 0x01)
+# The spec defaults byte mode to ISO-8859-1 with no ECI, but real
+# decoders disagree (some apply Shift-JIS heuristics on high bytes).
+# Emit ECI 3 explicitly for Latin-1 to remove the ambiguity. Pure ASCII
+# is safe everywhere with no ECI; UTF-8 needs ECI 26.
+_ECI_DESIGNATOR = {"ascii": None, "iso-8859-1": 3, "utf-8": 26}
 
 
 class TextEncoder:
@@ -48,8 +33,8 @@ class TextEncoder:
         self.minfo = None
         self.max_data_codewords = None
 
-    def encode(self, text, ecl=None):
-        """Encode the given text and add padding and error codes
+    def encode(self, data, ecl=None):
+        """Encode the given data and add padding and error codes
         also set up the correct matrix size for the resulting codewords"""
 
         self.__init__()
@@ -57,11 +42,11 @@ class TextEncoder:
             ecl = "M"
         self.ecl = STR2ECL[ecl]
 
-        self.encode_text(text)
+        self.encode_text(data)
 
         self.pad()
 
-        self.minfo = isodata.MatrixInfo(self.version, self.ecl)
+        self.minfo = isodata.get_matrix_info(self.version, self.ecl)
 
         self.append_error_codes()
 
@@ -71,11 +56,16 @@ class TextEncoder:
 
         return self.matrix
 
-    def encode_text(self, text):
-        """Encode the given text into bitstream"""
+    def encode_text(self, data: QRCodeData):
+        """Encode the given QRCodeData into bitstream"""
+
+        encoded = "".join(data.segments).encode(data.encoding)
+        eci = _ECI_DESIGNATOR[data.encoding]
+        eci_overhead = 0 if eci is None else 12  # 4-bit ECI mode + 8-bit designator
 
         char_count_num = 8
-        result_len = 4 + char_count_num + 8 * len(text)
+        num_bytes = len(encoded)
+        result_len = eci_overhead + 4 + char_count_num + 8 * num_bytes
         terminator_len = 4
         # Calculate smallest symbol version
         for self.version in range(1, 42):
@@ -93,14 +83,20 @@ class TextEncoder:
                 break
 
         bitstream = BitStream()
-        for char in text:
-            bitstream.append(ord(char), 8)
+        for byte in encoded:
+            bitstream.append(byte, 8)
 
-        bitstream.prepend(len(text), char_count_num)
+        bitstream.prepend(num_bytes, char_count_num)
         # write 'byte' mode
         bitstream.prepend(4, 4)
-        # add terminator
-        bitstream.append(0, terminator_len)
+        if eci is not None:
+            # ECI mode indicator 0111 followed by the 8-bit designator
+            # (valid for ECI numbers up to 127).
+            bitstream.prepend(eci, 8)
+            bitstream.prepend(7, 4)
+        # Terminator is 0-4 zero bits; omit when the data fills the symbol.
+        if terminator_len > 0:
+            bitstream.append(0, terminator_len)
         # convert bitstream into codewords
         byte = 0
         bit_num = 7
@@ -111,6 +107,10 @@ class TextEncoder:
                 self.codewords.append(byte)
                 bit_num = 7
                 byte = 0
+        # Pad the final partial byte to a codeword boundary. Only reachable
+        # when an ECI prefix has shifted the bit stream off byte alignment.
+        if bit_num != 7:
+            self.codewords.append(byte)
 
     def pad(self):
         """Pad out the encoded text to the correct word length"""
@@ -139,30 +139,11 @@ class TextEncoder:
                 rs_temp.append([])
             i += 1
 
-        rs_block_number = 0
-        rs_block_order_num = len(self.minfo.rs_block_order)
-
-        while rs_block_number < rs_block_order_num:
-            rs_codewords = self.minfo.rs_block_order[rs_block_number]
-            rs_data_codewords = rs_codewords - self.minfo.rs_ecc_codewords
-
-            rstemp = rs_temp[rs_block_number] + [0] * self.minfo.rs_ecc_codewords
-            j = rs_data_codewords
-            while j > 0:
-                first = rstemp[0]
-                if first != 0:
-                    rstemp = rstemp[1:]
-                    cal = list(self.minfo.rs_cal_table[first])
-
-                    if len(rstemp) < len(cal):
-                        rstemp, cal = cal, rstemp
-                    cal += [0] * (len(rstemp) - len(cal))
-                    rstemp = [x1 ^ x2 for x1, x2 in zip(rstemp, cal, strict=False)]
-                else:
-                    rstemp = rstemp[1:]
-                j -= 1
-            self.codewords += rstemp
-            rs_block_number += 1
+        for block_number in range(len(self.minfo.rs_block_order)):
+            ec = reed_solomon_encode(
+                rs_temp[block_number], GF256_0x11D, self.minfo.rs_ecc_codewords
+            )
+            self.codewords += ec
 
     def create_matrix(self):
         """Create QR Code matrix"""

@@ -5,9 +5,9 @@ __revision__ = "$Rev$"
 import logging
 
 from pystrich.exceptions import PyStrichInvalidInput
+from pystrich.reedsolomon import GF256_0x12D, reed_solomon_encode
 
 from .data import DataMatrixCodeword, DataMatrixData, fnc1_workaround_compat
-from .reedsolomon import get_reed_solomon_code
 
 log = logging.getLogger("datamatrix")
 
@@ -159,9 +159,9 @@ class TextEncoder:
         error_length = error_word_length[self.size_index]
         log.debug("Error word length: %d bytes", error_length)
 
-        error_words = get_reed_solomon_code(self.codewords, error_length)
-
-        self.codewords += error_words
+        data = [ord(c) for c in self.codewords]
+        ec = reed_solomon_encode(data, GF256_0x12D, error_length, first_root=1)
+        self.codewords += "".join(chr(b) for b in ec)
 
     def append_codeword(self, value):
         """Append a single codeword to the buffer."""

@@ -110,7 +110,6 @@ module = [
     "pystrich.code39.encoding",
     "pystrich.code39.textencoder",
     "pystrich.datamatrix.placement",
-    "pystrich.datamatrix.reedsolomon",
     "pystrich.datamatrix.textencoder",
     "pystrich.ean13.encoding",
     "pystrich.fonts",

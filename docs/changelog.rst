@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.13 — unreleased
+-----------------
+
+- QR Code: accepts any Unicode string and picks the best encoding
+  automatically (ASCII, Latin-1 or UTF-8). New
+  :class:`~pystrich.qrcode.QRCodeData` exposes explicit charset control
+  when you need it.
+- QR Code: internal refactor to improve the encoder's spec compliance
+  and to share Reed-Solomon and encoding-selection code with
+  the Data Matrix module.
+
 0.12 — 2026-05-09
 -----------------
 

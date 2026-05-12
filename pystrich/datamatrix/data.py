@@ -3,8 +3,13 @@
 from __future__ import annotations
 
 import warnings
-from typing import Literal
+from typing import Literal, NamedTuple
 
+from pystrich.charset import (
+    Charset,
+    find_max_codepoint,
+    get_suitable_encoding_for_codepoint,
+)
 from pystrich.exceptions import (
     DataMatrixNonAsciiWarning,
     Fnc1WorkaroundCompatWarning,
@@ -14,20 +19,27 @@ from pystrich.exceptions import (
 
 DataMatrixEncoding = Literal["compat", "ascii", "iso-8859-1", "utf-8"]
 
-_ENCODING_RULES: dict[DataMatrixEncoding, tuple[str, int, Literal["warn", "raise"]]] = {
-    # encoding name -> (Python codec name, max representable codepoint, on-fail policy)
-    "compat": ("ascii", 0x7F, "warn"),
-    "ascii": ("ascii", 0x7F, "raise"),
-    "iso-8859-1": ("iso-8859-1", 0xFF, "raise"),
-    "utf-8": ("utf-8", 0x10FFFF, "raise"),
+
+class DataMatrixEncodingRule(NamedTuple):
+    """Concrete :class:`~pystrich.charset.EncodingRule` plus DataMatrix's on-fail policy."""
+
+    charset: Charset
+    max_codepoint: int
+    on_fail: Literal["warn", "raise"]
+
+
+_ENCODING_RULES: dict[DataMatrixEncoding, DataMatrixEncodingRule] = {
+    "compat": DataMatrixEncodingRule("ascii", 0x7F, "warn"),
+    "ascii": DataMatrixEncodingRule("ascii", 0x7F, "raise"),
+    "iso-8859-1": DataMatrixEncodingRule("iso-8859-1", 0xFF, "raise"),
+    "utf-8": DataMatrixEncodingRule("utf-8", 0x10FFFF, "raise"),
 }
 
-_AUTO_ENCODING_ORDER: tuple[DataMatrixEncoding, ...] = ("ascii", "iso-8859-1", "utf-8")
-
-
-def get_suitable_encoding_for_codepoint(codepoint: int) -> DataMatrixEncoding:
-    """Return the narrowest encoding from the auto-selection order that fits ``codepoint``."""
-    return next(c for c in _AUTO_ENCODING_ORDER if codepoint <= _ENCODING_RULES[c][1])
+_AUTO_ENCODING_RULES: tuple[DataMatrixEncodingRule, ...] = (
+    _ENCODING_RULES["ascii"],
+    _ENCODING_RULES["iso-8859-1"],
+    _ENCODING_RULES["utf-8"],
+)
 
 
 class DataMatrixData:
@@ -82,26 +94,17 @@ class DataMatrixData:
                 f"expected one of {sorted(_ENCODING_RULES)}"
             )
 
-        # Type-check segments and find the highest codepoint in one pass.
-        max_codepoint = 0
-        for segment in segments:
-            if isinstance(segment, DataMatrixCodeword):
-                continue
-            if not isinstance(segment, str):
-                raise TypeError(
-                    f"DataMatrixData segments must be str or DataMatrixCodeword, "
-                    f"got {type(segment).__name__}"
-                )
-            max_codepoint = max(max_codepoint, max((ord(c) for c in segment), default=0))
+        max_codepoint = find_max_codepoint(segments, ignore_types=(DataMatrixCodeword,))
 
+        chosen: DataMatrixEncoding
         if auto_encoding:
-            chosen = get_suitable_encoding_for_codepoint(max_codepoint)
+            chosen = get_suitable_encoding_for_codepoint(max_codepoint, _AUTO_ENCODING_RULES)
         else:
             assert encoding is not None  # guaranteed by the early None+!auto check
             chosen = encoding
             charset, max_allowed, on_fail = _ENCODING_RULES[encoding]
             if max_codepoint > max_allowed:
-                suggested = get_suitable_encoding_for_codepoint(max_codepoint)
+                suggested = get_suitable_encoding_for_codepoint(max_codepoint, _AUTO_ENCODING_RULES)
                 seg_args = ", ".join(repr(s) for s in segments)
                 msg = (
                     f"DataMatrix encoding {encoding!r} expects {charset.upper()}; "

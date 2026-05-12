@@ -1,8 +1,13 @@
 """ISO/IEC 18004:2006 tables and functions implementation"""
 
-import os.path
+import functools
+import re
+from collections.abc import Iterable, Sequence
+from pathlib import Path
 
 from pystrich.exceptions import PyStrichError
+
+_DATA_DIR = Path(__file__).parent / "qrcode_data"
 
 # fmt: off
 MAX_DATA_BITS = [
@@ -47,38 +52,21 @@ class MatrixInfo:
     dependent information necessary for creating matrix"""
 
     def __init__(self, version, ecl):
-        path = os.path.join(os.path.split(__file__)[0], "qrcode_data")
-
         self.byte_num = MATRIX_REMAIN_BIT[version] + (MAX_CODEWORDS[version] << 3)
 
-        filename = path + "/qrv" + str(version) + "_"
-        filename += str(ecl) + ".dat"
+        with (_DATA_DIR / f"qrv{version}_{ecl}.dat").open("rb") as f:
+            self.matrix_d = [
+                list(f.read(self.byte_num)),
+                list(f.read(self.byte_num)),
+                list(f.read(self.byte_num)),
+            ]
+            self.format_info = [list(f.read(15)), list(f.read(15))]
+            self.rs_ecc_codewords = ord(f.read(1))
+            self.rs_block_order = list(f.read(128))
 
-        unpack = list
-
-        with open(filename, "rb") as fhndl:
-            self.matrix_d = []
-            self.matrix_d.append(unpack(fhndl.read(self.byte_num)))
-            self.matrix_d.append(unpack(fhndl.read(self.byte_num)))
-            self.matrix_d.append(unpack(fhndl.read(self.byte_num)))
-            self.format_info = []
-            self.format_info.append(unpack(fhndl.read(15)))
-            self.format_info.append(unpack(fhndl.read(15)))
-            self.rs_ecc_codewords = ord(fhndl.read(1))
-            self.rs_block_order = unpack(fhndl.read(128))
-
-        filename = path + "/rsc" + str(self.rs_ecc_codewords) + ".dat"
-        with open(filename, "rb") as fhndl:
-            self.rs_cal_table = []
-
-            for _ in range(0, 256):
-                self.rs_cal_table.append(unpack(fhndl.read(self.rs_ecc_codewords)))
-
-        filename = path + "/qrvfr" + str(version) + ".dat"
-        with open(filename) as fhndl:
-            frame_data_str = fhndl.read(65535)
+        with (_DATA_DIR / f"qrvfr{version}.dat").open(encoding="ascii") as f:
             self.frame_data = []
-            for line in frame_data_str.splitlines():
+            for line in f.read().splitlines():
                 frame_line = []
                 for char in line:
                     if char == "1":
@@ -161,91 +149,93 @@ class MatrixInfo:
                     matrix[i][j] = self.frame_data[i][j]
         return matrix
 
-    def calc_demerit_score(self, bit_r, dem_data):
-        """Calculate demerit score"""
-
-        n1_search = (chr(255) * 5) + "+|" + (bit_r * 5) + "+"
-        n3_search = bit_r + chr(255) + bit_r * 3 + chr(255) + bit_r
-
-        import re
-
-        demerit = [0, 0, 0, 0]
-        demerit[2] = len(re.findall(n3_search, dem_data[0])) * 40
-        demerit[3] = dem_data[1].count(bit_r) * len(bit_r) * 100
-        demerit[3] /= self.byte_num
-        demerit[3] -= 50
-        demerit[3] = abs(int(demerit[3] / 5)) * 10
-
-        ptn_temp = re.findall(bit_r + bit_r + "+", dem_data[2])
-        demerit[1] += sum([len(x) - 1 for x in ptn_temp])
-
-        ptn_temp = re.findall(chr(255) + chr(255) + "+", dem_data[3])
-        demerit[1] += sum([len(x) - 1 for x in ptn_temp])
-        demerit[1] *= 3
-
-        ptn_temp = re.findall(n1_search, dem_data[0])
-        demerit[0] += sum([len(x) - 2 for x in ptn_temp])
-        return sum(demerit)
-
     def calc_mask_number(self, matrix_content):
-        """Calculate mask number for matrix"""
+        """Pick the data mask that minimises the ISO 18004 penalty score.
 
+        ``matrix_content`` is the per-mask packed matrix from
+        :meth:`create_matrix`: bit ``i`` of cell ``[x][y]`` is 1 when the
+        module is dark under mask ``i``.
+        """
         mtx_size = len(matrix_content)
-        mask_number = 0
-        min_demerit_score = 0
-        hor_master = ""
-        ver_master = ""
-        for i in range(0, mtx_size):
-            for k in range(0, mtx_size):
-                hor_master += chr(matrix_content[k][i])
-                ver_master += chr(matrix_content[i][k])
-
-        for i in range(0, 8):
-            bit_r = chr((~(1 << i)) & 255)
-            bit_mask = chr(1 << i) * mtx_size * mtx_size
-            dem_data = ["", "", "", ""]
-            dem_data[0] = strings_and(hor_master, bit_mask)
-            dem_data[1] = strings_and(ver_master, bit_mask)
-            dem_data[2] = strings_and(
-                ((chr(170) * mtx_size) + dem_data[1]), (dem_data[1] + (chr(170) * mtx_size))
+        best_mask = 0
+        best_score = 0
+        for mask_index in range(8):
+            mask_bit = 1 << mask_index
+            rows = [
+                bytes((matrix_content[x][y] & mask_bit) != 0 for x in range(mtx_size))
+                for y in range(mtx_size)
+            ]
+            cols = [bytes(row[x] for row in rows) for x in range(mtx_size)]
+            lines = rows + cols
+            score = (
+                _mask_penalty_n1(lines)
+                + _mask_penalty_n2(rows)
+                + _mask_penalty_n3(lines)
+                + _mask_penalty_n4(rows, mtx_size * mtx_size)
             )
-            dem_data[3] = strings_or(
-                ((chr(170) * mtx_size) + dem_data[1]), (dem_data[1] + (chr(170) * mtx_size))
-            )
-            dem_data = [string_not(x) for x in dem_data]
-
-            def str_split(x, a):
-                return [x[p : p + a] for p in range(0, len(x), a)]
-
-            dem_data = [chr(170).join(str_split(x, mtx_size)) for x in dem_data]
-
-            dem_data[0] += chr(170) + dem_data[1]
-            demerit_score = self.calc_demerit_score(bit_r, dem_data)
-            if demerit_score <= min_demerit_score or i == 0:
-                mask_number = i
-                min_demerit_score = demerit_score
-        return mask_number
+            if mask_index == 0 or score <= best_score:
+                best_mask = mask_index
+                best_score = score
+        return best_mask
 
 
-def strings_and(str1, str2):
-    """Apply logical 'and' to strings"""
-
-    if len(str1) < len(str2):
-        str1, str2 = str2, str1
-    str2 += "\0" * (len(str1) - len(str2))
-    return "".join([chr(ord(x1) & ord(x2)) for x1, x2 in zip(str1, str2, strict=False)])
-
-
-def strings_or(str1, str2):
-    """Apply logical 'or' to strings"""
-
-    if len(str1) < len(str2):
-        str1, str2 = str2, str1
-    str2 += "\0" * (len(str1) - len(str2))
-    return "".join([chr(ord(x1) | ord(x2)) for x1, x2 in zip(str1, str2, strict=False)])
+# The 1:1:3:1:1 dark/light finder pattern only scores N3 when it has a
+# 4-module light run on at least one side. Both flanks count separately,
+# so a finder flanked on both sides contributes twice. Lookahead so
+# overlapping occurrences are still counted.
+_FINDER_BEFORE = re.compile(b"(?=\x00\x00\x00\x00\x01\x00\x01\x01\x01\x00\x01)")
+_FINDER_AFTER = re.compile(b"(?=\x01\x00\x01\x01\x01\x00\x01\x00\x00\x00\x00)")
+_N1_RUN_RE = re.compile(rb"\x00{5,}|\x01{5,}")
 
 
-def string_not(str1):
-    """Apply logical 'not' to every symbol of string"""
+def _mask_penalty_n1(lines: Iterable[bytes]) -> int:
+    """N1: runs of 5+ same-colour modules in a row or column.
 
-    return "".join([chr(256 + ~ord(x)) for x in str1])
+    Each run of length ``L >= 5`` contributes ``L - 2`` (i.e. 3 + (L - 5)).
+    """
+    score = 0
+    for line in lines:
+        for m in _N1_RUN_RE.finditer(line):
+            score += m.end() - m.start() - 2
+    return score
+
+
+def _mask_penalty_n2(rows: Sequence[bytes]) -> int:
+    """N2: 2x2 blocks of same-colour modules. 3 per block; overlaps count."""
+    score = 0
+    n = len(rows)
+    for y in range(n - 1):
+        top = rows[y]
+        bot = rows[y + 1]
+        for x in range(n - 1):
+            if top[x] == top[x + 1] == bot[x] == bot[x + 1]:
+                score += 3
+    return score
+
+
+def _mask_penalty_n3(lines: Iterable[bytes]) -> int:
+    """N3: 1:1:3:1:1 dark/light pattern flanked by ≥4 light modules in a row or column.
+
+    40 per occurrence; a finder pattern with light runs on both sides counts twice.
+    """
+    score = 0
+    for line in lines:
+        score += len(_FINDER_BEFORE.findall(line)) + len(_FINDER_AFTER.findall(line))
+    return score * 40
+
+
+def _mask_penalty_n4(rows: Iterable[bytes], total_modules: int) -> int:
+    """N4: 10 penalty per 5% deviation of dark-module proportion from 50%."""
+    dark_count = sum(row.count(1) for row in rows)
+    deviation = (dark_count * 100 / total_modules) - 50
+    return abs(int(deviation / 5)) * 10
+
+
+@functools.cache
+def get_matrix_info(version: int, ecl: int) -> MatrixInfo:
+    """Cached :class:`MatrixInfo` constructor.
+
+    The instance is read-only after construction, so a single shared copy per
+    (version, ECL) is safe and avoids re-reading the binary data files.
+    """
+    return MatrixInfo(version, ecl)
