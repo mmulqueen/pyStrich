@@ -1,12 +1,10 @@
 """Text encoder for code39 barcode encoder"""
 
-import logging
+from __future__ import annotations
 
 from pystrich.exceptions import PyStrichInvalidInput
 
 from . import encoding
-
-log = logging.getLogger("code39")
 
 
 class CharacterNotAllowedInCode39(PyStrichInvalidInput):
@@ -15,18 +13,13 @@ class CharacterNotAllowedInCode39(PyStrichInvalidInput):
 
 class TextEncoder:
     """Class which encodes a raw text string into a list of
-    character codes.
-    Adds in character set switch codes, and compresses pairs of
-    digits under character set C"""
+    character codes."""
 
-    def __init__(self):
-        self.digits = ""
-
-    def encode(self, text, full_ascii):
+    def encode(self, text: str, full_ascii: bool) -> list[str]:
         """Encode the given text and return a
         list of character codes"""
 
-        encoded_text = []
+        encoded_text: list[str] = []
 
         # First symbol is always the start code
         encoded_text.append("*")
@@ -35,11 +28,15 @@ class TextEncoder:
         # applications (i.e. where the whole system is controlled by one authority). Otherwise
         # we are limited to a smaller subset.
         if full_ascii:
-            # Ensure the text can be encoded into ASCII first
-            ascii_text = text.encode("ascii")
-            # Convert to Code 39 encodings. This is only for use in closed-loop applications
-            for char in ascii_text:
-                encoded_text.extend(encoding.ascii_ord_to_code39[char])
+            try:
+                ascii_bytes = text.encode("ascii")
+            except UnicodeEncodeError as exc:
+                raise PyStrichInvalidInput(
+                    f"Code 39 full-ASCII mode requires ASCII input; got non-ASCII "
+                    f"character {exc.object[exc.start]!r} at index {exc.start}"
+                ) from exc
+            for byte in ascii_bytes:
+                encoded_text.extend(encoding.ascii_to_code39[byte])
         else:
             allowed_chars = encoding.code39_encodings.keys()
             for char in text:
@@ -57,13 +54,11 @@ class TextEncoder:
         return encoded_text
 
     @staticmethod
-    def get_bars(encoded_text):
+    def get_bars(encoded_text: list[str]) -> str:
         """Return the bar encoding (a string of ones and zeroes)
         representing the given encoded text."""
 
-        bars = []
-        for char in encoded_text:
-            bars.append(encoding.code39_encodings[char])
+        bars = [encoding.code39_encodings[char] for char in encoded_text]
 
         # Join the characters, leaving a wide gap between
         return "0".join(bars)

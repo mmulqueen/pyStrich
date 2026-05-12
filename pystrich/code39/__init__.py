@@ -44,7 +44,7 @@ class Code39Encoder(Bar1DEncoder):
 
     options: BarcodeRenderOptions
     text: str
-    encoded_text: list[int]
+    encoded_text: list[str]
     bars: str
 
     def __init__(

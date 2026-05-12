@@ -13,6 +13,14 @@ Changelog
   the Data Matrix module.
 - Data Matrix: ``TextEncoder.encode()`` returns ``list[int]`` instead of
   a ``str`` of ``chr()``-packed bytes.
+- Code 128: unencodable characters now raise
+  :class:`~pystrich.exceptions.PyStrichInvalidInput` instead of being
+  logged and failing later with ``KeyError``.
+- Code 39: non-ASCII input under ``full_ascii=True`` now raises
+  :class:`~pystrich.exceptions.PyStrichInvalidInput` instead of an
+  unwrapped ``UnicodeEncodeError``.
+- Typing: the entire ``pystrich`` package is now checked with mypy;
+  the remaining per-module ``ignore_errors`` overrides have been removed.
 
 0.12 — 2026-05-09
 -----------------

@@ -2,146 +2,144 @@
 
 Source: MIL-STD-1189B, via: http://quicksearch.dla.mil/qsDocDetails.aspx?ident_number=36123"""
 
-# Code39 encoding is deliberately represented in strings instead of bytestrings for ease of
-# iteration.
+from __future__ import annotations
 
-# MIL-STD-1189B, page 21, Table VI
-ascii_to_code39 = {
-    b"\x00": "%U",  # NUL
-    b"\x01": "$A",  # SOH
-    b"\x02": "$B",  # STX
-    b"\x03": "$C",  # ETX
-    b"\x04": "$D",  # EOT
-    b"\x05": "$E",  # ENQ
-    b"\x06": "$F",  # ACK
-    b"\x07": "$G",  # BEL
-    b"\x08": "$H",  # BS
-    b"\x09": "$I",  # HT
-    b"\x0a": "$J",  # LF
-    b"\x0b": "$K",  # VT
-    b"\x0c": "$L",  # FF
-    b"\x0d": "$M",  # CR
-    b"\x0e": "$N",  # SO
-    b"\x0f": "$O",  # SI
-    b"\x10": "$P",  # DLE
-    b"\x11": "$Q",  # DC1
-    b"\x12": "$R",  # DC2
-    b"\x13": "$S",  # DC3
-    b"\x14": "$T",  # DC4
-    b"\x15": "$U",  # NAK
-    b"\x16": "$V",  # SYN
-    b"\x17": "$W",  # ETB
-    b"\x18": "$X",  # CAN
-    b"\x19": "$Y",  # EM
-    b"\x1a": "$Z",  # SUB
-    b"\x1b": "%A",  # ESC
-    b"\x1c": "%B",  # FS
-    b"\x1d": "%C",  # GS
-    b"\x1e": "%D",  # RS
-    b"\x1f": "%E",  # US
-    b" ": " ",  # Space
-    b"!": "/A",
-    b'"': "/B",
-    b"#": "/C",
-    b"$": "/D",
-    b"%": "/E",
-    b"&": "/F",
-    b"'": "/G",
-    b"(": "/H",
-    b")": "/I",
-    b"*": "/J",
-    b"+": "/K",
-    b",": "/L",
-    b"-": "-",
-    b".": ".",
-    b"/": "/O",
-    b"0": "0",
-    b"1": "1",
-    b"2": "2",
-    b"3": "3",
-    b"4": "4",
-    b"5": "5",
-    b"6": "6",
-    b"7": "7",
-    b"8": "8",
-    b"9": "9",
-    b":": "/Z",
-    b";": "%F",
-    b"<": "%G",
-    b"=": "%H",
-    b">": "%I",
-    b"?": "%J",
-    b"@": "%V",
-    b"A": "A",
-    b"B": "B",
-    b"C": "C",
-    b"D": "D",
-    b"E": "E",
-    b"F": "F",
-    b"G": "G",
-    b"H": "H",
-    b"I": "I",
-    b"J": "J",
-    b"K": "K",
-    b"L": "L",
-    b"M": "M",
-    b"N": "N",
-    b"O": "O",
-    b"P": "P",
-    b"Q": "Q",
-    b"R": "R",
-    b"S": "S",
-    b"T": "T",
-    b"U": "U",
-    b"V": "V",
-    b"W": "W",
-    b"X": "X",
-    b"Y": "Y",
-    b"Z": "Z",
-    b"[": "%K",
-    b"\\": "%L",
-    b"]": "%M",
-    b"^": "%N",
-    b"_": "%O",
-    b"`": "%W",
-    b"a": "+A",
-    b"b": "+B",
-    b"c": "+C",
-    b"d": "+D",
-    b"e": "+E",
-    b"f": "+F",
-    b"g": "+G",
-    b"h": "+H",
-    b"i": "+I",
-    b"j": "+J",
-    b"k": "+K",
-    b"l": "+L",
-    b"m": "+M",
-    b"n": "+N",
-    b"o": "+O",
-    b"p": "+P",
-    b"q": "+Q",
-    b"r": "+R",
-    b"s": "+S",
-    b"t": "+T",
-    b"u": "+U",
-    b"v": "+V",
-    b"w": "+W",
-    b"x": "+X",
-    b"y": "+Y",
-    b"z": "+Z",
-    b"{": "%P",
-    b"|": "%Q",
-    b"}": "%R",
-    b"~": "%S",
-    b"\x7f": "%T",  # DEL
+# MIL-STD-1189B, page 21, Table VI -- maps each ASCII byte (0-127) to its
+# Code 39 representation (one or two symbols from the restricted set).
+ascii_to_code39: dict[int, str] = {
+    0x00: "%U",  # NUL
+    0x01: "$A",  # SOH
+    0x02: "$B",  # STX
+    0x03: "$C",  # ETX
+    0x04: "$D",  # EOT
+    0x05: "$E",  # ENQ
+    0x06: "$F",  # ACK
+    0x07: "$G",  # BEL
+    0x08: "$H",  # BS
+    0x09: "$I",  # HT
+    0x0A: "$J",  # LF
+    0x0B: "$K",  # VT
+    0x0C: "$L",  # FF
+    0x0D: "$M",  # CR
+    0x0E: "$N",  # SO
+    0x0F: "$O",  # SI
+    0x10: "$P",  # DLE
+    0x11: "$Q",  # DC1
+    0x12: "$R",  # DC2
+    0x13: "$S",  # DC3
+    0x14: "$T",  # DC4
+    0x15: "$U",  # NAK
+    0x16: "$V",  # SYN
+    0x17: "$W",  # ETB
+    0x18: "$X",  # CAN
+    0x19: "$Y",  # EM
+    0x1A: "$Z",  # SUB
+    0x1B: "%A",  # ESC
+    0x1C: "%B",  # FS
+    0x1D: "%C",  # GS
+    0x1E: "%D",  # RS
+    0x1F: "%E",  # US
+    0x20: " ",  # Space
+    0x21: "/A",  # !
+    0x22: "/B",  # "
+    0x23: "/C",  # #
+    0x24: "/D",  # $
+    0x25: "/E",  # %
+    0x26: "/F",  # &
+    0x27: "/G",  # '
+    0x28: "/H",  # (
+    0x29: "/I",  # )
+    0x2A: "/J",  # *
+    0x2B: "/K",  # +
+    0x2C: "/L",  # ,
+    0x2D: "-",  # -
+    0x2E: ".",  # .
+    0x2F: "/O",  # /
+    0x30: "0",
+    0x31: "1",
+    0x32: "2",
+    0x33: "3",
+    0x34: "4",
+    0x35: "5",
+    0x36: "6",
+    0x37: "7",
+    0x38: "8",
+    0x39: "9",
+    0x3A: "/Z",  # :
+    0x3B: "%F",  # ;
+    0x3C: "%G",  # <
+    0x3D: "%H",  # =
+    0x3E: "%I",  # >
+    0x3F: "%J",  # ?
+    0x40: "%V",  # @
+    0x41: "A",
+    0x42: "B",
+    0x43: "C",
+    0x44: "D",
+    0x45: "E",
+    0x46: "F",
+    0x47: "G",
+    0x48: "H",
+    0x49: "I",
+    0x4A: "J",
+    0x4B: "K",
+    0x4C: "L",
+    0x4D: "M",
+    0x4E: "N",
+    0x4F: "O",
+    0x50: "P",
+    0x51: "Q",
+    0x52: "R",
+    0x53: "S",
+    0x54: "T",
+    0x55: "U",
+    0x56: "V",
+    0x57: "W",
+    0x58: "X",
+    0x59: "Y",
+    0x5A: "Z",
+    0x5B: "%K",  # [
+    0x5C: "%L",  # \
+    0x5D: "%M",  # ]
+    0x5E: "%N",  # ^
+    0x5F: "%O",  # _
+    0x60: "%W",  # `
+    0x61: "+A",  # a
+    0x62: "+B",
+    0x63: "+C",
+    0x64: "+D",
+    0x65: "+E",
+    0x66: "+F",
+    0x67: "+G",
+    0x68: "+H",
+    0x69: "+I",
+    0x6A: "+J",
+    0x6B: "+K",
+    0x6C: "+L",
+    0x6D: "+M",
+    0x6E: "+N",
+    0x6F: "+O",
+    0x70: "+P",
+    0x71: "+Q",
+    0x72: "+R",
+    0x73: "+S",
+    0x74: "+T",
+    0x75: "+U",
+    0x76: "+V",
+    0x77: "+W",
+    0x78: "+X",
+    0x79: "+Y",
+    0x7A: "+Z",  # z
+    0x7B: "%P",  # {
+    0x7C: "%Q",  # |
+    0x7D: "%R",  # }
+    0x7E: "%S",  # ~
+    0x7F: "%T",  # DEL
 }
-
-ascii_ord_to_code39 = {ord(k): v for k, v in ascii_to_code39.items()}
 
 # MIL-STD-1189B, page 8
 # 1 represents a wide bar/gap, 0 represents a narrow bar/gap
-code39_bars_and_gaps = {
+code39_bars_and_gaps: dict[str, tuple[str, str]] = {
     # symbol: (bars, gaps)
     # Numbers
     "1": ("10001", "0100"),
@@ -192,13 +190,13 @@ code39_bars_and_gaps = {
 }
 
 
-def build_code39_encodings():
+def build_code39_encodings() -> dict[str, str]:
     """Change representations so that 1 represents a narrow bar and 0 represents a narrow gap.
     # (11 = wide bar, 00 = wide gap)"""
-    encodings = {}
+    encodings: dict[str, str] = {}
     for symbol, bars_and_gaps in code39_bars_and_gaps.items():
         bars, gaps = bars_and_gaps
-        new_seq = []
+        new_seq: list[str] = []
         for i in range(5):
             if bars[i] == "0":
                 new_seq.extend("1")
@@ -215,4 +213,4 @@ def build_code39_encodings():
     return encodings
 
 
-code39_encodings = build_code39_encodings()
+code39_encodings: dict[str, str] = build_code39_encodings()

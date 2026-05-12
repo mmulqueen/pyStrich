@@ -116,6 +116,7 @@ class Code128Renderer(Bar1DRenderer):
 
         if show_label:
             ttf_font = self.options.get("ttf_font")
+            font: ImageFont.ImageFont | ImageFont.FreeTypeFont
             if ttf_font:
                 font = ImageFont.truetype(ttf_font, fontsize)
             else:

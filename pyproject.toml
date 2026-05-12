@@ -96,20 +96,4 @@ select = [
 [tool.mypy]
 files = ["pystrich"]
 python_version = "3.10"
-exclude = [
-    "(^|/)test_[^/]+\\.py$",
-    "(^|/)generate_test\\.py$",
-    "(^|/)conftest\\.py$",
-]
 
-# Internals not yet typed; enable case by case as they're cleaned up.
-[[tool.mypy.overrides]]
-module = [
-    "pystrich.code128.encoding",
-    "pystrich.code128.textencoder",
-    "pystrich.code39.encoding",
-    "pystrich.code39.textencoder",
-    "pystrich.ean13.encoding",
-    "pystrich.fonts",
-]
-ignore_errors = true

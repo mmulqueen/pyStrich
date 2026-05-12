@@ -1,5 +1,7 @@
 """Encoding tables and functions for EAN-13 barcode"""
 
+from __future__ import annotations
+
 from pystrich.exceptions import PyStrichError
 
 #
@@ -10,7 +12,7 @@ from pystrich.exceptions import PyStrichError
 # 0 = even
 # 1 = odd
 #
-parity_table = {
+parity_table: dict[int, tuple[int, int, int, int, int, int]] = {
     0: (1, 1, 1, 1, 1, 1),
     1: (1, 1, 0, 1, 0, 0),
     2: (1, 1, 0, 0, 1, 0),
@@ -31,7 +33,7 @@ parity_table = {
 # Left hand side, even parity
 # Right hand side (all characters)
 #
-encoding_table = {
+encoding_table: dict[int, tuple[str, str, str]] = {
     0: ("0001101", "0100111", "1110010"),
     1: ("0011001", "0110011", "1100110"),
     2: ("0010011", "0011011", "1101100"),
@@ -45,22 +47,20 @@ encoding_table = {
 }
 
 
-def get_left_encoded(digit, parity):
+def get_left_encoded(digit: int, parity: int) -> str:
     """Get the left hand encoding of the given digit, under
     the given parity (0=even or 1=odd)"""
 
     if parity not in (0, 1):
         raise PyStrichError(f"Invalid parity '{parity}'")
-    elif digit not in list(range(0, 10)):
+    if digit not in range(10):
         raise PyStrichError(f"Invalid digit '{digit}'")
-    else:
-        return encoding_table[digit][1 - parity]
+    return encoding_table[digit][1 - parity]
 
 
-def get_right_encoded(digit):
+def get_right_encoded(digit: int) -> str:
     """Get the right hand encoding of the given digit"""
 
-    if digit not in list(range(0, 10)):
+    if digit not in range(10):
         raise PyStrichError(f"Invalid digit '{digit}'")
-    else:
-        return encoding_table[digit][2]
+    return encoding_table[digit][2]

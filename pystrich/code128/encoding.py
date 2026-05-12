@@ -1,7 +1,9 @@
 """Encoding data tables for code128 barcode encoder"""
 
+from __future__ import annotations
+
 # fmt: off
-charset_a = {
+charset_a: dict[str, int] = {
     ' ': 0, '!': 1, '"': 2, '#': 3,
     '$': 4, '%': 5, '&': 6, '\'': 7,
     '(': 8, ')': 9, '*': 10, '+': 11,
@@ -30,7 +32,7 @@ charset_a = {
     'TO_B': 100, '\xf4': 101, '\xf1': 102
 }
 
-charset_b = {
+charset_b: dict[str, int] = {
     ' ': 0, '!': 1, '"': 2, '#': 3,
     '$': 4, '%': 5, '&': 6, '\'': 7,
     '(': 8, ')': 9, '*': 10, '+': 11,
@@ -61,9 +63,9 @@ charset_b = {
 # fmt: on
 
 
-charset_c = {"TO_B": 100, "TO_A": 101, "\xf1": 102}
+charset_c: dict[str, int] = {"TO_B": 100, "TO_A": 101, "\xf1": 102}
 
-encodings = {
+encodings: dict[int, str] = {
     0: "11011001100",
     1: "11001101100",
     2: "11001100110",
