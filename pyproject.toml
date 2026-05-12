@@ -113,7 +113,5 @@ module = [
     "pystrich.datamatrix.textencoder",
     "pystrich.ean13.encoding",
     "pystrich.fonts",
-    "pystrich.qrcode.isodata",
-    "pystrich.qrcode.textencoder",
 ]
 ignore_errors = true

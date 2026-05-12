@@ -1,5 +1,7 @@
 """Text encoder for QR Code encoder"""
 
+from __future__ import annotations
+
 import logging
 
 from pystrich.bitstream import BitStream
@@ -7,37 +9,47 @@ from pystrich.exceptions import PyStrichInvalidInput
 from pystrich.reedsolomon import GF256_0x11D, reed_solomon_encode
 
 from . import isodata
-from .data import QRCodeData
+from .data import QRCodeData, QRCodeEncoding
 
 LOG = logging.getLogger("qrcode")
 
-STR2ECL = {"L": 1, "l": 1, "M": 0, "m": 0, "Q": 3, "q": 3, "H": 2, "h": 2}
+STR2ECL: dict[str, int] = {"L": 1, "l": 1, "M": 0, "m": 0, "Q": 3, "q": 3, "H": 2, "h": 2}
 
 # The spec defaults byte mode to ISO-8859-1 with no ECI, but real
 # decoders disagree (some apply Shift-JIS heuristics on high bytes).
 # Emit ECI 3 explicitly for Latin-1 to remove the ambiguity. Pure ASCII
 # is safe everywhere with no ECI; UTF-8 needs ECI 26.
-_ECI_DESIGNATOR = {"ascii": None, "iso-8859-1": 3, "utf-8": 26}
+_ECI_DESIGNATOR: dict[QRCodeEncoding, int | None] = {
+    "ascii": None,
+    "iso-8859-1": 3,
+    "utf-8": 26,
+}
 
 
 class TextEncoder:
     """Text encoder class for QR Code"""
 
-    def __init__(self):
+    version: int
+    ecl: int
+    codewords: list[int]
+    matrix: list[list[int]]
+    mtx_size: int
+    minfo: isodata.MatrixInfo
+    max_data_codewords: int
 
-        self.version = None
-        self.ecl = None
+    def __init__(self) -> None:
+        self.version = 0
+        self.ecl = 0
         self.codewords = []
-        self.matrix = None
+        self.matrix = []
         self.mtx_size = 0
-        self.minfo = None
-        self.max_data_codewords = None
+        self.max_data_codewords = 0
 
-    def encode(self, data, ecl=None):
+    def encode(self, data: QRCodeData, ecl: str | None = None) -> list[list[int]]:
         """Encode the given data and add padding and error codes
         also set up the correct matrix size for the resulting codewords"""
 
-        self.__init__()
+        self.codewords = []
         if ecl is None:
             ecl = "M"
         self.ecl = STR2ECL[ecl]
@@ -56,7 +68,7 @@ class TextEncoder:
 
         return self.matrix
 
-    def encode_text(self, data: QRCodeData):
+    def encode_text(self, data: QRCodeData) -> None:
         """Encode the given QRCodeData into bitstream"""
 
         encoded = "".join(data.segments).encode(data.encoding)
@@ -112,7 +124,7 @@ class TextEncoder:
         if bit_num != 7:
             self.codewords.append(byte)
 
-    def pad(self):
+    def pad(self) -> None:
         """Pad out the encoded text to the correct word length"""
 
         pads = [236, 17]
@@ -121,14 +133,14 @@ class TextEncoder:
             self.codewords.append(pads[pad_idx])
             pad_idx = 1 - pad_idx
 
-    def append_error_codes(self):
+    def append_error_codes(self) -> None:
         """Calculate the necessary number of error codes for the encoded
         text and padding codewords, and append to the codeword buffer"""
 
         i = 0
         j = 0
         rs_block_number = 0
-        rs_temp = [[]]
+        rs_temp: list[list[int]] = [[]]
         while i < self.max_data_codewords:
             rs_temp[rs_block_number].append(self.codewords[i])
 
@@ -145,7 +157,7 @@ class TextEncoder:
             )
             self.codewords += ec
 
-    def create_matrix(self):
+    def create_matrix(self) -> None:
         """Create QR Code matrix"""
 
         matrix_content = self.minfo.create_matrix(self.version, self.codewords)

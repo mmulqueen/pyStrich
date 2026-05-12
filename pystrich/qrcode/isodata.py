@@ -1,5 +1,7 @@
 """ISO/IEC 18004:2006 tables and functions implementation"""
 
+from __future__ import annotations
+
 import functools
 import re
 from collections.abc import Iterable, Sequence
@@ -10,7 +12,7 @@ from pystrich.exceptions import PyStrichError
 _DATA_DIR = Path(__file__).parent / "qrcode_data"
 
 # fmt: off
-MAX_DATA_BITS = [
+MAX_DATA_BITS: list[int] = [
     128, 224, 352, 512, 688, 864, 992, 1232, 1456, 1728,
     2032, 2320, 2672, 2920, 3320, 3624, 4056, 4504, 5016, 5352,
     5712, 6256, 6880, 7312, 8000, 8496, 9024, 9544, 10136, 10984,
@@ -32,14 +34,14 @@ MAX_DATA_BITS = [
     8264, 8920, 9368, 9848, 10288, 10832, 11408, 12016, 12656, 13328]
 
 
-MAX_CODEWORDS = [
+MAX_CODEWORDS: list[int] = [
     0, 26, 44, 70, 100, 134, 172, 196, 242,
     292, 346, 404, 466, 532, 581, 655, 733, 815, 901, 991, 1085, 1156,
     1258, 1364, 1474, 1588, 1706, 1828, 1921, 2051, 2185, 2323, 2465,
     2611, 2761, 2876, 3034, 3196, 3362, 3532, 3706]
 
 
-MATRIX_REMAIN_BIT = [0, 0, 7, 7, 7, 7, 7, 0,
+MATRIX_REMAIN_BIT: list[int] = [0, 0, 7, 7, 7, 7, 7, 0,
                      0, 0, 0, 0, 0, 0, 3, 3,
                      3, 3, 3, 3, 3, 4, 4, 4,
                      4, 4, 4, 4, 3, 3, 3, 3,
@@ -51,7 +53,14 @@ class MatrixInfo:
     """Provides QR Code version and Error Correction Level
     dependent information necessary for creating matrix"""
 
-    def __init__(self, version, ecl):
+    byte_num: int
+    matrix_d: list[list[int]]
+    format_info: list[list[int]]
+    rs_ecc_codewords: int
+    rs_block_order: list[int]
+    frame_data: list[list[int]]
+
+    def __init__(self, version: int, ecl: int) -> None:
         self.byte_num = MATRIX_REMAIN_BIT[version] + (MAX_CODEWORDS[version] << 3)
 
         with (_DATA_DIR / f"qrv{version}_{ecl}.dat").open("rb") as f:
@@ -67,7 +76,7 @@ class MatrixInfo:
         with (_DATA_DIR / f"qrvfr{version}.dat").open(encoding="ascii") as f:
             self.frame_data = []
             for line in f.read().splitlines():
-                frame_line = []
+                frame_line: list[int] = []
                 for char in line:
                     if char == "1":
                         frame_line.append(1)
@@ -77,11 +86,11 @@ class MatrixInfo:
                         raise PyStrichError(f"Corrupted frame data file, found char: {char}")
                 self.frame_data.append(frame_line)
 
-    def create_matrix(self, version, codewords):
+    def create_matrix(self, version: int, codewords: Sequence[int]) -> list[list[int]]:
         """Create matrix based on version and fills it w/ codewords"""
 
         mtx_size = 17 + (version << 2)
-        matrix = [[0 for i in range(mtx_size)] for j in range(mtx_size)]
+        matrix: list[list[int]] = [[0 for _ in range(mtx_size)] for _ in range(mtx_size)]
 
         max_codewords = MAX_CODEWORDS[version]
         i = 0
@@ -106,7 +115,7 @@ class MatrixInfo:
             matrix[pos_x][pos_y] = 255 ^ mask
         return matrix
 
-    def put_format_info(self, matrix, format_info_value):
+    def put_format_info(self, matrix: list[list[int]], format_info_value: int) -> None:
         """Put format information into the matrix"""
 
         # fmt: off
@@ -135,11 +144,11 @@ class MatrixInfo:
             matrix[format_info_x1[i]][format_info_y1[i]] = content
             matrix[self.format_info[0][i]][self.format_info[1][i]] = content
 
-    def finalize(self, matrix_content, mask_content):
+    def finalize(self, matrix_content: list[list[int]], mask_content: int) -> list[list[int]]:
         """Create final matrix and put frame data into it"""
 
         mtx_size = len(matrix_content)
-        matrix = [[0 for i in range(mtx_size)] for j in range(mtx_size)]
+        matrix: list[list[int]] = [[0 for _ in range(mtx_size)] for _ in range(mtx_size)]
 
         for i in range(mtx_size):
             for j in range(mtx_size):
@@ -149,7 +158,7 @@ class MatrixInfo:
                     matrix[i][j] = self.frame_data[i][j]
         return matrix
 
-    def calc_mask_number(self, matrix_content):
+    def calc_mask_number(self, matrix_content: list[list[int]]) -> int:
         """Pick the data mask that minimises the ISO 18004 penalty score.
 
         ``matrix_content`` is the per-mask packed matrix from
