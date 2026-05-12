@@ -1,19 +1,25 @@
 """Matrix placement for 2D datamatrix barcode encoder"""
 
-__revision__ = "$Rev$"
+from __future__ import annotations
+
+from collections.abc import Sequence
 
 
 class DataMatrixPlacer:
     """Class which takes care of placing codewords in the correct position
     in the 2D datamatrix"""
 
-    def __init__(self):
-        """Initialize with an empty matrix"""
-        self.matrix = None
+    matrix: list[list[int | None]]
+    rows: int
+    cols: int
+
+    def __init__(self) -> None:
+        """Initialise with an empty matrix"""
+        self.matrix = []
         self.rows = 0
         self.cols = 0
 
-    def place_bit(self, position, bit):
+    def place_bit(self, position: tuple[int, int], bit: int) -> None:
         """Place bit in the correct location in the matrix"""
 
         posx, posy = position
@@ -29,7 +35,7 @@ class DataMatrixPlacer:
 
         self.matrix[posx][posy] = bit
 
-    def place_special_1(self, codeword):
+    def place_special_1(self, codeword: int) -> None:
         """Special corner case 1
         bottom left corner: |1|2|3|
 
@@ -47,7 +53,7 @@ class DataMatrixPlacer:
         self.place_bit((2, self.cols - 1), (codeword & (0x01 << 1)) >> 1)
         self.place_bit((3, self.cols - 1), codeword & 0x01)
 
-    def place_special_2(self, codeword):
+    def place_special_2(self, codeword: int) -> None:
         """Special corner case 2
         bottom left corner: |1|
                             |2|
@@ -65,7 +71,7 @@ class DataMatrixPlacer:
         self.place_bit((0, self.cols - 1), (codeword & (0x01 << 1)) >> 1)
         self.place_bit((1, self.cols - 1), codeword & 0x01)
 
-    def place_special_3(self, codeword):
+    def place_special_3(self, codeword: int) -> None:
         """Special corner case 3
         bottom left corner: |1|
                             |2|
@@ -85,7 +91,7 @@ class DataMatrixPlacer:
         self.place_bit((2, self.cols - 1), (codeword & (0x01 << 1)) >> 1)
         self.place_bit((3, self.cols - 1), codeword & 0x01)
 
-    def place_special_4(self, codeword):
+    def place_special_4(self, codeword: int) -> None:
         """Special corner case 4
         bottom left corner: |1|
 
@@ -103,7 +109,7 @@ class DataMatrixPlacer:
         self.place_bit((1, self.cols - 2), (codeword & (0x01 << 1)) >> 1)
         self.place_bit((1, self.cols - 1), codeword & 0x01)
 
-    def place_standard_shape(self, position, codeword):
+    def place_standard_shape(self, position: tuple[int, int], codeword: int) -> None:
         """Standard codeword placement
         |1|2|
         |3|4|5|
@@ -121,7 +127,7 @@ class DataMatrixPlacer:
             self.place_bit((posx, posy - 1), (codeword & (0x01 << 1)) >> 1)
             self.place_bit((posx, posy - 0), (codeword & 0x01))
 
-    def place(self, codewords, matrix):
+    def place(self, codewords: Sequence[int], matrix: list[list[int | None]]) -> None:
         """Place all the given codewords into the given matrix
         Matrix should be correctly pre-sized"""
 
@@ -131,7 +137,7 @@ class DataMatrixPlacer:
 
         row, col = 4, 0
 
-        cw_list = [ord(codeword) for codeword in codewords]
+        cw_list = list(codewords)
 
         while True:
             # Special corner cases
@@ -179,7 +185,7 @@ class DataMatrixPlacer:
                 break
 
         # Fill in any remaining Nones
-        for row in self.matrix:
-            for i in range(len(row)):
-                if row[i] is None:
-                    row[i] = 0
+        for matrix_row in self.matrix:
+            for i in range(len(matrix_row)):
+                if matrix_row[i] is None:
+                    matrix_row[i] = 0

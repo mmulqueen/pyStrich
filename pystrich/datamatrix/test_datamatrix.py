@@ -233,7 +233,7 @@ def test_dxf_round_trip(string, wrap, inverse, tmp_path, dxf_to_svg, svg_to_png,
 )
 def test_encoding(text, wrap, expected_codewords):
     enc = TextEncoder()
-    assert [ord(c) for c in enc.encode(wrap(text))] == expected_codewords
+    assert enc.encode(wrap(text)) == expected_codewords
 
 
 @pytest.mark.parametrize(
@@ -461,7 +461,7 @@ def test_fnc1_workaround_compat(text, expected_segments, expected_warning_cls):
 def test_encoding_latin1_upper_shift():
     """Latin-1 chars >127 emit codeword 235 (Upper Shift) followed by the offset char."""
     enc = TextEncoder()
-    codewords = [ord(c) for c in enc.encode(DataMatrixData("café", encoding="iso-8859-1"))]
+    codewords = enc.encode(DataMatrixData("café", encoding="iso-8859-1"))
     # 'c'->100, 'a'->98, 'f'->103, 'é' (ord 233) -> 235 then chr(105)+1 = 106
     assert codewords[:5] == [100, 98, 103, 235, 106]
 
@@ -470,7 +470,7 @@ def test_compat_does_not_emit_upper_shift():
     """Compat-mode latin-1 chars keep the legacy +1 offset (broken), no Upper Shift gating."""
     enc = TextEncoder()
     with pytest.warns(DataMatrixNonAsciiWarning):
-        codewords = [ord(c) for c in enc.encode("café")]
+        codewords = enc.encode("café")
     # 'é' under compat falls through append_ascii_char -> chr(234), no leading 235.
     assert codewords[:4] == [100, 98, 103, 234]
 
@@ -506,14 +506,14 @@ def test_datamatrix_data_raises_on_non_latin1_in_latin1(text):
 def test_encoding_utf8_eci_prefix():
     """UTF-8 mode emits the ECI 26 prefix (codewords 241, 27) once at the start."""
     enc = TextEncoder()
-    codewords = [ord(c) for c in enc.encode(DataMatrixData("hi", encoding="utf-8"))]
+    codewords = enc.encode(DataMatrixData("hi", encoding="utf-8"))
     assert codewords[:2] == [241, 27]
 
 
 def test_encoding_utf8_byte_iteration():
     """Each UTF-8 byte > 127 emits Upper Shift; ASCII bytes pass through unchanged."""
     enc = TextEncoder()
-    codewords = [ord(c) for c in enc.encode(DataMatrixData("é", encoding="utf-8"))]
+    codewords = enc.encode(DataMatrixData("é", encoding="utf-8"))
     # 'é' UTF-8 -> bytes 0xC3, 0xA9.
     # 0xC3 (195) -> 235, (195-128)+1 = 68; 0xA9 (169) -> 235, (169-128)+1 = 42.
     assert codewords[:6] == [241, 27, 235, 68, 235, 42]

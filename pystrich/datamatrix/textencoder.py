@@ -1,36 +1,34 @@
 """Text encoder for 2D datamatrix barcode encoder"""
 
-__revision__ = "$Rev$"
+from __future__ import annotations
 
-import logging
+from collections.abc import Iterable
 
 from pystrich.exceptions import PyStrichInvalidInput
 from pystrich.reedsolomon import GF256_0x12D, reed_solomon_encode
 
 from .data import DataMatrixCodeword, DataMatrixData, fnc1_workaround_compat
 
-log = logging.getLogger("datamatrix")
-
 # fmt: off
-data_word_length = (3, 5, 8, 12, 18, 22, 30, 36, 44,
-                    62, 86, 114, 144, 174, 204,
-                    280, 368, 456, 576, 696, 816,
-                    1050, 1304, 1558)
+data_word_length: tuple[int, ...] = (3, 5, 8, 12, 18, 22, 30, 36, 44,
+                                     62, 86, 114, 144, 174, 204,
+                                     280, 368, 456, 576, 696, 816,
+                                     1050, 1304, 1558)
 
-error_word_length = (5, 7, 10, 12, 14, 18, 20, 24, 28,
-                     36, 42, 48, 56, 68, 84,
-                     112, 144, 192, 224, 272, 336,
-                     408, 496, 620)
+error_word_length: tuple[int, ...] = (5, 7, 10, 12, 14, 18, 20, 24, 28,
+                                      36, 42, 48, 56, 68, 84,
+                                      112, 144, 192, 224, 272, 336,
+                                      408, 496, 620)
 
-data_region_size = (8, 10, 12, 14, 16, 18, 20, 22, 24,
-                    14, 16, 18, 20, 22, 24,
-                    14, 16, 18, 20, 22, 24,
-                    18, 20, 22)
+data_region_size: tuple[int, ...] = (8, 10, 12, 14, 16, 18, 20, 22, 24,
+                                     14, 16, 18, 20, 22, 24,
+                                     14, 16, 18, 20, 22, 24,
+                                     18, 20, 22)
 
-hv_regions = (1, 1, 1, 1, 1, 1, 1, 1, 1,
-              2, 2, 2, 2, 2, 2,
-              4, 4, 4, 4, 4, 4,
-              6, 6, 6)
+hv_regions: tuple[int, ...] = (1, 1, 1, 1, 1, 1, 1, 1, 1,
+                               2, 2, 2, 2, 2, 2,
+                               4, 4, 4, 4, 4, 4,
+                               6, 6, 6)
 # fmt: on
 
 
@@ -41,17 +39,22 @@ class DataTooLongForImplementation(PyStrichInvalidInput):
 class TextEncoder:
     """Text encoder class for 2D datamatrix"""
 
-    def __init__(self):
-        self.codewords = ""
-        self.size_index = None
-        self.mtx_size = 0
-        self.regions = None
+    codewords: list[int]
+    size_index: int
+    mtx_size: int
+    regions: int
 
-    def encode(self, text):
+    def __init__(self) -> None:
+        self.codewords = []
+        self.size_index = 0
+        self.mtx_size = 0
+        self.regions = 0
+
+    def encode(self, text: DataMatrixData | str) -> list[int]:
         """Encode the given text and add padding and error codes
         also set up the correct matrix size for the resulting codewords"""
 
-        self.__init__()
+        self.codewords = []
 
         self.encode_text(text)
 
@@ -59,16 +62,12 @@ class TextEncoder:
 
         self.append_error_codes()
 
-        log.debug("Codewords: " + " ".join([str(ord(codeword)) for codeword in self.codewords]))
-
         self.mtx_size = data_region_size[self.size_index]
         self.regions = hv_regions[self.size_index]
 
-        log.debug("Matrix size will be %d", self.mtx_size)
-
         return self.codewords
 
-    def encode_text(self, text):
+    def encode_text(self, text: DataMatrixData | str) -> None:
         """Encode the given text into codewords"""
 
         data = text if isinstance(text, DataMatrixData) else fnc1_workaround_compat(text)
@@ -81,12 +80,12 @@ class TextEncoder:
 
         numbuf = ""
 
-        def flush_numbuf():
+        def flush_numbuf() -> None:
             nonlocal numbuf
             if len(numbuf) == 2:
                 self.append_digits(numbuf)
             elif numbuf:
-                self.append_ascii_char(numbuf)
+                self.append_byte(ord(numbuf))
             numbuf = ""
 
         for segment in data.segments:
@@ -95,31 +94,32 @@ class TextEncoder:
                 self.append_codeword(segment.value)
                 continue
 
-            # For UTF-8 we work over the byte sequence (each byte rendered as a
-            # 1-char string); for everything else, iterate the codepoints directly.
-            chars = (
-                (chr(b) for b in segment.encode("utf-8")) if data.encoding == "utf-8" else segment
+            # Compat mode tolerates codepoints outside its nominal ASCII charset,
+            # so .encode() would raise; everything else maps cleanly to bytes.
+            byte_iter: Iterable[int] = (
+                map(ord, segment) if data.encoding == "compat" else segment.encode(data.encoding)
             )
 
-            for char in chars:
-                if data.encoding in ("iso-8859-1", "utf-8") and ord(char) > 127:
-                    flush_numbuf()
-                    self.append_upper_shift_byte(ord(char))
-                elif "0" <= char <= "9":
-                    numbuf += char
+            for byte in byte_iter:
+                if 0x30 <= byte <= 0x39:  # ASCII '0'-'9'
+                    numbuf += chr(byte)
                     if len(numbuf) == 2:
                         flush_numbuf()
+                    continue
+                flush_numbuf()
+                if data.encoding == "compat":
+                    # Legacy +1 offset preserved for backwards compat: emits
+                    # codewords > 255 for non-ASCII input (broken on purpose).
+                    self.append_codeword(byte + 1)
                 else:
-                    flush_numbuf()
-                    self.append_ascii_char(char)
+                    self.append_byte(byte)
 
         flush_numbuf()
 
-    def pad(self):
+    def pad(self) -> None:
         """Pad out the encoded text to the correct word length"""
 
         unpadded_len = len(self.codewords)
-        log.debug("Unpadded data size:   %d bytes", unpadded_len)
 
         # Work out how big the matrix needs to be
         for self.size_index, length in enumerate(data_word_length):
@@ -135,13 +135,11 @@ class TextEncoder:
         # Number of characters with which the data will be padded
         padsize = length - unpadded_len
 
-        log.debug("Pad size: %d bytes", padsize)
-
         # First pad character is 129
         if padsize:
             self.append_codeword(129)
 
-        def rand253(pos):
+        def rand253(pos: int) -> int:
             """generate the next padding character"""
             rnd = ((149 * pos) % 253) + 1
             return (129 + rnd) % 254
@@ -150,40 +148,31 @@ class TextEncoder:
         for i in range(1, padsize):
             self.append_codeword(rand253(unpadded_len + i + 1))
 
-        log.debug("Word size after padding: %d bytes", len(self.codewords))
-
-    def append_error_codes(self):
+    def append_error_codes(self) -> None:
         """Calculate the necessary number of Reed Solomon error codes for the
         encoded text and padding codewords, and append to the codeword buffer"""
 
         error_length = error_word_length[self.size_index]
-        log.debug("Error word length: %d bytes", error_length)
 
-        data = [ord(c) for c in self.codewords]
-        ec = reed_solomon_encode(data, GF256_0x12D, error_length, first_root=1)
-        self.codewords += "".join(chr(b) for b in ec)
+        ec = reed_solomon_encode(self.codewords, GF256_0x12D, error_length, first_root=1)
+        self.codewords.extend(ec)
 
-    def append_codeword(self, value):
+    def append_codeword(self, value: int) -> None:
         """Append a single codeword to the buffer."""
 
-        self.codewords += chr(value)
+        self.codewords.append(value)
 
-    def append_digits(self, digits):
-        """Write a pair of digits
-        (the appended value is 130 + the integer value of the digits together"""
+    def append_digits(self, digits: str) -> None:
+        """Append a pair of digits as a single codeword (130 + integer value)."""
 
-        value = 130 + int(digits)
-        self.append_codeword(value)
+        self.append_codeword(130 + int(digits))
 
-    def append_ascii_char(self, char):
-        """Append a single ascii character
-        (the appended value is the value of the char plus 1"""
+    def append_byte(self, byte: int) -> None:
+        """Append a data byte: ASCII (0-127) as codeword byte+1; high byte
+        (128-255) as Upper Shift (235) + (byte-127)."""
 
-        value = ord(char) + 1
-        self.append_codeword(value)
-
-    def append_upper_shift_byte(self, byte_value):
-        """Append a byte in 128-255 via Upper Shift (codeword 235)."""
-
-        self.append_codeword(235)
-        self.append_ascii_char(chr(byte_value - 128))
+        if byte > 127:
+            self.append_codeword(235)
+            self.append_codeword(byte - 127)
+        else:
+            self.append_codeword(byte + 1)

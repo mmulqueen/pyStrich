@@ -11,6 +11,8 @@ Changelog
 - QR Code: internal refactor to improve the encoder's spec compliance
   and to share Reed-Solomon and encoding-selection code with
   the Data Matrix module.
+- Data Matrix: ``TextEncoder.encode()`` returns ``list[int]`` instead of
+  a ``str`` of ``chr()``-packed bytes.
 
 0.12 — 2026-05-09
 -----------------

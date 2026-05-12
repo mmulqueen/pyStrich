@@ -109,8 +109,6 @@ module = [
     "pystrich.code128.textencoder",
     "pystrich.code39.encoding",
     "pystrich.code39.textencoder",
-    "pystrich.datamatrix.placement",
-    "pystrich.datamatrix.textencoder",
     "pystrich.ean13.encoding",
     "pystrich.fonts",
 ]
