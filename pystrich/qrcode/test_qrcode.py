@@ -244,11 +244,11 @@ def test_encoding(text, expected_codewords):
         "Hello 🎉",
     ],
 )
-def test_encode_decode(string, ecl, tmp_path, zbarimg):
-    """zbarimg can decode this library's output back to the original string"""
+def test_scanner_round_trip(string, ecl, tmp_path, decode_barcode):
+    """A real scanner decodes this library's output back to the original string."""
     img = tmp_path / "qrcode-test.png"
     QRCodeEncoder(string, ecl).save(str(img), 3)
-    assert zbarimg(img) == string
+    assert decode_barcode(img) == string
 
 
 @pytest.mark.parametrize("cellsize", [5, 10])
@@ -262,13 +262,13 @@ def test_encode_decode(string, ecl, tmp_path, zbarimg):
         "00231872347699829949",
     ],
 )
-def test_svg_round_trip(string, ecl, cellsize, tmp_path, svg_to_png, zbarimg):
+def test_svg_round_trip(string, ecl, cellsize, tmp_path, svg_to_png, decode_barcode):
     """SVG output rasterised with librsvg decodes back to the original string."""
     svg = tmp_path / "qrcode-test.svg"
     png = tmp_path / "qrcode-test.png"
     QRCodeEncoder(string, ecl).save_svg(str(svg), cellsize=cellsize)
     svg_to_png(svg, png)
-    assert zbarimg(png) == string
+    assert decode_barcode(png) == string
 
 
 @pytest.mark.parametrize("cellsize", [5, 10])
@@ -282,13 +282,13 @@ def test_svg_round_trip(string, ecl, cellsize, tmp_path, svg_to_png, zbarimg):
         "00231872347699829949",
     ],
 )
-def test_eps_round_trip(string, ecl, cellsize, tmp_path, eps_to_png, zbarimg):
+def test_eps_round_trip(string, ecl, cellsize, tmp_path, eps_to_png, decode_barcode):
     """EPS output rasterised with Ghostscript decodes back to the original string."""
     eps = tmp_path / "qrcode-test.eps"
     png = tmp_path / "qrcode-test.png"
     QRCodeEncoder(string, ecl).save_eps(str(eps), cellsize=cellsize)
     eps_to_png(eps, png)
-    assert zbarimg(png) == string
+    assert decode_barcode(png) == string
 
 
 @pytest.mark.parametrize("inverse", [True, False])
@@ -302,7 +302,7 @@ def test_eps_round_trip(string, ecl, cellsize, tmp_path, eps_to_png, zbarimg):
         "00231872347699829949",
     ],
 )
-def test_dxf_round_trip(string, ecl, inverse, tmp_path, dxf_to_svg, svg_to_png, zbarimg):
+def test_dxf_round_trip(string, ecl, inverse, tmp_path, dxf_to_svg, svg_to_png, decode_barcode):
     """DXF output rendered to SVG via ezdxf, rasterised, decodes back to the original string."""
     cellsize = 5
     dxf = tmp_path / "qrcode-test.dxf"
@@ -320,7 +320,7 @@ def test_dxf_round_trip(string, ecl, inverse, tmp_path, dxf_to_svg, svg_to_png, 
         # back in for the decoder.
         dxf_to_svg(dxf, svg, inverse=False, margin_mm=4 * cellsize)
     svg_to_png(svg, png)
-    assert zbarimg(png) == string
+    assert decode_barcode(png) == string
 
 
 @pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])

@@ -68,18 +68,18 @@ def test_against_generated(string, reference, tmp_path):
         ("750103131130", "7501031311309"),
     ],
 )
-def test_zbarimg_round_trip(string, decoded, tmp_path, zbarimg):
-    """zbarimg decodes the saved image to the input plus its check digit."""
+def test_scanner_round_trip(string, decoded, tmp_path, decode_barcode):
+    """A real scanner decodes the saved image to the input plus its check digit."""
     img = tmp_path / "ean13.png"
     EAN13Encoder(string).save(str(img))
-    assert zbarimg(img) == decoded
+    assert decode_barcode(img) == decoded
 
 
-def test_first_digit_y_offset_zero(tmp_path, zbarimg):
+def test_first_digit_y_offset_zero(tmp_path, decode_barcode):
     """Setting the option does not break scanner decoding."""
     img = tmp_path / "ean13.png"
     EAN13Encoder("750103131130", options={"first_digit_y_offset": 0}).save(str(img))
-    assert zbarimg(img) == "7501031311309"
+    assert decode_barcode(img) == "7501031311309"
 
 
 @pytest.mark.parametrize("bar_width", [3, 5])
@@ -91,13 +91,13 @@ def test_first_digit_y_offset_zero(tmp_path, zbarimg):
         ("750103131130", "7501031311309"),
     ],
 )
-def test_svg_round_trip(string, decoded, bar_width, tmp_path, svg_to_png, zbarimg):
+def test_svg_round_trip(string, decoded, bar_width, tmp_path, svg_to_png, decode_barcode):
     """SVG output rasterised with librsvg decodes to the input plus check digit."""
     svg = tmp_path / "ean13.svg"
     png = tmp_path / "ean13.png"
     EAN13Encoder(string).save_svg(str(svg), bar_width)
     svg_to_png(svg, png)
-    assert zbarimg(png) == decoded
+    assert decode_barcode(png) == decoded
 
 
 @pytest.mark.parametrize(
@@ -144,10 +144,10 @@ def test_eps_label_glyphs(string, full_code):
         ("750103131130", "7501031311309"),
     ],
 )
-def test_eps_round_trip(string, decoded, bar_width, tmp_path, eps_to_png, zbarimg):
+def test_eps_round_trip(string, decoded, bar_width, tmp_path, eps_to_png, decode_barcode):
     """EPS output rasterised with Ghostscript decodes to the input plus check digit."""
     eps = tmp_path / "ean13.eps"
     png = tmp_path / "ean13.png"
     EAN13Encoder(string).save_eps(str(eps), bar_width)
     eps_to_png(eps, png)
-    assert zbarimg(png) == decoded
+    assert decode_barcode(png) == decoded

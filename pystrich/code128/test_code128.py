@@ -85,11 +85,11 @@ def test_against_generated(string, reference, tmp_path):
         pytest.param("12345", id="C-leftover-digit"),
     ],
 )
-def test_zbarimg_round_trip(string, tmp_path, zbarimg):
-    """zbarimg can decode this library's output back to the original string."""
+def test_scanner_round_trip(string, tmp_path, decode_barcode):
+    """A real scanner decodes this library's output back to the original string."""
     img = tmp_path / "code128.png"
     Code128Encoder(string).save(str(img))
-    assert zbarimg(img) == string
+    assert decode_barcode(img) == string
 
 
 @pytest.mark.parametrize("bar_width", [3, 5])
@@ -103,13 +103,13 @@ def test_zbarimg_round_trip(string, tmp_path, zbarimg):
     ],
 )
 @pytest.mark.parametrize("options", [{}, {"show_label": False}])
-def test_svg_round_trip(string, bar_width, options, tmp_path, svg_to_png, zbarimg):
+def test_svg_round_trip(string, bar_width, options, tmp_path, svg_to_png, decode_barcode):
     """SVG output rasterised with librsvg decodes back to the original string."""
     svg = tmp_path / "code128.svg"
     png = tmp_path / "code128.png"
     Code128Encoder(string, options=options).save_svg(str(svg), bar_width)
     svg_to_png(svg, png)
-    assert zbarimg(png) == string
+    assert decode_barcode(png) == string
 
 
 @pytest.mark.parametrize("bar_width", [3, 5])
@@ -123,13 +123,13 @@ def test_svg_round_trip(string, bar_width, options, tmp_path, svg_to_png, zbarim
     ],
 )
 @pytest.mark.parametrize("options", [{}, {"show_label": False}])
-def test_eps_round_trip(string, bar_width, options, tmp_path, eps_to_png, zbarimg):
+def test_eps_round_trip(string, bar_width, options, tmp_path, eps_to_png, decode_barcode):
     """EPS output rasterised with Ghostscript decodes back to the original string."""
     eps = tmp_path / "code128.eps"
     png = tmp_path / "code128.png"
     Code128Encoder(string, options=options).save_eps(str(eps), bar_width)
     eps_to_png(eps, png)
-    assert zbarimg(png) == string
+    assert decode_barcode(png) == string
 
 
 @pytest.mark.parametrize(
