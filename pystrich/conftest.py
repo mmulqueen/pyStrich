@@ -6,14 +6,21 @@ import pytest
 
 
 @pytest.fixture
-def zbarimg():
-    path = which("zbarimg")
-    if not path:
-        pytest.skip("zbarimg not installed")
+def decode_barcode():
+    """Decode a saved barcode image via zxing-cpp.
+
+    Covers every symbology this project generates -- Code 39, Code 128,
+    EAN-13, Data Matrix, QR Code and PDF417 -- through one Python binding.
+    """
+    zxingcpp = pytest.importorskip("zxingcpp")
+    PIL_Image = pytest.importorskip("PIL.Image")
 
     def _read(image_path: "str | os.PathLike[str]") -> str:
-        output = subprocess.check_output([path, "--quiet", "--raw", os.fspath(image_path)]).decode()
-        return output.rstrip("\n")
+        with PIL_Image.open(os.fspath(image_path)) as image:
+            results = zxingcpp.read_barcodes(image)
+        if not results:
+            raise AssertionError(f"zxing-cpp could not decode {image_path}")
+        return results[0].text
 
     return _read
 
