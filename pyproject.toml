@@ -47,6 +47,7 @@ dev = [
     "ezdxf>=1.3",
     "fonttools>=4.55",
     "ruff>=0.15.12",
+    "zxing-cpp>=2.2",
 ]
 docs = [
     "sphinx>=8.1",

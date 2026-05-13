@@ -17,7 +17,7 @@ ENV UV_LINK_MODE=copy \
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-        ca-certificates dmtx-utils zbar-tools librsvg2-bin ghostscript \
+        ca-certificates dmtx-utils librsvg2-bin ghostscript \
  && rm -rf /var/lib/apt/lists/*
 
 RUN uv python install ${PYTHON_VERSION}

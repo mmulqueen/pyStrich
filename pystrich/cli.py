@@ -26,6 +26,11 @@ from pystrich.dxf import DxfUnit
 from pystrich.ean13 import EAN13Encoder, EAN13RenderOptions
 from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
 from pystrich.marks import MarkShape
+from pystrich.pdf417 import (
+    DEFAULT_ROW_HEIGHT,
+    PDF417_DEFAULT_QUIET_ZONE,
+    PDF417Encoder,
+)
 from pystrich.qrcode import QRCodeEncoder
 from pystrich.types import BarcodeRenderOptions
 
@@ -340,7 +345,49 @@ class QRCode(TwoDFormat):
         return QRCodeEncoder(args.text, ecl=args.ecl)
 
 
-FORMATS: list[Format] = [Code39(), Code128(), EAN13(), DataMatrix(), QRCode()]
+class PDF417(TwoDFormat):
+    name = "pdf417"
+    help = "PDF417 (stacked 2D)"
+
+    def add_args(self, sp: argparse.ArgumentParser) -> None:
+        super().add_args(sp)
+        sp.add_argument(
+            "--ecl",
+            type=int,
+            choices=range(9),
+            help="error-correction level 0-8 (default: chosen from data length)",
+        )
+        sp.add_argument(
+            "--columns",
+            type=int,
+            choices=range(1, 31),
+            metavar="N",
+            help="data columns 1-30 (default: near-square layout)",
+        )
+        sp.add_argument(
+            "--row-height",
+            type=int,
+            default=DEFAULT_ROW_HEIGHT,
+            help=f"module-rows per codeword row (default: {DEFAULT_ROW_HEIGHT})",
+        )
+        sp.add_argument(
+            "--quiet-zone",
+            type=int,
+            default=PDF417_DEFAULT_QUIET_ZONE,
+            help=f"quiet-zone width in modules (default: {PDF417_DEFAULT_QUIET_ZONE})",
+        )
+
+    def encoder(self, args: argparse.Namespace) -> PDF417Encoder:
+        return PDF417Encoder(
+            args.text,
+            ecl=args.ecl,
+            columns=args.columns,
+            quiet_zone=args.quiet_zone,
+            row_height=args.row_height,
+        )
+
+
+FORMATS: list[Format] = [Code39(), Code128(), EAN13(), DataMatrix(), QRCode(), PDF417()]
 
 
 def _build_parser() -> argparse.ArgumentParser:

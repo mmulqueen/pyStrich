@@ -60,6 +60,7 @@ def _generate_example_images(app):
     from pystrich.datamatrix import FNC1, DataMatrixData, DataMatrixEncoder
     from pystrich.ean13 import EAN13Encoder
     from pystrich.marks import MarkShape
+    from pystrich.pdf417 import PDF417Encoder
     from pystrich.qrcode import QRCodeEncoder
 
     out = Path(app.srcdir) / "examples"
@@ -80,6 +81,10 @@ def _generate_example_images(app):
         DataMatrixEncoder(DataMatrixData("Rausschmeißer", auto_encoding=True)).get_terminal_art(
             ansi_bg=False
         ),
+        encoding="utf-8",
+    )
+    (out / "pdf417-terminal.txt").write_text(
+        PDF417Encoder("WDBCA45D2HA327260").get_terminal_art(ansi_bg=False),
         encoding="utf-8",
     )
 
@@ -149,6 +154,14 @@ def _generate_example_images(app):
     QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save(
         str(out / "qrcode-large.png"), cellsize=10
     )
+
+    PDF417Encoder("WDBCA45D2HA327260").save(str(out / "pdf417-example.png"))
+    PDF417Encoder("WDBCA45D2HA327260").save_svg(str(out / "pdf417-example.svg"))
+    PDF417Encoder("WDBCA45D2HA327260").save(str(out / "pdf417-large.png"), cellsize=10)
+    PDF417Encoder("Ich dachte, Sie wären kräftiger").save(
+        str(out / "pdf417-latin1.png"), cellsize=4
+    )
+    PDF417Encoder("€5 親切にしろ 🐻‍❄️").save(str(out / "pdf417-utf8.png"), cellsize=4)
 
 
 def _copy_text_to_html(app, exception):

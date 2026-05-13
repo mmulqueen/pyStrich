@@ -2,10 +2,10 @@ pyStrich
 ========
 
 pyStrich is a Python module for generating 1D and 2D barcodes. It supports
-Code 39, Code 128, EAN-13, Data Matrix and QR Code symbologies. All five
-emit PNG (via :class:`Pillow <PIL.Image.Image>`), SVG and EPS. Data Matrix
-and QR Code additionally render to terminal art and DXF for direct part
-marking.
+Code 39, Code 128, EAN-13, Data Matrix, QR Code and PDF417 symbologies. All
+six emit PNG (via :class:`Pillow <PIL.Image.Image>`), SVG and EPS. Data
+Matrix, QR Code and PDF417 additionally render to terminal art and DXF for
+direct part marking.
 
 pyStrich is encoder-only -- it does not read barcodes.
 
@@ -66,6 +66,14 @@ A minimal example for each of the other symbologies:
 .. image:: examples/qrcode-example.svg
    :alt: QR code encoding the pyStrich GitHub URL.
 
+.. code-block:: python
+
+   from pystrich.pdf417 import PDF417Encoder
+   PDF417Encoder("WDBCA45D2HA327260").save_svg("pdf417-example.svg")
+
+.. image:: examples/pdf417-example.svg
+   :alt: PDF417 encoding "WDBCA45D2HA327260".
+
 For more patterns -- serving barcodes from a web request, generating in
 bulk, compositing onto a label -- see :doc:`recipes`.
 
@@ -80,6 +88,7 @@ Symbologies
    code39
    ean13
    qrcode
+   pdf417
 
 Guides
 ------
