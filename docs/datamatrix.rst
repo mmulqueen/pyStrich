@@ -2,7 +2,7 @@ Data Matrix
 ===========
 
 Data Matrix (ECC 200) is a 2D symbology suitable for short payloads, capable
-of encoding up to 174 ASCII characters in pyStrich's implementation.
+of encoding up to 1558 ASCII characters in the largest 144x144 symbol.
 
 .. seealso::
 

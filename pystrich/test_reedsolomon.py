@@ -129,3 +129,25 @@ def test_codeword_is_zero_at_generator_roots(field, first_root, num_ec):
     for k in range(num_ec):
         root = field._exp[(first_root + k) % (field.size - 1)]
         assert _eval_poly(codeword, root, field) == 0
+
+
+@pytest.mark.parametrize(
+    "data, num_ec, expected_ec",
+    [
+        pytest.param(
+            [105, 106, 129],
+            5,
+            [74, 235, 130, 61, 159],
+            id="datamatrix-hi-3data-5ec",
+        ),
+        pytest.param(
+            [99, 98, 111, 98, 111, 98, 129, 56],
+            10,
+            [227, 236, 237, 109, 16, 221, 163, 60, 171, 76],
+            id="datamatrix-banana-8data-10ec",
+        ),
+    ],
+)
+def test_reed_solomon_encode_datamatrix_vectors(data, num_ec, expected_ec):
+    """Direct vector check of ECC200's GF(256)/0x12D + first_root=1 RS path."""
+    assert reed_solomon_encode(data, GF256_0x12D, num_ec, first_root=1) == expected_ec

@@ -13,6 +13,13 @@ Changelog
   the Data Matrix module.
 - Data Matrix: ``TextEncoder.encode()`` returns ``list[int]`` instead of
   a ``str`` of ``chr()``-packed bytes.
+- Data Matrix: support all 24 ECC200 square symbol sizes up to 144x144
+  (1558 data codewords), with interleaved Reed-Solomon blocks for the
+  larger symbols. Previously capped at 48x48 (174 codewords).
+- Data Matrix: fix the bottom-right corner-module pattern for sizes
+  where it was previously emitted as four zero cells, and fix
+  pad-codeword randomisation to produce the correct value at the
+  position-28 boundary.
 - Code 128: unencodable characters now raise
   :class:`~pystrich.exceptions.PyStrichInvalidInput` instead of being
   logged and failing later with ``KeyError``.

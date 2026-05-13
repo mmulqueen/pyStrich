@@ -10,8 +10,13 @@ from pystrich.datamatrix import (
     DataMatrixEncoder,
 )
 from pystrich.datamatrix.data import fnc1_workaround_compat
+from pystrich.datamatrix.placement import DataMatrixPlacer
 from pystrich.datamatrix.renderer import DATAMATRIX_DEFAULT_QUIET_ZONE
-from pystrich.datamatrix.textencoder import TextEncoder
+from pystrich.datamatrix.textencoder import (
+    DataTooLongForImplementation,
+    TextEncoder,
+    _randomise_pad,
+)
 from pystrich.exceptions import (
     DataMatrixNonAsciiWarning,
     Fnc1WorkaroundCompatWarning,
@@ -579,3 +584,102 @@ def test_auto_encoding_concat_with_two_auto_re_derives():
     combined = ascii_auto + latin1_auto
     assert combined.auto_encoding is True
     assert combined.encoding == "iso-8859-1"
+
+
+@pytest.mark.parametrize(
+    "position, expected",
+    [
+        pytest.param(1, 25, id="P1-sum-overflow"),
+        pytest.param(2, 175, id="P2-sum-fits"),
+        pytest.param(27, 104, id="P27-sum-overflow"),
+        pytest.param(28, 254, id="P28-boundary-bug-case"),
+        pytest.param(29, 150, id="P29-sum-fits"),
+    ],
+)
+def test_pad_randomisation_matches_spec(position, expected):
+    """Subtract 254 only when sum exceeds 254; the boundary at sum==254 must keep 254."""
+    assert _randomise_pad(position) == expected
+
+
+def test_set_corner_module_applies_pattern_when_corner_unset():
+    placer = DataMatrixPlacer()
+    placer.matrix = [[None] * 4 for _ in range(4)]
+    placer.rows, placer.cols = 4, 4
+    placer._set_corner_module()
+    assert (placer.matrix[3][3], placer.matrix[2][2]) == (1, 1)
+    assert (placer.matrix[3][2], placer.matrix[2][3]) == (0, 0)
+
+
+def test_set_corner_module_noop_when_corner_already_placed():
+    placer = DataMatrixPlacer()
+    placer.matrix = [[None] * 4 for _ in range(4)]
+    placer.matrix[3][3] = 0  # snake already placed something here
+    placer.rows, placer.cols = 4, 4
+    placer._set_corner_module()
+    assert placer.matrix[3][3] == 0
+    assert placer.matrix[2][2] is None
+
+
+def test_corner_module_round_trip_at_12x12(tmp_path, dmtxread):
+    """End-to-end check that the corner-fill is wired into place() at an affected size."""
+    # 'a'*4 = 4 codewords, lands in size_index 1 (12x12), which the probe shows
+    # is one of the sizes whose snake leaves the bottom-right corner untouched.
+    payload = "aaaa"
+    img = tmp_path / "corner.png"
+    DataMatrixEncoder(payload).save(str(img))
+    assert dmtxread(img) == payload
+
+
+@pytest.mark.parametrize(
+    "payload_len, expected_size_index",
+    [
+        pytest.param(180, 14, id="52x52-2blocks"),
+        pytest.param(400, 17, id="80x80-4blocks"),
+        pytest.param(800, 20, id="104x104-6blocks"),
+        pytest.param(1500, 23, id="144x144-10blocks"),
+    ],
+)
+def test_large_symbol_round_trip(payload_len, expected_size_index, tmp_path, dmtxread):
+    """Sizes >=52x52 use interleaved Reed-Solomon blocks; verify they decode."""
+    payload = "a" * payload_len
+    enc = TextEncoder()
+    enc.encode(DataMatrixData(payload, encoding="ascii"))
+    assert enc.size_index == expected_size_index
+    img = tmp_path / "large.png"
+    DataMatrixEncoder(DataMatrixData(payload, encoding="ascii")).save(str(img))
+    assert dmtxread(img) == payload
+
+
+def test_52x52_codeword_snapshot():
+    """Lock the interleaved RS bytes for one multi-block size against regression."""
+    enc = TextEncoder()
+    cws = enc.encode(DataMatrixData("a" * 180, encoding="ascii"))
+    assert enc.size_index == 14
+    assert len(cws) == 288
+    assert cws[:5] == [98, 98, 98, 98, 98]
+    assert cws[-8:] == [36, 150, 18, 28, 149, 94, 22, 218]
+
+
+def test_capacity_overflow_raises():
+    """Inputs exceeding the largest 144x144 symbol raise DataTooLongForImplementation."""
+    enc = TextEncoder()
+    with pytest.raises(DataTooLongForImplementation, match="1559"):
+        enc.encode(DataMatrixData("a" * 1559, encoding="ascii"))
+
+
+@pytest.mark.parametrize(
+    "input_len, expected_size_index",
+    [
+        pytest.param(3, 0, id="exact-10x10"),
+        pytest.param(175, 14, id="spill-into-2-block-regime"),
+        pytest.param(281, 16, id="spill-into-4-block-regime"),
+        pytest.param(697, 20, id="spill-into-6-block-regime"),
+        pytest.param(1305, 23, id="spill-into-10-block-regime"),
+        pytest.param(1558, 23, id="exact-144x144"),
+    ],
+)
+def test_size_index_picks_smallest_fitting(input_len, expected_size_index):
+    """One probe per RS block-count regime plus the smallest/largest edges."""
+    enc = TextEncoder()
+    enc.encode(DataMatrixData("a" * input_len, encoding="ascii"))
+    assert enc.size_index == expected_size_index

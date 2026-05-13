@@ -184,8 +184,18 @@ class DataMatrixPlacer:
             if row >= self.rows and col >= self.cols:
                 break
 
+        self._set_corner_module()
+
         # Fill in any remaining Nones
         for matrix_row in self.matrix:
             for i in range(len(matrix_row)):
                 if matrix_row[i] is None:
                     matrix_row[i] = 0
+
+    def _set_corner_module(self) -> None:
+        """When the snake leaves the bottom-right cell untouched, set the diagonal pattern."""
+        if self.matrix[self.rows - 1][self.cols - 1] is None:
+            self.matrix[self.rows - 1][self.cols - 1] = 1
+            self.matrix[self.rows - 2][self.cols - 2] = 1
+            self.matrix[self.rows - 1][self.cols - 2] = 0
+            self.matrix[self.rows - 2][self.cols - 1] = 0
