@@ -102,3 +102,70 @@ def reed_solomon_encode(
             for j in range(num_ec):
                 buffer[i + 1 + j] ^= field.mul(lead, gen[j])
     return buffer[data_len:]
+
+
+class PrimeGaloisField:
+    """Arithmetic over a prime field GF(p), used by PDF417's Reed-Solomon.
+
+    Unlike QR Code and DataMatrix, PDF417's RS works over GF(929) -- a
+    prime field, not a binary extension. Addition and multiplication
+    are integer arithmetic taken modulo ``prime``; subtraction is its
+    own operation (in a binary field, addition and subtraction are both
+    XOR, but that doesn't hold here).
+
+    :param prime: The field's prime modulus. Must be prime.
+    :param primitive: A primitive root mod ``prime``. PDF417 uses 3.
+    """
+
+    def __init__(self, prime: int, *, primitive: int) -> None:
+        self.prime = prime
+        self.primitive = primitive
+
+    @functools.cache  # noqa: B019
+    def generator_coefficients(self, num_ec: int, *, first_root: int = 1) -> tuple[int, ...]:
+        """Reed-Solomon generator polynomial of degree ``num_ec``.
+
+        Builds ``g(x) = (x - a^k)(x - a^(k+1)) ... (x - a^(k + num_ec - 1))``
+        where ``a`` is the field's primitive element, and returns the
+        ``num_ec`` non-leading coefficients, highest power first. PDF417
+        uses ``first_root=1``.
+
+        :param first_root: The ``k`` in the formula above.
+        """
+        poly = [1]
+        for i in range(num_ec):
+            root = pow(self.primitive, first_root + i, self.prime)
+            new_poly = [*poly, 0]
+            for j, c in enumerate(poly):
+                new_poly[j + 1] = (new_poly[j + 1] - root * c) % self.prime
+            poly = new_poly
+        return tuple(poly[1:])
+
+
+GF929 = PrimeGaloisField(929, primitive=3)
+
+
+def reed_solomon_encode_pdf417(data: Sequence[int], num_ec: int) -> list[int]:
+    """Return ``num_ec`` Reed-Solomon EC codewords for PDF417 ``data``.
+
+    Divides ``data * x^num_ec`` by the generator polynomial over GF(929),
+    then negates each remainder coefficient. The negation step is what
+    makes the full codeword satisfy ``c(3^i) = 0`` at every generator
+    root.
+
+    :param data: Data codewords, highest power first. The first element
+        is the Symbol Length Descriptor.
+    :param num_ec: Number of EC codewords. PDF417 uses ``2 ** (ecl + 1)``
+        for ECL ``0..8``: 2, 4, 8, 16, 32, 64, 128, 256, 512.
+    :returns: EC codewords, length ``num_ec``, highest power first.
+    """
+    p = GF929.prime
+    gen = GF929.generator_coefficients(num_ec, first_root=1)
+    data_len = len(data)
+    buffer = list(data) + [0] * num_ec
+    for i in range(data_len):
+        lead = buffer[i]
+        if lead != 0:
+            for j in range(num_ec):
+                buffer[i + 1 + j] = (buffer[i + 1 + j] - lead * gen[j]) % p
+    return [(p - r) % p for r in buffer[data_len:]]

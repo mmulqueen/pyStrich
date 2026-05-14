@@ -1,0 +1,251 @@
+PDF417
+======
+
+PDF417 is a stacked 2D symbology used on driver's licences, boarding
+passes, shipping labels and other documents that need a high-capacity
+barcode (up to 925 data codewords).
+
+.. seealso::
+
+   `PDF417 on Wikipedia <https://en.wikipedia.org/wiki/PDF417>`_ for
+   background on the symbology itself.
+
+Example
+-------
+
+.. code-block:: python
+
+   from pystrich.pdf417 import PDF417Encoder
+
+   encoder = PDF417Encoder("WDBCA45D2HA327260")
+   encoder.save_svg("pdf417-example.svg")
+
+.. image:: examples/pdf417-example.svg
+   :alt: PDF417 encoding "WDBCA45D2HA327260".
+
+Sizing and quiet zone
+---------------------
+
+The ``cellsize`` argument to :meth:`~PDF417Encoder.save` and
+:meth:`~PDF417Encoder.get_imagedata` sets the pixel side length of one
+module (default ``5``).
+
+The ``quiet_zone`` argument to :class:`PDF417Encoder` sets the width (in
+modules) of the white border applied at render time. The PDF417
+specification requires at least two modules on every side; pyStrich
+defaults to that minimum.
+
+PDF417 modules are not square -- the spec recommends a row height of at
+least three times the module width (``Y >= 3X``). The ``row_height``
+argument expresses that ratio; the default ``3`` matches the spec
+recommendation. Decreasing it produces a denser symbol but reduces
+scanner robustness.
+
+.. seealso::
+
+   :doc:`printing` for guidance on selecting ``cellsize`` for printed
+   output.
+
+.. code-block:: python
+
+   encoder = PDF417Encoder("WDBCA45D2HA327260")
+   encoder.save("pdf417-large.png", cellsize=10)
+
+.. image:: examples/pdf417-large.png
+   :alt: PDF417 encoding "WDBCA45D2HA327260" rendered with cellsize=10.
+
+Output formats
+--------------
+
+SVG output
+~~~~~~~~~~
+
+For embedding in web pages or any workflow that benefits from
+resolution-independent output, use :meth:`~PDF417Encoder.save_svg` (or
+:meth:`~PDF417Encoder.get_svg` to receive the SVG as a string).
+
+.. code-block:: python
+
+   PDF417Encoder("WDBCA45D2HA327260").save_svg("pdf417.svg")
+
+The SVG's ``viewBox`` is in module units, while ``width`` and ``height``
+scale by ``cellsize``.
+
+PNG output
+~~~~~~~~~~
+
+For raster output, use :meth:`~PDF417Encoder.save` to write a PNG file
+or :meth:`~PDF417Encoder.get_imagedata` to receive the raw PNG bytes.
+
+.. code-block:: python
+
+   PDF417Encoder("WDBCA45D2HA327260").save("pdf417.png")
+
+EPS output
+~~~~~~~~~~
+
+For embedding in LaTeX (``\includegraphics``) or other vector print
+workflows, use :meth:`~PDF417Encoder.save_eps` (or
+:meth:`~PDF417Encoder.get_eps` to receive the EPS as a string).
+
+.. code-block:: python
+
+   PDF417Encoder("WDBCA45D2HA327260").save_eps("pdf417.eps")
+
+The ``cellsize`` argument is the side length of one module in PostScript
+points (1 point = 1/72 inch).
+
+Terminal output
+~~~~~~~~~~~~~~~
+
+For quick on-screen display, :meth:`~PDF417Encoder.get_terminal_art`
+returns an on-screen rendering using horizontal half-block characters
+(``▌``/``▐``): one codeword row per line, two modules per character.
+That keeps codeword-row boundaries aligned with character boundaries
+and gives an on-screen aspect ratio close to the spec's ``Y >= 3X``.
+
+.. code-block:: python
+
+   print(PDF417Encoder("WDBCA45D2HA327260").get_terminal_art())
+
+.. literalinclude:: examples/pdf417-terminal.txt
+   :language: text
+   :class: terminal-art
+
+By default the output is wrapped in ANSI escape codes that force a white
+background and black foreground, so the symbol scans regardless of the
+terminal's colour scheme. Pass ``ansi_bg=False`` for plain output
+(correct only on a light-themed terminal).
+
+DXF (CAD) output
+~~~~~~~~~~~~~~~~
+
+For direct part marking applications, :meth:`~PDF417Encoder.get_dxf`
+returns a DXF representation of the symbol that CAD and CAM tools can
+read directly. The ``cellsize`` is in your chosen ``units`` (default
+``"mm"``) rather than pixels.
+
+.. code-block:: python
+
+   encoder = PDF417Encoder("WDBCA45D2HA327260")
+   with open("part.dxf", "w") as f:
+       f.write(encoder.get_dxf(cellsize=0.5, units="mm"))
+
+The default ``inverse=True`` emits geometry for the light modules,
+including the quiet zone -- so the bounding box frames the symbol. Pass
+``inverse=False`` to emit only the dark modules instead, matching the
+symbol's normal appearance; the bounding box then hugs the dark cells
+and the quiet zone has to be reintroduced downstream.
+
+Symbol shape
+------------
+
+PDF417 symbols are rectangular: ``rows`` (3-90) and ``columns`` (1-30,
+counting data columns only -- the start/stop patterns and row indicators
+are added on top). pyStrich picks both automatically to give a roughly
+square aspect at the default ``row_height=3``.
+
+For applications that need a fixed width -- for example a label of known
+size -- pin ``columns`` and let pyStrich choose the row count:
+
+.. code-block:: python
+
+   PDF417Encoder("WDBCA45D2HA327260", columns=4).save("pdf417-4col.png")
+
+Increasing ``columns`` makes the symbol wider and shorter; decreasing it
+narrower and taller. The encoder raises
+:class:`~pystrich.exceptions.PyStrichInvalidInput` if the data does not
+fit at the chosen column count.
+
+Error correction level
+----------------------
+
+PDF417 embeds redundant data so that a partly-damaged symbol can still
+be read. The error correction level (ECL) is an integer 0-8; each level
+doubles the number of error-correction codewords:
+
+=======  ============  =============================================
+ECL      EC codewords  Typical use
+=======  ============  =============================================
+``0``    2             Verification only, no recovery.
+``1``    4             Tiny symbols where space is at a premium.
+``2``    8             **Default** for up to 40 data codewords.
+``3``    16            Default for 41-160 data codewords.
+``4``    32            Default for 161-320 data codewords.
+``5``    64            Default for 321-863 data codewords.
+``6``    128           Hostile environments (label damage likely).
+``7``    256           As above; large symbols only.
+``8``    512           As above; only fits up to 415 data codewords.
+=======  ============  =============================================
+
+The defaults follow the spec's minimum-level recommendation. Pick a
+higher level for symbols likely to be partly obscured -- scratched,
+smudged or torn -- and the symbol will grow to fit the extra
+correction.
+
+.. code-block:: python
+
+   PDF417Encoder("WDBCA45D2HA327260", ecl=5).save("pdf417-high.png")
+
+Non-ASCII text
+--------------
+
+:class:`PDF417Encoder` accepts any Unicode string directly and picks the
+narrowest character set that fits. Wrap the input in :class:`PDF417Data`
+only when you want to constrain that choice -- for example, to enforce
+``"ascii"`` so a stray non-ASCII character raises instead of silently
+growing the symbol:
+
+================  ===================================================================
+Encoding          Behaviour
+================  ===================================================================
+``"ascii"``       Raises :class:`~pystrich.exceptions.PyStrichInvalidInput` on any
+                  byte > 127.
+``"iso-8859-1"``  Latin-1 -- the PDF417 default character interpretation. No ECI
+                  prefix; conformant decoders pick it up automatically.
+``"utf-8"``       Emits codeword 927 + 26 (ECI 000026) once at the start of the
+                  symbol and byte-encodes the input. Conformant decoders pick up
+                  the encoding automatically.
+================  ===================================================================
+
+.. tip::
+
+   The auto-selected encoding is always the narrowest one that fits, so
+   passing a plain ``str`` already gives you the smallest symbol. Picking
+   an encoding by hand is mostly useful for input validation -- e.g.
+   reject anything outside ASCII at the boundary.
+
+.. code-block:: python
+
+   # Plain str: Latin-1 picked automatically, no ECI prefix.
+   PDF417Encoder("Ich dachte, Sie wären kräftiger").save("latin1.png")
+
+.. image:: examples/pdf417-latin1.png
+   :alt: PDF417 encoding "Ich dachte, Sie wären kräftiger" as Latin-1.
+
+.. code-block:: python
+
+   # Plain str: UTF-8 picked automatically, ECI 26 emitted.
+   PDF417Encoder("€5 親切にしろ 🐻‍❄️").save("utf8.png")
+
+.. image:: examples/pdf417-utf8.png
+   :alt: PDF417 encoding "€5 親切にしろ 🐻‍❄️" as UTF-8 (ECI 26).
+
+If you pin an encoding that does not fit the input, the raised error
+names the offending character and suggests the encoding that *would*
+have worked:
+
+.. doctest::
+
+   >>> from pystrich.pdf417 import PDF417Data
+   >>> PDF417Data("Ich dachte, Sie wären kräftiger", encoding="ascii")
+   Traceback (most recent call last):
+       ...
+   pystrich.exceptions.PyStrichInvalidInput: PDF417Data encoding 'ascii' expects ASCII; got 'ä'. Try PDF417Data('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
+
+API
+---
+
+.. autoclass:: pystrich.pdf417.PDF417Encoder
+
+.. autoclass:: pystrich.pdf417.PDF417Data

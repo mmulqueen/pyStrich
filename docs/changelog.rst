@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.14 - unreleased
+-----------------
+
+- New :class:`~pystrich.pdf417.PDF417Encoder` for the PDF417 stacked 2D
+  symbology, with PNG / SVG / EPS / DXF / terminal output and a
+  ``pystrich pdf417`` CLI subcommand. See :doc:`pdf417`.
+
 0.13 — 2026-05-14
 -----------------
 

@@ -21,10 +21,13 @@ import random
 import pytest
 
 from pystrich.reedsolomon import (
+    GF929,
     BinaryExtensionGaloisField,
     GF256_0x11D,
     GF256_0x12D,
+    PrimeGaloisField,
     reed_solomon_encode,
+    reed_solomon_encode_pdf417,
 )
 
 
@@ -129,6 +132,87 @@ def test_codeword_is_zero_at_generator_roots(field, first_root, num_ec):
     for k in range(num_ec):
         root = field._exp[(first_root + k) % (field.size - 1)]
         assert _eval_poly(codeword, root, field) == 0
+
+
+# PDF417 -- Reed-Solomon over the prime field GF(929)
+
+
+def test_prime_galois_field_basic_arithmetic():
+    """Sanity check: GF(929) modular arithmetic and its primitive element."""
+    f = PrimeGaloisField(929, primitive=3)
+    assert f.prime == 929
+    # 3 is a primitive root mod 929: powers 3^0..3^927 cover every non-zero
+    # field element exactly once.
+    seen = {pow(3, i, 929) for i in range(928)}
+    assert len(seen) == 928
+    assert 0 not in seen
+
+
+# Generator polynomial coefficients pulled verbatim from the spec for
+# error correction levels 0..4. The spec lists them lowest-power-first
+# (constant term first); the encoder returns them highest-power-first,
+# so the comparison reverses one of them.
+# fmt: off
+SPEC_LOW_LEVELS = {
+    0: [27, 917],
+    1: [522, 568, 723, 809],
+    2: [237, 308, 436, 284, 646, 653, 428, 379],
+    3: [274, 562, 232, 755, 599, 524, 801, 132, 295, 116, 442, 428, 295, 42, 176, 65],
+    4: [361, 575, 922, 525, 176, 586, 640, 321, 536, 742, 677, 742, 687, 284, 193, 517,
+        273, 494, 263, 147, 593, 800, 571, 320, 803, 133, 231, 390, 685, 330, 63, 410],
+}
+# fmt: on
+
+
+@pytest.mark.parametrize(
+    "ecl, expected_low_first",
+    list(SPEC_LOW_LEVELS.items()),
+    ids=lambda v: f"ECL{v}" if isinstance(v, int) else "spec",
+)
+def test_pdf417_generator_coefficients_match_spec(ecl, expected_low_first):
+    """``generator_coefficients`` reproduces the spec's coefficient tables.
+
+    The spec lists coefficients lowest-power-first; the encoder returns
+    them highest-power-first, so the comparison reverses one of them.
+    """
+    num_ec = 2 ** (ecl + 1)
+    coeffs = GF929.generator_coefficients(num_ec, first_root=1)
+    assert list(coeffs) == list(reversed(expected_low_first))
+
+
+def test_pdf417_reed_solomon_encode_matches_spec_worked_example():
+    """Spec worked example: data [5, 453, 178, 121, 239] at ECL 1 produces [452, 327, 657, 619].
+
+    This is the spec's only fully traced worked example. The encoder's
+    output is the four EC codewords appended after the data; the codeword
+    polynomial is then zero at every root of the generator polynomial
+    (verified in the next test).
+    """
+    data = [5, 453, 178, 121, 239]
+    ec = reed_solomon_encode_pdf417(data, num_ec=4)
+    assert ec == [452, 327, 657, 619]
+
+
+@pytest.mark.parametrize("ecl, num_ec", [(0, 2), (1, 4), (2, 8), (3, 16), (4, 32)])
+def test_pdf417_codeword_is_zero_at_generator_roots(ecl, num_ec):
+    """A PDF417 codeword is zero at every root of its generator polynomial.
+
+    The defining property of a Reed-Solomon codeword is ``c(3^i) = 0``
+    for ``i = 1..k``, independent of how the encoder produced the EC
+    bytes. This evaluates the codeword polynomial via Horner's method
+    and checks each root -- so the encoder is verified against the
+    algebraic definition rather than its own output.
+    """
+    rng = random.Random(ecl)
+    data = [rng.randrange(929) for _ in range(50)]
+    ec = reed_solomon_encode_pdf417(data, num_ec=num_ec)
+    codeword = data + ec
+    for k in range(1, num_ec + 1):
+        root = pow(3, k, 929)
+        acc = 0
+        for c in codeword:
+            acc = (acc * root + c) % 929
+        assert acc == 0, f"codeword non-zero at root 3^{k} = {root}"
 
 
 @pytest.mark.parametrize(
