@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from pystrich.code128 import Code128Encoder
+from pystrich.exceptions import PyStrichInvalidInput
 
 TEST_IMG_DIR = Path(__file__).parent / "test_img"
 
@@ -165,6 +166,19 @@ def test_eps_label_glyphs(string):
         eps.count(f"g_{ord(c):02X}") - eps.count(f"/g_{ord(c):02X}") for c in set(string)
     )
     assert invocations == len(string)
+
+
+@pytest.mark.parametrize(
+    "string",
+    [
+        pytest.param("café", id="from-B"),
+        pytest.param("00000é", id="from-C"),
+        pytest.param("HELLO\x01é", id="from-A"),
+    ],
+)
+def test_unencodable_character_raises(string):
+    with pytest.raises(PyStrichInvalidInput, match="cannot be encoded in Code 128"):
+        Code128Encoder(string)
 
 
 @pytest.mark.parametrize("fmt", ["svg", "eps"])

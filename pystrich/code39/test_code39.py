@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from pystrich.code39 import Code39Encoder
+from pystrich.exceptions import PyStrichInvalidInput
 
 TEST_IMG_DIR = Path(__file__).parent / "test_img"
 
@@ -26,19 +27,21 @@ def test_against_generated(string, reference, tmp_path):
 
 
 @pytest.mark.parametrize(
-    "string",
+    "string, full_ascii",
     [
-        "1234567890",
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG",
+        pytest.param("1234567890", False, id="digits"),
+        pytest.param("ABCDEFGHIJKLMNOPQRSTUVWXYZ", False, id="upper"),
+        pytest.param("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG", False, id="sentence"),
         # Exercises the Code 39 special symbols ($ . / + - %).
-        "INVOICE-5/2024 $A+B%",
+        pytest.param("INVOICE-5/2024 $A+B%", False, id="symbols"),
+        # Full-ASCII pairs each char as two Code 39 symbols.
+        pytest.param("Hello, World!", True, id="full-ascii"),
     ],
 )
-def test_scanner_round_trip(string, tmp_path, decode_barcode):
+def test_scanner_round_trip(string, full_ascii, tmp_path, decode_barcode):
     """A real scanner decodes this library's output back to the original string."""
     img = tmp_path / "code39.png"
-    Code39Encoder(string).save(str(img))
+    Code39Encoder(string, full_ascii=full_ascii).save(str(img))
     assert decode_barcode(img) == string
 
 
@@ -78,6 +81,16 @@ def test_eps_round_trip(string, bar_width, options, tmp_path, eps_to_png, decode
     Code39Encoder(string, options=options).save_eps(str(eps), bar_width)
     eps_to_png(eps, png)
     assert decode_barcode(png) == string
+
+
+def test_full_ascii_rejects_non_ascii():
+    with pytest.raises(PyStrichInvalidInput, match="non-ASCII"):
+        Code39Encoder("café", full_ascii=True)
+
+
+def test_restricted_mode_rejects_out_of_set_char():
+    with pytest.raises(PyStrichInvalidInput, match="not allowed in code 39"):
+        Code39Encoder("hello")
 
 
 @pytest.mark.parametrize(

@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.13 — unreleased
+0.13 — 2026-05-14
 -----------------
 
 - QR Code: accepts any Unicode string and picks the best encoding
