@@ -683,3 +683,13 @@ def test_size_index_picks_smallest_fitting(input_len, expected_size_index):
     enc = TextEncoder()
     enc.encode(DataMatrixData("a" * input_len, encoding="ascii"))
     assert enc.size_index == expected_size_index
+
+
+def test_datamatrix_smudge_tolerance(tmp_path, decode_barcode):
+    """The smudged Data Matrix rendered for ``docs/printing.rst`` still decodes."""
+    from pystrich._simulate_damage import datamatrix_smudge_demo
+
+    text = "https://github.com/mmulqueen/pyStrich"
+    path = tmp_path / "datamatrix-damaged.png"
+    datamatrix_smudge_demo(text).save(path)
+    assert decode_barcode(path) == text

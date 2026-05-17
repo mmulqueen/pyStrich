@@ -40,6 +40,7 @@ def test_1d_smoke(tmp_path, subcommand, text, output_type, extension, header):
     [
         pytest.param("datamatrix", "datamatrix payload", id="datamatrix"),
         pytest.param("qrcode", "qr payload", id="qrcode"),
+        pytest.param("aztec", "aztec payload", id="aztec"),
     ],
 )
 @pytest.mark.parametrize(

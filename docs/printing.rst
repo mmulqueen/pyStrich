@@ -5,11 +5,18 @@ The most common cause of "my barcode does not scan" is not encoding -- the
 bars are too small. Scanners need the narrowest bar (1D) or one module
 (2D) -- the *X-dimension* -- to be wide enough for their optics to
 resolve. As features shrink below that threshold, read rates drop like a
-stone. Most barcode standards specify a minimum and recommended
-X-dimension for each application:
+stone.
+
+Most symbology specs leave X-dimension to the application. The figures
+below are practical recommendations for the typical pyStrich print
+chain: a consumer-grade laser printer (300-600 DPI) plus either a
+low-cost handheld scanner or a modern mobile phone camera. Push the
+X-dimension up if either end of that chain is weaker -- worn ribbons,
+blurry cameras, scans from a distance -- or if the printed surface is
+reflective or contoured.
 
 ================  ======================  ================================
-Symbology         X-dimension (typical)   Notes
+Symbology         X-dimension             Notes
 ================  ======================  ================================
 Code 39           0.19 - 0.50 mm          0.25 mm is a safe default for
                                           industrial labelling.
@@ -19,17 +26,21 @@ EAN-13 (retail)   0.26 - 0.66 mm          GS1 specifies a nominal X of
                                           0.33 mm (100% magnification);
                                           retail scanning typically allows
                                           80%-200% of nominal.
-Data Matrix       0.25 - 0.50 mm          Smaller is feasible for direct
-                                          part marking with appropriate
-                                          imagers.
+Data Matrix       0.25 - 0.50 mm          ~0.3 mm is the common practical
+                                          floor for handheld imagers.
 QR Code           0.25 - 0.50 mm          Mobile phone cameras typically
                                           need >=0.4 mm at arm's length.
+PDF417            0.25 - 0.50 mm          Row height must be >=3x the
+                                          X-dimension (pyStrich default).
+Aztec Code        0.38 - 0.76 mm          Most reliable range; smaller
+                                          works with good imagers, but
+                                          mobile-camera reads degrade
+                                          quickly below ~0.4 mm.
 ================  ======================  ================================
 
-These are guidance values, not specifications -- always confirm against
-the relevant standard for your application (GS1 General Specifications
-for retail and supply-chain symbols; ISO/IEC 15415 / 15416 for print
-quality verification).
+For print-quality verification, see ISO/IEC 15415 (2D) or ISO/IEC 15416
+(1D); for retail and supply-chain applications, follow the GS1 General
+Specifications.
 
 .. tip::
 
@@ -95,7 +106,49 @@ EAN-13         11x ``bar_width`` left, 7x right (mandated by GS1).
 Data Matrix    Configurable via ``quiet_zone`` (default 2 modules,
                spec minimum 1 module).
 QR Code        4 modules on each side (mandated by spec).
+PDF417         Configurable via ``quiet_zone`` (default 2 modules,
+               spec minimum 2 modules on every side).
+Aztec Code     Configurable via ``quiet_zone`` (default 2 modules;
+               spec does not require any quiet zone).
 =============  =====================================================
+
+Damage tolerance
+----------------
+
+2D barcodes offer some tolerance to physical and environmental damage --
+scuffing, smudging, marking, partial occlusion -- thanks to their
+Reed-Solomon error correction. This tolerance can be improved by
+increasing the error correction level, increasing print dimensions, and
+positioning the barcode away from the edges of the label or document
+(which take the most wear). Using suitable media and printing is
+essential.
+
+For harsh environments, if the encoded data has a predictable length
+and character set, raise the error correction level as high as the
+available label or document space permits at a sensible module size.
+
+Error correction protects only the data area: the symbol's fixed
+patterns (finder, locator or bullseye) must remain identifiable for the
+decoder to lock on at all.
+
+.. only:: not text
+
+   The examples below each survive a dramatic diagonal smudge placed
+   clear of those fixed patterns.
+
+   .. list-table::
+      :widths: 33 33 33
+      :header-rows: 1
+
+      * - Aztec (``ecc=50``)
+        - Data Matrix
+        - QR Code (``ecl="H"``)
+      * - .. image:: examples/aztec-damaged.png
+             :alt: Aztec Code with a diagonal smudge over its lower-right corner; still scannable.
+        - .. image:: examples/datamatrix-damaged.png
+             :alt: Data Matrix with a diagonal smudge over its interior; still scannable.
+        - .. image:: examples/qrcode-damaged.png
+             :alt: QR Code with a diagonal smudge over its middle, clear of the corner finder patterns; still scannable.
 
 Verification
 ------------

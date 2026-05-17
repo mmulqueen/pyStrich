@@ -47,8 +47,8 @@ class BinaryExtensionGaloisField:
             return 0
         return self._exp[(self._log[a] + self._log[b]) % (self.size - 1)]
 
-    # B019: the cache pins `self`, but the only callers pass module-level
-    # singletons (GF256_0x11D / GF256_0x12D) that already live forever.
+    # B019: the cache pins `self`, but instances are module-level
+    # singletons that already live forever.
     @functools.cache  # noqa: B019
     def generator_coefficients(self, num_ec: int, *, first_root: int = 0) -> tuple[int, ...]:
         """Reed-Solomon generator polynomial of degree ``num_ec``.
@@ -71,8 +71,18 @@ class BinaryExtensionGaloisField:
         return tuple(poly[1:])
 
 
-GF256_0x11D = BinaryExtensionGaloisField(0x11D)
-GF256_0x12D = BinaryExtensionGaloisField(0x12D)
+# Aztec Code mode message.
+GF16_0x13 = BinaryExtensionGaloisField(0x13, size=16)  # x^4 + x + 1
+# Aztec Code data (layers 1-2, 6-bit codewords).
+GF64_0x43 = BinaryExtensionGaloisField(0x43, size=64)  # x^6 + x + 1
+# QR Code data.
+GF256_0x11D = BinaryExtensionGaloisField(0x11D)  # x^8 + x^4 + x^3 + x^2 + 1
+# Data Matrix (ECC200) and Aztec Code (data layers 3-8, 8-bit codewords).
+GF256_0x12D = BinaryExtensionGaloisField(0x12D)  # x^8 + x^5 + x^3 + x^2 + 1
+# Aztec Code data (layers 9-22, 10-bit codewords).
+GF1024_0x409 = BinaryExtensionGaloisField(0x409, size=1024)  # x^10 + x^3 + 1
+# Aztec Code data (layers 23-32, 12-bit codewords).
+GF4096_0x1069 = BinaryExtensionGaloisField(0x1069, size=4096)  # x^12 + x^6 + x^5 + x^3 + 1
 
 
 def reed_solomon_encode(

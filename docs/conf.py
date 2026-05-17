@@ -55,6 +55,7 @@ html_css_files = ["custom.css"]
 
 
 def _generate_example_images(app):
+    from pystrich.aztec import AztecEncoder
     from pystrich.code39 import Code39Encoder
     from pystrich.code128 import Code128Encoder
     from pystrich.datamatrix import FNC1, DataMatrixData, DataMatrixEncoder
@@ -85,6 +86,10 @@ def _generate_example_images(app):
     )
     (out / "pdf417-terminal.txt").write_text(
         PDF417Encoder("WDBCA45D2HA327260").get_terminal_art(ansi_bg=False),
+        encoding="utf-8",
+    )
+    (out / "aztec-terminal.txt").write_text(
+        AztecEncoder("https://github.com/mmulqueen/pyStrich").get_terminal_art(ansi_bg=False),
         encoding="utf-8",
     )
 
@@ -162,6 +167,28 @@ def _generate_example_images(app):
         str(out / "pdf417-latin1.png"), cellsize=4
     )
     PDF417Encoder("€5 親切にしろ 🐻‍❄️").save(str(out / "pdf417-utf8.png"), cellsize=4)
+
+    AztecEncoder("https://github.com/mmulqueen/pyStrich").save(str(out / "aztec-example.png"))
+    AztecEncoder("https://github.com/mmulqueen/pyStrich").save_svg(str(out / "aztec-example.svg"))
+    AztecEncoder("https://github.com/mmulqueen/pyStrich").save(
+        str(out / "aztec-large.png"), cellsize=10
+    )
+    AztecEncoder("Ich dachte, Sie wären kräftiger").save(str(out / "aztec-latin1.png"), cellsize=8)
+    AztecEncoder("€5 親切にしろ 🐻‍❄️").save(str(out / "aztec-utf8.png"), cellsize=8)
+
+    # Damage-tolerance demos for docs/printing.rst. The matching
+    # ``test_*_smudge_tolerance`` tests in each symbology's test module
+    # apply the same damage and assert zxing-cpp still decodes.
+    from pystrich._simulate_damage import (
+        aztec_smudge_demo,
+        datamatrix_smudge_demo,
+        qrcode_smudge_demo,
+    )
+
+    url = "https://github.com/mmulqueen/pyStrich"
+    aztec_smudge_demo(url).save(str(out / "aztec-damaged.png"))
+    datamatrix_smudge_demo(url).save(str(out / "datamatrix-damaged.png"))
+    qrcode_smudge_demo(url).save(str(out / "qrcode-damaged.png"))
 
 
 def _copy_text_to_html(app, exception):

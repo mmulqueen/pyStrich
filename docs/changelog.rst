@@ -1,12 +1,19 @@
 Changelog
 =========
 
+.. _v0-14:
+
 0.14 - unreleased
 -----------------
 
+- New :class:`~pystrich.aztec.AztecEncoder` for Aztec Code (compact and
+  full-range), with PNG / SVG / EPS / DXF / terminal output and a
+  ``pystrich aztec`` CLI subcommand. See :doc:`aztec`.
 - New :class:`~pystrich.pdf417.PDF417Encoder` for the PDF417 stacked 2D
   symbology, with PNG / SVG / EPS / DXF / terminal output and a
   ``pystrich pdf417`` CLI subcommand. See :doc:`pdf417`.
+
+.. _v0-13:
 
 0.13 — 2026-05-14
 -----------------
@@ -35,6 +42,8 @@ Changelog
   unwrapped ``UnicodeEncodeError``.
 - Typing: the entire ``pystrich`` package is now checked with mypy;
   the remaining per-module ``ignore_errors`` overrides have been removed.
+
+.. _v0-12:
 
 0.12 — 2026-05-09
 -----------------
@@ -80,6 +89,8 @@ Changelog
   symbol with Unicode half-block characters so it scans on screen. ANSI
   background/foreground codes are applied by default for readability on
   any terminal theme; pass ``ansi_bg=False`` for plain output.
+
+.. _v0-11:
 
 0.11 — 2026-05-07
 -----------------
@@ -131,12 +142,16 @@ Changelog
 - Drop support for Python 3.8 and 3.9. Supported versions are now Python
   3.10 to 3.14.
 
+.. _v0-10:
+
 0.10 — 2025-09-24
 -----------------
 
 - Make the DataMatrix quiet zone configurable
   (`issue #17 <https://github.com/mmulqueen/pyStrich/issues/17>`_).
 - Add Python 3.13 to the supported and tested versions (Python 3.8 to 3.13).
+
+.. _v0-9:
 
 0.9 — 2024-10-02
 ----------------
@@ -155,10 +170,14 @@ Changelog
   examples verified with ``zbarimg``.
 - Supported and tested on Python 3.8 to 3.12.
 
+.. _v0-8:
+
 0.8 — 2016-07-06
 ----------------
 
 - Fix `issue #5 <https://github.com/mmulqueen/pyStrich/issues/5>`_.
+
+.. _v0-7:
 
 0.7 — 2015-07-26
 ----------------
@@ -167,11 +186,15 @@ Changelog
   (or 348 digits) by supporting larger symbol sizes
   (`issue #2 <https://github.com/mmulqueen/pyStrich/issues/2>`_).
 
+.. _v0-6:
+
 0.6 — 2015-07-21
 ----------------
 
 - Released as "This time with fonts and data".
 - Remove test relying on ``dmtxwrite`` due to issues in the previous commit.
+
+.. _v0-4:
 
 0.4 — 2015-07-19
 ----------------

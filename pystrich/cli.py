@@ -13,6 +13,7 @@ import os
 import sys
 from typing import Any, ClassVar, Literal, get_args
 
+from pystrich.aztec import AZTEC_DEFAULT_QUIET_ZONE, AztecEncoder
 from pystrich.code39 import Code39Encoder
 from pystrich.code128 import Code128Encoder
 from pystrich.datamatrix import (
@@ -387,7 +388,49 @@ class PDF417(TwoDFormat):
         )
 
 
-FORMATS: list[Format] = [Code39(), Code128(), EAN13(), DataMatrix(), QRCode(), PDF417()]
+class Aztec(TwoDFormat):
+    name = "aztec"
+    help = "Aztec Code (2D)"
+
+    def add_args(self, sp: argparse.ArgumentParser) -> None:
+        super().add_args(sp)
+        sp.add_argument(
+            "--ecc",
+            type=int,
+            metavar="PCT",
+            default=23,
+            help="error-correction percentage 5..95 (default: 23)",
+        )
+        sp.add_argument(
+            "--symbol-kind",
+            choices=("auto", "compact", "full"),
+            default="auto",
+            help="symbol kind (default: auto picks the smallest that fits)",
+        )
+        sp.add_argument(
+            "--layers",
+            type=int,
+            default=None,
+            help="data layer count; requires --symbol-kind compact or full",
+        )
+        sp.add_argument(
+            "--quiet-zone",
+            type=int,
+            default=AZTEC_DEFAULT_QUIET_ZONE,
+            help=f"quiet-zone width in modules (default: {AZTEC_DEFAULT_QUIET_ZONE})",
+        )
+
+    def encoder(self, args: argparse.Namespace) -> AztecEncoder:
+        return AztecEncoder(
+            args.text,
+            ecc=args.ecc,
+            symbol_kind=args.symbol_kind,
+            layers=args.layers,
+            quiet_zone=args.quiet_zone,
+        )
+
+
+FORMATS: list[Format] = [Code39(), Code128(), EAN13(), DataMatrix(), QRCode(), PDF417(), Aztec()]
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -399,7 +442,7 @@ def _build_parser() -> argparse.ArgumentParser:
         prog="pystrich",
         description=(
             "Generate 1D/2D barcodes "
-            "(Code 39, Code 128, EAN-13, Data Matrix, QR Code). "
+            "(Code 39, Code 128, EAN-13, Data Matrix, QR Code, PDF417, Aztec Code). "
             "Pass input via --text or stdin."
         ),
     )

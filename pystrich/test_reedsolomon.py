@@ -23,8 +23,12 @@ import pytest
 from pystrich.reedsolomon import (
     GF929,
     BinaryExtensionGaloisField,
+    GF16_0x13,
+    GF64_0x43,
     GF256_0x11D,
     GF256_0x12D,
+    GF1024_0x409,
+    GF4096_0x1069,
     PrimeGaloisField,
     reed_solomon_encode,
     reed_solomon_encode_pdf417,
@@ -235,3 +239,49 @@ def test_pdf417_codeword_is_zero_at_generator_roots(ecl, num_ec):
 def test_reed_solomon_encode_datamatrix_vectors(data, num_ec, expected_ec):
     """Direct vector check of ECC200's GF(256)/0x12D + first_root=1 RS path."""
     assert reed_solomon_encode(data, GF256_0x12D, num_ec, first_root=1) == expected_ec
+
+
+# Aztec Code -- Reed-Solomon across five Galois fields keyed to symbol size
+
+
+_AZTEC_FIELDS = [
+    pytest.param(GF16_0x13, id="GF16_0x13"),
+    pytest.param(GF64_0x43, id="GF64_0x43"),
+    pytest.param(GF1024_0x409, id="GF1024_0x409"),
+    pytest.param(GF4096_0x1069, id="GF4096_0x1069"),
+]
+
+
+@pytest.mark.parametrize("field", _AZTEC_FIELDS)
+def test_aztec_galois_field_log_exp_round_trip(field):
+    """Each Aztec field's exp/log tables are inverses for every non-zero element.
+
+    Catches a wrong primitive polynomial: an incorrect choice yields duplicate
+    entries in the log table and this round-trip fails.
+    """
+    for x in range(1, field.size):
+        assert field._exp[field._log[x]] == x
+
+
+def test_aztec_gf64_matches_spec_worked_example():
+    """10 datawords from the spec's 'Code 2D!' example produce the spec's 7 EC codewords."""
+    data = [9, 50, 1, 41, 47, 2, 39, 37, 1, 27]
+    expected_ec = [38, 50, 8, 16, 10, 20, 40]
+    assert reed_solomon_encode(data, GF64_0x43, 7, first_root=1) == expected_ec
+
+
+@pytest.mark.parametrize("field", _AZTEC_FIELDS)
+@pytest.mark.parametrize("num_ec", [4, 6, 12])
+def test_aztec_codeword_is_zero_at_generator_roots(field, num_ec):
+    """RS over each Aztec field produces codewords zero at every generator root.
+
+    Aztec specifies first_root=1; this verifies the field + encoder produce
+    valid codewords under that choice without relying on the encoder's own
+    output.
+    """
+    rng = random.Random(field.size)
+    data = [rng.randrange(field.size) for _ in range(20)]
+    codeword = data + reed_solomon_encode(data, field, num_ec, first_root=1)
+    for k in range(num_ec):
+        root = field._exp[(1 + k) % (field.size - 1)]
+        assert _eval_poly(codeword, root, field) == 0

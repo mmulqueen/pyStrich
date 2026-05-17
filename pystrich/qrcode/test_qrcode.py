@@ -489,3 +489,13 @@ def test_mask_penalty_n3(lines, expected):
 )
 def test_mask_penalty_n4(rows, total_modules, expected):
     assert _mask_penalty_n4(rows, total_modules) == expected
+
+
+def test_qrcode_smudge_tolerance(tmp_path, decode_barcode):
+    """The smudged QR Code rendered for ``docs/printing.rst`` still decodes."""
+    from pystrich._simulate_damage import qrcode_smudge_demo
+
+    text = "https://github.com/mmulqueen/pyStrich"
+    path = tmp_path / "qrcode-damaged.png"
+    qrcode_smudge_demo(text).save(path)
+    assert decode_barcode(path) == text
