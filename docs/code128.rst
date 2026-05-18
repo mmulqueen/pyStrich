@@ -1,3 +1,8 @@
+:og:description: Generate Code 128 barcodes in Python with pyStrich. Automatic A/B/C code-set switching, mod-103 checksum, full ASCII; PNG, SVG and EPS output.
+
+.. meta::
+   :description: Generate Code 128 barcodes in Python with pyStrich. Automatic A/B/C code-set switching, mod-103 checksum, full ASCII; PNG, SVG and EPS output.
+
 Code 128
 ========
 

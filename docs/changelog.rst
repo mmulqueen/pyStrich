@@ -3,7 +3,7 @@ Changelog
 
 .. _v0-14:
 
-0.14 - unreleased
+0.14 — 2026-05-18
 -----------------
 
 - New :class:`~pystrich.aztec.AztecEncoder` for Aztec Code (compact and

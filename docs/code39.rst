@@ -1,3 +1,8 @@
+:og:description: Generate Code 39 barcodes in Python with pyStrich. Standard alphanumeric set or full ASCII via paired symbols; PNG, SVG and EPS output.
+
+.. meta::
+   :description: Generate Code 39 barcodes in Python with pyStrich. Standard alphanumeric set or full ASCII via paired symbols; PNG, SVG and EPS output.
+
 Code 39
 =======
 

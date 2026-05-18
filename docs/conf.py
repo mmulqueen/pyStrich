@@ -1,9 +1,13 @@
 """Sphinx configuration for pyStrich documentation."""
 
 import shutil
+import sys
 from pathlib import Path
 
 import tomllib
+
+# Docs-only helpers (anatomy diagrams) live alongside conf.py.
+sys.path.insert(0, str(Path(__file__).parent))
 
 _pyproject = tomllib.loads((Path(__file__).parent.parent / "pyproject.toml").read_text())
 
@@ -20,7 +24,9 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
+    "sphinx_sitemap",
     "sphinxarg.ext",
+    "sphinxext.opengraph",
 ]
 
 copybutton_prompt_text = r">>> |\.\.\. |\$ "
@@ -46,12 +52,45 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 templates_path = ["_templates"]
 
+html_baseurl = "https://www.method-b.uk/pyStrich/docs/"
 html_theme = "furo"
-html_title = f"pyStrich {release}"
-html_logo = "logo.svg"
-html_favicon = "favicon.svg"
-html_static_path = ["_static"]
+html_title = "pyStrich — the Python 1D/2D barcode encoder"
+html_logo = "static/logo.svg"
+html_favicon = "static/favicon.svg"
+html_static_path = ["static"]
 html_css_files = ["custom.css"]
+
+# NamedTuple field descriptors and methods report __module__ as 'collections'
+# (they come from collections.namedtuple's exec'd factory), which would
+# otherwise drag a viewcode source page for the stdlib collections module
+# into our output.
+viewcode_follow_imported_members = False
+
+# sphinx-sitemap: omit the default {lang}{version} URL prefix and skip
+# auto-generated pages that aren't useful in search results. lastmod
+# is populated from git log; sphinx-sitemap quietly omits it when git
+# history is unavailable (e.g. shallow clones, local checkouts without
+# the relevant commits).
+sitemap_url_scheme = "{link}"
+sitemap_show_lastmod = True
+sitemap_excludes = [
+    "search.html",
+    "genindex.html",
+    "py-modindex.html",
+    "_modules/*",
+]
+
+# sphinxext-opengraph: per-page :description: drives <meta name="description">;
+# per-page :og:description: drives the social-preview description. Auto-extraction
+# is disabled (ogp_description_length=0) so untagged pages get no description
+# rather than a comma-mashed dump of headings.
+ogp_site_url = html_baseurl
+ogp_site_name = "pyStrich"
+ogp_type = "website"
+ogp_image = f"{html_baseurl}_static/logo-social.png"
+ogp_image_alt = "pyStrich — Python 1D/2D barcode encoder"
+ogp_enable_meta_description = False
+ogp_description_length = 0
 
 
 def _generate_example_images(app):
@@ -175,6 +214,16 @@ def _generate_example_images(app):
     )
     AztecEncoder("Ich dachte, Sie wären kräftiger").save(str(out / "aztec-latin1.png"), cellsize=8)
     AztecEncoder("€5 親切にしろ 🐻‍❄️").save(str(out / "aztec-utf8.png"), cellsize=8)
+
+    from _anatomy import (
+        aztec_anatomy_svg,
+        datamatrix_anatomy_svg,
+        qrcode_anatomy_svg,
+    )
+
+    (out / "aztec-anatomy.svg").write_text(aztec_anatomy_svg(), encoding="utf-8")
+    (out / "datamatrix-anatomy.svg").write_text(datamatrix_anatomy_svg(), encoding="utf-8")
+    (out / "qrcode-anatomy.svg").write_text(qrcode_anatomy_svg(), encoding="utf-8")
 
     # Damage-tolerance demos for docs/printing.rst. The matching
     # ``test_*_smudge_tolerance`` tests in each symbology's test module

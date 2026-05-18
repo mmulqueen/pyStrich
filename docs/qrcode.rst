@@ -1,3 +1,8 @@
+:og:description: Generate QR codes in Python with pyStrich. Encodes URLs, contact details and arbitrary text; PNG, SVG, EPS, DXF and terminal art output.
+
+.. meta::
+   :description: Generate QR codes in Python with pyStrich. Encodes URLs, contact details and arbitrary text; PNG, SVG, EPS, DXF and terminal art output.
+
 QR Code
 =======
 
@@ -7,6 +12,9 @@ QR Code is a 2D symbology widely used for URLs and contact details.
 
    `QR code on Wikipedia <https://en.wikipedia.org/wiki/QR_code>`_ for
    background on the symbology itself.
+
+   QR codes are defined in `ISO/IEC 18004
+   <https://www.iso.org/standard/83389.html>`_.
 
 .. note::
 
@@ -251,6 +259,38 @@ have worked:
    Traceback (most recent call last):
        ...
    pystrich.exceptions.PyStrichInvalidInput: QRCodeData encoding 'ascii' expects ASCII; got 'ä'. Try QRCodeData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
+
+Anatomy
+-------
+
+A QR Code carries the payload in a sea of data modules, surrounded by
+several fixed function patterns that let scanners locate, align and
+decode the symbol. The diagram below labels a Version 5 symbol
+(37x37 modules); larger versions repeat the same parts and add more
+alignment patterns, plus a version-information block from Version 7
+upwards.
+
+.. image:: examples/qrcode-anatomy.svg
+   :alt: Annotated Version-5 QR Code showing the position detection patterns, separators, timing patterns, alignment pattern, data area and quiet zone.
+
+* **Position detection patterns** -- the three large squares at the
+  top-left, top-right and bottom-left corners. Scanners use them to
+  detect the symbol from any angle and infer its orientation from the
+  one missing corner.
+* **Separators** -- a one-module strip of white isolating each finder
+  from the data area, keeping the :term:`finder pattern` unambiguous.
+* **Timing patterns** -- one row and one column of alternating dark
+  and light cells, running between the top finders and between the
+  left finders. They fix the module grid across the symbol.
+* **Alignment pattern** -- smaller squares dropped into the data area
+  in Version 2 and above to correct for :term:`projective distortion`
+  when the symbol is photographed at an angle. Version 5 has one; the
+  largest versions have several dozen.
+* **Data and error correction** -- the masked :term:`codeword` stream
+  (payload plus :term:`Reed-Solomon`). This is what scales with
+  version.
+* **Quiet zone** -- four modules of white margin on every side, as
+  mandated by the QR Code specification.
 
 API
 ---

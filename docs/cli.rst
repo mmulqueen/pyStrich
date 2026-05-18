@@ -1,3 +1,8 @@
+:og:description: Generate barcodes from the command line with the pyStrich CLI.
+
+.. meta::
+   :description: Generate barcodes from the command line with the pyStrich CLI.
+
 Command-line interface
 ======================
 

@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/mmulqueen/pyStrich/main/docs/logo.png" alt="pyStrich" width="200">
+<img src="https://raw.githubusercontent.com/mmulqueen/pyStrich/main/docs/static/logo.png" alt="pyStrich" width="200">
 
 pyStrich
 ========
@@ -11,7 +11,7 @@ supports:
  * datamatrix
  * qrcode
 
-pyStrich only depends on Pillow and has no other dependencies.
+pyStrich only depends on Pillow and has no other dependencies. It only supports encoding, not decoding.
 
 Available from PyPI: https://pypi.org/project/pyStrich/
 
@@ -26,12 +26,13 @@ src="https://img.shields.io/pypi/v/pyStrich.svg"></a>
 
 Background
 ----------
-pyStrich is a fork of huBarcode module with modifications to support Python 3 (amongst other changes). pyStrich
-only supports encoding not decoding.
+pyStrich was originally a fork of [huBarcode](https://github.com/hudora/huBarcode). huBarcode was developed by
+[HuDoRa](http://www.hudora.de/en/) from at least 2007, and has not been active since late 2013.
+[Method B Ltd](https://www.method-b.uk/) forked huBarcode as pyStrich to provide Python 3 support and to continue
+development. pyStrich has been substantially enhanced over the years and has gone far beyond a simple port to Python 3.
+As of 2026, pyStrich is a modern Python package with full use of typing, linting and a comprehensive test suite.
 
-[huBarcode](https://github.com/hudora/huBarcode) was developed by [HuDoRa](http://www.hudora.de/en/) from at least 2007, the project does not seem to have been
-active since late 2013. [Method B Ltd](http://method-b.uk) has forked it to provide Python 3 support and facilitate
-future development. Thank you to the folks at HuDoRa for doing most of the hard work, porting was the easy part.
+Thanks to the folks at HuDoRa for the original huBarcode library that pyStrich grew out of.
 
 License
 -------

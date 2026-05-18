@@ -1,3 +1,8 @@
+:og:description: Generate PDF417 stacked 2D barcodes in Python with pyStrich. High-capacity codes for IDs, boarding passes and shipping labels; PNG, SVG and EPS.
+
+.. meta::
+   :description: Generate PDF417 stacked 2D barcodes in Python with pyStrich. High-capacity codes for IDs, boarding passes and shipping labels; PNG, SVG and EPS.
+
 PDF417
 ======
 
@@ -9,6 +14,9 @@ barcode (up to 925 data codewords).
 
    `PDF417 on Wikipedia <https://en.wikipedia.org/wiki/PDF417>`_ for
    background on the symbology itself.
+
+   PDF417 is defined in `ISO/IEC 15438
+   <https://www.iso.org/standard/65502.html>`_.
 
 Example
 -------

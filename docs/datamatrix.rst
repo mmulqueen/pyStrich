@@ -1,3 +1,8 @@
+:og:description: Generate Data Matrix (ECC 200) barcodes in Python with pyStrich. Encodes up to 1558 ASCII characters; PNG, SVG, EPS, DXF and terminal art output.
+
+.. meta::
+   :description: Generate Data Matrix (ECC 200) barcodes in Python with pyStrich. Encodes up to 1558 ASCII characters; PNG, SVG, EPS, DXF and terminal art output.
+
 Data Matrix
 ===========
 
@@ -8,6 +13,9 @@ of encoding up to 1558 ASCII characters in the largest 144x144 symbol.
 
    `Data Matrix on Wikipedia <https://en.wikipedia.org/wiki/Data_Matrix>`_
    for background on the symbology itself.
+
+   Data Matrix barcodes are defined in `ISO/IEC 16022
+   <https://www.iso.org/standard/80926.html>`_.
 
 Example
 -------
@@ -176,6 +184,12 @@ including the quiet zone -- so the bounding box frames the symbol. Pass
 symbol's normal appearance; the bounding box then hugs the dark cells and
 the quiet zone has to be reintroduced downstream.
 
+.. seealso::
+
+   `SAE AS9132B
+   <https://www.sae.org/standards/as9132b-data-matrix-quality-requirements-parts-marking>`_
+   -- aerospace/defense quality standard for Data Matrix marks applied to metal parts.
+
 GS1 / FNC1
 ----------
 
@@ -315,6 +329,29 @@ offending character and suggests the encoding that *would* have worked:
    Traceback (most recent call last):
        ...
    pystrich.exceptions.PyStrichInvalidInput: DataMatrix encoding 'ascii' expects ASCII; got 'ä'. Try DataMatrixData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
+
+Anatomy
+-------
+
+Each Data Matrix region is built from the same three elements. Sizes
+from 10x10 to 26x26 use a single region; larger sizes tile the region
+in a 2x2, 4x4 or 6x6 grid. The diagram below labels a 36x36 ECC 200
+symbol (2x2 regions of 16x16).
+
+.. image:: examples/datamatrix-anatomy.svg
+   :alt: Annotated 36x36 Data Matrix showing the solid L finder, timing pattern, data area and quiet zone across four regions.
+
+* **Solid L finder** -- two solid edges (left and bottom of each
+  region) that identify the symbol's size and orientation.
+* **Timing pattern** -- the opposite two edges of each region
+  (top and right), alternating dark and light cells so the scanner
+  can count modules across the region.
+* **Data area** -- everything inside the region's L and timing edges:
+  the encoded :term:`codewords <codeword>` plus :term:`Reed-Solomon`
+  error correction, mapped to cells by the ECC 200 placement
+  algorithm.
+* **Quiet zone** -- white margin around the symbol; the spec requires
+  at least one module, and pyStrich defaults to two.
 
 API
 ---

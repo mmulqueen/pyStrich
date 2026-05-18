@@ -1,3 +1,8 @@
+:og:description: Generate 1D and 2D barcodes in Python with pyStrich – Code 39, Code 128, EAN-13, Data Matrix, QR Code, PDF417 and Aztec Code as PNG, SVG, EPS, DXF and terminal art.
+
+.. meta::
+   :description: Generate 1D and 2D barcodes in Python with pyStrich – Code 39, Code 128, EAN-13, Data Matrix, QR Code, PDF417 and Aztec Code as PNG, SVG, EPS, DXF and terminal art.
+
 pyStrich
 ========
 
@@ -116,21 +121,25 @@ Reference
    :maxdepth: 1
 
    exceptions
+   glossary
    changelog
    contributors
 
 Background
 ----------
 
-pyStrich is a fork of `huBarcode
-<https://github.com/hudora/huBarcode>`_, originally developed by `HuDoRa
-<https://www.hudora.de/de-en/>`_ from at least 2007. The upstream project
-has not been active since late 2013. `Method B Ltd
-<https://www.method-b.uk/>`_ forked it to provide Python 3 support and to
-continue development.
+pyStrich was originally a fork of `huBarcode
+<https://github.com/hudora/huBarcode>`_. huBarcode was developed by
+`HuDoRa <https://www.hudora.de/de-en/>`_ from at least 2007, and has not
+been active since late 2013. `Method B Ltd <https://www.method-b.uk/>`_
+forked huBarcode as pyStrich to provide Python 3 support and to continue
+development.
+pyStrich has been substantially enhanced over the years and has gone far
+beyond a simple port to Python 3. As of 2026, pyStrich is a modern Python
+package with full use of typing, linting and a comprehensive test suite.
 
-Thank you to the folks at HuDoRa for doing most of the hard work; the
-porting was the easy part.
+Thanks to the folks at HuDoRa for the original huBarcode library that
+pyStrich grew out of.
 
 Licence
 -------

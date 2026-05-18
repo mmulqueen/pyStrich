@@ -1,6 +1,6 @@
 [project]
 name = "pyStrich"
-version = "0.13"
+version = "0.14"
 description = "PyStrich is a Python module to generate 1D and 2D barcodes (Code 39, Code 128, DataMatrix, QRCode and EAN13). Forked from huBarcode."
 readme = "README.md"
 license = "Apache-2.0"
@@ -54,6 +54,8 @@ docs = [
     "furo>=2024.8.6",
     "sphinx-copybutton>=0.5",
     "sphinx-argparse>=0.5",
+    "sphinxext-opengraph>=0.13.0",
+    "sphinx-sitemap>=2.9.0",
 ]
 
 [build-system]

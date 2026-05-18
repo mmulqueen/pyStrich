@@ -1,3 +1,8 @@
+:og:description: Generate Aztec Code 2D barcodes in Python with pyStrich. Strong rotation tolerance, sizes from compact to full-range. PNG, SVG, EPS, DXF.
+
+.. meta::
+   :description: Generate Aztec Code 2D barcodes in Python with pyStrich. Strong rotation tolerance, sizes from compact to full-range. PNG, SVG, EPS, DXF.
+
 Aztec Code
 ==========
 
@@ -10,6 +15,9 @@ bullseye finder decodes reliably from any rotation. Symbols range from
 
    `Aztec Code on Wikipedia <https://en.wikipedia.org/wiki/Aztec_Code>`_
    for background on the symbology itself.
+
+   Aztec Code is defined in `ISO/IEC 24778
+   <https://www.iso.org/standard/82441.html>`_.
 
 Example
 -------
@@ -258,6 +266,35 @@ Aztec Runes -- tiny single-byte Aztec-like symbols -- are not supported.
 If you need them, you can build them on top of the geometry primitives
 in :mod:`pystrich.aztec.placement`. Please file an issue on GitHub
 describing what you need.
+
+Anatomy
+-------
+
+Aztec symbols combine a few fixed structural elements with a variable
+data area. The diagram below labels a full-range 5-layer symbol
+(37x37 modules); compact symbols use the same parts in a smaller core
+and skip the reference grid.
+
+.. image:: examples/aztec-anatomy.svg
+   :alt: Annotated Aztec Code showing the bullseye finder, orientation marks, mode message, reference grid, data layers and quiet zone.
+
+* **Bullseye finder** -- concentric central squares (9x9 in compact
+  symbols, 13x13 in full-range). The Aztec's signature pattern;
+  scanners lock onto it from any rotation.
+* **Orientation marks** -- L-shaped three-cell patterns at each corner
+  of the core; the dark-cell count decreases clockwise (3, 2, 1, 0),
+  encoding the symbol's rotation.
+* **Mode message** -- the outermost ring of the core (one cell wide),
+  encoding the symbol's layer count and :term:`codeword` count so the
+  decoder knows how big the data area is.
+* **Reference grid** -- sparse strips of alternating dark and light
+  cells that run across full-range symbols every 16 modules to keep
+  scanners aligned. Compact symbols do not need them.
+* **Data layers** -- concentric rings of modules carrying the payload
+  plus :term:`Reed-Solomon` error correction. The number of layers
+  determines the symbol size.
+* **Quiet zone** -- white margin around the symbol; not required by
+  the spec.
 
 API
 ---

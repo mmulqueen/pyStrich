@@ -47,8 +47,8 @@ between calls. To generate many barcodes, loop over your inputs:
    for sku in ["A1266470501", "A1268206342", "A0001513255"]:
        Code128Encoder(sku).save(out / f"{sku}.png")
 
-Loading the output into PIL for further processing
---------------------------------------------------
+Loading the output into Pillow for further processing
+------------------------------------------------------
 
 To composite a barcode onto a label template, call
 :meth:`get_pilimage` to obtain a :class:`PIL.Image.Image` directly:
