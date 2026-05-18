@@ -10,6 +10,8 @@ supports:
  * ean13
  * datamatrix
  * qrcode
+ * pdf417
+ * aztec
 
 pyStrich only depends on Pillow and has no other dependencies. It only supports encoding, not decoding.
 

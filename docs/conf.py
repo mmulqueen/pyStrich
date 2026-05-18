@@ -67,12 +67,8 @@ html_css_files = ["custom.css"]
 viewcode_follow_imported_members = False
 
 # sphinx-sitemap: omit the default {lang}{version} URL prefix and skip
-# auto-generated pages that aren't useful in search results. lastmod
-# is populated from git log; sphinx-sitemap quietly omits it when git
-# history is unavailable (e.g. shallow clones, local checkouts without
-# the relevant commits).
+# auto-generated pages that aren't useful in search results.
 sitemap_url_scheme = "{link}"
-sitemap_show_lastmod = True
 sitemap_excludes = [
     "search.html",
     "genindex.html",
