@@ -75,6 +75,7 @@ class _HighLevelEncoder:
 
     def __init__(self, payload: bytes, eci: int | None) -> None:
         self.payload = payload
+        self.payload_emission: Emission = [(b, 8) for b in payload]
         self.n = len(payload)
         eci_em: Emission = _eci_emission(eci) if eci is not None else []
         eci_cost = sum(w for _, w in eci_em)
@@ -179,6 +180,7 @@ class _HighLevelEncoder:
         """Try Byte mode runs of 1..2047 bytes starting at ``pos``.
 
         Runs of 1..31 use a 5-bit length prefix; longer runs use a 5+11 prefix.
+        Inlines the relax check so the per-k emission is only built when accepted.
         """
         if mode not in BYTE_SHIFT_FROM:
             return
@@ -187,14 +189,17 @@ class _HighLevelEncoder:
         cost_here = self.dp[src]
         max_k = min(_MAX_BYTE_RUN, self.n - pos)
         for k in range(1, max_k + 1):
+            length_bits = 5 if k <= 31 else 16
+            new_cost = cost_here + bs_bits + length_bits + 8 * k
+            dst = State(mode, pos + k)
+            if new_cost >= self.dp.get(dst, _INF):
+                continue
             if k <= 31:
-                cost = bs_bits + 5 + 8 * k
                 prefix: Emission = [(bs_cw, bs_bits), (k, 5)]
             else:
-                cost = bs_bits + 5 + 11 + 8 * k
                 prefix = [(bs_cw, bs_bits), (0, 5), (k - 31, 11)]
-            payload_bytes = [(b, 8) for b in self.payload[pos : pos + k]]
-            self._relax(State(mode, pos + k), cost_here + cost, src, prefix + payload_bytes)
+            self.dp[dst] = new_cost
+            self.prev[dst] = (src, prefix + self.payload_emission[pos : pos + k])
 
     def _reconstruct(self) -> list[int]:
         """Walk back-pointers from the cheapest end state and concatenate emissions."""

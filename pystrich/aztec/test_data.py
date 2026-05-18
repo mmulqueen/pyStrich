@@ -74,4 +74,3 @@ def test_equal_when_segments_and_encoding_match():
 def test_not_equal_when_field_differs(a, b):
     assert a != b
     assert hash(a) != hash(b)
-
