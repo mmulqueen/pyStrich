@@ -6,7 +6,7 @@ All needed by the user is done via the QRCodeEncoder class:
 
 >>> encoder = QRCodeEncoder("HuDoRa")
 >>> # encoder.save( "test.png" )
->>> print encoder.get_ascii()
+>>> print(encoder.get_ascii())
 
 """
 

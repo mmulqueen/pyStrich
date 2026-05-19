@@ -6,7 +6,7 @@ All needed by the user is done via the DataMatrixEncoder class:
 
 >>> encoder = DataMatrixEncoder("HuDoRa")
 >>> # encoder.save( "test.png" )
->>> print encoder.get_ascii()
+>>> print(encoder.get_ascii())
 XX  XX  XX  XX  XX  XX  XX
 XX  XXXX  XXXXXX      XXXXXX
 XXXXXX    XX          XX
