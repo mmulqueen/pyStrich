@@ -13,6 +13,7 @@ import os
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Generic
 
+from pystrich._dataurl import png_to_data_url, svg_to_data_url
 from pystrich.dxf import DxfUnit
 from pystrich.marks import MarkShape
 from pystrich.matrix_renderer import CellT, Matrix2DRenderer
@@ -54,6 +55,14 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         """
         return self.init_renderer().get_imagedata(cellsize)
 
+    def png_dataurl(self, cellsize: int = 5) -> str:
+        """Render the symbol and return a PNG ``data:`` URL string.
+
+        :param cellsize: Side length in pixels of one module.
+        :rtype: str
+        """
+        return png_to_data_url(self.get_imagedata(cellsize))
+
     def get_pilimage(self, cellsize: int = 5) -> PILImage:
         """Render the symbol and return a Pillow image.
 
@@ -82,6 +91,22 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         .. versionadded:: 0.12
         """
         return self.init_renderer().get_svg(cellsize, inverse=inverse, mark_shape=mark_shape)
+
+    def svg_dataurl(
+        self,
+        cellsize: int = 5,
+        *,
+        inverse: bool = False,
+        mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+    ) -> str:
+        """Render the symbol and return an SVG ``data:`` URL string.
+
+        :param cellsize: Side length in user units of one module.
+        :param inverse: If ``True``, mark the light cells instead of the dark ones.
+        :param mark_shape: How matched cells are grouped and drawn.
+        :rtype: str
+        """
+        return svg_to_data_url(self.get_svg(cellsize, inverse=inverse, mark_shape=mark_shape))
 
     def save_svg(
         self,

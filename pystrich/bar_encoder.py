@@ -15,6 +15,8 @@ from abc import ABC, abstractmethod
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
+from pystrich._dataurl import png_to_data_url, svg_to_data_url
+
 if TYPE_CHECKING:
     from PIL.Image import Image as PILImage
 
@@ -50,6 +52,14 @@ class Bar1DEncoder(ABC):
         self.height = barcode.image_height
         return imagedata
 
+    def png_dataurl(self, bar_width: int = 3) -> str:
+        """Render the barcode and return a PNG ``data:`` URL string.
+
+        :param bar_width: Width in pixels of the narrowest bar.
+        :rtype: str
+        """
+        return png_to_data_url(self.get_imagedata(bar_width))
+
     def get_pilimage(self, bar_width: int = 3) -> PILImage:
         """Render the barcode and return a Pillow image.
 
@@ -82,6 +92,14 @@ class Bar1DEncoder(ABC):
         .. versionadded:: 0.12
         """
         return self.init_renderer().get_svg(bar_width)
+
+    def svg_dataurl(self, bar_width: int = 3) -> str:
+        """Render the barcode and return an SVG ``data:`` URL string.
+
+        :param bar_width: Width in user units of the narrowest bar.
+        :rtype: str
+        """
+        return svg_to_data_url(self.get_svg(bar_width))
 
     def save_svg(self, filename: str | os.PathLike[str], bar_width: int = 3) -> None:
         """Save the barcode as an SVG file. Pass a ``.svg`` filename.

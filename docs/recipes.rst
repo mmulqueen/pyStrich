@@ -81,3 +81,70 @@ equivalent of :meth:`save_svg`).
 
    png_data = encoder.get_imagedata()   # bytes -- attach to an email, store in a database
    svg_markup = encoder.get_svg()       # str  -- embed directly in an HTML response
+
+Embedding barcodes as data URLs in templates
+--------------------------------------------
+
+Every encoder has :meth:`~pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl`
+and :meth:`~pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl` methods
+(``cellsize`` for 2D, ``bar_width`` for 1D) that return a ``data:`` URL
+string in one call. Register a thin wrapper with your templating engine
+to inline barcodes directly in the rendered HTML.
+
+Flask / Jinja2
+~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   from flask import Flask
+   from pystrich.ean13 import EAN13Encoder
+   from pystrich.qrcode import QRCodeEncoder
+
+   app = Flask(__name__)
+
+
+   @app.template_filter("ean13_dataurl")
+   def ean13_dataurl(code):
+       return EAN13Encoder(code).svg_dataurl()
+
+
+   @app.template_filter("qr_dataurl")
+   def qr_dataurl(text):
+       return QRCodeEncoder(text).svg_dataurl(cellsize=4)
+
+Then in a template:
+
+.. code-block:: jinja
+
+   <img src="{{ product.gtin | ean13_dataurl }}" alt="EAN-13 for {{ product.name }}">
+   <img src="{{ product.url | qr_dataurl }}" alt="QR code">
+
+Django
+~~~~~~
+
+Define the filter inside a templatetags module at
+``<app>/templatetags/pystrich_filters.py`` (with an ``__init__.py`` in
+``templatetags/`` so Django picks it up):
+
+.. code-block:: python
+
+   from django import template
+   from django.template.defaultfilters import stringfilter
+
+   from pystrich.qrcode import QRCodeEncoder
+
+   register = template.Library()
+
+
+   @register.filter
+   @stringfilter
+   def qr_dataurl(text):
+       return QRCodeEncoder(text, ecl="H").svg_dataurl(cellsize=8)
+
+Then in a template:
+
+.. code-block:: html+django
+
+   {% load pystrich_filters %}
+   <img src="{{ product.url|qr_dataurl }}" alt="QR code for {{ product.name }}">
+

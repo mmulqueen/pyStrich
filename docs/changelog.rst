@@ -1,6 +1,14 @@
 Changelog
 =========
 
+.. _unreleased:
+
+Unreleased
+----------
+
+- All encoders gain ``svg_dataurl`` and ``png_dataurl`` methods that
+  return the symbol as a ``data:`` URL string.
+
 .. _v0-14:
 
 0.14 — 2026-05-18
