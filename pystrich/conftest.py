@@ -20,7 +20,7 @@ def decode_barcode():
             results = zxingcpp.read_barcodes(image)
         if not results:
             raise AssertionError(f"zxing-cpp could not decode {image_path}")
-        return results[0].text
+        return str(results[0].text)
 
     return _read
 

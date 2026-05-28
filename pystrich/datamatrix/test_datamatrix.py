@@ -364,7 +364,7 @@ def test_datamatrix_data_raises_on_non_ascii_in_ascii(text):
 
 def test_datamatrix_data_unknown_encoding_raises():
     with pytest.raises(PyStrichInvalidOption):
-        DataMatrixData("abc", encoding="bogus")
+        DataMatrixData("abc", encoding="bogus")  # type: ignore[arg-type]
 
 
 @pytest.mark.parametrize(

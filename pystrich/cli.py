@@ -11,9 +11,10 @@ import argparse
 import importlib.metadata
 import os
 import sys
-from typing import Any, ClassVar, Literal, get_args
+from typing import Any, ClassVar, Literal, cast, get_args
 
 from pystrich.aztec import AZTEC_DEFAULT_QUIET_ZONE, AztecEncoder
+from pystrich.bar_encoder import Bar1DEncoder
 from pystrich.code39 import Code39Encoder
 from pystrich.code128 import Code128Encoder
 from pystrich.datamatrix import (
@@ -27,6 +28,7 @@ from pystrich.dxf import DxfUnit
 from pystrich.ean13 import EAN13Encoder, EAN13RenderOptions
 from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
 from pystrich.marks import MarkShape
+from pystrich.matrix_encoder import Matrix2DEncoder
 from pystrich.pdf417 import (
     DEFAULT_ROW_HEIGHT,
     PDF417_DEFAULT_QUIET_ZONE,
@@ -104,6 +106,9 @@ class OneDFormat(Format):
             help="image height in pixels",
         )
 
+    @abc.abstractmethod
+    def encoder(self, args: argparse.Namespace) -> Bar1DEncoder: ...
+
     def render_png(self, args: argparse.Namespace) -> bytes:
         return self.encoder(args).get_imagedata(args.bar_width)
 
@@ -123,7 +128,10 @@ class TwoDFormat(Format):
             "--cell-size",
             type=float,
             default=None,
-            help="side length of one module (default: 5 for raster/SVG/EPS, 1.0 for DXF)",
+            help=(
+                "side length of one module; must be a whole number for png/svg/eps "
+                "(default: 5), decimals are supported for dxf (default: 1.0)"
+            ),
         )
         sp.add_argument(
             "--inverse",
@@ -144,6 +152,9 @@ class TwoDFormat(Format):
             help="DXF units (default: mm); 'unspecified' writes $INSUNITS=0",
         )
 
+    @abc.abstractmethod
+    def encoder(self, args: argparse.Namespace) -> Matrix2DEncoder[Any]: ...
+
     @staticmethod
     def _reject_flags(args: argparse.Namespace, output_type: OutputType, *names: str) -> None:
         bad = [_FLAG_LABELS[n] for n in names if getattr(args, n) is not None]
@@ -153,12 +164,17 @@ class TwoDFormat(Format):
             )
 
     @staticmethod
-    def _raster_cell_size(args: argparse.Namespace) -> int:
+    def _raster_cell_size(args: argparse.Namespace, output_type: OutputType) -> int:
         if args.cell_size is None:
             return 5
         if args.cell_size <= 0:
             raise PyStrichInvalidOption(f"--cell-size must be positive, got {args.cell_size}")
-        return round(args.cell_size)
+        if not args.cell_size.is_integer():
+            raise PyStrichInvalidOption(
+                f"--cell-size must be a whole number for {output_type} output; "
+                "decimal values are only supported for dxf"
+            )
+        return int(args.cell_size)
 
     @staticmethod
     def _dxf_cell_size(args: argparse.Namespace) -> float:
@@ -179,15 +195,19 @@ class TwoDFormat(Format):
 
     def render_png(self, args: argparse.Namespace) -> bytes:
         self._reject_flags(args, "png", "inverse", "mark_shape", "dxf_units")
-        return self.encoder(args).get_imagedata(self._raster_cell_size(args))
+        return self.encoder(args).get_imagedata(self._raster_cell_size(args, "png"))
 
     def render_svg(self, args: argparse.Namespace) -> str:
         self._reject_flags(args, "svg", "dxf_units")
-        return self.encoder(args).get_svg(self._raster_cell_size(args), **self._vector_kwargs(args))
+        return self.encoder(args).get_svg(
+            self._raster_cell_size(args, "svg"), **self._vector_kwargs(args)
+        )
 
     def render_eps(self, args: argparse.Namespace) -> str:
         self._reject_flags(args, "eps", "dxf_units")
-        return self.encoder(args).get_eps(self._raster_cell_size(args), **self._vector_kwargs(args))
+        return self.encoder(args).get_eps(
+            self._raster_cell_size(args, "eps"), **self._vector_kwargs(args)
+        )
 
     def render_ascii(self, args: argparse.Namespace) -> str:
         self._reject_flags(args, "ascii", "inverse", "mark_shape", "dxf_units")
@@ -461,7 +481,7 @@ def _resolve_text(arg: str | None) -> str:
 
 def _resolve_output_type(args: argparse.Namespace, fmt: Format) -> OutputType:
     if args.output_type != "auto":
-        return args.output_type
+        return cast(OutputType, args.output_type)
     if args.output is not None and args.output != "-":
         ext = os.path.splitext(args.output)[1].lower()
         candidate = _OUTPUT_BY_EXTENSION.get(ext)

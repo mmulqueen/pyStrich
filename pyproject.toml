@@ -105,4 +105,11 @@ select = [
 [tool.mypy]
 files = ["pystrich"]
 python_version = "3.10"
+check_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+strict_equality = true
+extra_checks = true
 

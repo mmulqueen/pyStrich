@@ -76,18 +76,35 @@ def test_invalid_input_exits_2(capsys):
     assert "invalid input" in capsys.readouterr().err
 
 
-def test_cell_size_rounds_for_raster(tmp_path):
-    out_27 = tmp_path / "27.png"
-    out_3 = tmp_path / "3.png"
-    assert cli.main(["qrcode", "--text", "x", "-o", str(out_27), "--cell-size", "2.7"]) == 0
-    assert cli.main(["qrcode", "--text", "x", "-o", str(out_3), "--cell-size", "3"]) == 0
-    assert out_27.read_bytes() == out_3.read_bytes()
+@pytest.mark.parametrize(
+    "output_type, extension",
+    [("png", "png"), ("svg", "svg"), ("eps", "eps")],
+)
+def test_decimal_cell_size_errors_for_raster_and_vector(output_type, extension, capsys, tmp_path):
+    out = tmp_path / f"x.{extension}"
+    rc = cli.main(["qrcode", "--text", "x", "-o", str(out), "--cell-size", "2.7"])
+    assert rc == 2
+    err = capsys.readouterr().err
+    assert "whole number" in err
+    assert output_type in err
 
 
 def test_cell_size_zero_errors(capsys, tmp_path):
     out = tmp_path / "x.png"
     assert cli.main(["qrcode", "--text", "x", "-o", str(out), "--cell-size", "0"]) == 2
     assert "--cell-size" in capsys.readouterr().err
+
+
+def test_decimal_cell_size_below_one_errors_for_raster(capsys, tmp_path):
+    out = tmp_path / "x.png"
+    assert cli.main(["qrcode", "--text", "x", "-o", str(out), "--cell-size", "0.4"]) == 2
+    assert "whole number" in capsys.readouterr().err
+
+
+def test_decimal_cell_size_allowed_for_dxf(tmp_path):
+    out = tmp_path / "x.dxf"
+    assert cli.main(["qrcode", "--text", "x", "-o", str(out), "--cell-size", "0.4"]) == 0
+    assert b"SECTION" in out.read_bytes()
 
 
 def test_inverse_changes_svg(tmp_path):
