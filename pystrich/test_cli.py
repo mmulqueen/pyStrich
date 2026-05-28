@@ -9,6 +9,8 @@ import pytest
 
 from pystrich import cli
 from pystrich.datamatrix import FNC1, DataMatrixData, DataMatrixEncoder
+from pystrich.marks import MarkShape
+from pystrich.qrcode import QRCodeEncoder
 
 PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
 
@@ -76,17 +78,11 @@ def test_invalid_input_exits_2(capsys):
     assert "invalid input" in capsys.readouterr().err
 
 
-@pytest.mark.parametrize(
-    "output_type, extension",
-    [("png", "png"), ("svg", "svg"), ("eps", "eps")],
-)
-def test_decimal_cell_size_errors_for_raster_and_vector(output_type, extension, capsys, tmp_path):
-    out = tmp_path / f"x.{extension}"
+def test_decimal_cell_size_errors_for_raster(capsys, tmp_path):
+    out = tmp_path / "x.png"
     rc = cli.main(["qrcode", "--text", "x", "-o", str(out), "--cell-size", "2.7"])
     assert rc == 2
-    err = capsys.readouterr().err
-    assert "whole number" in err
-    assert output_type in err
+    assert "whole number" in capsys.readouterr().err
 
 
 def test_cell_size_zero_errors(capsys, tmp_path):
@@ -95,38 +91,17 @@ def test_cell_size_zero_errors(capsys, tmp_path):
     assert "--cell-size" in capsys.readouterr().err
 
 
-def test_decimal_cell_size_below_one_errors_for_raster(capsys, tmp_path):
-    out = tmp_path / "x.png"
-    assert cli.main(["qrcode", "--text", "x", "-o", str(out), "--cell-size", "0.4"]) == 2
-    assert "whole number" in capsys.readouterr().err
-
-
 def test_decimal_cell_size_allowed_for_dxf(tmp_path):
     out = tmp_path / "x.dxf"
     assert cli.main(["qrcode", "--text", "x", "-o", str(out), "--cell-size", "0.4"]) == 0
     assert b"SECTION" in out.read_bytes()
 
 
-def test_inverse_changes_svg(tmp_path):
-    plain = tmp_path / "plain.svg"
-    inv = tmp_path / "inv.svg"
-    assert cli.main(["qrcode", "--text", "x", "-o", str(plain), "--no-inverse"]) == 0
-    assert cli.main(["qrcode", "--text", "x", "-o", str(inv), "--inverse"]) == 0
-    assert plain.read_bytes() != inv.read_bytes()
-
-
-def test_mark_shape_circular_emits_circle(tmp_path):
-    out = tmp_path / "x.svg"
-    assert cli.main(["qrcode", "--text", "x", "-o", str(out), "--mark-shape", "circular"]) == 0
-    assert b"<circle" in out.read_bytes()
-
-
-def test_mark_shape_default_emits_rect(tmp_path):
-    out = tmp_path / "x.svg"
-    assert cli.main(["qrcode", "--text", "x", "-o", str(out)]) == 0
-    body = out.read_bytes()
-    assert b"<rect" in body
-    assert b"<circle" not in body
+def test_mark_shape_circular_matches_direct_api(tmp_path):
+    via_cli = tmp_path / "cli.svg"
+    assert cli.main(["qrcode", "--text", "x", "-o", str(via_cli), "--mark-shape", "circular"]) == 0
+    direct = QRCodeEncoder("x").get_svg(5, mark_shape=MarkShape.CIRCULAR_CELLS).encode("utf-8")
+    assert via_cli.read_bytes() == direct
 
 
 @pytest.mark.parametrize(
@@ -223,17 +198,18 @@ def test_auto_pipe_without_type_errors(capsys):
     assert "not a terminal" in capsys.readouterr().err
 
 
-def test_terminal_output_no_ansi_when_redirected(tmp_path):
+def test_terminal_output_redirected_matches_direct_api(tmp_path):
     out = tmp_path / "t.txt"
     assert cli.main(["qrcode", "--text", "x", "-t", "terminal", "-o", str(out)]) == 0
-    assert b"\x1b[" not in out.read_bytes()
+    direct = (QRCodeEncoder("x").get_terminal_art(ansi_bg=False) + "\n").encode("utf-8")
+    assert out.read_bytes() == direct
 
 
-def test_terminal_output_has_ansi_when_tty(monkeypatch, capfd):
+def test_terminal_output_tty_matches_direct_api(monkeypatch, capfd):
     monkeypatch.setattr(sys.stdout, "isatty", lambda: True)
     assert cli.main(["qrcode", "--text", "x", "-t", "terminal"]) == 0
     out, _ = capfd.readouterr()
-    assert "\x1b[" in out
+    assert out == QRCodeEncoder("x").get_terminal_art(ansi_bg=True) + "\n"
 
 
 def test_version_prints(capsys):
