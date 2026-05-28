@@ -9,6 +9,19 @@ Command-line interface
 Installing pyStrich exposes a ``pystrich`` console script with a subcommand
 per format and PNG / SVG / EPS / ASCII / terminal / DXF output.
 
+.. tip::
+
+   To try the CLI without installing pyStrich into an environment, run it
+   through pipx_ or uvx_:
+
+   .. code-block:: console
+
+      $ pipx run pystrich datamatrix --text "Rausschmeißer"
+      $ uvx pystrich datamatrix --text "Rausschmeißer"
+
+   .. _pipx: https://pipx.pypa.io/stable/
+   .. _uvx: https://docs.astral.sh/uv/guides/tools/
+
 .. code-block:: console
 
    $ pystrich qrcode --text "https://en.wikipedia.org/wiki/Jasper,_Missouri" -o jasper.svg
