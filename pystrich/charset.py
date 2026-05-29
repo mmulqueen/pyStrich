@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from typing import Literal, Protocol, TypeVar
+from typing import ClassVar, Literal, NamedTuple, Protocol, TypeVar
+
+from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
 
 T = TypeVar("T")
 C = TypeVar("C", bound=str, covariant=True)
@@ -71,3 +73,127 @@ def merge_str_segments(segments: tuple[str | T, ...]) -> tuple[str | T, ...]:
         else:
             out.append(seg)
     return tuple(out)
+
+
+class StandardEncodingRule(NamedTuple):
+    """Default rule shape: ``charset`` plus its widest representable codepoint."""
+
+    charset: Charset
+    max_codepoint: int
+
+
+_STANDARD_RULES: dict[Charset, StandardEncodingRule] = {
+    "ascii": StandardEncodingRule("ascii", 0x7F),
+    "iso-8859-1": StandardEncodingRule("iso-8859-1", 0xFF),
+    "utf-8": StandardEncodingRule("utf-8", 0x10FFFF),
+}
+
+
+class EncodableData:
+    """Shared base for the ``*Data`` composition types with a pinned charset.
+
+    Subclasses typically only carry a docstring referencing the matching
+    encoder. The default rule table covers ASCII, ISO-8859-1, and UTF-8;
+    override ``_ENCODING_RULES`` / ``_AUTO_ENCODING_RULES`` to extend or
+    narrow it.
+
+    :ivar segments: Tuple of input string segments after empty-merge.
+    :ivar encoding: The chosen Python codec name.
+    :ivar auto_encoding: ``True`` if the encoding was picked automatically.
+    """
+
+    __slots__ = ("auto_encoding", "encoding", "segments")
+
+    _ENCODING_RULES: ClassVar[dict[Charset, StandardEncodingRule]] = _STANDARD_RULES
+    _AUTO_ENCODING_RULES: ClassVar[tuple[StandardEncodingRule, ...]] = tuple(
+        _STANDARD_RULES.values()
+    )
+
+    segments: tuple[str, ...]
+    encoding: Charset
+    auto_encoding: bool
+
+    def __init__(
+        self,
+        *segments: str,
+        encoding: Charset | None = None,
+        auto_encoding: bool = False,
+    ) -> None:
+        cls_name = type(self).__name__
+        rules = self._ENCODING_RULES
+        auto_rules = self._AUTO_ENCODING_RULES
+
+        if auto_encoding:
+            chosen = get_suitable_encoding_for_codepoint(find_max_codepoint(segments), auto_rules)
+        elif encoding is None:
+            raise PyStrichInvalidOption(
+                f"{cls_name} requires an explicit encoding= "
+                f"(one of {', '.join(repr(c) for c in rules)}) "
+                "or auto_encoding=True for automatic selection."
+            )
+        elif encoding not in rules:
+            raise PyStrichInvalidOption(
+                f"unknown {cls_name} encoding {encoding!r}; expected one of {sorted(rules)}"
+            )
+        else:
+            max_codepoint = find_max_codepoint(segments)
+            chosen = encoding
+            rule = rules[encoding]
+            if max_codepoint > rule.max_codepoint:
+                suggested = get_suitable_encoding_for_codepoint(max_codepoint, auto_rules)
+                seg_args = ", ".join(repr(s) for s in segments)
+                raise PyStrichInvalidInput(
+                    f"{cls_name} encoding {encoding!r} expects {rule.charset.upper()}; "
+                    f"got {chr(max_codepoint)!r}. "
+                    f"Try {cls_name}({seg_args}, encoding={suggested!r})"
+                    " or pass auto_encoding=True to select an encoding automatically."
+                )
+
+        self.segments = merge_str_segments(segments)
+        self.encoding = chosen
+        self.auto_encoding = auto_encoding
+
+    def as_plain_text(self) -> tuple[str, Charset]:
+        """Return the concatenated text and the codec to encode it with."""
+        return "".join(self.segments), self.encoding
+
+    def __add__(self, other):
+        if isinstance(other, str):
+            new_segments = (*self.segments, other)
+            other_auto = False
+        elif isinstance(other, type(self)):
+            if not (self.auto_encoding or other.auto_encoding) and other.encoding != self.encoding:
+                raise PyStrichInvalidOption(
+                    f"cannot concatenate {type(self).__name__} with different encodings "
+                    f"({self.encoding!r} and {other.encoding!r})"
+                )
+            new_segments = (*self.segments, *other.segments)
+            other_auto = other.auto_encoding
+        else:
+            return NotImplemented
+        return type(self)(
+            *new_segments,
+            encoding=self.encoding,
+            auto_encoding=self.auto_encoding or other_auto,
+        )
+
+    def __radd__(self, other):
+        if not isinstance(other, str):
+            return NotImplemented
+        return type(self)(
+            other,
+            *self.segments,
+            encoding=self.encoding,
+            auto_encoding=self.auto_encoding,
+        )
+
+    def __eq__(self, other):
+        if type(self) is not type(other):
+            return NotImplemented
+        return self.segments == other.segments and self.encoding == other.encoding
+
+    def __hash__(self):
+        return hash((type(self), self.segments, self.encoding))
+
+    def __repr__(self):
+        return f"{type(self).__name__}({list(self.segments)!r})"
