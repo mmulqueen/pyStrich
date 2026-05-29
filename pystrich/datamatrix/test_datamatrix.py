@@ -350,10 +350,17 @@ def test_concat_with_mismatched_encodings_raises(lhs_encoding, rhs_encoding):
         DataMatrixData("a", encoding=lhs_encoding) + DataMatrixData("b", encoding=rhs_encoding)
 
 
-@pytest.mark.parametrize("text", ["café", "naïve", "tést", "é", "€"])
+@pytest.mark.parametrize("text", ["café", "naïve", "tést", "é"])
 def test_datamatrix_data_warns_on_non_ascii_in_compat(text):
     with pytest.warns(DataMatrixNonAsciiWarning):
         DataMatrixData(text, encoding="compat")
+
+
+def test_datamatrix_data_compat_rejects_codepoint_above_254():
+    """Compat replaces each high codepoint with ``DataMatrixCodeword(ord + 1)``;
+    codepoints whose ``ord + 1`` exceeds 255 (e.g. '€') aren't representable."""
+    with pytest.warns(DataMatrixNonAsciiWarning), pytest.raises(ValueError, match="codeword"):
+        DataMatrixData("€", encoding="compat")
 
 
 @pytest.mark.parametrize("text", ["café", "naïve", "tést", "é", "€"])
@@ -409,11 +416,6 @@ def test_datamatrix_data_concat_warns_on_non_ascii():
         DataMatrixData("abc", encoding="compat") + "café"
 
 
-def test_encoder_warns_on_non_ascii():
-    with pytest.warns(DataMatrixNonAsciiWarning):
-        DataMatrixEncoder("café")
-
-
 def test_fnc1_concat_with_non_ascii_raises():
     """Modern path (FNC1 + ...) raises on non-ASCII, no compat-warn fallback."""
     with pytest.raises(PyStrichInvalidInput):
@@ -437,19 +439,10 @@ def test_fnc1_concat_with_non_ascii_raises():
         pytest.param(
             "\xe7\xe7", (FNC1, FNC1), Fnc1WorkaroundCompatWarning, id="leading-consecutive"
         ),
-        pytest.param(
-            "hello\xe7", ("hello\xe7",), DataMatrixNonAsciiWarning, id="trailing-chr231-passthrough"
-        ),
-        pytest.param(
-            "a\xe7b", ("a\xe7b",), DataMatrixNonAsciiWarning, id="middle-chr231-passthrough"
-        ),
-        pytest.param(
-            "a\xe7\xe7b",
-            ("a\xe7\xe7b",),
-            DataMatrixNonAsciiWarning,
-            id="middle-consecutive-passthrough",
-        ),
-        pytest.param("café", ("café",), DataMatrixNonAsciiWarning, id="non-ascii-no-chr231"),
+        pytest.param("hello\xe7", ("hello\xe7",), None, id="trailing-chr231-passthrough"),
+        pytest.param("a\xe7b", ("a\xe7b",), None, id="middle-chr231-passthrough"),
+        pytest.param("a\xe7\xe7b", ("a\xe7\xe7b",), None, id="middle-consecutive-passthrough"),
+        pytest.param("café", ("café",), None, id="non-ascii-no-chr231"),
     ],
 )
 def test_fnc1_workaround_compat(text, expected_segments, expected_warning_cls):
@@ -475,7 +468,8 @@ def test_compat_does_not_emit_upper_shift():
     """Compat-mode latin-1 chars keep the legacy +1 offset (broken), no Upper Shift gating."""
     enc = TextEncoder()
     with pytest.warns(DataMatrixNonAsciiWarning):
-        codewords = enc.encode("café")
+        data = DataMatrixData("café", encoding="compat")
+    codewords = enc.encode(data)
     # 'é' under compat falls through append_ascii_char -> chr(234), no leading 235.
     assert codewords[:4] == [100, 98, 103, 234]
 
@@ -683,6 +677,14 @@ def test_size_index_picks_smallest_fitting(input_len, expected_size_index):
     enc = TextEncoder()
     enc.encode(DataMatrixData("a" * input_len, encoding="ascii"))
     assert enc.size_index == expected_size_index
+
+
+def test_fnc1_routes_through_ascii_only():
+    """FNC1 markers force the ASCII-only path (the DP can't represent markers)."""
+    enc = TextEncoder()
+    cws = enc.encode(FNC1 + "10ABCDEFGH")
+    # FNC1 codeword first, then ASCII-only (digit pair 10 + single ASCII bytes).
+    assert cws[:7] == [232, 140, 66, 67, 68, 69, 70]
 
 
 def test_datamatrix_smudge_tolerance(tmp_path, decode_barcode):

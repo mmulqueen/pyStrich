@@ -58,3 +58,16 @@ def get_suitable_encoding_for_codepoint(
     rules whose ``charset`` is a ``Literal`` returns that ``Literal``.
     """
     return next(rule.charset for rule in rules if codepoint <= rule.max_codepoint)
+
+
+def merge_str_segments(segments: tuple[str | T, ...]) -> tuple[str | T, ...]:
+    """Merge consecutive str segments into one; drop empty strs."""
+    out: list[str | T] = []
+    for seg in segments:
+        if isinstance(seg, str) and not seg:
+            continue
+        if out and isinstance(seg, str) and isinstance(out[-1], str):
+            out[-1] += seg
+        else:
+            out.append(seg)
+    return tuple(out)

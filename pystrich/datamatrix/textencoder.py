@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
-
 from pystrich.exceptions import PyStrichInvalidInput
 from pystrich.reedsolomon import GF256_0x12D, reed_solomon_encode
 
+from ..charset import Charset
 from .data import DataMatrixCodeword, DataMatrixData, fnc1_workaround_compat
 
 # fmt: off
@@ -35,6 +34,17 @@ rs_blocks: tuple[int, ...] = (1, 1, 1, 1, 1, 1, 1, 1, 1,
                               2, 2, 4, 4, 4, 4,
                               6, 6, 8, 10)
 # fmt: on
+
+# Map the DataMatrix charset to the ECI number to prepend, or None for no ECI.
+# iso-8859-1 high bytes go through Upper Shift codewords, not ECI.
+_ECI_BY_CHARSET: dict[Charset, int | None] = {
+    "ascii": None,
+    "iso-8859-1": None,
+    "utf-8": 26,
+}
+
+# Codeword that introduces an ECI designator (designator = ECI value + 1).
+_ECI_INDICATOR = 241
 
 
 class DataTooLongForImplementation(PyStrichInvalidInput):
@@ -84,11 +94,12 @@ class TextEncoder:
 
         data = text if isinstance(text, DataMatrixData) else fnc1_workaround_compat(text)
 
-        if data.encoding == "utf-8":
-            # Codeword 241 (ECI) + 27 (ECI value 26 + 1) declares UTF-8 for the
-            # remainder of the symbol. Emitted once, before any data.
-            self.append_codeword(241)
-            self.append_codeword(27)
+        charset: Charset = "ascii" if data.encoding == "compat" else data.encoding
+        eci = _ECI_BY_CHARSET[charset]
+
+        if eci is not None:
+            self.append_codeword(_ECI_INDICATOR)
+            self.append_codeword(eci + 1)
 
         numbuf = ""
 
@@ -106,25 +117,14 @@ class TextEncoder:
                 self.append_codeword(segment.value)
                 continue
 
-            # Compat mode tolerates codepoints outside its nominal ASCII charset,
-            # so .encode() would raise; everything else maps cleanly to bytes.
-            byte_iter: Iterable[int] = (
-                map(ord, segment) if data.encoding == "compat" else segment.encode(data.encoding)
-            )
-
-            for byte in byte_iter:
+            for byte in segment.encode(charset):
                 if 0x30 <= byte <= 0x39:  # ASCII '0'-'9'
                     numbuf += chr(byte)
                     if len(numbuf) == 2:
                         flush_numbuf()
                     continue
                 flush_numbuf()
-                if data.encoding == "compat":
-                    # Legacy +1 offset preserved for backwards compat: emits
-                    # codewords > 255 for non-ASCII input (broken on purpose).
-                    self.append_codeword(byte + 1)
-                else:
-                    self.append_byte(byte)
+                self.append_byte(byte)
 
         flush_numbuf()
 

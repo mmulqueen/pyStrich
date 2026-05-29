@@ -106,8 +106,9 @@ class TextEncoder:
         if not 5 <= ecc_pct <= 95:
             raise PyStrichInvalidOption(f"ecc must be between 5 and 95 (got {ecc_pct})")
 
-        payload_bytes = "".join(data.segments).encode(data.encoding)
-        eci = _ECI_BY_CHARSET[data.encoding]
+        text, charset = data.as_plain_text()
+        payload_bytes = text.encode(charset)
+        eci = _ECI_BY_CHARSET[charset]
         bits = encode_high_level(payload_bytes, eci=eci)
 
         kind, n_layers, codewords, num_ec = self._choose_size(bits, ecc_pct, symbol_kind, layers)

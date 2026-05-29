@@ -202,12 +202,12 @@ def _compact(text: PDF417Data | str) -> list[int]:
     rather than the Latin-1 default.
     """
     data = _coerce(text)
-    joined = "".join(data.segments)
+    joined, charset = data.as_plain_text()
     if not joined:
         return []
 
     cws: list[int] = []
-    eci = _ECI_DESIGNATOR[data.encoding]
+    eci = _ECI_DESIGNATOR[charset]
     if eci is not None:
         cws.extend([ECI_SMALL, eci])
 
@@ -248,13 +248,13 @@ def _compact(text: PDF417Data | str) -> list[int]:
         while end < n and joined[end] not in CHAR_TO_SUBMODE_VALUE and not _is_digit(joined[end]):
             end += 1
         try:
-            byte_data = joined[i:end].encode(data.encoding)
+            byte_data = joined[i:end].encode(charset)
         except UnicodeEncodeError as exc:
             # PDF417Data validates encoding fit at construction, so reaching
             # here means a private caller bypassed the wrapper. Surface it
             # as an input error so the message names the offending character.
             raise PyStrichInvalidInput(
-                f"Character {joined[exc.start]!r} cannot be encoded as {data.encoding}"
+                f"Character {joined[exc.start]!r} cannot be encoded as {charset}"
             ) from exc
         cws.append(LATCH_BYTE_MULT6 if len(byte_data) % 6 == 0 else LATCH_BYTE)
         cws.extend(_byte_compact(byte_data))

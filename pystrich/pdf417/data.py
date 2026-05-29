@@ -8,6 +8,7 @@ from pystrich.charset import (
     Charset,
     find_max_codepoint,
     get_suitable_encoding_for_codepoint,
+    merge_str_segments,
 )
 from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
 
@@ -89,9 +90,13 @@ class PDF417Data:
                     " or pass auto_encoding=True to select an encoding automatically."
                 )
 
-        self.segments = segments
+        self.segments = merge_str_segments(segments)
         self.encoding = chosen
         self.auto_encoding = auto_encoding
+
+    def as_plain_text(self) -> tuple[str, Charset]:
+        """Return the concatenated text and the codec to encode it with."""
+        return "".join(self.segments), self.encoding
 
     def __add__(self, other):
         if isinstance(other, str):

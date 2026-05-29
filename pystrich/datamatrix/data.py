@@ -9,6 +9,7 @@ from pystrich.charset import (
     Charset,
     find_max_codepoint,
     get_suitable_encoding_for_codepoint,
+    merge_str_segments,
 )
 from pystrich.exceptions import (
     DataMatrixNonAsciiWarning,
@@ -42,6 +43,40 @@ _AUTO_ENCODING_RULES: tuple[DataMatrixEncodingRule, ...] = (
 )
 
 
+class _HasMarkers(Exception):
+    """Raised by :meth:`DataMatrixData.as_plain_text` when the data contains
+    :class:`DataMatrixCodeword` markers (which the DP optimiser can't represent).
+    """
+
+
+def _compat_transform(
+    segments: tuple[str | DataMatrixCodeword, ...],
+) -> tuple[str | DataMatrixCodeword, ...]:
+    """Replace each char with ``ord >= 128`` by ``DataMatrixCodeword(ord + 1)``.
+
+    Used only for the deprecated ``"compat"`` encoding. Codepoints whose
+    ``ord + 1`` exceeds 255 (e.g. ``'€'``) can't be represented and will
+    raise from ``DataMatrixCodeword``'s validation.
+    """
+    out: list[str | DataMatrixCodeword] = []
+    for seg in segments:
+        if isinstance(seg, str):
+            chunk = ""
+            for ch in seg:
+                if ord(ch) >= 128:
+                    if chunk:
+                        out.append(chunk)
+                        chunk = ""
+                    out.append(DataMatrixCodeword(ord(ch) + 1))
+                else:
+                    chunk += ch
+            if chunk:
+                out.append(chunk)
+        else:
+            out.append(seg)
+    return tuple(out)
+
+
 class DataMatrixData:
     """Composable encoder input mixing text chunks with raw-codeword markers.
 
@@ -56,6 +91,13 @@ class DataMatrixData:
     that represents every segment; any ``encoding=`` argument passed
     alongside is ignored. After construction, :attr:`encoding` is always
     one of the four concrete charsets.
+
+    After construction :attr:`segments` is normalised: consecutive str
+    segments are merged, empty strs are dropped, and (for ``"compat"``)
+    every codepoint with the high bit set is replaced by a
+    :class:`DataMatrixCodeword` carrying the legacy ``ord + 1`` value.
+    The encoder therefore only ever sees pure-encodable strs interleaved with
+    raw codeword markers.
 
     .. versionadded:: 0.11
 
@@ -121,9 +163,28 @@ class DataMatrixData:
                     stacklevel=2,
                 )
 
-        self.segments = segments
+        if chosen == "compat":
+            segments = _compat_transform(segments)
+
+        self.segments = merge_str_segments(segments)
         self.encoding = chosen
         self.auto_encoding = auto_encoding
+
+    def as_plain_text(self) -> tuple[str, Charset]:
+        """Return the concatenated text and the codec to encode it with.
+
+        Raises :class:`_HasMarkers` if any segment is a
+        :class:`DataMatrixCodeword`. ``"compat"`` maps to ``"ascii"`` —
+        the normaliser has already replaced compat's high codepoints with
+        markers, which trigger the raise instead.
+        """
+        parts: list[str] = []
+        for seg in self.segments:
+            if isinstance(seg, DataMatrixCodeword):
+                raise _HasMarkers
+            parts.append(seg)
+        charset: Charset = "ascii" if self.encoding == "compat" else self.encoding
+        return "".join(parts), charset
 
     def __add__(self, other):
         if isinstance(other, (str, DataMatrixCodeword)):
@@ -219,13 +280,14 @@ def fnc1_workaround_compat(text: str, /) -> DataMatrixData:
     """Translate a leading chr(231) into an explicit FNC1 marker.
 
     Predates the FNC1 constant: callers triggered codeword 232 via the +1 ASCII
-    offset bug. Non-leading chr(231) is left alone and falls through to the
-    compat-mode warning. New code should use the FNC1 constant directly.
+    offset bug. Without a leading chr(231) the text is handed off to
+    ``auto_encoding=True`` to match the other symbologies. New code should use
+    the FNC1 constant directly.
 
     See https://github.com/mmulqueen/pyStrich/issues/13.
     """
     if not text.startswith("\xe7"):
-        return DataMatrixData(text, encoding="compat")
+        return DataMatrixData(text, auto_encoding=True)
 
     warnings.warn(
         "chr(231) is being interpreted as FNC1 (codeword 232) for backwards "

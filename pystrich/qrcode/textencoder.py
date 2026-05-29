@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import itertools
 import logging
 
 from pystrich.bitstream import BitStream
@@ -71,8 +72,9 @@ class TextEncoder:
     def encode_text(self, data: QRCodeData) -> None:
         """Encode the given QRCodeData into bitstream"""
 
-        encoded = "".join(data.segments).encode(data.encoding)
-        eci = _ECI_DESIGNATOR[data.encoding]
+        text, charset = data.as_plain_text()
+        encoded = text.encode(charset)
+        eci = _ECI_DESIGNATOR[charset]
         eci_overhead = 0 if eci is None else 12  # 4-bit ECI mode + 8-bit designator
 
         char_count_num = 8
@@ -127,11 +129,9 @@ class TextEncoder:
     def pad(self) -> None:
         """Pad out the encoded text to the correct word length"""
 
-        pads = [236, 17]
-        pad_idx = 0
+        pad_cycle = itertools.cycle((236, 17))
         for _ in range(len(self.codewords), self.max_data_codewords):
-            self.codewords.append(pads[pad_idx])
-            pad_idx = 1 - pad_idx
+            self.codewords.append(next(pad_cycle))
 
     def append_error_codes(self) -> None:
         """Calculate the necessary number of error codes for the encoded

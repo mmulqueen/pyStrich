@@ -66,4 +66,4 @@ def test_pdf417data_concatenation_inherits_encoding():
     """``+`` preserves the pinned encoding across segments."""
     combined = PDF417Data("abc", encoding="utf-8") + "def"
     assert combined.encoding == "utf-8"
-    assert combined.segments == ("abc", "def")
+    assert combined.segments == ("abcdef",)
