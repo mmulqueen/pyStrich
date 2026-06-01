@@ -5,12 +5,13 @@ from __future__ import annotations
 import itertools
 import logging
 
-from pystrich.bitstream import BitStream
 from pystrich.exceptions import PyStrichInvalidInput
 from pystrich.reedsolomon import GF256_0x11D, reed_solomon_encode
 
 from . import isodata
 from .data import QRCodeData, QRCodeEncoding
+from .dpencoder import encode_high_level
+from .modes import bracket_for_version
 
 LOG = logging.getLogger("qrcode")
 
@@ -70,60 +71,39 @@ class TextEncoder:
         return self.matrix
 
     def encode_text(self, data: QRCodeData) -> None:
-        """Encode the given QRCodeData into bitstream"""
+        """Encode the given QRCodeData into the codeword buffer."""
 
         text, charset = data.as_plain_text()
         encoded = text.encode(charset)
         eci = _ECI_DESIGNATOR[charset]
-        eci_overhead = 0 if eci is None else 12  # 4-bit ECI mode + 8-bit designator
 
-        char_count_num = 8
-        num_bytes = len(encoded)
-        result_len = eci_overhead + 4 + char_count_num + 8 * num_bytes
-        terminator_len = 4
-        # Calculate smallest symbol version
-        for self.version in range(1, 42):
-            if self.version == 10:
-                char_count_num = 16
-                result_len += 8
-            elif self.version == 41:
-                raise PyStrichInvalidInput(f"QRCode cannot store {result_len} bits")
-
+        bits_by_bracket = [
+            encode_high_level(encoded, version_bracket=b, eci=eci) for b in (0, 1, 2)
+        ]
+        for self.version in range(1, 41):
+            bits = bits_by_bracket[bracket_for_version(self.version)]
             max_bits = isodata.MAX_DATA_BITS[self.version - 1 + 40 * self.ecl]
-            if max_bits >= result_len:
-                if max_bits - result_len < 4:
-                    terminator_len = max_bits - result_len
-                self.max_data_codewords = max_bits >> 3
+            if max_bits >= len(bits):
+                terminator_len = min(4, max_bits - len(bits))
+                self.max_data_codewords = max_bits // 8
                 break
+        else:
+            raise PyStrichInvalidInput(
+                f"payload needs {len(bits_by_bracket[2])} bits at version 40; "
+                f"no QR symbol at ECL {self.ecl} holds this"
+            )
 
-        bitstream = BitStream()
-        for byte in encoded:
-            bitstream.append(byte, 8)
+        self._pack_bits(bits, terminator_len)
 
-        bitstream.prepend(num_bytes, char_count_num)
-        # write 'byte' mode
-        bitstream.prepend(4, 4)
-        if eci is not None:
-            # ECI mode indicator 0111 followed by the 8-bit designator
-            # (valid for ECI numbers up to 127).
-            bitstream.prepend(eci, 8)
-            bitstream.prepend(7, 4)
-        # Terminator is 0-4 zero bits; omit when the data fills the symbol.
-        if terminator_len > 0:
-            bitstream.append(0, terminator_len)
-        # convert bitstream into codewords
-        byte = 0
-        bit_num = 7
-        for bit in bitstream.data:
-            byte |= bit << bit_num
-            bit_num -= 1
-            if bit_num == -1:
-                self.codewords.append(byte)
-                bit_num = 7
-                byte = 0
-        # Pad the final partial byte to a codeword boundary. Only reachable
-        # when an ECI prefix has shifted the bit stream off byte alignment.
-        if bit_num != 7:
+    def _pack_bits(self, bits: list[int], terminator_len: int) -> None:
+        """Append terminator zeros then pack the bit stream into codewords."""
+
+        bits = bits + [0] * terminator_len
+        bits += [0] * (-len(bits) % 8)  # pad final byte to a codeword boundary
+        for i in range(0, len(bits), 8):
+            byte = 0
+            for bit in bits[i : i + 8]:
+                byte = (byte << 1) | bit
             self.codewords.append(byte)
 
     def pad(self) -> None:
