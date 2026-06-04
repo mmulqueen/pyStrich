@@ -248,8 +248,7 @@ Encoding          Behaviour
    :alt: Aztec Code encoding "€5 親切にしろ 🐻‍❄️" as UTF-8 (ECI 26).
 
 If you pin an encoding that does not fit the input, the raised error
-names the offending character and suggests the encoding that *would*
-have worked:
+suggests the encoding that *would* have worked:
 
 .. doctest::
 
@@ -257,7 +256,7 @@ have worked:
    >>> AztecData("Ich dachte, Sie wären kräftiger", encoding="ascii")
    Traceback (most recent call last):
        ...
-   pystrich.exceptions.PyStrichInvalidInput: AztecData encoding 'ascii' expects ASCII; got 'ä'. Try AztecData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
+   pystrich.exceptions.PyStrichInvalidInput: AztecData encoding ASCII cannot encode the input; try AztecData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
 
 Aztec Runes
 -----------

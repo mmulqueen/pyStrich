@@ -249,8 +249,7 @@ Encoding          Behaviour
    QRCodeEncoder("€5 親切にしろ 🐻‍❄️").save("utf8.png")
 
 If you pin an encoding that does not fit the input, the raised error
-names the offending character and suggests the encoding that *would*
-have worked:
+suggests the encoding that *would* have worked:
 
 .. doctest::
 
@@ -258,7 +257,7 @@ have worked:
    >>> QRCodeData("Ich dachte, Sie wären kräftiger", encoding="ascii")
    Traceback (most recent call last):
        ...
-   pystrich.exceptions.PyStrichInvalidInput: QRCodeData encoding 'ascii' expects ASCII; got 'ä'. Try QRCodeData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
+   pystrich.exceptions.PyStrichInvalidInput: QRCodeData encoding ASCII cannot encode the input; try QRCodeData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
 
 Anatomy
 -------

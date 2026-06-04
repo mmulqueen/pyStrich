@@ -94,8 +94,7 @@ class TextEncoder:
 
         data = text if isinstance(text, DataMatrixData) else fnc1_workaround_compat(text)
 
-        charset: Charset = "ascii" if data.encoding == "compat" else data.encoding
-        eci = _ECI_BY_CHARSET[charset]
+        eci = _ECI_BY_CHARSET[data.encoding]
 
         if eci is not None:
             self.append_codeword(_ECI_INDICATOR)
@@ -117,7 +116,7 @@ class TextEncoder:
                 self.append_codeword(segment.value)
                 continue
 
-            for byte in segment.encode(charset):
+            for byte in segment.encode(data.encoding):
                 if 0x30 <= byte <= 0x39:  # ASCII '0'-'9'
                     numbuf += chr(byte)
                     if len(numbuf) == 2:

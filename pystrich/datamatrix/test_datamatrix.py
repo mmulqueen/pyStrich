@@ -310,12 +310,12 @@ def test_gs1_fnc1(payload, expected, tmp_path, dmtxread):
         pytest.param(FNC1 + FNC1, "ascii", id="codeword-then-codeword"),
         pytest.param(
             FNC1 + DataMatrixData("abc", encoding="compat"),
-            "compat",
+            "ascii",
             id="codeword-preserves-compat-data-encoding",
         ),
         pytest.param(
             DataMatrixData(encoding="compat") + "abc" + FNC1,
-            "compat",
+            "ascii",
             id="compat-data-then-str-then-codeword",
         ),
         pytest.param(
@@ -341,8 +341,9 @@ def test_concat_returns_datamatrix_data(data, expected_encoding):
 @pytest.mark.parametrize(
     "lhs_encoding, rhs_encoding",
     [
-        ("compat", "ascii"),
-        ("ascii", "compat"),
+        ("ascii", "iso-8859-1"),
+        ("iso-8859-1", "utf-8"),
+        ("ascii", "utf-8"),
     ],
 )
 def test_concat_with_mismatched_encodings_raises(lhs_encoding, rhs_encoding):
@@ -404,15 +405,20 @@ def test_datamatrix_data_rejects_non_str_segments(bad_segment):
         DataMatrixData(bad_segment, encoding="compat")
 
 
-def test_datamatrix_data_equality_distinguishes_encoding():
+def test_compat_resolves_to_ascii_after_init():
+    """Compat is a one-shot init option: post-construction the data is
+    indistinguishable from encoding='ascii' (for ASCII-only input)."""
     compat = DataMatrixData("abc", encoding="compat")
     strict = DataMatrixData("abc", encoding="ascii")
-    assert compat != strict
-    assert hash(compat) != hash(strict)
+    assert compat == strict
+    assert hash(compat) == hash(strict)
+    assert compat.encoding == "ascii"
 
 
-def test_datamatrix_data_concat_warns_on_non_ascii():
-    with pytest.warns(DataMatrixNonAsciiWarning):
+def test_compat_init_then_concat_non_ascii_raises():
+    """Compat doesn't survive __add__: after the legacy transform runs at
+    init, the result is ASCII-encoded and further non-ASCII raises."""
+    with pytest.raises(PyStrichInvalidInput):
         DataMatrixData("abc", encoding="compat") + "café"
 
 

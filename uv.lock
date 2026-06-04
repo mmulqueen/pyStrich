@@ -948,6 +948,7 @@ version = "0.14"
 source = { editable = "." }
 dependencies = [
     { name = "pillow" },
+    { name = "typing-extensions" },
 ]
 
 [package.dev-dependencies]
@@ -974,6 +975,7 @@ docs = [
 requires-dist = [
     { name = "pillow", marker = "python_full_version < '3.11'", specifier = ">=10.3" },
     { name = "pillow", marker = "python_full_version >= '3.11'", specifier = ">=12.2" },
+    { name = "typing-extensions", specifier = ">=4.15.0" },
 ]
 
 [package.metadata.requires-dev]

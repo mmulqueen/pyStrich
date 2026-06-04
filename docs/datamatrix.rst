@@ -319,8 +319,8 @@ Encoding          Behaviour
 .. image:: examples/datamatrix-utf8.png
    :alt: Data Matrix encoding "€5 親切にしろ 🐻‍❄️" as UTF-8 (ECI 26).
 
-If you pass a string with the wrong encoding, the raised error names the
-offending character and suggests the encoding that *would* have worked:
+If you pass a string with the wrong encoding, the raised error suggests
+the encoding that *would* have worked:
 
 .. doctest::
 
@@ -328,7 +328,7 @@ offending character and suggests the encoding that *would* have worked:
    >>> DataMatrixData("Ich dachte, Sie wären kräftiger", encoding="ascii")
    Traceback (most recent call last):
        ...
-   pystrich.exceptions.PyStrichInvalidInput: DataMatrix encoding 'ascii' expects ASCII; got 'ä'. Try DataMatrixData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
+   pystrich.exceptions.PyStrichInvalidInput: DataMatrixData encoding ASCII cannot encode the input; try DataMatrixData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
 
 Anatomy
 -------

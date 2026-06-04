@@ -2,30 +2,26 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
-from typing import ClassVar, Literal, NamedTuple, Protocol, TypeVar
+from collections.abc import Iterable
+from typing import ClassVar, Generic, Literal, TypeGuard, cast, get_args, get_origin
+
+from typing_extensions import Never, TypeVar
 
 from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
 
 T = TypeVar("T")
-C = TypeVar("C", bound=str, covariant=True)
 
 Charset = Literal["ascii", "iso-8859-1", "utf-8"]
 
+EncT = TypeVar("EncT", bound=str, default=Charset)
+MarkerT = TypeVar("MarkerT", default=Never)
 
-class EncodingRule(Protocol[C]):
-    """An encoding entry: a Python codec name and its widest codepoint.
 
-    Generic over the ``charset`` type so format-specific concretes can
-    narrow it to a ``Literal`` (e.g. :data:`Charset`); the
-    :func:`get_suitable_encoding_for_codepoint` return type then carries
-    that narrower type back without a cast.
+class _HasMarkers(Exception):
+    """Raised by :meth:`EncodableData.as_plain_text` when the data contains
+    raw markers that have no plain-text representation. Subclasses with
+    ``_MARKER_TYPES == ()`` (the default) never trigger this.
     """
-
-    @property
-    def charset(self) -> C: ...
-    @property
-    def max_codepoint(self) -> int: ...
 
 
 def find_max_codepoint(
@@ -49,17 +45,31 @@ def find_max_codepoint(
     return result
 
 
-def get_suitable_encoding_for_codepoint(
-    codepoint: int,
-    rules: Sequence[EncodingRule[C]],
-) -> C:
-    """Return the ``charset`` of the first rule that covers ``codepoint``.
+def pick_default_encoding(codepoint: int) -> Charset:
+    """Narrowest of ASCII / ISO-8859-1 / UTF-8 that represents ``codepoint``."""
+    if codepoint <= 0x7F:
+        return "ascii"
+    if codepoint <= 0xFF:
+        return "iso-8859-1"
+    return "utf-8"
 
-    ``rules`` is walked in order, so put the narrowest first. The return
-    type matches the rules' ``charset`` type, so passing a sequence of
-    rules whose ``charset`` is a ``Literal`` returns that ``Literal``.
+
+def _all_str(segments: tuple[str | object, ...]) -> TypeGuard[tuple[str, ...]]:
+    """Narrow ``segments`` to ``tuple[str, ...]`` when every element is a str."""
+    return all(isinstance(s, str) for s in segments)
+
+
+def _extract_marker_types(marker_type: object) -> tuple[type, ...]:
+    """Resolve the ``MarkerT`` arm of ``EncodableData[EncT, MarkerT]`` to a
+    concrete tuple of types for ``isinstance``. ``Never`` collapses to
+    ``()``; a union expands to its arms; a single class wraps to a 1-tuple.
     """
-    return next(rule.charset for rule in rules if codepoint <= rule.max_codepoint)
+    if marker_type is Never:
+        return ()
+    args = get_args(marker_type)
+    if args:
+        return args
+    return (marker_type,)  # type: ignore[return-value]
 
 
 def merge_str_segments(segments: tuple[str | T, ...]) -> tuple[str | T, ...]:
@@ -75,91 +85,121 @@ def merge_str_segments(segments: tuple[str | T, ...]) -> tuple[str | T, ...]:
     return tuple(out)
 
 
-class StandardEncodingRule(NamedTuple):
-    """Default rule shape: ``charset`` plus its widest representable codepoint."""
-
-    charset: Charset
-    max_codepoint: int
-
-
-_STANDARD_RULES: dict[Charset, StandardEncodingRule] = {
-    "ascii": StandardEncodingRule("ascii", 0x7F),
-    "iso-8859-1": StandardEncodingRule("iso-8859-1", 0xFF),
-    "utf-8": StandardEncodingRule("utf-8", 0x10FFFF),
-}
-
-
-class EncodableData:
+class EncodableData(Generic[EncT, MarkerT]):
     """Shared base for the ``*Data`` composition types with a pinned charset.
 
-    Subclasses typically only carry a docstring referencing the matching
-    encoder. The default rule table covers ASCII, ISO-8859-1, and UTF-8;
-    override ``_ENCODING_RULES`` / ``_AUTO_ENCODING_RULES`` to extend or
-    narrow it.
+    Generic over two parameters: ``EncT`` is the encoding-literal type
+    (defaults to :data:`Charset`), and ``MarkerT`` is the raw-marker type
+    that may appear alongside text segments (defaults to ``Never`` -- no
+    markers). The Literal's arms become ``_SUPPORTED_ENCODINGS`` and the
+    marker type becomes ``_MARKER_TYPES`` automatically via
+    :meth:`__init_subclass__`. Override :meth:`_validate_explicit_encoding`
+    only if you need to swap the default trial-encode policy.
 
-    :ivar segments: Tuple of input string segments after empty-merge.
+    :ivar segments: Tuple of input segments after empty-merge.
     :ivar encoding: The chosen Python codec name.
     :ivar auto_encoding: ``True`` if the encoding was picked automatically.
     """
 
     __slots__ = ("auto_encoding", "encoding", "segments")
 
-    _ENCODING_RULES: ClassVar[dict[Charset, StandardEncodingRule]] = _STANDARD_RULES
-    _AUTO_ENCODING_RULES: ClassVar[tuple[StandardEncodingRule, ...]] = tuple(
-        _STANDARD_RULES.values()
-    )
+    # Populated from the parameterised generics by __init_subclass__.
+    _SUPPORTED_ENCODINGS: ClassVar[tuple[str, ...]] = ()
+    _MARKER_TYPES: ClassVar[tuple[type, ...]] = ()
 
-    segments: tuple[str, ...]
-    encoding: Charset
+    segments: tuple[str | MarkerT, ...]
+    encoding: EncT
     auto_encoding: bool
+
+    def __init_subclass__(cls, **kwargs: object) -> None:
+        super().__init_subclass__(**kwargs)
+        # __orig_bases__ holds the parameterised form when generic args
+        # are explicit; __bases__ holds the bare class when subclasses
+        # omit them (relying on the TypeVar defaults).
+        type_params = EncodableData.__parameters__  # type: ignore[attr-defined]
+        for base in (*getattr(cls, "__orig_bases__", ()), *cls.__bases__):
+            if base is EncodableData or get_origin(base) is EncodableData:
+                args = get_args(base)
+                enc_type, marker_type = (
+                    args[i] if i < len(args) else tp.__default__ for i, tp in enumerate(type_params)
+                )
+                cls._SUPPORTED_ENCODINGS = get_args(enc_type)
+                cls._MARKER_TYPES = _extract_marker_types(marker_type)
+                return
+        raise TypeError(
+            f"{cls.__name__} must subclass EncodableData, "
+            "optionally parameterised (e.g. EncodableData[DataMatrixEncoding, DataMatrixCodeword])."
+        )
 
     def __init__(
         self,
-        *segments: str,
-        encoding: Charset | None = None,
+        *segments: str | MarkerT,
+        encoding: EncT | None = None,
         auto_encoding: bool = False,
     ) -> None:
-        cls_name = type(self).__name__
-        rules = self._ENCODING_RULES
-        auto_rules = self._AUTO_ENCODING_RULES
-
         if auto_encoding:
-            chosen = get_suitable_encoding_for_codepoint(find_max_codepoint(segments), auto_rules)
+            max_cp = find_max_codepoint(segments, ignore_types=self._MARKER_TYPES)
+            chosen = cast(EncT, pick_default_encoding(max_cp))
         elif encoding is None:
             raise PyStrichInvalidOption(
-                f"{cls_name} requires an explicit encoding= "
-                f"(one of {', '.join(repr(c) for c in rules)}) "
+                f"{type(self).__name__} requires an explicit encoding= "
+                f"(one of {', '.join(self._SUPPORTED_ENCODINGS)}) "
                 "or auto_encoding=True for automatic selection."
             )
-        elif encoding not in rules:
-            raise PyStrichInvalidOption(
-                f"unknown {cls_name} encoding {encoding!r}; expected one of {sorted(rules)}"
-            )
         else:
-            max_codepoint = find_max_codepoint(segments)
+            self._validate_explicit_encoding(segments, encoding)
             chosen = encoding
-            rule = rules[encoding]
-            if max_codepoint > rule.max_codepoint:
-                suggested = get_suitable_encoding_for_codepoint(max_codepoint, auto_rules)
-                seg_args = ", ".join(repr(s) for s in segments)
-                raise PyStrichInvalidInput(
-                    f"{cls_name} encoding {encoding!r} expects {rule.charset.upper()}; "
-                    f"got {chr(max_codepoint)!r}. "
-                    f"Try {cls_name}({seg_args}, encoding={suggested!r})"
-                    " or pass auto_encoding=True to select an encoding automatically."
-                )
 
         self.segments = merge_str_segments(segments)
         self.encoding = chosen
         self.auto_encoding = auto_encoding
 
-    def as_plain_text(self) -> tuple[str, Charset]:
-        """Return the concatenated text and the codec to encode it with."""
+    def _validate_explicit_encoding(
+        self, segments: tuple[str | object, ...], encoding: str
+    ) -> None:
+        """Raise if ``encoding`` isn't supported or can't represent the segments.
+
+        Trial-encodes each str segment with ``encoding``; the codec itself
+        decides what it can cover, which keeps the base class
+        codec-agnostic. Non-str segments (i.e. :attr:`_MARKER_TYPES`
+        instances) are skipped.
+        """
+        cls_name = type(self).__name__
+        if encoding not in self._SUPPORTED_ENCODINGS:
+            raise PyStrichInvalidOption(
+                f"unknown {cls_name} encoding {encoding!r}; "
+                f"expected one of {sorted(self._SUPPORTED_ENCODINGS)}"
+            )
+        # Also serves as type validation: rejects non-str non-marker segments.
+        max_cp = find_max_codepoint(segments, ignore_types=self._MARKER_TYPES)
+        try:
+            for seg in segments:
+                if isinstance(seg, str):
+                    seg.encode(encoding)
+        except UnicodeEncodeError as e:
+            suggested = pick_default_encoding(max_cp)
+            seg_args = ", ".join(repr(s) for s in segments)
+            raise PyStrichInvalidInput(
+                f"{cls_name} encoding {encoding.upper()} cannot encode the input; "
+                f"try {cls_name}({seg_args}, encoding={suggested!r}) "
+                "or pass auto_encoding=True to select an encoding automatically."
+            ) from e
+
+    def as_plain_text(self) -> tuple[str, EncT]:
+        """Return the concatenated text and the codec to encode it with.
+
+        Raises :class:`_HasMarkers` if any segment is a raw marker rather
+        than a string. For subclasses without markers (``MarkerT == Never``)
+        the check is a no-op.
+        """
+        if not _all_str(self.segments):
+            raise _HasMarkers
         return "".join(self.segments), self.encoding
 
     def __add__(self, other):
-        if isinstance(other, str):
-            new_segments = (*self.segments, other)
+        new_segments: tuple[str | MarkerT, ...]
+        if isinstance(other, (str, *self._MARKER_TYPES)):
+            new_segments = (*self.segments, other)  # type: ignore[assignment]
             other_auto = False
         elif isinstance(other, type(self)):
             if not (self.auto_encoding or other.auto_encoding) and other.encoding != self.encoding:
