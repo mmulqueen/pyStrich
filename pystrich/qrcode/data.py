@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from pystrich.charset import Charset, EncodableData
+from typing import Literal
 
-QRCodeEncoding = Charset
+from pystrich.charset import EncodableData
+
+QRCodeEncoding = Literal["ascii", "iso-8859-1", "utf-8", "shift_jis"]
 
 
-class QRCodeData(EncodableData):
+class QRCodeData(EncodableData[QRCodeEncoding]):
     """Encoder input with an explicit character-set choice.
 
     :class:`QRCodeEncoder` accepts a plain ``str`` and selects the encoding
@@ -15,9 +17,9 @@ class QRCodeData(EncodableData):
     example, force ``"ascii"`` to reject non-ASCII input.
 
     Pass either ``encoding=`` (one of ``"ascii"``, ``"iso-8859-1"``,
-    ``"utf-8"``) or ``auto_encoding=True``. With ``auto_encoding=True``
-    the constructor picks the narrowest fitting encoding; any
-    ``encoding=`` argument is then ignored.
+    ``"utf-8"``, ``"shift_jis"``) or ``auto_encoding=True``. With
+    ``auto_encoding=True`` the constructor picks the narrowest fitting
+    encoding from the first three; ``"shift_jis"`` is explicit-only.
     """
 
     __slots__ = ()

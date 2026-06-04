@@ -25,6 +25,7 @@ _ECI_DESIGNATOR: dict[QRCodeEncoding, int | None] = {
     "ascii": None,
     "iso-8859-1": 3,
     "utf-8": 26,
+    "shift_jis": 20,
 }
 
 

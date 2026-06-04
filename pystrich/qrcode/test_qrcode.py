@@ -257,6 +257,25 @@ def test_scanner_round_trip(string, ecl, tmp_path, decode_barcode):
     assert decode_barcode(img) == string
 
 
+@pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])
+@pytest.mark.parametrize(
+    "string",
+    [
+        "中文",
+        "Hello 中文",
+        "日本語テスト",
+        # Mixed segmentation: NUM+KANJI and ALPHA+KANJI under shift_jis.
+        "0123456789中文",
+        "HELLO中文",
+    ],
+)
+def test_shift_jis_kanji_round_trip(string, ecl, tmp_path, decode_barcode):
+    """Shift_JIS payloads use Kanji mode where it pays and decode back cleanly."""
+    img = tmp_path / "qrcode-test.png"
+    QRCodeEncoder(QRCodeData(string, encoding="shift_jis"), ecl).save(str(img), 3)
+    assert decode_barcode(img) == string
+
+
 @pytest.mark.parametrize("cellsize", [5, 10])
 @pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])
 @pytest.mark.parametrize(
