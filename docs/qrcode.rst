@@ -229,6 +229,9 @@ Encoding          Behaviour
                   do not fall back to Shift-JIS heuristics on high bytes.
 ``"utf-8"``       Declares ECI 26 and byte-encodes the input. Conformant decoders
                   pick up the encoding automatically.
+``"shift_jis"``   Declares ECI 20 and enables Kanji-mode compaction (13 bits per
+                  JIS X 0208 character vs. 24 bits as UTF-8 in byte mode). Opt-in;
+                  auto-selection never picks it.
 ================  ===================================================================
 
 .. tip::
@@ -258,6 +261,20 @@ suggests the encoding that *would* have worked:
    Traceback (most recent call last):
        ...
    pystrich.exceptions.PyStrichInvalidInput: QRCodeData encoding ASCII cannot encode the input; try QRCodeData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
+
+Japanese with Shift_JIS
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+   QRCodeEncoder(QRCodeData("親切にしろ", encoding="shift_jis")).save_svg("kanji.svg")
+
+.. image:: examples/qrcode-shift-jis.svg
+   :alt: QR code encoding the Japanese phrase 親切にしろ via Shift_JIS Kanji mode.
+
+Pinning ``shift_jis`` enables Kanji-mode compaction -- 13 bits per
+JIS X 0208 character vs. 24 as UTF-8 in byte mode. Auto-selection
+won't pick it.
 
 Anatomy
 -------

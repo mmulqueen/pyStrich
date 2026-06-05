@@ -8,6 +8,8 @@ Unreleased
 
 - All encoders gain ``svg_dataurl`` and ``png_dataurl`` methods that
   return the symbol as a ``data:`` URL string.
+- QR Code: ``QRCodeData(encoding="shift_jis")`` now triggers Kanji-mode
+  segmentation under ECI 20, packing JIS X 0208 characters into 13 bits each.
 
 .. _v0-14:
 

@@ -97,7 +97,7 @@ def _generate_example_images(app):
     from pystrich.ean13 import EAN13Encoder
     from pystrich.marks import MarkShape
     from pystrich.pdf417 import PDF417Encoder
-    from pystrich.qrcode import QRCodeEncoder
+    from pystrich.qrcode import QRCodeData, QRCodeEncoder
 
     out = Path(app.srcdir) / "examples"
     out.mkdir(exist_ok=True)
@@ -193,6 +193,9 @@ def _generate_example_images(app):
     )
     QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save(
         str(out / "qrcode-large.png"), cellsize=10
+    )
+    QRCodeEncoder(QRCodeData("親切にしろ", encoding="shift_jis")).save_svg(
+        str(out / "qrcode-shift-jis.svg")
     )
 
     PDF417Encoder("WDBCA45D2HA327260").save(str(out / "pdf417-example.png"))

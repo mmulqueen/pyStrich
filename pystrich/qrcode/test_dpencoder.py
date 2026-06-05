@@ -20,6 +20,10 @@ def _bits(*emissions: tuple[int, int]) -> list[int]:
 _NUM = 0b0001
 _ALPHA = 0b0010
 _BYTE = 0b0100
+_KANJI = 0b1000
+
+# Shift_JIS ECI designator (enables Kanji mode in the DP).
+_SJIS = 20
 
 
 @pytest.mark.parametrize(
@@ -131,3 +135,111 @@ def test_eci_prologue_precedes_first_segment() -> None:
 
 def test_no_eci_emits_no_prologue() -> None:
     assert encode_high_level(b"A", version_bracket=0) == _bits((_ALPHA, 4), (1, 9), (10, 6))
+
+
+# Kanji mode tests. The encoder turns Kanji on only when eci is the Shift_JIS
+# designator (20); under any other ECI, kanji-lead-shaped bytes go through
+# byte mode unchanged. The Shift_JIS encodings:
+#   '中' = 0x9286  → kanji codeword 0xD06
+#   '文' = 0x95B6  → kanji codeword 0xF76
+#   '　' = 0x8140  → kanji codeword 0x000  (low boundary)
+# The ECI prologue is (0b0111, 4) + (20, 8) = 12 bits, included in each
+# expected emission.
+_ECI20 = ((0b0111, 4), (20, 8))
+
+
+@pytest.mark.parametrize(
+    "payload, expected",
+    [
+        pytest.param(
+            b"\x92\x86",
+            _bits(*_ECI20, (_KANJI, 4), (1, 8), (0xD06, 13)),
+            id="single-kanji-pair-picks-kanji-mode",
+        ),
+        pytest.param(
+            b"\x81\x40",
+            _bits(*_ECI20, (_KANJI, 4), (1, 8), (0, 13)),
+            id="kanji-range-low-boundary",
+        ),
+        pytest.param(
+            b"\xe0\x40",
+            _bits(*_ECI20, (_KANJI, 4), (1, 8), (0x1740, 13)),
+            id="upper-range-low-boundary",
+        ),
+        pytest.param(
+            b"\xeb\xbf",
+            _bits(*_ECI20, (_KANJI, 4), (1, 8), (0x1FFF, 13)),
+            id="upper-range-high-boundary",
+        ),
+        pytest.param(
+            # 0xA0 sits in the Shift_JIS half-width katakana band, outside
+            # both kanji-lead ranges, so the pair falls through to BYTE.
+            b"\xa0\x40",
+            _bits(*_ECI20, (_BYTE, 4), (2, 8), (0xA0, 8), (0x40, 8)),
+            id="half-width-katakana-not-treated-as-kanji-lead",
+        ),
+        pytest.param(
+            # ASCII bytes have no kanji classification, so they go through
+            # the usual alpha/num/byte selection.
+            b"ABC",
+            _bits(*_ECI20, (_ALPHA, 4), (3, 9), (10 * 45 + 11, 11), (12, 6)),
+            id="ascii-under-sjis-eci-stays-alpha",
+        ),
+        pytest.param(
+            # NUM run followed by Kanji pairs: NUM(10) wins over ALPHA over byte;
+            # KANJI segment captures the two pairs.
+            b"0123456789\x92\x86\x95\xb6",
+            _bits(
+                *_ECI20,
+                (_NUM, 4),
+                (10, 10),
+                (12, 10),
+                (345, 10),
+                (678, 10),
+                (9, 4),
+                (_KANJI, 4),
+                (2, 8),
+                (0xD06, 13),
+                (0xF76, 13),
+            ),
+            id="numeric-run-then-kanji-segments",
+        ),
+        pytest.param(
+            # ALPHA run followed by Kanji pairs.
+            b"HELLO\x92\x86\x95\xb6",
+            _bits(
+                *_ECI20,
+                (_ALPHA, 4),
+                (5, 9),
+                (17 * 45 + 14, 11),
+                (21 * 45 + 21, 11),
+                (24, 6),
+                (_KANJI, 4),
+                (2, 8),
+                (0xD06, 13),
+                (0xF76, 13),
+            ),
+            id="alpha-run-then-kanji-segments",
+        ),
+    ],
+)
+def test_kanji_mode_under_sjis(payload: bytes, expected: list[int]) -> None:
+    assert encode_high_level(payload, version_bracket=0, eci=_SJIS) == expected
+
+
+def test_kanji_disabled_outside_sjis_eci() -> None:
+    """Same bytes under ECI 26 (UTF-8) go through byte mode, not kanji."""
+    payload = b"\x92\x86"
+    expected = _bits((0b0111, 4), (26, 8), (_BYTE, 4), (2, 8), (0x92, 8), (0x86, 8))
+    assert encode_high_level(payload, version_bracket=0, eci=26) == expected
+
+
+@pytest.mark.parametrize(
+    "bracket, count_width",
+    [(0, 8), (1, 10), (2, 12)],
+    ids=["bracket-1-9", "bracket-10-26", "bracket-27-40"],
+)
+def test_kanji_char_count_width_per_bracket(bracket: int, count_width: int) -> None:
+    assert encode_high_level(b"\x92\x86", version_bracket=bracket, eci=_SJIS) == _bits(
+        *_ECI20, (_KANJI, 4), (1, count_width), (0xD06, 13)
+    )
