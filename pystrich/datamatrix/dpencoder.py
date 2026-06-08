@@ -60,8 +60,8 @@ def _eci_emission(eci: int) -> list[int]:
     return [241, eci + 1]
 
 
-def _pack_ascii(payload: bytes) -> list[int]:
-    """ASCII codewords: digit-pair packing and Upper Shift for high bytes."""
+def _pack_byte_by_byte(payload: bytes) -> list[int]:
+    """ASCII-mode codewords: digit-pair packing and Upper Shift for high bytes."""
     out: list[int] = []
     i = 0
     n = len(payload)
@@ -122,7 +122,7 @@ def _pack_x12(payload: bytes) -> list[int]:
 
 # Indexed by the mode constants from .modes — ASCII=0, C40=1, TEXT=2, X12=3.
 _PACKERS: tuple[Callable[[bytes], list[int]], ...] = (
-    _pack_ascii,
+    _pack_byte_by_byte,
     _pack_c40,
     _pack_text,
     _pack_x12,

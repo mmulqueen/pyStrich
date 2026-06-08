@@ -60,12 +60,17 @@ _API_FORMS = [
         "http://www.hudora.de/track/00340",
         "http://www.hudora.de/track/0034",
         "This sentence will need multiple datamatrix regions. Tests to see whether bug 2 is fixed.",
+        # C40-picking payload (uppercase + digits + dashes): DP picks C40 prefix + ASCII tail.
+        "ROUTE-AB1234-DESTINATION-CD5678",
+        # X12-picking payload (CR-delimited record shape that X12 exists for).
+        "ABCDEFG\rHIJKLMN\rOPQRST",
     ],
 )
-def test_encode_decode(string, wrap, tmp_path, dmtxread):
+def test_encode_decode(string, wrap, tmp_path, dmtxread, decode_barcode):
     img = tmp_path / "datamatrix-test.png"
     DataMatrixEncoder(wrap(string)).save(str(img))
     assert dmtxread(img) == string
+    assert decode_barcode(img) == string
 
 
 @pytest.mark.parametrize("cellsize", [5, 10])
@@ -471,15 +476,21 @@ def test_encoding_utf8_byte_iteration():
         "naïve",
         "plain ascii",
         "ça",
+        # Mixed payloads where the DP picks a non-ASCII mode for the bulk
+        # then switches back to ASCII to encode the UTF-8 high bytes.
+        "café BATCH-A1234-DESTINATION-XYZ",  # C40 run between high-byte ASCII
+        "wer das liest ist 31337 — café",  # TEXT run, em-dash + 'é' in tail
+        "ORDER\rITEM\rQTY\rPRICE\rcafé",  # X12 can't carry 'é' — DP closes for tail
     ],
 )
-def test_encode_decode_utf8(text, tmp_path, dmtxread):
-    """UTF-8 strings round-trip through DataMatrixEncoder + dmtxread."""
+def test_encode_decode_utf8(text, tmp_path, dmtxread, decode_barcode):
+    """UTF-8 strings round-trip through DataMatrixEncoder + dmtxread + zxing-cpp."""
     img = tmp_path / "utf8.png"
     DataMatrixEncoder(DataMatrixData(text, encoding="utf-8")).save(str(img))
     # libdmtx prefixes ECI-encoded output with a raw byte equal to the ECI
     # value (0x1A = 26 for UTF-8); no dmtxread flag suppresses it.
     assert dmtxread(img, encoding="utf-8").removeprefix("\x1a") == text
+    assert decode_barcode(img) == text
 
 
 def test_datamatrix_data_requires_encoding_choice():
@@ -616,12 +627,26 @@ def test_trailing_unlatch_dropped_when_symbol_fits_exactly(tmp_path, dmtxread):
     assert dmtxread(img) == "_ABCDEFGHI"
 
 
-def test_fnc1_routes_through_ascii_only():
-    """FNC1 markers force the ASCII-only path (the DP can't represent markers)."""
+def test_fnc1_routes_through_byte_by_byte():
+    """FNC1 markers force the byte-by-byte path (the DP can't represent markers)."""
     enc = TextEncoder()
     cws = enc.encode(FNC1 + "10ABCDEFGH")
-    # FNC1 codeword first, then ASCII-only (digit pair 10 + single ASCII bytes).
+    # FNC1 codeword first, then ASCII-mode bytes (digit pair 10 + single bytes).
     assert cws[:7] == [232, 140, 66, 67, 68, 69, 70]
+
+
+def test_force_byte_mode_true_skips_dp():
+    """``force_byte_mode=True`` takes the byte-by-byte path even when the
+    DP would otherwise pick a denser mode."""
+    payload = "AAAAAAAAA"  # DP picks C40 (latch 230)
+    enc = TextEncoder()
+    dp_cws = enc.encode(DataMatrixData(payload, encoding="ascii"))
+    enc = TextEncoder()
+    byte_cws = enc.encode(DataMatrixData(payload, encoding="ascii"), force_byte_mode=True)
+    assert 230 in dp_cws
+    assert 230 not in byte_cws
+    # Byte-by-byte in ASCII mode: codeword = byte + 1 for the first byte.
+    assert byte_cws[0] == ord("A") + 1
 
 
 def test_datamatrix_smudge_tolerance(tmp_path, decode_barcode):

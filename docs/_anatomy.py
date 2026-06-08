@@ -200,7 +200,9 @@ def datamatrix_anatomy_svg() -> str:
     expected_size = qz + 2 * region_outer + qz  # 40
 
     payload = "Data Matrix anatomy: https://www.method-b.uk/pyStrich/docs/datamatrix.html"
-    encoder = DataMatrixEncoder(DataMatrixData(payload, encoding="ascii"), quiet_zone=qz)
+    encoder = DataMatrixEncoder(
+        DataMatrixData(payload, encoding="ascii"), quiet_zone=qz, force_byte_mode=True
+    )
     assert encoder.regions == 2, (
         f"Data Matrix anatomy expects a 2x2-region symbol, got regions={encoder.regions}. "
         "Pick a payload that still encodes to a 36x36 symbol."

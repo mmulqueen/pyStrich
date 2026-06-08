@@ -17,6 +17,9 @@ Unreleased
   CR-delimited X12 records. Payloads built with
   :data:`~pystrich.datamatrix.FNC1` stay in single-mode ASCII as the
   GS1 Data Matrix spec requires.
+- Data Matrix: new ``force_byte_mode`` keyword on
+  :class:`~pystrich.datamatrix.DataMatrixEncoder` pins the encoder to the
+  byte-by-byte path, skipping the C40/Text/X12 optimiser.
 
 .. _v0-14:
 

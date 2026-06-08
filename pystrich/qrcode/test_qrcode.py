@@ -244,6 +244,9 @@ def test_encoding(text, expected_codewords):
         "naïve",
         "Zürich",
         "½ + ½ = 1",
+        # Mixed segmentation under Latin-1 ECI: ALPHA prefix, BYTE for 'Ü',
+        # ALPHA tail. Exercises mode switching around a non-ASCII byte.
+        "PROD-12345-ZÜRICH 67890",
         # UTF-8 (auto-selected ECI 26 header).
         "中文",
         "☕",

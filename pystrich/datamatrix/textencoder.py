@@ -11,7 +11,7 @@ from .data import (
     DataMatrixData,
     fnc1_workaround_compat,
 )
-from .dpencoder import _pack_ascii, encode_high_level
+from .dpencoder import _pack_byte_by_byte, encode_high_level
 from .modes import UNLATCH
 
 # fmt: off
@@ -80,13 +80,18 @@ class TextEncoder:
         self.mtx_size = 0
         self.regions = 0
 
-    def encode(self, text: DataMatrixData | str) -> list[int]:
+    def encode(
+        self,
+        text: DataMatrixData | str,
+        *,
+        force_byte_mode: bool = False,
+    ) -> list[int]:
         """Encode the given text and add padding and error codes
         also set up the correct matrix size for the resulting codewords"""
 
         self.codewords = []
 
-        self.encode_text(text)
+        self.encode_text(text, force_byte_mode=force_byte_mode)
 
         self.pad()
 
@@ -97,20 +102,30 @@ class TextEncoder:
 
         return self.codewords
 
-    def encode_text(self, text: DataMatrixData | str) -> None:
+    def encode_text(
+        self,
+        text: DataMatrixData | str,
+        *,
+        force_byte_mode: bool = False,
+    ) -> None:
         """Encode the given text into codewords.
 
-        Marker-free input goes through the DP optimiser. Payloads containing
-        :class:`DataMatrixCodeword` markers (FNC1, compat high bytes) fall
-        back to single-mode ASCII encoding because the DP can't represent
-        the markers.
+        With ``force_byte_mode=False`` (the default), marker-free input goes
+        through the DP optimiser; payloads containing :class:`DataMatrixCodeword`
+        markers (FNC1, compat high bytes) fall back to the single-mode
+        byte-by-byte path because the DP can't represent the markers. Pass
+        ``force_byte_mode=True`` to take the byte-by-byte path for any
+        payload.
         """
 
         data = text if isinstance(text, DataMatrixData) else fnc1_workaround_compat(text)
+        if force_byte_mode:
+            self._encode_text_byte_by_byte(data)
+            return
         try:
             plain_text, charset = data.as_plain_text()
         except _HasMarkers:
-            self._encode_text_ascii_only(data)
+            self._encode_text_byte_by_byte(data)
         else:
             self._encode_text_dp(plain_text, charset)
 
@@ -120,8 +135,10 @@ class TextEncoder:
         eci = _ECI_BY_CHARSET[charset]
         self.codewords.extend(encode_high_level(text.encode(charset), eci=eci))
 
-    def _encode_text_ascii_only(self, data: DataMatrixData) -> None:
-        """Single-mode ASCII encoding: digit-pair packing + Upper Shift for high bytes."""
+    def _encode_text_byte_by_byte(self, data: DataMatrixData) -> None:
+        """Single-mode byte-by-byte encoding via the ASCII mode: emits the ECI
+        prologue for non-ASCII charsets, then digit-pair packs plain bytes and
+        escapes high bytes with Upper Shift."""
 
         # DataMatrixData has already normalised compat by replacing high
         # codepoints with raw-codeword markers, so every str segment here is
@@ -136,7 +153,7 @@ class TextEncoder:
             if isinstance(segment, DataMatrixCodeword):
                 self.append_codeword(segment.value)
             else:
-                self.codewords.extend(_pack_ascii(segment.encode(charset)))
+                self.codewords.extend(_pack_byte_by_byte(segment.encode(charset)))
 
     def pad(self) -> None:
         """Pad out the encoded text to the correct word length"""

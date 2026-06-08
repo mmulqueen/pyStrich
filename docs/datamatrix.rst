@@ -330,6 +330,23 @@ the encoding that *would* have worked:
        ...
    pystrich.exceptions.PyStrichInvalidInput: DataMatrixData encoding ASCII cannot encode the input; try DataMatrixData('Ich dachte, Sie wären kräftiger', encoding='iso-8859-1') or pass auto_encoding=True to select an encoding automatically.
 
+Encodation modes
+----------------
+
+pyStrich supports the following encodation modes: ASCII/bytes (with
+numeric digit pairing), Text, C40 and X12. Base 256 is not currently
+supported. Due to concerns about decoder/scanner support, we have made
+the decision not to implement EDIFACT.\ [#edifact]_
+
+.. [#edifact] Some Honeywell scanners decode every other Data Matrix
+   mode but not EDIFACT. See `Honeywell's support article
+   <https://sps-support.honeywell.com/s/article/Can-Honeywell-scanners-read-Data-Matrix-Base-256-mode-symbols>`_.
+
+..
+   Wayback Machine snapshots in case the Honeywell links die:
+   https://web.archive.org/web/20260608122836/https://sps-support.honeywell.com/s/article/Can-Honeywell-scanners-read-Data-Matrix-Base-256-mode-symbols
+   https://web.archive.org/web/20260608122743/https://sps-support.honeywell.com/sfc/servlet.shepherd/document/download/0692G00000QymxFQAR?operationContext=S1
+
 Anatomy
 -------
 
