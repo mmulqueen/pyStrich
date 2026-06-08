@@ -49,6 +49,7 @@ dev = [
     "fonttools>=4.55",
     "ruff>=0.15.12",
     "zxing-cpp>=2.2",
+    "hypothesis>=6.155.2",
 ]
 docs = [
     "sphinx>=8.1",

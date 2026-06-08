@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
+
 import pytest
+from hypothesis import HealthCheck, given, settings
+from hypothesis import strategies as st
 
 from pystrich.aztec import AZTEC_DEFAULT_QUIET_ZONE, AztecData, AztecEncoder
 from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
@@ -142,6 +146,59 @@ def test_custom_quiet_zone_roundtrips(tmp_path, decode_barcode):
     encoder = AztecEncoder(text, quiet_zone=6)
     path = tmp_path / "aztec.png"
     encoder.save(path, cellsize=8)
+    assert decode_barcode(path) == text
+
+
+@st.composite
+def _aztec_payload(draw):
+    parts = draw(
+        st.lists(
+            st.one_of(
+                st.text(alphabet="0123456789", min_size=1, max_size=8),
+                st.text(alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ", min_size=1, max_size=8),
+                st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=1, max_size=8),
+                st.text(alphabet=" .,-+/:;!?", min_size=1, max_size=4),
+                st.sampled_from([". ", ", ", ": ", "\r\n"]),
+                st.text(alphabet="\\@^_`{|}~", min_size=1, max_size=4),
+                st.text(alphabet="\t\n\r", min_size=1, max_size=2),
+                # 0xA0+ skips the C1 control block (0x80-0x9F).
+                st.text(
+                    st.characters(min_codepoint=0xA0, max_codepoint=0xFF),
+                    min_size=1,
+                    max_size=4,
+                ),
+                st.text(
+                    st.characters(
+                        min_codepoint=0x0100,
+                        max_codepoint=0x2FFF,
+                        exclude_categories=("Cs", "Cc"),
+                    ),
+                    min_size=1,
+                    max_size=4,
+                ),
+            ),
+            min_size=1,
+            max_size=6,
+        )
+    )
+    return "".join(parts)
+
+
+@given(text=_aztec_payload())
+@settings(
+    max_examples=100,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[
+        HealthCheck.function_scoped_fixture,
+        HealthCheck.data_too_large,
+        HealthCheck.filter_too_much,
+    ],
+)
+def test_property_roundtrip(text, tmp_path, decode_barcode):
+    """Class-banded payloads roundtrip through encode + render + decode."""
+    path = tmp_path / "aztec-property.png"
+    AztecEncoder(text).save(path, cellsize=8)
     assert decode_barcode(path) == text
 
 

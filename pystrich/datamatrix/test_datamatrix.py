@@ -1,8 +1,11 @@
 """Unit test for 2D datamatrix barcode encoder"""
 
 import warnings
+from datetime import timedelta
 
 import pytest
+from hypothesis import HealthCheck, given, settings
+from hypothesis import strategies as st
 
 from pystrich.datamatrix import (
     FNC1,
@@ -71,6 +74,61 @@ def test_encode_decode(string, wrap, tmp_path, dmtxread, decode_barcode):
     DataMatrixEncoder(wrap(string)).save(str(img))
     assert dmtxread(img) == string
     assert decode_barcode(img) == string
+
+
+@st.composite
+def _datamatrix_payload(draw):
+    parts = draw(
+        st.lists(
+            st.one_of(
+                st.text(alphabet="0123456789", min_size=1, max_size=8),
+                st.text(alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ", min_size=1, max_size=8),
+                st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=1, max_size=8),
+                st.text(alphabet="!\"#$%&'()*+,-./:;<=>?@[\\]^_", min_size=1, max_size=4),
+                st.text(alphabet="`{|}~", min_size=1, max_size=2),
+                # zxing-cpp renders C0 controls outside \t\n\r as <NAME> escapes in `.text`.
+                # \r lives in the X12 trigger band so it clusters with * and >.
+                st.text(alphabet="\t\n", min_size=1, max_size=2),
+                st.text(alphabet="\r*>", min_size=1, max_size=2),
+                # 0xA0+ skips the C1 control block (0x80-0x9F).
+                st.text(
+                    st.characters(min_codepoint=0xA0, max_codepoint=0xFF),
+                    min_size=1,
+                    max_size=4,
+                ),
+                st.text(
+                    st.characters(
+                        min_codepoint=0x0100,
+                        max_codepoint=0x2FFF,
+                        exclude_categories=("Cs", "Cc"),
+                    ),
+                    min_size=1,
+                    max_size=4,
+                ),
+            ),
+            min_size=1,
+            max_size=6,
+        )
+    )
+    return "".join(parts)
+
+
+@given(text=_datamatrix_payload())
+@settings(
+    max_examples=100,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[
+        HealthCheck.function_scoped_fixture,
+        HealthCheck.data_too_large,
+        HealthCheck.filter_too_much,
+    ],
+)
+def test_property_roundtrip(text, tmp_path, decode_barcode):
+    """Class-banded payloads roundtrip through encode + render + decode."""
+    img = tmp_path / "datamatrix-property.png"
+    DataMatrixEncoder(DataMatrixData(text, auto_encoding=True)).save(str(img))
+    assert decode_barcode(img) == text
 
 
 @pytest.mark.parametrize("cellsize", [5, 10])
@@ -405,11 +463,11 @@ def test_fnc1_workaround_compat(text, expected_segments, expected_warning_cls):
 
 
 def test_encoding_latin1_upper_shift():
-    """Latin-1 chars >127 emit codeword 235 (Upper Shift) followed by the offset char."""
+    """Latin-1 emits ECI 3 prologue then codeword 235 (Upper Shift) for high bytes."""
     enc = TextEncoder()
     codewords = enc.encode(DataMatrixData("café", encoding="iso-8859-1"))
-    # 'c'->100, 'a'->98, 'f'->103, 'é' (ord 233) -> 235 then chr(105)+1 = 106
-    assert codewords[:5] == [100, 98, 103, 235, 106]
+    # ECI 3 -> [241, 4]; 'c'->100, 'a'->98, 'f'->103, 'é' (ord 233) -> 235 then chr(105)+1 = 106
+    assert codewords[:7] == [241, 4, 100, 98, 103, 235, 106]
 
 
 def test_compat_does_not_emit_upper_shift():
@@ -441,7 +499,9 @@ def test_encode_decode_latin1(text, tmp_path, dmtxread):
     """Latin-1 strings round-trip through DataMatrixEncoder + dmtxread."""
     img = tmp_path / "latin1.png"
     DataMatrixEncoder(DataMatrixData(text, encoding="iso-8859-1")).save(str(img))
-    assert dmtxread(img, encoding="iso-8859-1") == text
+    # libdmtx prefixes ECI-encoded output with a raw byte equal to the ECI
+    # value (0x03 = 3 for ISO-8859-1); no dmtxread flag suppresses it.
+    assert dmtxread(img, encoding="iso-8859-1").removeprefix("\x03") == text
 
 
 @pytest.mark.parametrize("text", ["€", "中文", "🙂"])

@@ -44,10 +44,11 @@ rs_blocks: tuple[int, ...] = (1, 1, 1, 1, 1, 1, 1, 1, 1,
 _DATA_WORD_LENGTH_SET: frozenset[int] = frozenset(data_word_length)
 
 # Map the DataMatrix charset to the ECI number to prepend, or None for no ECI.
-# iso-8859-1 high bytes go through Upper Shift codewords, not ECI.
+# iso-8859-1 emits the redundant ECI 3 designator so heuristic decoders
+# (zxing-cpp) don't misinterpret short Upper-Shift sequences as another charset.
 _ECI_BY_CHARSET: dict[Charset, int | None] = {
     "ascii": None,
-    "iso-8859-1": None,
+    "iso-8859-1": 3,
     "utf-8": 26,
 }
 

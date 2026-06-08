@@ -20,6 +20,9 @@ Unreleased
 - Data Matrix: new ``force_byte_mode`` keyword on
   :class:`~pystrich.datamatrix.DataMatrixEncoder` pins the encoder to the
   byte-by-byte path, skipping the C40/Text/X12 optimiser.
+- Data Matrix: ``iso-8859-1`` payloads now emit an explicit ECI 3
+  designator so heuristic decoders don't misinterpret short Upper-Shift
+  sequences as another charset.
 
 .. _v0-14:
 

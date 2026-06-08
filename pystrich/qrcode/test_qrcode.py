@@ -1,6 +1,10 @@
 """Unit test for QR Code barcode encoder"""
 
+from datetime import timedelta
+
 import pytest
+from hypothesis import HealthCheck, given, settings
+from hypothesis import strategies as st
 
 from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
 from pystrich.qrcode import QRCodeData, QRCodeEncoder, isodata
@@ -277,6 +281,56 @@ def test_shift_jis_kanji_round_trip(string, ecl, tmp_path, decode_barcode):
     img = tmp_path / "qrcode-test.png"
     QRCodeEncoder(QRCodeData(string, encoding="shift_jis"), ecl).save(str(img), 3)
     assert decode_barcode(img) == string
+
+
+@st.composite
+def _qr_payload(draw):
+    parts = draw(
+        st.lists(
+            st.one_of(
+                st.text(alphabet="0123456789", min_size=1, max_size=8),
+                st.text(alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ", min_size=1, max_size=8),
+                st.text(alphabet=" $%*+-./:", min_size=1, max_size=4),
+                st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=1, max_size=8),
+                # 0xA0+ skips the C1 control block (0x80-0x9F).
+                st.text(
+                    st.characters(min_codepoint=0xA0, max_codepoint=0xFF),
+                    min_size=1,
+                    max_size=4,
+                ),
+                st.text(
+                    st.characters(
+                        min_codepoint=0x0100,
+                        max_codepoint=0x2FFF,
+                        exclude_categories=("Cs", "Cc"),
+                    ),
+                    min_size=1,
+                    max_size=4,
+                ),
+            ),
+            min_size=1,
+            max_size=6,
+        )
+    )
+    return "".join(parts)
+
+
+@given(text=_qr_payload())
+@settings(
+    max_examples=100,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[
+        HealthCheck.function_scoped_fixture,
+        HealthCheck.data_too_large,
+        HealthCheck.filter_too_much,
+    ],
+)
+def test_property_roundtrip(text, tmp_path, decode_barcode):
+    """Class-banded payloads roundtrip through encode + render + decode."""
+    img = tmp_path / "qrcode-property.png"
+    QRCodeEncoder(text).save(str(img), 3)
+    assert decode_barcode(img) == text
 
 
 @pytest.mark.parametrize("cellsize", [5, 10])
