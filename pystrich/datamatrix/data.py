@@ -11,7 +11,8 @@ from pystrich.exceptions import (
     Fnc1WorkaroundCompatWarning,
 )
 
-DataMatrixEncoding = Literal["compat", "ascii", "iso-8859-1", "utf-8"]
+DataMatrixEncodingArg = Literal["compat", "ascii", "iso-8859-1", "utf-8"]
+DataMatrixEncoding = Charset
 
 
 class DataMatrixCodeword:
@@ -138,12 +139,12 @@ class DataMatrixData(EncodableData[DataMatrixEncoding, DataMatrixCodeword]):
 
     __slots__ = ()
 
-    encoding: Charset
+    encoding: DataMatrixEncoding
 
     def __init__(
         self,
         *segments: str | DataMatrixCodeword,
-        encoding: DataMatrixEncoding | None = None,
+        encoding: DataMatrixEncodingArg | None = None,
         auto_encoding: bool = False,
     ) -> None:
         if encoding == "compat":

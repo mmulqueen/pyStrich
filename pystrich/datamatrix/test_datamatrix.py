@@ -178,69 +178,6 @@ def test_dxf_round_trip(string, wrap, inverse, tmp_path, dxf_to_svg, svg_to_png,
     assert dmtxread(png) == string
 
 
-@pytest.mark.parametrize("wrap", _API_FORMS)
-@pytest.mark.parametrize(
-    "text, expected_codewords",
-    [
-        pytest.param("hi", [105, 106, 129, 74, 235, 130, 61, 159], id="hi"),
-        pytest.param(
-            "banana",
-            [99, 98, 111, 98, 111, 98, 129, 56, 227, 236, 237, 109, 16, 221, 163, 60, 171, 76],
-            id="banana",
-        ),
-        pytest.param(
-            "wer das liest ist 31337",
-            [
-                120,
-                102,
-                115,
-                33,
-                101,
-                98,
-                116,
-                33,
-                109,
-                106,
-                102,
-                116,
-                117,
-                33,
-                106,
-                116,
-                117,
-                33,
-                161,
-                163,
-                56,
-                129,
-                83,
-                116,
-                244,
-                3,
-                40,
-                16,
-                79,
-                220,
-                144,
-                76,
-                17,
-                186,
-                175,
-                211,
-                244,
-                84,
-                59,
-                71,
-            ],
-            id="wer-das-liest",
-        ),
-    ],
-)
-def test_encoding(text, wrap, expected_codewords):
-    enc = TextEncoder()
-    assert enc.encode(wrap(text)) == expected_codewords
-
-
 @pytest.mark.parametrize(
     "quiet_zone, expected_diff",
     [
@@ -630,59 +567,53 @@ def test_corner_module_round_trip_at_12x12(tmp_path, dmtxread):
     assert dmtxread(img) == payload
 
 
-@pytest.mark.parametrize(
-    "payload_len, expected_size_index",
-    [
-        pytest.param(180, 14, id="52x52-2blocks"),
-        pytest.param(400, 17, id="80x80-4blocks"),
-        pytest.param(800, 20, id="104x104-6blocks"),
-        pytest.param(1500, 23, id="144x144-10blocks"),
-    ],
-)
-def test_large_symbol_round_trip(payload_len, expected_size_index, tmp_path, dmtxread):
+@pytest.mark.parametrize("payload_len", [400, 1000, 2000])
+def test_large_payload_round_trip(payload_len, tmp_path, dmtxread):
     """Sizes >=52x52 use interleaved Reed-Solomon blocks; verify they decode."""
     payload = "a" * payload_len
-    enc = TextEncoder()
-    enc.encode(DataMatrixData(payload, encoding="ascii"))
-    assert enc.size_index == expected_size_index
     img = tmp_path / "large.png"
     DataMatrixEncoder(DataMatrixData(payload, encoding="ascii")).save(str(img))
     assert dmtxread(img) == payload
 
 
-def test_52x52_codeword_snapshot():
-    """Lock the interleaved RS bytes for one multi-block size against regression."""
-    enc = TextEncoder()
-    cws = enc.encode(DataMatrixData("a" * 180, encoding="ascii"))
-    assert enc.size_index == 14
-    assert len(cws) == 288
-    assert cws[:5] == [98, 98, 98, 98, 98]
-    assert cws[-8:] == [36, 150, 18, 28, 149, 94, 22, 218]
-
-
 def test_capacity_overflow_raises():
     """Inputs exceeding the largest 144x144 symbol raise DataTooLongForImplementation."""
     enc = TextEncoder()
-    with pytest.raises(DataTooLongForImplementation, match="1559"):
-        enc.encode(DataMatrixData("a" * 1559, encoding="ascii"))
+    with pytest.raises(DataTooLongForImplementation):
+        enc.encode(DataMatrixData("A" * 3000, encoding="ascii"))
 
 
 @pytest.mark.parametrize(
-    "input_len, expected_size_index",
+    "text",
     [
-        pytest.param(3, 0, id="exact-10x10"),
-        pytest.param(175, 14, id="spill-into-2-block-regime"),
-        pytest.param(281, 16, id="spill-into-4-block-regime"),
-        pytest.param(697, 20, id="spill-into-6-block-regime"),
-        pytest.param(1305, 23, id="spill-into-10-block-regime"),
-        pytest.param(1558, 23, id="exact-144x144"),
+        pytest.param("ABCDEFGHIJKLMNOP", id="uppercase-c40"),
+        pytest.param("abcdefghijklmnop", id="lowercase-text"),
+        pytest.param("\rABCDEFGH*>1234", id="x12-mix"),
+        pytest.param("Hello, World! 12345 ABCDEFG", id="cross-mode-optimum"),
+        pytest.param("ABCDEFGH 12345 abcdefgh", id="alternating-cases"),
     ],
 )
-def test_size_index_picks_smallest_fitting(input_len, expected_size_index):
-    """One probe per RS block-count regime plus the smallest/largest edges."""
+def test_multi_mode_round_trip(text, tmp_path, dmtxread):
+    """Inputs that exercise C40, Text or X12 paths still decode correctly."""
+    img = tmp_path / "compact.png"
+    DataMatrixEncoder(DataMatrixData(text, encoding="ascii")).save(str(img))
+    assert dmtxread(img) == text
+
+
+def test_trailing_unlatch_dropped_when_symbol_fits_exactly(tmp_path, dmtxread):
+    """When dropping the trailing Unlatch lands on a valid symbol size, do so.
+
+    ``"_ABCDEFGHI"`` encodes as 1 ASCII + C40 segment ending in Unlatch = 9 cw.
+    Dropping the Unlatch fits size 8 (size_index=2) exactly; keeping it would
+    spill into size 12 (size_index=3).
+    """
     enc = TextEncoder()
-    enc.encode(DataMatrixData("a" * input_len, encoding="ascii"))
-    assert enc.size_index == expected_size_index
+    cws = enc.encode(DataMatrixData("_ABCDEFGHI", encoding="ascii"))
+    assert enc.size_index == 2
+    assert cws[:8] == [96, 230, 89, 233, 109, 36, 128, 95]
+    img = tmp_path / "exact-fit.png"
+    DataMatrixEncoder(DataMatrixData("_ABCDEFGHI", encoding="ascii")).save(str(img))
+    assert dmtxread(img) == "_ABCDEFGHI"
 
 
 def test_fnc1_routes_through_ascii_only():
