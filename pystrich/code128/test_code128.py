@@ -1,12 +1,13 @@
 """Unit test for code128 barcode encoder"""
 
 import filecmp
+import warnings
 from pathlib import Path
 
 import pytest
 
-from pystrich.code128 import Code128Encoder
-from pystrich.exceptions import PyStrichInvalidInput
+from pystrich.code128 import FNC1, FNC2, Code128Data, Code128Encoder, Code128Marker
+from pystrich.exceptions import Code128MarkerBytesCompatWarning, PyStrichInvalidInput
 
 TEST_IMG_DIR = Path(__file__).parent / "test_img"
 
@@ -168,17 +169,9 @@ def test_eps_label_glyphs(string):
     assert invocations == len(string)
 
 
-@pytest.mark.parametrize(
-    "string",
-    [
-        pytest.param("café", id="from-B"),
-        pytest.param("00000é", id="from-C"),
-        pytest.param("HELLO\x01é", id="from-A"),
-    ],
-)
-def test_unencodable_character_raises(string):
-    with pytest.raises(PyStrichInvalidInput, match="cannot be encoded in Code 128"):
-        Code128Encoder(string)
+def test_unencodable_character_raises():
+    with pytest.raises(PyStrichInvalidInput, match="encoding ASCII cannot encode the input"):
+        Code128Encoder("café")
 
 
 @pytest.mark.parametrize("fmt", ["svg", "eps"])
@@ -190,3 +183,156 @@ def test_charset_a_control_chars_dropped_from_label(fmt):
         assert f"g_{ord(printable):02X}" in output
     for control in "\t\x01":
         assert f"g_{ord(control):02X}" not in output
+
+
+def test_code128_marker_unknown_name_raises():
+    with pytest.raises(ValueError, match="unknown Code128 marker name"):
+        Code128Marker("FNC5")
+
+
+@pytest.mark.parametrize(
+    "expr, expected_segments",
+    [
+        # marker.__add__(str) chain — marker on the left
+        pytest.param(
+            FNC1 + "10ABC" + FNC1 + "21XYZ",
+            (FNC1, "10ABC", FNC1, "21XYZ"),
+            id="marker-leading",
+        ),
+        # str + marker exercises marker.__radd__
+        pytest.param(
+            "lead" + FNC1 + "mid" + FNC2 + "tail",
+            ("lead", FNC1, "mid", FNC2, "tail"),
+            id="str-leading-with-radd",
+        ),
+    ],
+)
+def test_marker_concatenation_builds_code128data(expr, expected_segments):
+    """``+`` between markers and strs returns a Code128Data with the segments
+    in order. The two cases cover ``__add__`` and ``__radd__`` entry points."""
+    assert isinstance(expr, Code128Data)
+    assert expr.segments == expected_segments
+    assert expr.encoding == "ascii"
+
+
+@pytest.mark.parametrize(
+    "byte, marker_name, hint_fragment",
+    [
+        pytest.param("\xf1", "FNC1", "FNC1 marker constant", id="fnc1"),
+        pytest.param("\xf2", "FNC2", "FNC2 marker constant", id="fnc2"),
+        pytest.param("\xf3", "FNC3", "FNC3 marker constant", id="fnc3"),
+        pytest.param("\xf4", "FNC4", "encoding='iso-8859-1'", id="fnc4-latin1"),
+    ],
+)
+def test_code128data_rejects_legacy_marker_bytes(byte, marker_name, hint_fragment):
+    """Magic bytes in ASCII-mode str segments are rejected with a message
+    pointing at the typed marker constant (FNC1-3) or the Latin-1 path (FNC4)."""
+    with pytest.raises(PyStrichInvalidInput) as exc:
+        Code128Data(byte, encoding="ascii")
+    assert f"legacy magic-byte form of {marker_name}" in str(exc.value)
+    assert hint_fragment in str(exc.value)
+
+
+@pytest.mark.parametrize(
+    "encoding, payload",
+    [
+        pytest.param("ascii", "café", id="ascii-rejects-high-byte"),
+        pytest.param("iso-8859-1", "€", id="iso-8859-1-rejects-above-0xff"),
+    ],
+)
+def test_code128data_rejects_out_of_range(encoding, payload):
+    """Each encoding's codec rejects codepoints it can't represent."""
+    with pytest.raises(PyStrichInvalidInput, match="cannot encode"):
+        Code128Data(payload, encoding=encoding)
+
+
+def test_legacy_marker_bytes_in_str_path_matches_typed():
+    """The legacy bare-str path warns and produces byte-identical codewords,
+    checksum and bars compared to the typed Code128Data form."""
+    with pytest.warns(Code128MarkerBytesCompatWarning, match="legacy FNC marker shortcut"):
+        legacy = Code128Encoder("\xf110ABC\xf121XYZ")
+    typed = Code128Encoder(FNC1 + "10ABC" + FNC1 + "21XYZ")
+    assert (legacy.encoded_text, legacy.checksum, legacy.bars) == (
+        typed.encoded_text,
+        typed.checksum,
+        typed.bars,
+    )
+
+
+@pytest.mark.parametrize("text", ["hello world", "12345"])
+def test_str_without_marker_bytes_does_not_warn(text):
+    """Plain str without marker bytes passes through with no warning —
+    we don't want to spam users on every encode."""
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", Code128MarkerBytesCompatWarning)
+        Code128Encoder(text)
+
+
+@pytest.mark.parametrize(
+    "payload, expected_decoded",
+    [
+        # FNC1 in position 1 → GS1-128 symbol (AIM ID ]C1); zxing-cpp prints AIs in parens.
+        pytest.param(
+            FNC1 + "10ABC" + FNC1 + "21XYZ",
+            "(10)ABC(21)XYZ",
+            id="gs1-fnc1-first",
+        ),
+        # FNC1 mid-data (AIM ID ]C0) surfaces as <GS>; placement mid-digit-run also
+        # exercises the charset-C digit-buffer flush before the marker is emitted.
+        pytest.param(
+            "12345" + FNC1 + "TAIL",
+            "12345<GS>TAIL",
+            id="fnc1-mid-digit-run",
+        ),
+        # Latin-1 supplement chars via explicit encoding — FNC4 single-shifts on the wire.
+        pytest.param(
+            Code128Data("HELLO café", encoding="iso-8859-1"),
+            "HELLO café",
+            id="latin1-explicit",
+        ),
+        # auto_encoding=True picks iso-8859-1 for the same payload.
+        pytest.param(
+            Code128Data("café", auto_encoding=True),
+            "café",
+            id="latin1-auto",
+        ),
+        # FNC1 between Latin-1 segments — exercises marker + iso-8859-1 mixing.
+        pytest.param(
+            Code128Data("12345", encoding="iso-8859-1")
+            + FNC1
+            + Code128Data("café", encoding="iso-8859-1"),
+            "12345<GS>café",
+            id="fnc1-between-latin1",
+        ),
+    ],
+)
+def test_round_trip_code128data(payload, expected_decoded, tmp_path, decode_barcode):
+    """End-to-end: encode payload → PNG → zxing-cpp → expected string."""
+    img = tmp_path / "rt.png"
+    Code128Encoder(payload).save(str(img))
+    assert decode_barcode(img) == expected_decoded
+
+
+def test_latin1_marker_in_digit_run():
+    """Latin-1 char arriving mid-charset-C run forces a switch to B (FNC4
+    isn't representable in C), spills the leftover digit, then shifts."""
+    encoder = Code128Encoder(Code128Data("12345" + chr(0xE9), encoding="iso-8859-1"))
+    cw = encoder.encoded_text
+    assert cw[0] == 105  # START_C
+    assert cw[1:3] == [12, 34]  # '12','34' digit pairs
+    assert cw[3] == 100  # TO_B
+    assert cw[4] == 21  # leftover '5' in B
+    assert cw[5] == 100  # FNC4 (codeword 100 in B)
+    assert cw[6] == 73  # 'i' — the ASCII counterpart of é (0xE9 - 0x80)
+
+
+def test_latin1_c1_control_routes_to_charset_a():
+    """A Latin-1 C1 control (0x80-0x9F) shifts to its ASCII counterpart in
+    0x00-0x1F, which lives in charset A only — the encoder must pick A, not
+    B, so the table lookup finds the counterpart."""
+    encoder = Code128Encoder(Code128Data("\x82", encoding="iso-8859-1"))
+    cw = encoder.encoded_text
+    # START_B + TO_A optimizes to START_A; then FNC4 in A (101) + STX (66).
+    assert cw[0] == 103  # START_A
+    assert cw[1] == 101  # FNC4 in A
+    assert cw[2] == 66  # '\x02' (STX) — counterpart of '\x82' in charset A

@@ -1,10 +1,12 @@
 """Regenerate ``pystrich/_courier_glyphs.py`` from the bundled Courier Prime TTF.
 
 Reads ``courier_prime/CourierPrime-Regular.ttf`` and writes outline path
-data for the printable-ASCII range (0x20-0x7E) into a Python module that
-ships inside the package. SVG and EPS renderers consume that data to
-draw the human-readable label below 1D barcodes — see ``pystrich/svg.py``
-and ``pystrich/eps.py``.
+data for printable ASCII (0x20-0x7E) and the Latin-1 supplement (0xA0-0xFF)
+into a Python module that ships inside the package. SVG and EPS renderers
+consume that data to draw the human-readable label below 1D barcodes — see
+``pystrich/svg.py`` and ``pystrich/eps.py``. Latin-1 coverage lets Code 128
+labels render text like ``café`` correctly when the encoder was given
+``encoding="iso-8859-1"``.
 
 This script is not run by the test suite or build; it only needs to run
 when the source font changes. ``fontTools`` is part of the ``dev`` Poetry
@@ -28,7 +30,7 @@ TTF_PATH = REPO_ROOT / "courier_prime" / "CourierPrime-Regular.ttf"
 OFL_PATH = REPO_ROOT / "courier_prime" / "OFL.txt"
 OUT_PATH = REPO_ROOT / "pystrich" / "_courier_glyphs.py"
 
-PRINTABLE_ASCII = range(0x20, 0x7F)
+PRINTABLE_CODEPOINTS = (*range(0x20, 0x7F), *range(0xA0, 0x100))
 
 # Qu2CuPen tolerance in font units. The font is at UPM 1000 and we render
 # labels at ~24 px max in practice (≈ 42 font units per pixel), so a 1-unit
@@ -175,7 +177,7 @@ def main() -> int:
 
     advances: set[int] = set()
     glyphs: list[tuple[str, str, str]] = []
-    for codepoint in PRINTABLE_ASCII:
+    for codepoint in PRINTABLE_CODEPOINTS:
         glyph_name = cmap.get(codepoint)
         if glyph_name is None:
             print(
@@ -189,7 +191,7 @@ def main() -> int:
 
     if len(advances) != 1:
         print(
-            f"Expected uniform advance for printable ASCII but got {sorted(advances)};"
+            f"Expected uniform advance for printable codepoints but got {sorted(advances)};"
             " the renderer assumes a constant ADVANCE.",
             file=sys.stderr,
         )

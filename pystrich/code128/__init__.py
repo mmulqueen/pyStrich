@@ -22,8 +22,19 @@ import logging
 from pystrich.bar_encoder import Bar1DEncoder
 from pystrich.types import BarcodeRenderOptions
 
+from .data import FNC1, FNC2, FNC3, Code128Data, Code128Marker, fnc_marker_bytes_compat
 from .renderer import Code128Renderer
 from .textencoder import TextEncoder
+
+__all__ = [
+    "FNC1",
+    "FNC2",
+    "FNC3",
+    "Code128Data",
+    "Code128Encoder",
+    "Code128Marker",
+    "Code128Renderer",
+]
 
 log = logging.getLogger("code128")
 
@@ -51,17 +62,26 @@ class Code128Encoder(Bar1DEncoder):
     """
 
     options: BarcodeRenderOptions
-    text: str
+    text: Code128Data
     encoded_text: list[int]
     checksum: int
     bars: str
 
-    def __init__(self, text: str, options: BarcodeRenderOptions | None = None) -> None:
+    def __init__(
+        self,
+        text: str | Code128Data,
+        options: BarcodeRenderOptions | None = None,
+    ) -> None:
         """Encode ``text`` as Code 128 and compute the checksum.
 
-        :param text: The data to encode. Any character in the Code 128 set
-            (ASCII 0-127, plus the FNC controls via the dedicated text
-            encoder) is permitted.
+        :param text: The data to encode. Either a :class:`Code128Data`
+            composing plain text with typed :class:`Code128Marker` tokens
+            (the recommended path for GS1-128 and Latin-1 input), or a
+            plain ASCII ``str``. A plain ``str`` containing the legacy
+            FNC shortcut bytes (``\\xf1``..``\\xf4``) is accepted and
+            silently promoted to a :class:`Code128Data` with the typed
+            markers, emitting a
+            :class:`pystrich.exceptions.Code128MarkerBytesCompatWarning`.
         :param options: Optional dict tweaking the rendered output. Supported
             keys:
 
@@ -77,6 +97,10 @@ class Code128Encoder(Bar1DEncoder):
               bottom edge.
         """
         super().__init__(options)
+        if isinstance(text, str):
+            text = fnc_marker_bytes_compat(text)
+        if not isinstance(text, Code128Data):
+            text = Code128Data(text, encoding="ascii")
         self.text = text
         encoder = TextEncoder()
 
@@ -109,4 +133,11 @@ class Code128Encoder(Bar1DEncoder):
 
         :rtype: :class:`Code128Renderer`
         """
-        return Code128Renderer(self.bars, self.text, self.options)
+        return Code128Renderer(self.bars, self._label_text(), self.options)
+
+    def _label_text(self) -> str:
+        """Plain-str rendering of the input for the human-readable label.
+
+        FNC markers have no printable representation and are dropped.
+        """
+        return "".join(s for s in self.text.segments if isinstance(s, str))

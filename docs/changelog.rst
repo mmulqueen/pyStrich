@@ -23,6 +23,10 @@ Unreleased
 - Data Matrix: ``iso-8859-1`` payloads now emit an explicit ECI 3
   designator so heuristic decoders don't misinterpret short Upper-Shift
   sequences as another charset.
+- Code 128: new :class:`~pystrich.code128.Code128Data` accepts typed
+  :data:`~pystrich.code128.FNC1`, :data:`~pystrich.code128.FNC2` and
+  :data:`~pystrich.code128.FNC3` markers (GS1-128 etc.), plus
+  ``encoding="iso-8859-1"`` for Latin-1 input.
 
 .. _v0-14:
 

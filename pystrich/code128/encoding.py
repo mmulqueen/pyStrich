@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+
+def _by_codepoint(pairs: dict[str, int]) -> dict[int, int]:
+    return {ord(k): v for k, v in pairs.items()}
+
+
 # fmt: off
-charset_a: dict[str, int] = {
+charset_a: dict[int, int] = _by_codepoint({
     ' ': 0, '!': 1, '"': 2, '#': 3,
     '$': 4, '%': 5, '&': 6, '\'': 7,
     '(': 8, ')': 9, '*': 10, '+': 11,
@@ -28,11 +33,9 @@ charset_a: dict[str, int] = {
     '\x14': 84, '\x15': 85, '\x16': 86, '\x17': 87,
     '\x18': 88, '\x19': 89, '\x1a': 90, '\x1b': 91,
     '\x1c': 92, '\x1d': 93, '\x1e': 94, '\x1f': 95,
-    '\xf3': 96, '\xf2': 97, 'SHIFT': 98, 'TO_C': 99,
-    'TO_B': 100, '\xf4': 101, '\xf1': 102
-}
+})
 
-charset_b: dict[str, int] = {
+charset_b: dict[int, int] = _by_codepoint({
     ' ': 0, '!': 1, '"': 2, '#': 3,
     '$': 4, '%': 5, '&': 6, '\'': 7,
     '(': 8, ')': 9, '*': 10, '+': 11,
@@ -57,13 +60,8 @@ charset_b: dict[str, int] = {
     't': 84, 'u': 85, 'v': 86, 'w': 87,
     'x': 88, 'y': 89, 'z': 90, '{': 91,
     '|': 92, '}': 93, '~': 94, '\x7f': 95,
-    '\xf3': 96, '\xf2': 97, 'SHIFT': 98, 'TO_C': 99,
-    '\xf4': 100, 'TO_A': 101, '\xf1': 102
-}
+})
 # fmt: on
-
-
-charset_c: dict[str, int] = {"TO_B": 100, "TO_A": 101, "\xf1": 102}
 
 encodings: dict[int, str] = {
     0: "11011001100",
