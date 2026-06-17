@@ -9,7 +9,9 @@ from pystrich.charset import Charset, EncodableData
 from pystrich.exceptions import (
     DataMatrixNonAsciiWarning,
     Fnc1WorkaroundCompatWarning,
+    PyStrichInvalidOption,
 )
+from pystrich.gs1 import GS1Fixed, GS1Variable
 
 DataMatrixEncodingArg = Literal["compat", "ascii", "iso-8859-1", "utf-8"]
 DataMatrixEncoding = Charset
@@ -151,6 +153,46 @@ class DataMatrixData(EncodableData[DataMatrixEncoding, DataMatrixCodeword]):
             segments = _compat_transform(segments)
             encoding = "ascii"
         super().__init__(*segments, encoding=encoding, auto_encoding=auto_encoding)
+
+    @classmethod
+    def gs1(cls, *fields: GS1Fixed | GS1Variable) -> DataMatrixData:
+        """Build a GS1 Data Matrix payload from typed Application Identifier fields.
+
+        Emits a leading :data:`FNC1` (which flags the symbol as GS1 Data
+        Matrix to conformant scanners) followed by
+        ``application_identifier + value`` for each field, inserting a
+        further :data:`FNC1` separator after each
+        :class:`~pystrich.gs1.GS1Variable` that is not the final element.
+        ASCII is hardcoded -- the GS1 General Specifications restrict
+        Application Identifier values to a 7-bit character set.
+
+        :param fields: One or more :class:`~pystrich.gs1.GS1Fixed` /
+            :class:`~pystrich.gs1.GS1Variable` instances. Plain strings are
+            not accepted; wrap each Application Identifier / value pair in
+            the appropriate field class so we know whether to follow it
+            with FNC1.
+        :raises pystrich.exceptions.PyStrichInvalidOption: if ``fields`` is
+            empty or contains anything other than the field classes.
+
+        .. versionadded:: 0.15
+        """
+        if not fields:
+            raise PyStrichInvalidOption(
+                "DataMatrixData.gs1 requires at least one GS1Fixed or GS1Variable field"
+            )
+        for field in fields:
+            if not isinstance(field, (GS1Fixed, GS1Variable)):
+                raise PyStrichInvalidOption(
+                    "DataMatrixData.gs1 fields must be GS1Fixed or GS1Variable, "
+                    f"got {type(field).__name__}"
+                )
+        segments: list[str | DataMatrixCodeword] = [FNC1]
+        last = len(fields) - 1
+        for i, field in enumerate(fields):
+            segments.append(field.application_identifier + field.value)
+            if isinstance(field, GS1Variable) and i != last:
+                segments.append(FNC1)
+        return cls(*segments, encoding="ascii")
 
 
 # Codeword 232 — see https://github.com/mmulqueen/pyStrich/issues/13

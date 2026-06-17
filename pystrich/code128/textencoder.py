@@ -105,9 +105,7 @@ class TextEncoder:
 
         if cp >= 0x80:
             assert self.current_charset != "C"
-            table = (
-                encoding.charset_a if self.current_charset == "A" else encoding.charset_b
-            )
+            table = encoding.charset_a if self.current_charset == "A" else encoding.charset_b
             return [_FNC4.codeword_for_charset(self.current_charset), table[cp - 0x80]]
 
         if self.current_charset == "A":
@@ -176,9 +174,7 @@ class TextEncoder:
         switch_charset() handles the leftover flush.
         """
         codes: list[int] = []
-        if self.current_charset == "C" and (
-            self.digits or not marker.representable_in("C")
-        ):
+        if self.current_charset == "C" and (self.digits or not marker.representable_in("C")):
             codes.extend(self.switch_charset(marker.representable_charsets()[0]))
         codes.append(marker.codeword_for_charset(self.current_charset))
         return codes

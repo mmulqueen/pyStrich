@@ -15,7 +15,9 @@ from pystrich.charset import EncodableData
 from pystrich.exceptions import (
     Code128MarkerBytesCompatWarning,
     PyStrichInvalidInput,
+    PyStrichInvalidOption,
 )
+from pystrich.gs1 import GS1Fixed, GS1Variable
 
 Code128EncodingArg = Literal["ascii", "iso-8859-1"]
 Code128Encoding = Literal["ascii", "iso-8859-1"]
@@ -157,6 +159,46 @@ class Code128Data(EncodableData[Code128Encoding, Code128Marker]):
         if encoding == "ascii":
             _reject_legacy_marker_bytes(segments)
         super().__init__(*segments, encoding=encoding, auto_encoding=auto_encoding)
+
+    @classmethod
+    def gs1(cls, *fields: GS1Fixed | GS1Variable) -> Code128Data:
+        """Build a GS1-128 payload from typed Application Identifier fields.
+
+        Emits a leading :data:`FNC1` (which flags the symbol as GS1-128 to
+        conformant scanners) followed by
+        ``application_identifier + value`` for each field, inserting a
+        further :data:`FNC1` separator after each
+        :class:`~pystrich.gs1.GS1Variable` that is not the final element.
+        ASCII is hardcoded -- GS1 Application Identifier values are
+        restricted to a 7-bit character set.
+
+        :param fields: One or more :class:`~pystrich.gs1.GS1Fixed` /
+            :class:`~pystrich.gs1.GS1Variable` instances. Plain strings are
+            not accepted; wrap each Application Identifier / value pair in
+            the appropriate field class so we know whether to follow it
+            with FNC1.
+        :raises pystrich.exceptions.PyStrichInvalidOption: if ``fields`` is
+            empty or contains anything other than the field classes.
+
+        .. versionadded:: 0.15
+        """
+        if not fields:
+            raise PyStrichInvalidOption(
+                "Code128Data.gs1 requires at least one GS1Fixed or GS1Variable field"
+            )
+        for field in fields:
+            if not isinstance(field, (GS1Fixed, GS1Variable)):
+                raise PyStrichInvalidOption(
+                    "Code128Data.gs1 fields must be GS1Fixed or GS1Variable, "
+                    f"got {type(field).__name__}"
+                )
+        segments: list[str | Code128Marker] = [FNC1]
+        last = len(fields) - 1
+        for i, field in enumerate(fields):
+            segments.append(field.application_identifier + field.value)
+            if isinstance(field, GS1Variable) and i != last:
+                segments.append(FNC1)
+        return cls(*segments, encoding="ascii")
 
 
 def _reject_legacy_marker_bytes(

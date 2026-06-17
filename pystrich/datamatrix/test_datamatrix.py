@@ -27,6 +27,7 @@ from pystrich.exceptions import (
     PyStrichInvalidOption,
     PyStrichWarning,
 )
+from pystrich.gs1 import GS1Fixed, GS1Variable
 from pystrich.marks import MarkShape
 
 _API_FORMS = [
@@ -300,6 +301,65 @@ def test_gs1_fnc1(payload, expected, tmp_path, dmtxread):
     img = tmp_path / "gs1.png"
     DataMatrixEncoder(payload).save(str(img))
     assert dmtxread(img, gs1="|") == expected
+
+
+@pytest.mark.parametrize(
+    "fields, expected_segments",
+    [
+        pytest.param(
+            (GS1Fixed("01", "09501234543213"),),
+            (FNC1, "0109501234543213"),
+            id="single-fixed",
+        ),
+        pytest.param(
+            (GS1Variable("10", "BF07"),),
+            (FNC1, "10BF07"),
+            id="single-variable-last-no-trailing-fnc1",
+        ),
+        pytest.param(
+            (
+                GS1Fixed("01", "09501234543213"),
+                GS1Fixed("17", "261231"),
+                GS1Variable("10", "BF07"),
+            ),
+            (FNC1, "01095012345432131726123110BF07"),
+            id="fixed-fixed-variable-no-separators",
+        ),
+        pytest.param(
+            (GS1Variable("10", "BF07"), GS1Variable("21", "19890519")),
+            (FNC1, "10BF07", FNC1, "2119890519"),
+            id="variable-not-last-gets-separator",
+        ),
+    ],
+)
+def test_datamatrix_data_gs1_segment_structure(fields, expected_segments):
+    data = DataMatrixData.gs1(*fields)
+    assert data.segments == expected_segments
+    assert data.encoding == "ascii"
+
+
+def test_datamatrix_data_gs1_round_trip(tmp_path, dmtxread):
+    data = DataMatrixData.gs1(
+        GS1Fixed("01", "09501234543213"),
+        GS1Fixed("17", "261231"),
+        GS1Variable("10", "BF07"),
+    )
+    img = tmp_path / "gs1.png"
+    DataMatrixEncoder(data).save(str(img))
+    assert dmtxread(img, gs1="|") == "|0109501234543213" + "17261231" + "10BF07"
+
+
+@pytest.mark.parametrize(
+    "fields, reason",
+    [
+        pytest.param((), "at least one", id="empty"),
+        pytest.param(("01", "x"), "GS1Fixed or GS1Variable", id="bare-str"),
+        pytest.param((GS1Fixed("01", "x"), "extra"), "GS1Fixed or GS1Variable", id="mixed-str"),
+    ],
+)
+def test_datamatrix_data_gs1_rejects_bad_arguments(fields, reason):
+    with pytest.raises(PyStrichInvalidOption, match=reason):
+        DataMatrixData.gs1(*fields)
 
 
 @pytest.mark.parametrize(

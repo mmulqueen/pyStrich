@@ -92,9 +92,10 @@ ogp_description_length = 0
 def _generate_example_images(app):
     from pystrich.aztec import AztecEncoder
     from pystrich.code39 import Code39Encoder
-    from pystrich.code128 import Code128Encoder
-    from pystrich.datamatrix import FNC1, DataMatrixData, DataMatrixEncoder
+    from pystrich.code128 import Code128Data, Code128Encoder
+    from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder
     from pystrich.ean13 import EAN13Encoder
+    from pystrich.gs1 import GS1Fixed, GS1Variable
     from pystrich.marks import MarkShape
     from pystrich.pdf417 import PDF417Encoder
     from pystrich.qrcode import QRCodeData, QRCodeEncoder
@@ -154,6 +155,13 @@ def _generate_example_images(app):
         str(out / "code128-custom.png"), bar_width=4
     )
     Code128Encoder("WDBCA45D2HA327260").save_svg(str(out / "code128-example.svg"))
+    Code128Encoder(
+        Code128Data.gs1(
+            GS1Fixed("01", "09501234543213"),
+            GS1Fixed("17", "261231"),
+            GS1Variable("10", "BF07"),
+        )
+    ).save(str(out / "code128-gs1.png"))
 
     DataMatrixEncoder(pystrich_url).save(str(out / "datamatrix-example.png"))
     DataMatrixEncoder(pystrich_url).save_svg(str(out / "datamatrix-example.svg"))
@@ -162,15 +170,19 @@ def _generate_example_images(app):
         mark_shape=MarkShape.CIRCULAR_CELLS,
     )
     DataMatrixEncoder(pystrich_url).save(str(out / "datamatrix-large.png"), cellsize=10)
-    DataMatrixEncoder(DataMatrixData(FNC1, "0105050070007664", encoding="ascii")).save(
+    DataMatrixEncoder(DataMatrixData.gs1(GS1Fixed("01", "05050070007664"))).save(
         str(out / "datamatrix-gs1.png"), cellsize=8
     )
     DataMatrixEncoder(
-        DataMatrixData(FNC1, "0109501234543213", "17261231", "10BF07", encoding="ascii")
+        DataMatrixData.gs1(
+            GS1Fixed("01", "09501234543213"),
+            GS1Fixed("17", "261231"),
+            GS1Variable("10", "BF07"),
+        )
     ).save(str(out / "datamatrix-gs1-multi-fixed.png"), cellsize=8)
-    DataMatrixEncoder(DataMatrixData(FNC1, "10BF07", FNC1, "2119890519", encoding="ascii")).save(
-        str(out / "datamatrix-gs1-multi.png"), cellsize=8
-    )
+    DataMatrixEncoder(
+        DataMatrixData.gs1(GS1Variable("10", "BF07"), GS1Variable("21", "19890519"))
+    ).save(str(out / "datamatrix-gs1-multi.png"), cellsize=8)
     DataMatrixEncoder(
         DataMatrixData("Ich dachte, Sie wären kräftiger", encoding="iso-8859-1")
     ).save(str(out / "datamatrix-latin1.png"), cellsize=8)

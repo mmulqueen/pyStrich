@@ -23,7 +23,8 @@ Example
 Wrap the input in :class:`DataMatrixData`. The simplest path is
 ``auto_encoding=True``, which picks the narrowest encoding that fits the
 input automatically. For control over the encoded byte sequence -- to
-enforce ``"ascii"`` for a 7-bit payload (URLs, identifiers, GS1 AI strings)
+enforce ``"ascii"`` for a 7-bit payload (URLs, identifiers, GS1 Application
+Identifier strings)
 or to require Latin-1 / UTF-8 -- pass an explicit ``encoding`` instead;
 see :ref:`datamatrix-non-ascii` below.
 
@@ -197,63 +198,82 @@ GS1 / FNC1
 
    `GS1 DataMatrix Guideline
    <https://www.gs1.org/standards/gs1-datamatrix-guideline/25>`_ -- the
-   authoritative reference for AI selection, encoding rules and print
-   quality requirements for GS1 Data Matrix.
+   authoritative reference for Application Identifier selection, encoding
+   rules and print quality requirements for GS1 Data Matrix.
 
-GS1 Data Matrix uses an FNC1 codeword as the first symbol to signal that the
-payload is a sequence of GS1 Application Identifiers, and again as a
-separator after any variable-length AI that is not the final element of the
-message. Pass :data:`FNC1` as the first segment to :class:`DataMatrixData`
-to emit codeword 232 directly:
+GS1 Data Matrix uses an FNC1 codeword as the first symbol to signal that
+the payload is a sequence of GS1 Application Identifiers, and again as a
+separator after any variable-length Application Identifier that is not
+the final element of the message. :meth:`DataMatrixData.gs1` builds the
+payload from typed field wrappers and handles separator placement
+automatically. Wrap each Application Identifier / value pair in
+:class:`~pystrich.gs1.GS1Fixed` for Application Identifiers whose data
+length is fixed or :class:`~pystrich.gs1.GS1Variable` otherwise:
 
 .. code-block:: python
 
-   from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder, FNC1
+   from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder
+   from pystrich.gs1 import GS1Fixed, GS1Variable
 
    # (01) GTIN-14 -- pad a GTIN-13 with a leading "0" indicator digit.
-   payload = DataMatrixData(FNC1, "0105050070007664", encoding="ascii")
+   payload = DataMatrixData.gs1(GS1Fixed("01", "05050070007664"))
    DataMatrixEncoder(payload).save("gs1.png")
 
 .. image:: examples/datamatrix-gs1.png
    :alt: GS1 Data Matrix encoding (01) GTIN 05050070007664.
 
-A typical pharmaceutical / medical-device payload combines a GTIN with an
-expiry date and a batch number. ``(01)`` and ``(17)`` are fixed-length, so
-no separator is required between them; ``(10)`` is variable-length, but
-because it is the last element of the message no trailing separator is
-required either:
+A typical pharmaceutical / medical-device payload combines a GTIN with
+an expiry date and a batch number. ``(01)`` and ``(17)`` are
+fixed-length, so :class:`~pystrich.gs1.GS1Fixed` declares them; ``(10)``
+is variable-length, so :class:`~pystrich.gs1.GS1Variable` carries it.
+The GS1 General Specifications recommend variable-length Application
+Identifiers come last -- positioning ``(10)`` at the end of the message
+means no FNC1 separator is needed between the fields:
 
 .. code-block:: python
 
-   # (01) GTIN + (17) expiry YYMMDD + (10) batch
-   payload = DataMatrixData(
-       FNC1, "0109501234543213", "17261231", "10BF07", encoding="ascii"
+   payload = DataMatrixData.gs1(
+       GS1Fixed("01", "09501234543213"),
+       GS1Fixed("17", "261231"),
+       GS1Variable("10", "BF07"),
    )
    DataMatrixEncoder(payload).save("gs1-multi-fixed.png")
 
 .. image:: examples/datamatrix-gs1-multi-fixed.png
    :alt: GS1 Data Matrix encoding (01) GTIN 09501234543213, (17) expiry 261231, (10) batch BF07.
 
-When a variable-length AI is followed by another AI, separate them with a
-further :data:`FNC1`:
+When a variable-length Application Identifier is not the last field, the
+FNC1 separator is inserted automatically:
 
 .. code-block:: python
 
-   # (10) batch + (21) serial -- (10) is variable-length and not last,
-   # so an FNC1 separator is required between the two AIs.
-   payload = DataMatrixData(
-       FNC1, "10BF07", FNC1, "2119890519", encoding="ascii"
+   payload = DataMatrixData.gs1(
+       GS1Variable("10", "BF07"),
+       GS1Variable("21", "19890519"),
    )
    DataMatrixEncoder(payload).save("gs1-multi.png")
 
 .. image:: examples/datamatrix-gs1-multi.png
-   :alt: GS1 Data Matrix encoding (10) batch BF07 and (21) serial SERIAL01 separated by FNC1.
+   :alt: GS1 Data Matrix encoding (10) batch BF07 and (21) serial 19890519 separated by FNC1.
+
+For full control over the codeword stream, pass :data:`FNC1` and the
+plain Application Identifier / value strings to :class:`DataMatrixData`
+directly -- this is
+the path :meth:`~DataMatrixData.gs1` wraps:
+
+.. code-block:: python
+
+   from pystrich.datamatrix import DataMatrixData, FNC1
+
+   payload = DataMatrixData(FNC1, "10BF07", FNC1, "2119890519", encoding="ascii")
 
 .. note::
 
-   GS1 Data Matrix payloads must be ASCII -- the GS1 General Specifications
-   restrict AI values to a 7-bit character set (essentially ASCII). Do not
-   combine :data:`FNC1` with non-ASCII encodings.
+   GS1 Data Matrix payloads must be ASCII -- the GS1 General
+   Specifications restrict Application Identifier values to a 7-bit
+   character set (essentially ASCII). :meth:`~DataMatrixData.gs1` hardcodes
+   ``"ascii"``; when placing FNC1 yourself, do not combine it with
+   non-ASCII encodings.
 
 .. deprecated:: 0.11
 
@@ -262,7 +282,8 @@ further :data:`FNC1`:
    (see `issue #13 <https://github.com/mmulqueen/pyStrich/issues/13>`_).
    The shim still works but emits a
    :class:`~pystrich.exceptions.Fnc1WorkaroundCompatWarning`. New code
-   should use :data:`FNC1`.
+   should use :meth:`~DataMatrixData.gs1` (or :data:`FNC1` for the raw
+   path).
 
 .. _datamatrix-non-ascii:
 

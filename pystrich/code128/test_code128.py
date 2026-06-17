@@ -7,7 +7,12 @@ from pathlib import Path
 import pytest
 
 from pystrich.code128 import FNC1, FNC2, Code128Data, Code128Encoder, Code128Marker
-from pystrich.exceptions import Code128MarkerBytesCompatWarning, PyStrichInvalidInput
+from pystrich.exceptions import (
+    Code128MarkerBytesCompatWarning,
+    PyStrichInvalidInput,
+    PyStrichInvalidOption,
+)
+from pystrich.gs1 import GS1Fixed, GS1Variable
 
 TEST_IMG_DIR = Path(__file__).parent / "test_img"
 
@@ -311,6 +316,66 @@ def test_round_trip_code128data(payload, expected_decoded, tmp_path, decode_barc
     img = tmp_path / "rt.png"
     Code128Encoder(payload).save(str(img))
     assert decode_barcode(img) == expected_decoded
+
+
+@pytest.mark.parametrize(
+    "fields, expected_segments",
+    [
+        pytest.param(
+            (GS1Fixed("01", "09501234543213"),),
+            (FNC1, "0109501234543213"),
+            id="single-fixed",
+        ),
+        pytest.param(
+            (GS1Variable("10", "BF07"),),
+            (FNC1, "10BF07"),
+            id="single-variable-last-no-trailing-fnc1",
+        ),
+        pytest.param(
+            (
+                GS1Fixed("01", "09501234543213"),
+                GS1Fixed("17", "261231"),
+                GS1Variable("10", "BF07"),
+            ),
+            (FNC1, "01095012345432131726123110BF07"),
+            id="fixed-fixed-variable-no-separators",
+        ),
+        pytest.param(
+            (GS1Variable("10", "BF07"), GS1Variable("21", "19890519")),
+            (FNC1, "10BF07", FNC1, "2119890519"),
+            id="variable-not-last-gets-separator",
+        ),
+    ],
+)
+def test_code128data_gs1_segment_structure(fields, expected_segments):
+    data = Code128Data.gs1(*fields)
+    assert data.segments == expected_segments
+    assert data.encoding == "ascii"
+
+
+def test_code128data_gs1_round_trip(tmp_path, decode_barcode):
+    """Real scanner decodes the .gs1() output as a GS1-128 with the AIs in parens."""
+    data = Code128Data.gs1(
+        GS1Fixed("01", "09501234543213"),
+        GS1Fixed("17", "261231"),
+        GS1Variable("10", "BF07"),
+    )
+    img = tmp_path / "gs1.png"
+    Code128Encoder(data).save(str(img))
+    assert decode_barcode(img) == "(01)09501234543213(17)261231(10)BF07"
+
+
+@pytest.mark.parametrize(
+    "fields, reason",
+    [
+        pytest.param((), "at least one", id="empty"),
+        pytest.param(("01", "x"), "GS1Fixed or GS1Variable", id="bare-str"),
+        pytest.param((GS1Fixed("01", "x"), "extra"), "GS1Fixed or GS1Variable", id="mixed-str"),
+    ],
+)
+def test_code128data_gs1_rejects_bad_arguments(fields, reason):
+    with pytest.raises(PyStrichInvalidOption, match=reason):
+        Code128Data.gs1(*fields)
 
 
 def test_latin1_marker_in_digit_run():

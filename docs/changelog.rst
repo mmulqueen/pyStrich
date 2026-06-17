@@ -27,6 +27,12 @@ Unreleased
   :data:`~pystrich.code128.FNC1`, :data:`~pystrich.code128.FNC2` and
   :data:`~pystrich.code128.FNC3` markers (GS1-128 etc.), plus
   ``encoding="iso-8859-1"`` for Latin-1 input.
+- GS1: new :class:`~pystrich.gs1.GS1Fixed` /
+  :class:`~pystrich.gs1.GS1Variable` field wrappers consumed by
+  :meth:`Code128Data.gs1 <pystrich.code128.Code128Data.gs1>` and
+  :meth:`DataMatrixData.gs1 <pystrich.datamatrix.DataMatrixData.gs1>` to
+  build GS1-128 and GS1 Data Matrix payloads without managing FNC1
+  separator placement by hand.
 
 .. _v0-14:
 

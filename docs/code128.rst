@@ -28,6 +28,46 @@ Example
 .. image:: examples/code128-example.svg
    :alt: Code 128 barcode encoding "WDBCA45D2HA327260".
 
+GS1-128
+-------
+
+.. seealso::
+
+   `GS1-128 on Wikipedia <https://en.wikipedia.org/wiki/GS1-128>`_ for
+   background on the GS1 variant.
+
+GS1-128 is Code 128 with an FNC1 in the first data position, signalling
+that the payload is a sequence of GS1 Application Identifiers.
+:meth:`Code128Data.gs1` builds the payload from typed field wrappers and
+handles FNC1 placement automatically -- one at the start of the message
+and one after each variable-length Application Identifier that is not
+the final element. Wrap each Application Identifier / value pair in
+:class:`~pystrich.gs1.GS1Fixed` for fixed-length Application Identifiers
+(``(01)``, ``(17)``, ``(11)`` ...) or :class:`~pystrich.gs1.GS1Variable`
+otherwise. The GS1 General Specifications recommend variable-length
+Application Identifiers come last:
+
+.. code-block:: python
+
+   from pystrich.code128 import Code128Data, Code128Encoder
+   from pystrich.gs1 import GS1Fixed, GS1Variable
+
+   # (01) GTIN + (17) expiry YYMMDD + (10) batch
+   payload = Code128Data.gs1(
+       GS1Fixed("01", "09501234543213"),
+       GS1Fixed("17", "261231"),
+       GS1Variable("10", "BF07"),
+   )
+   Code128Encoder(payload).save("code128-gs1.png")
+
+.. image:: examples/code128-gs1.png
+   :alt: GS1-128 barcode encoding (01) GTIN 09501234543213, (17) expiry 261231, (10) batch BF07.
+
+For full control over the codeword stream -- or to mix FNC2, FNC3 or
+Latin-1 segments with the GS1 markers -- pass :data:`FNC1` and the plain
+Application Identifier / value strings to :class:`Code128Data` directly;
+this is the path :meth:`~Code128Data.gs1` wraps.
+
 Sizing, label, font and layout
 ------------------------------
 
@@ -128,3 +168,17 @@ API
 ---
 
 .. autoclass:: pystrich.code128.Code128Encoder
+
+.. autoclass:: pystrich.code128.Code128Data
+   :members: gs1
+
+.. autoclass:: pystrich.code128.Code128Marker
+
+.. py:data:: pystrich.code128.FNC1
+.. py:data:: pystrich.code128.FNC2
+.. py:data:: pystrich.code128.FNC3
+
+   FNC marker constants (instances of :class:`Code128Marker`). Concatenate
+   with strings via ``+`` to build a :class:`Code128Data`; ``FNC1`` in
+   first position makes the symbol a GS1-128 (see :meth:`Code128Data.gs1`
+   for the structured API).

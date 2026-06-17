@@ -206,8 +206,8 @@ It's just a URL -- pass it to :class:`QRCodeEncoder` directly:
 
    QRCodeEncoder("https://id.gs1.org/01/05050070007664/10/W126").save("dl.png")
 
-Raw AI-syntax GS1 QR (FNC1 mode indicator) is not supported; for that,
-use :doc:`datamatrix`.
+Raw Application-Identifier-syntax GS1 QR (FNC1 mode indicator) is not
+supported; for that, use :doc:`datamatrix`.
 
 .. _qrcode-non-ascii:
 
