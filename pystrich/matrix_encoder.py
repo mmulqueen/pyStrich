@@ -60,6 +60,8 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
 
         :param cellsize: Side length in pixels of one module.
         :rtype: str
+
+        .. versionadded:: 0.15
         """
         return png_to_data_url(self.get_imagedata(cellsize))
 
@@ -105,6 +107,8 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         :param inverse: If ``True``, mark the light cells instead of the dark ones.
         :param mark_shape: How matched cells are grouped and drawn.
         :rtype: str
+
+        .. versionadded:: 0.15
         """
         return svg_to_data_url(self.get_svg(cellsize, inverse=inverse, mark_shape=mark_shape))
 

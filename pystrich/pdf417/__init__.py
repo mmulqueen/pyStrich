@@ -16,6 +16,8 @@ pin the character encoding by hand.
 
 Macro PDF417, Compact PDF417, and optimal mode-switching are not
 implemented.
+
+.. versionadded:: 0.14
 """
 
 from __future__ import annotations

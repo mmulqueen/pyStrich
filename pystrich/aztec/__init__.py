@@ -2,6 +2,8 @@
 
 Public entry: :class:`AztecEncoder`. See :class:`AztecData` for pinning
 the character encoding explicitly.
+
+.. versionadded:: 0.14
 """
 
 from __future__ import annotations

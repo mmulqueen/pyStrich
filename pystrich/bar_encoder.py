@@ -57,6 +57,8 @@ class Bar1DEncoder(ABC):
 
         :param bar_width: Width in pixels of the narrowest bar.
         :rtype: str
+
+        .. versionadded:: 0.15
         """
         return png_to_data_url(self.get_imagedata(bar_width))
 
@@ -98,6 +100,8 @@ class Bar1DEncoder(ABC):
 
         :param bar_width: Width in user units of the narrowest bar.
         :rtype: str
+
+        .. versionadded:: 0.15
         """
         return svg_to_data_url(self.get_svg(bar_width))
 

@@ -112,6 +112,9 @@ class DataMatrixEncoder(Matrix2DEncoder[int | None]):
         .. versionchanged:: 0.10
            Added the ``quiet_zone`` parameter; previously the quiet zone was
            fixed at 2 modules.
+
+        .. versionchanged:: 0.15
+           Added the ``force_byte_mode`` parameter.
         """
 
         enc = TextEncoder()

@@ -21,6 +21,9 @@ class QRCodeData(EncodableData[QRCodeEncoding]):
     ``"utf-8"``, ``"shift_jis"``) or ``auto_encoding=True``. With
     ``auto_encoding=True`` the constructor picks the narrowest fitting
     encoding from the first three; ``"shift_jis"`` is explicit-only.
+
+    .. versionchanged:: 0.15
+       Added ``"shift_jis"`` to unlock Kanji-mode compression.
     """
 
     __slots__ = ()
