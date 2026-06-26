@@ -6,9 +6,9 @@ pyStrich is a Python module to generate 1D and 2D barcodes in PNG, SVG and other
 supports:
 
  * code39
- * code128
+ * code128 (including GS1-128)
  * ean13
- * datamatrix
+ * datamatrix (including GS1 Data Matrix)
  * qrcode
  * pdf417
  * aztec
