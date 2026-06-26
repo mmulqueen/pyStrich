@@ -957,7 +957,7 @@ wheels = [
 
 [[package]]
 name = "pystrich"
-version = "0.14"
+version = "0.15"
 source = { editable = "." }
 dependencies = [
     { name = "pillow" },

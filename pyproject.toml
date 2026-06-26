@@ -1,6 +1,6 @@
 [project]
 name = "pyStrich"
-version = "0.14"
+version = "0.15"
 description = "PyStrich is a Python module to generate 1D and 2D barcodes: Code 39, Code 128 (including GS1-128), EAN-13, Data Matrix (including GS1 Data Matrix), QR Code, PDF417 and Aztec Code."
 readme = "README.md"
 license = "Apache-2.0"

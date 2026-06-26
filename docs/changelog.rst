@@ -1,10 +1,10 @@
 Changelog
 =========
 
-.. _unreleased:
+.. _v0-15:
 
-Unreleased
-----------
+0.15 — 2026-06-26
+-----------------
 
 - All encoders gain ``svg_dataurl`` and ``png_dataurl`` methods that
   return the symbol as a ``data:`` URL string.
