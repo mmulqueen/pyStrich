@@ -68,6 +68,25 @@ Latin-1 segments with the GS1 markers -- pass :data:`FNC1` and the plain
 Application Identifier / value strings to :class:`Code128Data` directly;
 this is the path :meth:`~Code128Data.gs1` wraps.
 
+Latin-1 text
+------------
+
+For Latin-1 input, wrap the payload in :class:`Code128Data` with
+``encoding="iso-8859-1"`` (or ``auto_encoding=True``). Bytes 128-255
+emit an FNC4 single-shift on the wire; characters outside Latin-1 are
+rejected.
+
+.. code-block:: python
+
+   from pystrich.code128 import Code128Data, Code128Encoder
+
+   Code128Encoder(
+       Code128Data("Rausschmeißer", encoding="iso-8859-1")
+   ).save("code128-latin1.png")
+
+.. image:: examples/code128-latin1.png
+   :alt: Code 128 barcode encoding "Rausschmeißer" via FNC4 Latin-1 shifts.
+
 Sizing, label, font and layout
 ------------------------------
 
@@ -170,7 +189,6 @@ API
 .. autoclass:: pystrich.code128.Code128Encoder
 
 .. autoclass:: pystrich.code128.Code128Data
-   :members: gs1
 
 .. autoclass:: pystrich.code128.Code128Marker
 

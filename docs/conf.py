@@ -162,6 +162,9 @@ def _generate_example_images(app):
             GS1Variable("10", "BF07"),
         )
     ).save(str(out / "code128-gs1.png"))
+    Code128Encoder(Code128Data("Rausschmeißer", encoding="iso-8859-1")).save(
+        str(out / "code128-latin1.png")
+    )
 
     DataMatrixEncoder(pystrich_url).save(str(out / "datamatrix-example.png"))
     DataMatrixEncoder(pystrich_url).save_svg(str(out / "datamatrix-example.svg"))
