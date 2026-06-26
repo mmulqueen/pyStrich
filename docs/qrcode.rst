@@ -276,6 +276,27 @@ Pinning ``shift_jis`` enables Kanji-mode compaction -- 13 bits per
 JIS X 0208 character vs. 24 as UTF-8 in byte mode. Auto-selection
 won't pick it.
 
+
+Wi-Fi network
+-------------
+
+Phones offer to join a network when they scan a QR code holding a ``WIFI:``
+payload. :meth:`QRCodeData.wifi_network` builds one in the format defined by
+the Wi-Fi Alliance WPA3 Specification v3.5:
+
+.. code-block:: python
+
+   from pystrich.qrcode import QRCodeData, QRCodeEncoder
+
+   payload = QRCodeData.wifi_network(ssid="DoubleDeuceGuest", password="PainDontHurt")
+   QRCodeEncoder(payload).save("wifi.png")
+
+.. image:: examples/qrcode-wifi.svg
+   :alt: QR code joining the DoubleDeuceGuest network
+
+Omit the password for an open network (the type field is left out), and
+pass ``hidden=True`` for a network that does not broadcast its SSID.
+
 Anatomy
 -------
 

@@ -501,6 +501,59 @@ def test_qrcode_encoder_wraps_plain_str_with_auto_encoding():
     )
 
 
+@pytest.mark.parametrize(
+    "kwargs, expected",
+    [
+        pytest.param(
+            {"ssid": "MyNet", "password": "MyPassword"},
+            "WIFI:T:WPA;S:MyNet;P:MyPassword;;",
+            id="wpa",
+        ),
+        pytest.param(
+            {"ssid": "MyNet"},
+            "WIFI:S:MyNet;;",
+            id="open-omits-type-and-password",
+        ),
+        pytest.param(
+            {"ssid": "MyNet", "password": "pw", "hidden": True},
+            "WIFI:T:WPA;S:MyNet;H:true;P:pw;;",
+            id="hidden-comes-before-password",
+        ),
+        pytest.param(
+            {"ssid": "Bar; Grill", "password": "p%ss:wo;rd"},
+            "WIFI:T:WPA;S:Bar%3B%20Grill;P:p%25ss%3Awo%3Brd;;",
+            id="percent-encodes-reserved-octets",
+        ),
+        pytest.param(
+            {"ssid": "MyNet", "password": "MyPassword", "transition_disable": 1},
+            "WIFI:T:WPA;R:1;S:MyNet;P:MyPassword;;",
+            id="transition-disable-rendered-hex",
+        ),
+        pytest.param(
+            {"ssid": "MyNet", "password": "pw", "password_identifier": "id;1"},
+            "WIFI:T:WPA;S:MyNet;I:id%3B1;P:pw;;",
+            id="password-identifier-before-password",
+        ),
+        # Example 3 from the WPA3 Specification v3.5, verbatim.
+        pytest.param(
+            {
+                "ssid": "MyNet",
+                "password": "a2bc-de3f-ghi4",
+                "transition_disable": 3,
+                "public_key": "MDkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDIgADURzxmttZoIRIPWGoQMV00XHWCAQIhXruVWOz0NjlkIA=",
+            },
+            "WIFI:T:WPA;R:3;S:MyNet;P:a2bc-de3f-ghi4;"
+            "K:MDkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDIgADURzxmttZoIRIPWGoQMV00XHWCAQIhXruVWOz0NjlkIA=;;",
+            id="sae-pk-public-key-verbatim",
+        ),
+    ],
+)
+def test_wifi_network_uri_structure(kwargs, expected):
+    data = QRCodeData.wifi_network(**kwargs)
+    assert data.segments == (expected,)
+    assert data.encoding == "ascii"
+
+
 # Direct tests on the mask-penalty helpers so the conformance fixes
 # (N3 4-module light buffer, N4 full module count denominator) cannot
 # silently regress.

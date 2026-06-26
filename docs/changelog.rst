@@ -12,6 +12,8 @@ Unreleased
   per input to shrink symbols carrying digits or uppercase runs.
 - QR Code: ``QRCodeData(encoding="shift_jis")`` now triggers Kanji-mode
   segmentation under ECI 20, packing JIS X 0208 characters into 13 bits each.
+- QR Code: new :meth:`~pystrich.qrcode.QRCodeData.wifi_network` classmethod
+  helps build WiFi network joining QR codes.
 - Data Matrix: the encoder now mixes ASCII, C40, Text and X12 segments
   per input to shrink symbols carrying uppercase, lowercase or
   CR-delimited X12 records. Payloads built with
