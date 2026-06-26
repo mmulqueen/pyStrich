@@ -215,6 +215,10 @@ def _generate_example_images(app):
     QRCodeEncoder(
         QRCodeData.wifi_network(ssid="DoubleDeuceGuest", password="PainDontHurt")
     ).save_svg(str(out / "qrcode-wifi.svg"))
+    QRCodeEncoder(
+        "BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Red\r\nTEL:+14175550142\r\nEND:VCARD\r\n"
+    ).save_svg(str(out / "qrcode-vcard.svg"))
+    QRCodeEncoder("geo:37.335278,-94.302222").save_svg(str(out / "qrcode-geo.svg"))
 
     PDF417Encoder("WDBCA45D2HA327260").save(str(out / "pdf417-example.png"))
     PDF417Encoder("WDBCA45D2HA327260").save_svg(str(out / "pdf417-example.svg"))

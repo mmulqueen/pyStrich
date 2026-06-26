@@ -148,3 +148,46 @@ Then in a template:
    {% load pystrich_filters %}
    <img src="{{ product.url|qr_dataurl }}" alt="QR code for {{ product.name }}">
 
+
+Encoding a contact card
+-----------------------
+
+A QR code holding a vCard lets a phone offer to save the contact. vCard is
+plain text -- build it directly, using ``CRLF`` line endings:
+
+.. code-block:: python
+
+   from pystrich.qrcode import QRCodeEncoder
+
+   vcard = (
+       "BEGIN:VCARD\r\n"
+       "VERSION:3.0\r\n"
+       "FN:Red\r\n"
+       "TEL:+14175550142\r\n"
+       "END:VCARD\r\n"
+   )
+   QRCodeEncoder(vcard).save("red.png")
+
+.. image:: examples/qrcode-vcard.svg
+   :alt: QR code holding a vCard contact for Red
+
+.. tip::
+
+   To avoid building the vCard by hand, generate it with `vobject
+   <https://py-vobject.github.io/>`_.
+
+Encoding a location
+-------------------
+
+The ``geo:`` URI scheme (:rfc:`5870`) carries a latitude/longitude pair that
+scanners open in a maps app:
+
+.. code-block:: python
+
+   from pystrich.qrcode import QRCodeEncoder
+
+   QRCodeEncoder("geo:37.335278,-94.302222").save("location.png")
+
+.. image:: examples/qrcode-geo.svg
+   :alt: QR code holding geo coordinates
+
