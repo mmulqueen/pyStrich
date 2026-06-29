@@ -98,6 +98,7 @@ def test_encoder_init_renderer_updates_pixel_dimensions():
     assert e.height == r.height == e.rows * 3 + 2 * PDF417_DEFAULT_QUIET_ZONE
 
 
+@pytest.mark.png
 def test_encoder_save_writes_png_to_disk(tmp_path):
     """``encoder.save`` produces a non-trivial PNG file."""
     out = tmp_path / "p417.png"
@@ -115,6 +116,7 @@ def test_encoder_get_svg_returns_svg_text():
     assert "</svg>" in svg
 
 
+@pytest.mark.png
 def test_encoder_get_imagedata_returns_png_bytes():
     """``get_imagedata`` returns PNG bytes (starts with the PNG magic number)."""
     e = PDF417Encoder("PDF417", ecl=1, columns=3)

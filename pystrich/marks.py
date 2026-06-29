@@ -108,9 +108,8 @@ class BarLayout(NamedTuple):
     gap). Each column is ``bar_width`` pixels wide. The four quiet zones
     frame the symbol; ``quiet_left`` and ``quiet_top`` shift the bars,
     while ``quiet_right`` and ``quiet_bottom`` only enlarge the canvas.
-    ``labels`` carries the human-readable text drawn beneath the bars by
-    SVG/EPS renderers; the PNG path renders text via PIL directly and
-    ignores this field.
+    ``labels`` carries the human-readable text drawn beneath the bars,
+    rendered identically by the PNG, SVG and EPS paths.
     """
 
     heights: Sequence[int]

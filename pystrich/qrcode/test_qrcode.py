@@ -257,6 +257,7 @@ def test_encoding(text, expected_codewords):
         "Hello 🎉",
     ],
 )
+@pytest.mark.png
 def test_scanner_round_trip(string, ecl, tmp_path, decode_barcode):
     """A real scanner decodes this library's output back to the original string."""
     img = tmp_path / "qrcode-test.png"
@@ -276,6 +277,7 @@ def test_scanner_round_trip(string, ecl, tmp_path, decode_barcode):
         "HELLO中文",
     ],
 )
+@pytest.mark.png
 def test_shift_jis_kanji_round_trip(string, ecl, tmp_path, decode_barcode):
     """Shift_JIS payloads use Kanji mode where it pays and decode back cleanly."""
     img = tmp_path / "qrcode-test.png"
@@ -326,6 +328,7 @@ def _qr_payload(draw):
         HealthCheck.filter_too_much,
     ],
 )
+@pytest.mark.png
 def test_property_roundtrip(text, tmp_path, decode_barcode):
     """Class-banded payloads roundtrip through encode + render + decode."""
     img = tmp_path / "qrcode-property.png"
@@ -626,6 +629,7 @@ def test_mask_penalty_n4(rows, total_modules, expected):
     assert _mask_penalty_n4(rows, total_modules) == expected
 
 
+@pytest.mark.png
 def test_qrcode_smudge_tolerance(tmp_path, decode_barcode):
     """The smudged QR Code rendered for ``docs/printing.rst`` still decodes."""
     from pystrich._simulate_damage import qrcode_smudge_demo

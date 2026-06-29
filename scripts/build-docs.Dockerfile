@@ -9,10 +9,11 @@ ENV UV_LINK_MODE=copy \
 WORKDIR /src
 
 COPY pyproject.toml uv.lock README.md ./
-RUN uv sync --frozen --no-install-project --no-default-groups --group docs
+# The docs build generates PNG example figures, which need Pillow (the png extra).
+RUN uv sync --frozen --no-install-project --no-default-groups --group docs --extra png
 
 COPY . .
-RUN uv sync --frozen --no-default-groups --group docs
+RUN uv sync --frozen --no-default-groups --group docs --extra png
 
 RUN uv run --frozen sphinx-build -W --keep-going -b doctest docs docs/_build/doctest
 RUN uv run --frozen sphinx-build -W --keep-going -b text docs docs/_build/text

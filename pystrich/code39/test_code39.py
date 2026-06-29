@@ -19,6 +19,7 @@ TEST_IMG_DIR = Path(__file__).parent / "test_img"
         ("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG", "3.png"),
     ],
 )
+@pytest.mark.png
 def test_against_generated(string, reference, tmp_path):
     """Output bytes match the checked-in reference image."""
     generated = tmp_path / "barcode.png"
@@ -38,6 +39,7 @@ def test_against_generated(string, reference, tmp_path):
         pytest.param("Hello, World!", True, id="full-ascii"),
     ],
 )
+@pytest.mark.png
 def test_scanner_round_trip(string, full_ascii, tmp_path, decode_barcode):
     """A real scanner decodes this library's output back to the original string."""
     img = tmp_path / "code39.png"

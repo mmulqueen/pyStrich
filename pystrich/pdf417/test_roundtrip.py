@@ -33,12 +33,14 @@ def _save(text: str, tmp_path, **kwargs) -> str:
         pytest.param("Mixed: ABC 123 def 4567890123456789012345 end.", id="mixed-mode-switching"),
     ],
 )
+@pytest.mark.png
 def test_roundtrip_decodes_to_input(tmp_path, text, decode_barcode):
     """Every compaction mode roundtrips through encoder, renderer and scanner."""
     assert decode_barcode(_save(text, tmp_path)) == text
 
 
 @pytest.mark.parametrize("ecl", [0, 1, 2, 3, 4, 5])
+@pytest.mark.png
 def test_roundtrip_at_every_ecl_decodes_correctly(tmp_path, ecl, decode_barcode):
     """All error correction levels produce decodable symbols on clean renders."""
     text = "the quick brown fox jumps over the lazy dog"
@@ -46,6 +48,7 @@ def test_roundtrip_at_every_ecl_decodes_correctly(tmp_path, ecl, decode_barcode)
 
 
 @pytest.mark.parametrize("columns", [1, 3, 6, 10, 20, 30])
+@pytest.mark.png
 def test_roundtrip_at_various_column_counts(tmp_path, columns, decode_barcode):
     """Different column counts produce decodable symbols."""
     text = "abcdef0123456789"
@@ -53,6 +56,7 @@ def test_roundtrip_at_various_column_counts(tmp_path, columns, decode_barcode):
 
 
 @pytest.mark.parametrize("row_height", [2, 3, 4, 6])
+@pytest.mark.png
 def test_roundtrip_at_various_row_heights(tmp_path, row_height, decode_barcode):
     """Above the spec minimum Y/X >= 2 the symbol decodes; row_height=3 is the default."""
     text = "PDF417 row-height test"
@@ -66,6 +70,7 @@ def test_roundtrip_at_various_row_heights(tmp_path, row_height, decode_barcode):
         pytest.param("€5 親切にしろ 🐻‍❄️", id="utf8-mixed"),
     ],
 )
+@pytest.mark.png
 def test_roundtrip_non_ascii_decodes_via_eci(tmp_path, text, decode_barcode):
     """Non-ASCII payloads roundtrip via the appropriate character interpretation.
 

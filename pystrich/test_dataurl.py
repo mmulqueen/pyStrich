@@ -39,6 +39,7 @@ def test_svg_dataurl(encoder: Bar1DEncoder | Matrix2DEncoder) -> None:
 
 
 @pytest.mark.parametrize("encoder", ENCODER_CASES)
+@pytest.mark.png
 def test_png_dataurl(encoder: Bar1DEncoder | Matrix2DEncoder) -> None:
     with urlopen(encoder.png_dataurl()) as resp:
         assert resp.headers.get_content_type() == "image/png"

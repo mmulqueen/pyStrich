@@ -70,6 +70,7 @@ _API_FORMS = [
         "ABCDEFG\rHIJKLMN\rOPQRST",
     ],
 )
+@pytest.mark.png
 def test_encode_decode(string, wrap, tmp_path, dmtxread, decode_barcode):
     img = tmp_path / "datamatrix-test.png"
     DataMatrixEncoder(wrap(string)).save(str(img))
@@ -125,6 +126,7 @@ def _datamatrix_payload(draw):
         HealthCheck.filter_too_much,
     ],
 )
+@pytest.mark.png
 def test_property_roundtrip(text, tmp_path, decode_barcode):
     """Class-banded payloads roundtrip through encode + render + decode."""
     img = tmp_path / "datamatrix-property.png"
@@ -249,6 +251,7 @@ def test_dxf_round_trip(string, wrap, inverse, tmp_path, dxf_to_svg, svg_to_png,
         pytest.param(10, (10 - DATAMATRIX_DEFAULT_QUIET_ZONE) * 2, id="ten"),
     ],
 )
+@pytest.mark.png
 def test_quiet_zone_changes_width(quiet_zone, expected_diff):
     """Width differs from the default by 2 * (quiet_zone - default) on each axis."""
     # .width is populated by the renderer, so each encoder must render before comparison.
@@ -259,6 +262,7 @@ def test_quiet_zone_changes_width(quiet_zone, expected_diff):
     assert custom_encoder.width - default_encoder.width == expected_diff
 
 
+@pytest.mark.png
 def test_quiet_zone_round_trip(tmp_path, dmtxread):
     # quiet_zone=0 is excluded because dmtxread fails to detect the symbol without padding.
     img = tmp_path / "datamatrix-test.png"
@@ -266,6 +270,7 @@ def test_quiet_zone_round_trip(tmp_path, dmtxread):
     assert dmtxread(img) == "test"
 
 
+@pytest.mark.png
 def test_get_imagedata_matches_save(tmp_path):
     img = tmp_path / "datamatrix-test.png"
     encoder = DataMatrixEncoder("Hello world")
@@ -273,6 +278,7 @@ def test_get_imagedata_matches_save(tmp_path):
     assert img.read_bytes() == encoder.get_imagedata()
 
 
+@pytest.mark.png
 def test_gs1_fnc1_workaround(tmp_path, dmtxread):
     """A leading chr(231) is translated to a real FNC1 codeword via the compat shim.
 
@@ -296,6 +302,7 @@ def test_gs1_fnc1_workaround(tmp_path, dmtxread):
         pytest.param(FNC1 + "1" + FNC1 + "21XYZ", "|1|21XYZ", id="unpaired_digit"),
     ],
 )
+@pytest.mark.png
 def test_gs1_fnc1(payload, expected, tmp_path, dmtxread):
     """The FNC1 marker emits codeword 232 directly (no chr(231) trick)."""
     img = tmp_path / "gs1.png"
@@ -338,6 +345,7 @@ def test_datamatrix_data_gs1_segment_structure(fields, expected_segments):
     assert data.encoding == "ascii"
 
 
+@pytest.mark.png
 def test_datamatrix_data_gs1_round_trip(tmp_path, dmtxread):
     data = DataMatrixData.gs1(
         GS1Fixed("01", "09501234543213"),
@@ -555,6 +563,7 @@ def test_compat_does_not_emit_upper_shift():
         "1²34",
     ],
 )
+@pytest.mark.png
 def test_encode_decode_latin1(text, tmp_path, dmtxread):
     """Latin-1 strings round-trip through DataMatrixEncoder + dmtxread."""
     img = tmp_path / "latin1.png"
@@ -603,6 +612,7 @@ def test_encoding_utf8_byte_iteration():
         "ORDER\rITEM\rQTY\rPRICE\rcafé",  # X12 can't carry 'é' — DP closes for tail
     ],
 )
+@pytest.mark.png
 def test_encode_decode_utf8(text, tmp_path, dmtxread, decode_barcode):
     """UTF-8 strings round-trip through DataMatrixEncoder + dmtxread + zxing-cpp."""
     img = tmp_path / "utf8.png"
@@ -688,6 +698,7 @@ def test_set_corner_module_noop_when_corner_already_placed():
     assert placer.matrix[2][2] is None
 
 
+@pytest.mark.png
 def test_corner_module_round_trip_at_12x12(tmp_path, dmtxread):
     """End-to-end check that the corner-fill is wired into place() at an affected size."""
     # 'a'*4 = 4 codewords, lands in size_index 1 (12x12), which the probe shows
@@ -699,6 +710,7 @@ def test_corner_module_round_trip_at_12x12(tmp_path, dmtxread):
 
 
 @pytest.mark.parametrize("payload_len", [400, 1000, 2000])
+@pytest.mark.png
 def test_large_payload_round_trip(payload_len, tmp_path, dmtxread):
     """Sizes >=52x52 use interleaved Reed-Solomon blocks; verify they decode."""
     payload = "a" * payload_len
@@ -724,6 +736,7 @@ def test_capacity_overflow_raises():
         pytest.param("ABCDEFGH 12345 abcdefgh", id="alternating-cases"),
     ],
 )
+@pytest.mark.png
 def test_multi_mode_round_trip(text, tmp_path, dmtxread):
     """Inputs that exercise C40, Text or X12 paths still decode correctly."""
     img = tmp_path / "compact.png"
@@ -731,6 +744,7 @@ def test_multi_mode_round_trip(text, tmp_path, dmtxread):
     assert dmtxread(img) == text
 
 
+@pytest.mark.png
 def test_trailing_unlatch_dropped_when_symbol_fits_exactly(tmp_path, dmtxread):
     """When dropping the trailing Unlatch lands on a valid symbol size, do so.
 
@@ -769,6 +783,7 @@ def test_force_byte_mode_true_skips_dp():
     assert byte_cws[0] == ord("A") + 1
 
 
+@pytest.mark.png
 def test_datamatrix_smudge_tolerance(tmp_path, decode_barcode):
     """The smudged Data Matrix rendered for ``docs/printing.rst`` still decodes."""
     from pystrich._simulate_damage import datamatrix_smudge_demo

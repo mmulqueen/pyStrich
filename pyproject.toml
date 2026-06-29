@@ -1,6 +1,6 @@
 [project]
 name = "pyStrich"
-version = "0.15"
+version = "0.16"
 description = "PyStrich is a Python module to generate 1D and 2D barcodes: Code 39, Code 128 (including GS1-128), EAN-13, Data Matrix (including GS1 Data Matrix), QR Code, PDF417 and Aztec Code."
 readme = "README.md"
 license = "Apache-2.0"
@@ -31,9 +31,19 @@ classifiers = [
     "Topic :: Office/Business",
 ]
 dependencies = [
+    # Pillow is needed only for PNG output and is also offered as the ``png``
+    # extra. It stays a hard dependency until 0.17, when these two lines are
+    # removed to make it opt-in.
     "pillow>=10.3; python_version < '3.11'",
     "pillow>=12.2; python_version >= '3.11'",
     "typing-extensions>=4.15.0",
+]
+
+[project.optional-dependencies]
+# PNG output requires Pillow; SVG, EPS, DXF and terminal output do not.
+png = [
+    "pillow>=10.3; python_version < '3.11'",
+    "pillow>=12.2; python_version >= '3.11'",
 ]
 
 [project.urls]
@@ -53,6 +63,10 @@ dev = [
     "ruff>=0.15.12",
     "zxing-cpp>=2.2",
     "hypothesis>=6.155.2",
+    # Tests need Pillow for the png-marked cases; kept here so they still run
+    # once Pillow leaves the core dependencies in 0.17.
+    "pillow>=10.3; python_version < '3.11'",
+    "pillow>=12.2; python_version >= '3.11'",
 ]
 docs = [
     "sphinx>=8.1",
@@ -101,11 +115,20 @@ select = [
     "B",   # flake8-bugbear
     "C4",  # flake8-comprehensions
     "RUF", # ruff-specific
+    "TID251", # flake8-tidy-imports: banned-api
 ]
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+# Pillow is optional: production code must reach it only through pystrich._pillow
+# (exempted below) so importing the package never requires Pillow.
+"PIL".msg = "Import Pillow via pystrich._pillow so it stays an optional dependency."
 
 [tool.ruff.lint.per-file-ignores]
 # Test fixtures contain long expected hex/encoded strings that don't wrap cleanly.
 "**/test_*.py" = ["E501"]
+# The Pillow gateway and the docs-only damage simulator may import PIL directly.
+"pystrich/_pillow.py" = ["TID251"]
+"pystrich/_simulate_damage.py" = ["TID251"]
 
 [tool.mypy]
 files = ["pystrich"]
@@ -117,4 +140,16 @@ warn_return_any = true
 warn_unreachable = true
 strict_equality = true
 extra_checks = true
+
+# Pillow is an optional dependency, so type-checking must succeed without it.
+# When Pillow is installed it ships inline types and is checked fully.
+[[tool.mypy.overrides]]
+module = "PIL.*"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers"
+markers = [
+    "png: needs Pillow for PNG output; runs with the real Pillow instead of the missing-Pillow stub",
+]
 

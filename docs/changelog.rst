@@ -1,6 +1,15 @@
 Changelog
 =========
 
+.. _v0-16:
+
+0.16 — unreleased
+-----------------
+
+- pyStrich now imports Pillow only when producing PNGs, and PNG support is
+  offered through a ``pyStrich[png]`` extra; SVG, EPS, DXF and terminal output
+  no longer need it at import time. Pillow remains installed by default in this version.
+
 .. _v0-15:
 
 0.15 — 2026-06-26

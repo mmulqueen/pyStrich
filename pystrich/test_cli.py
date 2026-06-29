@@ -31,6 +31,7 @@ PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
         pytest.param("eps", "eps", b"%!PS-Adobe", id="eps"),
     ],
 )
+@pytest.mark.png
 def test_1d_smoke(tmp_path, subcommand, text, output_type, extension, header):
     out = tmp_path / f"barcode.{extension}"
     assert cli.main([subcommand, "--text", text, "-t", output_type, "-o", str(out)]) == 0
@@ -56,6 +57,7 @@ def test_1d_smoke(tmp_path, subcommand, text, output_type, extension, header):
         pytest.param("dxf", "dxf", b"SECTION", id="dxf"),
     ],
 )
+@pytest.mark.png
 def test_2d_smoke(tmp_path, subcommand, text, output_type, extension, needle):
     out = tmp_path / f"barcode.{extension}"
     assert cli.main([subcommand, "--text", text, "-t", output_type, "-o", str(out)]) == 0
@@ -66,6 +68,7 @@ def test_2d_smoke(tmp_path, subcommand, text, output_type, extension, needle):
         assert needle in data
 
 
+@pytest.mark.png
 def test_stdin_input(tmp_path, monkeypatch):
     monkeypatch.setattr("sys.stdin", io.StringIO("HELLO FROM STDIN\n"))
     out = tmp_path / "barcode.png"
@@ -163,6 +166,7 @@ def test_substitute_with_fnc1_multichar_errors(capsys, tmp_path):
         pytest.param("datamatrix", "dxf", id="dxf"),
     ],
 )
+@pytest.mark.png
 def test_auto_resolves_from_extension(tmp_path, subcommand, extension):
     out = tmp_path / f"x.{extension}"
     assert cli.main([subcommand, "--text", "X", "-o", str(out)]) == 0

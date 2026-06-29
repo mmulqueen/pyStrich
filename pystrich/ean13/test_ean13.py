@@ -53,6 +53,7 @@ def test_encoding():
         ("750103131130", "3.png"),
     ],
 )
+@pytest.mark.png
 def test_against_generated(string, reference, tmp_path):
     """Output bytes match the checked-in reference image."""
     generated = tmp_path / "barcode.png"
@@ -68,6 +69,7 @@ def test_against_generated(string, reference, tmp_path):
         ("750103131130", "7501031311309"),
     ],
 )
+@pytest.mark.png
 def test_scanner_round_trip(string, decoded, tmp_path, decode_barcode):
     """A real scanner decodes the saved image to the input plus its check digit."""
     img = tmp_path / "ean13.png"
@@ -75,6 +77,7 @@ def test_scanner_round_trip(string, decoded, tmp_path, decode_barcode):
     assert decode_barcode(img) == decoded
 
 
+@pytest.mark.png
 def test_first_digit_y_offset_zero(tmp_path, decode_barcode):
     """Setting the option does not break scanner decoding."""
     img = tmp_path / "ean13.png"

@@ -19,7 +19,7 @@ from pystrich.marks import MarkShape
 from pystrich.matrix_renderer import CellT, Matrix2DRenderer
 
 if TYPE_CHECKING:
-    from PIL.Image import Image as PILImage
+    from pystrich._pillow import PILImage
 
 
 class Matrix2DEncoder(ABC, Generic[CellT]):

@@ -73,6 +73,7 @@ def test_bar_encoding():
         ("123456789", "7.png"),
     ],
 )
+@pytest.mark.png
 def test_against_generated(string, reference, tmp_path):
     """Output bytes match the checked-in reference image."""
     generated = tmp_path / "barcode.png"
@@ -92,6 +93,7 @@ def test_against_generated(string, reference, tmp_path):
         pytest.param("12345", id="C-leftover-digit"),
     ],
 )
+@pytest.mark.png
 def test_scanner_round_trip(string, tmp_path, decode_barcode):
     """A real scanner decodes this library's output back to the original string."""
     img = tmp_path / "code128.png"
@@ -311,6 +313,7 @@ def test_str_without_marker_bytes_does_not_warn(text):
         ),
     ],
 )
+@pytest.mark.png
 def test_round_trip_code128data(payload, expected_decoded, tmp_path, decode_barcode):
     """End-to-end: encode payload → PNG → zxing-cpp → expected string."""
     img = tmp_path / "rt.png"
@@ -353,6 +356,7 @@ def test_code128data_gs1_segment_structure(fields, expected_segments):
     assert data.encoding == "ascii"
 
 
+@pytest.mark.png
 def test_code128data_gs1_round_trip(tmp_path, decode_barcode):
     """Real scanner decodes the .gs1() output as a GS1-128 with the AIs in parens."""
     data = Code128Data.gs1(

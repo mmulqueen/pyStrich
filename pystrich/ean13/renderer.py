@@ -3,17 +3,11 @@
 from __future__ import annotations
 
 from functools import reduce
-from typing import TYPE_CHECKING, TypedDict
-
-from PIL import Image, ImageDraw
+from typing import TypedDict
 
 from pystrich._vector_text import make_text_label
 from pystrich.bar_renderer import Bar1DRenderer
-from pystrich.fonts import get_font
-from pystrich.marks import BarLayout, iter_bar_marks
-
-if TYPE_CHECKING:
-    from PIL.Image import Image as PILImage
+from pystrich.marks import BarLayout
 
 # GS1 specifies an asymmetric quiet zone for EAN-13: 11 modules on the left
 # and 7 on the right.
@@ -144,29 +138,3 @@ class EAN13Renderer(Bar1DRenderer):
             quiet_bottom=quiet_bottom,
             labels=labels,
         )
-
-    def get_pilimage(self, bar_width: int) -> PILImage:
-        layout = self._bar_layout(bar_width)
-        self.image_width = (
-            layout.quiet_left + len(layout.heights) * layout.bar_width + layout.quiet_right
-        )
-        self.image_height = layout.quiet_top + max(layout.heights) + layout.quiet_bottom
-
-        img = Image.new("L", (self.image_width, self.image_height), 255)
-        draw = ImageDraw.Draw(img)
-
-        for mark in iter_bar_marks(
-            layout.heights,
-            layout.bar_width,
-            quiet_left=layout.quiet_left,
-            quiet_top=layout.quiet_top,
-        ):
-            draw.rectangle(
-                (mark.x, mark.y, mark.x + mark.width - 1, mark.y + mark.height - 1),
-                fill=0,
-            )
-
-        for label in layout.labels:
-            font = get_font("courR", label.font_size)
-            draw.text((label.x, int(label.y)), label.text, font=font)
-        return img

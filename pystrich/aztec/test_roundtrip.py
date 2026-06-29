@@ -22,6 +22,7 @@ from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
         pytest.param("5050070007664", id="digits-only"),
     ],
 )
+@pytest.mark.png
 def test_ascii_roundtrip_compact(tmp_path, decode_barcode, text):
     encoder = AztecEncoder(text)
     path = tmp_path / "aztec.png"
@@ -29,6 +30,7 @@ def test_ascii_roundtrip_compact(tmp_path, decode_barcode, text):
     assert decode_barcode(path) == text
 
 
+@pytest.mark.png
 def test_auto_encoding_picks_iso8859_1_for_latin1(tmp_path, decode_barcode):
     text = "café"  # 'é' is Latin-1.
     encoder = AztecEncoder(text)
@@ -37,6 +39,7 @@ def test_auto_encoding_picks_iso8859_1_for_latin1(tmp_path, decode_barcode):
     assert decode_barcode(path) == text
 
 
+@pytest.mark.png
 def test_auto_encoding_picks_utf8_for_unicode(tmp_path, decode_barcode):
     text = "日本語"
     encoder = AztecEncoder(text)
@@ -45,6 +48,7 @@ def test_auto_encoding_picks_utf8_for_unicode(tmp_path, decode_barcode):
     assert decode_barcode(path) == text
 
 
+@pytest.mark.png
 def test_explicit_ascii_data_class(tmp_path, decode_barcode):
     data = AztecData("Plain ASCII", encoding="ascii")
     encoder = AztecEncoder(data)
@@ -62,6 +66,7 @@ def test_explicit_ascii_data_class(tmp_path, decode_barcode):
         pytest.param(95, id="ecc-95"),
     ],
 )
+@pytest.mark.png
 def test_ecc_levels_roundtrip(tmp_path, decode_barcode, ecc):
     text = "Code 2D!"
     encoder = AztecEncoder(text, ecc=ecc)
@@ -82,6 +87,7 @@ def test_ecc_levels_roundtrip(tmp_path, decode_barcode, ecc):
         pytest.param("full", 10, id="full-L10"),
     ],
 )
+@pytest.mark.png
 def test_explicit_size_roundtrip(tmp_path, decode_barcode, kind, layers):
     # Use a short payload so it fits the smallest symbols at the default ECC.
     text = "Hi!"
@@ -140,6 +146,7 @@ def test_custom_quiet_zone_resizes_rendered_matrix(quiet_zone):
     assert renderer.width == 15 + 2 * quiet_zone
 
 
+@pytest.mark.png
 def test_custom_quiet_zone_roundtrips(tmp_path, decode_barcode):
     """A wider quiet zone does not break decoding."""
     text = "Code 2D!"
@@ -195,6 +202,7 @@ def _aztec_payload(draw):
         HealthCheck.filter_too_much,
     ],
 )
+@pytest.mark.png
 def test_property_roundtrip(text, tmp_path, decode_barcode):
     """Class-banded payloads roundtrip through encode + render + decode."""
     path = tmp_path / "aztec-property.png"
@@ -202,6 +210,7 @@ def test_property_roundtrip(text, tmp_path, decode_barcode):
     assert decode_barcode(path) == text
 
 
+@pytest.mark.png
 def test_aztec_smudge_tolerance(tmp_path, decode_barcode):
     """The smudged Aztec rendered for ``docs/printing.rst`` still decodes."""
     from pystrich._simulate_damage import aztec_smudge_demo

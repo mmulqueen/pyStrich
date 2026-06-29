@@ -1,8 +1,40 @@
 import os
 import subprocess
+import sys
+import types
 from shutil import which
+from typing import NoReturn
 
 import pytest
+
+from pystrich.exceptions import PyStrichPillowNotInstalled
+
+
+@pytest.fixture(autouse=True)
+def simulate_missing_pillow(
+    request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Hide Pillow from production code for every test except those marked ``png``.
+
+    Pillow is an optional dependency, so pyStrich's encoding and vector-output
+    paths must work without it. Production code reaches Pillow only through
+    :mod:`pystrich._pillow`; replacing that module with a stub that raises
+    :class:`~pystrich.exceptions.PyStrichPillowNotInstalled` makes every
+    unmarked test run as a user without the ``png`` extra would. Test helpers
+    that import Pillow directly (such as :func:`decode_barcode`) are
+    unaffected. ``@pytest.mark.png`` restores the real module.
+    """
+    if request.node.get_closest_marker("png"):
+        return
+
+    stub = types.ModuleType("pystrich._pillow")
+
+    def missing(name: str) -> NoReturn:
+        raise PyStrichPillowNotInstalled()
+
+    # PEP 562 module __getattr__: any attribute access on the stub raises.
+    stub.__dict__["__getattr__"] = missing
+    monkeypatch.setitem(sys.modules, "pystrich._pillow", stub)
 
 
 @pytest.fixture

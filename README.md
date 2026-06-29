@@ -13,7 +13,7 @@ supports:
  * pdf417
  * aztec
 
-pyStrich only depends on Pillow and has no other dependencies. It only supports encoding, not decoding.
+PNG output requires Pillow, installable via the `pyStrich[png]` extra; SVG, EPS, DXF and terminal output do not. pyStrich supports encoding only, not decoding.
 
 Available from PyPI: https://pypi.org/project/pyStrich/
 

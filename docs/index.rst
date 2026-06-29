@@ -24,6 +24,13 @@ Installation
 
    $ pip install pyStrich
 
+PNG output relies on Pillow; SVG, EPS, DXF and terminal output do not. Install
+the ``png`` extra to be sure Pillow is present:
+
+.. code-block:: console
+
+   $ pip install "pyStrich[png]"
+
 Quick start
 -----------
 

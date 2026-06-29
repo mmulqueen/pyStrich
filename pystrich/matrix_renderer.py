@@ -15,15 +15,13 @@ from abc import ABC
 from io import BytesIO
 from typing import TYPE_CHECKING, ClassVar, Generic, TypeVar
 
-from PIL import Image
-
 from pystrich.dxf import DxfUnit, matrix_to_dxf
 from pystrich.eps import matrix_to_eps
 from pystrich.marks import MarkShape
 from pystrich.svg import matrix_to_svg
 
 if TYPE_CHECKING:
-    from PIL.Image import Image as PILImage
+    from pystrich._pillow import PILImage
 
 
 # Cell type. Most 2D formats use 0/1; Data Matrix additionally uses None
@@ -43,6 +41,8 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
 
     def get_pilimage(self, cellsize: int) -> PILImage:
         """Return the matrix as a PIL image."""
+        from pystrich._pillow import Image
+
         buff = self.get_buffer(cellsize)
         return Image.frombuffer(
             "L",

@@ -33,6 +33,24 @@ class PyStrichInvalidOption(PyStrichError):
     """
 
 
+class PyStrichPillowNotInstalled(PyStrichError):
+    """PNG output was requested but Pillow is not installed.
+
+    Pillow is an optional dependency, required only for PNG output.
+
+    .. versionadded:: 0.16
+    """
+
+    def __init__(
+        self,
+        message: str = (
+            "PNG output requires Pillow, an optional dependency of pyStrich. "
+            'Install it with: pip install "pyStrich[png]"'
+        ),
+    ) -> None:
+        super().__init__(message)
+
+
 class PyStrichWarning(UserWarning):
     """Base class for pyStrich-specific warnings.
 

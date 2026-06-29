@@ -22,7 +22,8 @@ jobs:
           python-version: "3.13"
 
       - name: Install dependencies
-        run: uv sync --frozen --no-default-groups --group docs
+        # The docs build generates PNG example figures, which need Pillow (the png extra).
+        run: uv sync --frozen --no-default-groups --group docs --extra png
 
       - name: Build docs
         run: |

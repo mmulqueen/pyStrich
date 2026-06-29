@@ -18,8 +18,7 @@ from typing import TYPE_CHECKING, Any
 from pystrich._dataurl import png_to_data_url, svg_to_data_url
 
 if TYPE_CHECKING:
-    from PIL.Image import Image as PILImage
-
+    from pystrich._pillow import PILImage
     from pystrich.bar_renderer import Bar1DRenderer
 
 
