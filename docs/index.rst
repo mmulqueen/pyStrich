@@ -93,6 +93,8 @@ bulk, compositing onto a label -- see :doc:`recipes`.
 Symbologies
 -----------
 
+Unsure which to pick? See :doc:`symbology-choice`.
+
 .. toctree::
    :maxdepth: 1
 
@@ -110,6 +112,7 @@ Guides
 .. toctree::
    :maxdepth: 1
 
+   symbology-choice
    cli
    recipes
    printing
