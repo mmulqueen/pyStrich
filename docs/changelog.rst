@@ -9,6 +9,9 @@ Changelog
 - pyStrich now imports Pillow only when producing PNGs, and PNG support is
   offered through a ``pyStrich[png]`` extra; SVG, EPS, DXF and terminal output
   no longer need it at import time. Pillow remains installed by default in this version.
+- All encoders: render methods gain ``dark_hex`` and ``light_hex`` keywords that
+  recolour the modules or bars and the background consistently across PNG, SVG and EPS.
+  Can also be used in the CLI ``--dark-hex`` / ``--light-hex``.
 
 .. _v0-15:
 

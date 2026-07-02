@@ -15,6 +15,7 @@ from abc import ABC
 from io import BytesIO
 from typing import TYPE_CHECKING, ClassVar, Generic, TypeVar
 
+from pystrich.colour import RGBA, Fill, resolve_pil_palette
 from pystrich.dxf import DxfUnit, matrix_to_dxf
 from pystrich.eps import matrix_to_eps
 from pystrich.marks import MarkShape
@@ -29,6 +30,10 @@ if TYPE_CHECKING:
 CellT = TypeVar("CellT", int, "int | None")
 
 
+def _pixel_bytes(value: Fill) -> bytes:
+    return bytes((value,) if isinstance(value, int) else value)
+
+
 class Matrix2DRenderer(ABC, Generic[CellT]):
     """Common rendering surface for 2D matrix barcode formats."""
 
@@ -36,41 +41,64 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
     width: int
     height: int
 
-    _PIXEL: ClassVar[dict[int | None, bytes]] = {0: b"\xff", 1: b"\x00"}
     _SYMBOL: ClassVar[dict[int | None, str]] = {0: " ", 1: "X"}
 
-    def get_pilimage(self, cellsize: int) -> PILImage:
+    def get_pilimage(
+        self,
+        cellsize: int,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> PILImage:
         """Return the matrix as a PIL image."""
         from pystrich._pillow import Image
 
-        buff = self.get_buffer(cellsize)
+        mode, dark_fill, light_fill = resolve_pil_palette(dark_hex, light_hex)
+        buff = self._buffer(cellsize, dark_fill, light_fill)
         return Image.frombuffer(
-            "L",
+            mode,
             (self.width * cellsize, self.height * cellsize),
             buff,
             "raw",
-            "L",
+            mode,
             0,
             -1,
         )
 
-    def write_file(self, cellsize: int, filename: str | os.PathLike[str]) -> None:
+    def write_file(
+        self,
+        cellsize: int,
+        filename: str | os.PathLike[str],
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> None:
         """Write the matrix out to an image file."""
-        self.get_pilimage(cellsize).save(filename)
+        self.get_pilimage(cellsize, dark_hex=dark_hex, light_hex=light_hex).save(filename)
 
-    def get_imagedata(self, cellsize: int) -> bytes:
+    def get_imagedata(
+        self,
+        cellsize: int,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> bytes:
         """Write the matrix out as PNG to a bytestream."""
         buffer = BytesIO()
-        self.get_pilimage(cellsize).save(buffer, "PNG")
+        self.get_pilimage(cellsize, dark_hex=dark_hex, light_hex=light_hex).save(buffer, "PNG")
         return buffer.getvalue()
 
-    def get_buffer(self, cellsize: int) -> bytes:
+    def _buffer(self, cellsize: int, dark_fill: Fill, light_fill: Fill) -> bytes:
         """Convert the matrix into the buffer format used by PIL."""
+        pixel: dict[int | None, bytes] = {
+            0: _pixel_bytes(light_fill),
+            1: _pixel_bytes(dark_fill),
+        }
         # PIL writes image buffers from the bottom up, so feed in rows in
         # reverse.
         buf = b""
         for row in self.matrix[::-1]:
-            bufrow = b"".join([self._PIXEL[cell] * cellsize for cell in row])
+            bufrow = b"".join([pixel[cell] * cellsize for cell in row])
             for _ in range(0, cellsize):
                 buf += bufrow
         return buf
@@ -117,9 +145,24 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
             lines.append(line)
         return "\n".join(lines) + "\n"
 
-    def get_svg(self, cellsize: int, *, inverse: bool, mark_shape: MarkShape) -> str:
+    def get_svg(
+        self,
+        cellsize: int,
+        *,
+        inverse: bool,
+        mark_shape: MarkShape,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> str:
         """Return the matrix as an SVG string."""
-        return matrix_to_svg(self.matrix, cellsize, inverse=inverse, mark_shape=mark_shape)
+        return matrix_to_svg(
+            self.matrix,
+            cellsize,
+            inverse=inverse,
+            mark_shape=mark_shape,
+            dark_hex=dark_hex,
+            light_hex=light_hex,
+        )
 
     def write_svg_file(
         self,
@@ -128,14 +171,39 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         *,
         inverse: bool,
         mark_shape: MarkShape,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
     ) -> None:
         """Write the matrix out to an SVG file."""
         with open(filename, "w", encoding="utf-8") as f:
-            f.write(self.get_svg(cellsize, inverse=inverse, mark_shape=mark_shape))
+            f.write(
+                self.get_svg(
+                    cellsize,
+                    inverse=inverse,
+                    mark_shape=mark_shape,
+                    dark_hex=dark_hex,
+                    light_hex=light_hex,
+                )
+            )
 
-    def get_eps(self, cellsize: int, *, inverse: bool, mark_shape: MarkShape) -> str:
+    def get_eps(
+        self,
+        cellsize: int,
+        *,
+        inverse: bool,
+        mark_shape: MarkShape,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> str:
         """Return the matrix as an EPS string."""
-        return matrix_to_eps(self.matrix, cellsize, inverse=inverse, mark_shape=mark_shape)
+        return matrix_to_eps(
+            self.matrix,
+            cellsize,
+            inverse=inverse,
+            mark_shape=mark_shape,
+            dark_hex=dark_hex,
+            light_hex=light_hex,
+        )
 
     def write_eps_file(
         self,
@@ -144,10 +212,20 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         *,
         inverse: bool,
         mark_shape: MarkShape,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
     ) -> None:
         """Write the matrix out to an EPS file."""
         with open(filename, "w", encoding="ascii") as f:
-            f.write(self.get_eps(cellsize, inverse=inverse, mark_shape=mark_shape))
+            f.write(
+                self.get_eps(
+                    cellsize,
+                    inverse=inverse,
+                    mark_shape=mark_shape,
+                    dark_hex=dark_hex,
+                    light_hex=light_hex,
+                )
+            )
 
     def get_dxf(
         self,

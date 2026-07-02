@@ -107,6 +107,46 @@ def test_mark_shape_circular_matches_direct_api(tmp_path):
     assert via_cli.read_bytes() == direct
 
 
+def test_colour_flags_match_direct_api(tmp_path):
+    via_cli = tmp_path / "cli.svg"
+    assert (
+        cli.main(
+            [
+                "qrcode",
+                "--text",
+                "x",
+                "-o",
+                str(via_cli),
+                "--dark-hex",
+                "#1b3a5c",
+                "--light-hex",
+                "#eee",
+            ]
+        )
+        == 0
+    )
+    direct = QRCodeEncoder("x").get_svg(5, dark_hex="#1b3a5c", light_hex="#eee").encode("utf-8")
+    assert via_cli.read_bytes() == direct
+
+
+def test_colour_flags_on_1d(tmp_path):
+    out = tmp_path / "c.svg"
+    assert cli.main(["code128", "--text", "ABC", "-o", str(out), "--dark-hex", "#1b3a5c"]) == 0
+    assert b'fill="#1b3a5c"' in out.read_bytes()
+
+
+def test_bad_hex_exits_2(capsys, tmp_path):
+    out = tmp_path / "x.svg"
+    assert cli.main(["qrcode", "--text", "x", "-o", str(out), "--dark-hex", "zzz"]) == 2
+    assert "3, 6 or 8 hex digits" in capsys.readouterr().err
+
+
+def test_transparent_colour_for_eps_exits_2(capsys, tmp_path):
+    out = tmp_path / "x.eps"
+    assert cli.main(["qrcode", "--text", "x", "-o", str(out), "--light-hex", "#ffffff00"]) == 2
+    assert "transparent" in capsys.readouterr().err
+
+
 @pytest.mark.parametrize(
     "extra_args, output_type",
     [
@@ -116,6 +156,8 @@ def test_mark_shape_circular_matches_direct_api(tmp_path):
         pytest.param(["--mark-shape", "circular"], "png", id="mark-shape-png"),
         pytest.param(["--dxf-units", "in"], "png", id="dxf-units-png"),
         pytest.param(["--dxf-units", "in"], "svg", id="dxf-units-svg"),
+        pytest.param(["--dark-hex", "#c00"], "ascii", id="dark-hex-ascii"),
+        pytest.param(["--light-hex", "#fff"], "dxf", id="light-hex-dxf"),
     ],
 )
 def test_unsupported_flag_errors(extra_args, output_type, capsys, tmp_path):

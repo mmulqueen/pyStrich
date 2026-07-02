@@ -21,6 +21,7 @@ from pystrich._vector_text import (
     label_geometry,
     used_chars,
 )
+from pystrich.colour import RGBA, resolve_colours
 from pystrich.marks import (
     BarLayout,
     MarkShape,
@@ -29,6 +30,27 @@ from pystrich.marks import (
     iter_bar_marks,
     iter_marks,
 )
+
+
+def _shortest_hex(r: int, g: int, b: int) -> str:
+    """Shortest equivalent hex, collapsing ``#rrggbb`` to ``#rgb`` when it doubles."""
+    pairs = [f"{r:02x}", f"{g:02x}", f"{b:02x}"]
+    if all(p[0] == p[1] for p in pairs):
+        return "#" + "".join(p[0] for p in pairs)
+    return "#" + "".join(pairs)
+
+
+def _svg_fill(rgba: RGBA) -> str:
+    """A colour as SVG ``fill`` attribute(s).
+
+    SVG 1.1 hex colours have no alpha, so a translucent colour is split into an
+    RGB ``fill`` plus a separate ``fill-opacity`` for the broadest renderer
+    support.
+    """
+    fill = f'fill="{_shortest_hex(rgba.r, rgba.g, rgba.b)}"'
+    if rgba.a == 255:
+        return fill
+    return f'{fill} fill-opacity="{_fmt(rgba.a / 255)}"'
 
 
 def _label_defs(chars: Iterable[str]) -> list[str]:
@@ -71,14 +93,16 @@ def _wrap_svg(
     *,
     shape_rendering: str,
     body: Sequence[str],
+    dark_fill: str,
+    light_fill: str,
 ) -> str:
     parts = [
         '<svg xmlns="http://www.w3.org/2000/svg" '
         f'viewBox="0 0 {view_w} {view_h}" '
         f'width="{view_w * cellsize}" height="{view_h * cellsize}" '
         f'shape-rendering="{shape_rendering}">',
-        f'<rect width="{view_w}" height="{view_h}" fill="#fff"/>',
-        '<g fill="#000">',
+        f'<rect width="{view_w}" height="{view_h}" {light_fill}/>',
+        f"<g {dark_fill}>",
         *body,
         "</g>",
         "</svg>",
@@ -105,6 +129,8 @@ def matrix_to_svg(
     *,
     inverse: bool = False,
     mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+    dark_hex: str | RGBA | None = None,
+    light_hex: str | RGBA | None = None,
 ) -> str:
     """Render a 2D module matrix as an SVG string.
 
@@ -127,10 +153,21 @@ def matrix_to_svg(
     else:
         body = marks_to_svg_rects(marks)
 
-    return _wrap_svg(width, height, cellsize, shape_rendering=shape_rendering, body=body)
+    dark, light = resolve_colours(dark_hex, light_hex)
+    return _wrap_svg(
+        width,
+        height,
+        cellsize,
+        shape_rendering=shape_rendering,
+        body=body,
+        dark_fill=_svg_fill(dark),
+        light_fill=_svg_fill(light),
+    )
 
 
-def bars_to_svg(layout: BarLayout) -> str:
+def bars_to_svg(
+    layout: BarLayout, *, dark_hex: str | RGBA | None = None, light_hex: str | RGBA | None = None
+) -> str:
     """Render a 1D bar layout (with optional human-readable labels) as SVG.
 
     The ``viewBox`` and ``width``/``height`` are in pixels (= user units
@@ -159,4 +196,13 @@ def bars_to_svg(layout: BarLayout) -> str:
     if layout.labels:
         body.extend(_label_groups(layout.labels))
 
-    return _wrap_svg(view_w, view_h, 1, shape_rendering="crispEdges", body=body)
+    dark, light = resolve_colours(dark_hex, light_hex)
+    return _wrap_svg(
+        view_w,
+        view_h,
+        1,
+        shape_rendering="crispEdges",
+        body=body,
+        dark_fill=_svg_fill(dark),
+        light_fill=_svg_fill(light),
+    )

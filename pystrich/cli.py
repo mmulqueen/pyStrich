@@ -79,9 +79,29 @@ class Format(abc.ABC):
             default="auto",
             help="output format; 'auto' resolves from -o filename or output context",
         )
+        sp.add_argument(
+            "--dark-hex",
+            metavar="HEX",
+            default=None,
+            help="dark (foreground) colour as 3, 6 or 8 hex digits; png/svg/eps only",
+        )
+        sp.add_argument(
+            "--light-hex",
+            metavar="HEX",
+            default=None,
+            help="light (background) colour as 3, 6 or 8 hex digits; png/svg/eps only",
+        )
 
     @abc.abstractmethod
     def encoder(self, args: argparse.Namespace) -> Any: ...
+
+    @staticmethod
+    def _colour_kwargs(args: argparse.Namespace) -> dict[str, Any]:
+        return {
+            flag: getattr(args, flag)
+            for flag in ("dark_hex", "light_hex")
+            if getattr(args, flag) is not None
+        }
 
     def render(self, args: argparse.Namespace) -> bytes:
         result = getattr(self, f"render_{args.output_type}")(args)
@@ -110,13 +130,13 @@ class OneDFormat(Format):
     def encoder(self, args: argparse.Namespace) -> Bar1DEncoder: ...
 
     def render_png(self, args: argparse.Namespace) -> bytes:
-        return self.encoder(args).get_imagedata(args.bar_width)
+        return self.encoder(args).get_imagedata(args.bar_width, **self._colour_kwargs(args))
 
     def render_svg(self, args: argparse.Namespace) -> str:
-        return self.encoder(args).get_svg(args.bar_width)
+        return self.encoder(args).get_svg(args.bar_width, **self._colour_kwargs(args))
 
     def render_eps(self, args: argparse.Namespace) -> str:
-        return self.encoder(args).get_eps(args.bar_width)
+        return self.encoder(args).get_eps(args.bar_width, **self._colour_kwargs(args))
 
 
 class TwoDFormat(Format):
@@ -195,29 +215,40 @@ class TwoDFormat(Format):
 
     def render_png(self, args: argparse.Namespace) -> bytes:
         self._reject_flags(args, "png", "inverse", "mark_shape", "dxf_units")
-        return self.encoder(args).get_imagedata(self._raster_cell_size(args, "png"))
+        return self.encoder(args).get_imagedata(
+            self._raster_cell_size(args, "png"), **self._colour_kwargs(args)
+        )
 
     def render_svg(self, args: argparse.Namespace) -> str:
         self._reject_flags(args, "svg", "dxf_units")
         return self.encoder(args).get_svg(
-            self._raster_cell_size(args, "svg"), **self._vector_kwargs(args)
+            self._raster_cell_size(args, "svg"),
+            **self._vector_kwargs(args),
+            **self._colour_kwargs(args),
         )
 
     def render_eps(self, args: argparse.Namespace) -> str:
         self._reject_flags(args, "eps", "dxf_units")
         return self.encoder(args).get_eps(
-            self._raster_cell_size(args, "eps"), **self._vector_kwargs(args)
+            self._raster_cell_size(args, "eps"),
+            **self._vector_kwargs(args),
+            **self._colour_kwargs(args),
         )
 
     def render_ascii(self, args: argparse.Namespace) -> str:
-        self._reject_flags(args, "ascii", "inverse", "mark_shape", "dxf_units")
+        self._reject_flags(
+            args, "ascii", "inverse", "mark_shape", "dxf_units", "dark_hex", "light_hex"
+        )
         return self.encoder(args).get_ascii() + "\n"
 
     def render_terminal(self, args: argparse.Namespace) -> str:
-        self._reject_flags(args, "terminal", "inverse", "mark_shape", "dxf_units")
+        self._reject_flags(
+            args, "terminal", "inverse", "mark_shape", "dxf_units", "dark_hex", "light_hex"
+        )
         return self.encoder(args).get_terminal_art(ansi_bg=args.is_tty) + "\n"
 
     def render_dxf(self, args: argparse.Namespace) -> str:
+        self._reject_flags(args, "dxf", "dark_hex", "light_hex")
         units: DxfUnit | None
         if args.dxf_units is None or args.dxf_units == "mm":
             units = "mm"
@@ -234,6 +265,8 @@ _FLAG_LABELS = {
     "inverse": "--inverse",
     "mark_shape": "--mark-shape",
     "dxf_units": "--dxf-units",
+    "dark_hex": "--dark-hex",
+    "light_hex": "--light-hex",
 }
 
 

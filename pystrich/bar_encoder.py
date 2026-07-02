@@ -20,6 +20,7 @@ from pystrich._dataurl import png_to_data_url, svg_to_data_url
 if TYPE_CHECKING:
     from pystrich._pillow import PILImage
     from pystrich.bar_renderer import Bar1DRenderer
+    from pystrich.colour import RGBA
 
 
 class Bar1DEncoder(ABC):
@@ -38,98 +39,224 @@ class Bar1DEncoder(ABC):
     def init_renderer(self) -> Bar1DRenderer:
         """Construct a :class:`Bar1DRenderer` for the encoded symbol."""
 
-    def get_imagedata(self, bar_width: int = 3) -> bytes:
+    def get_imagedata(
+        self,
+        bar_width: int = 3,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> bytes:
         """Render the barcode and return PNG bytes.
 
         :param bar_width: Width in pixels of the narrowest bar.
+        :param dark_hex: Bar and text colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
         :returns: PNG-encoded image data.
         :rtype: bytes
+
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
         """
         barcode = self.init_renderer()
-        imagedata = barcode.get_imagedata(bar_width)
+        imagedata = barcode.get_imagedata(bar_width, dark_hex=dark_hex, light_hex=light_hex)
         self.width = barcode.image_width
         self.height = barcode.image_height
         return imagedata
 
-    def png_dataurl(self, bar_width: int = 3) -> str:
+    def png_dataurl(
+        self,
+        bar_width: int = 3,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> str:
         """Render the barcode and return a PNG ``data:`` URL string.
 
         :param bar_width: Width in pixels of the narrowest bar.
+        :param dark_hex: Bar and text colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
         :rtype: str
 
         .. versionadded:: 0.15
-        """
-        return png_to_data_url(self.get_imagedata(bar_width))
 
-    def get_pilimage(self, bar_width: int = 3) -> PILImage:
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
+        """
+        return png_to_data_url(
+            self.get_imagedata(bar_width, dark_hex=dark_hex, light_hex=light_hex)
+        )
+
+    def get_pilimage(
+        self,
+        bar_width: int = 3,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> PILImage:
         """Render the barcode and return a Pillow image.
 
         :param bar_width: Width in pixels of the narrowest bar.
+        :param dark_hex: Bar and text colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
         :returns: The rendered barcode.
         :rtype: PIL.Image.Image
 
         .. versionadded:: 0.11
+
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
         """
         barcode = self.init_renderer()
-        img = barcode.get_pilimage(bar_width)
+        img = barcode.get_pilimage(bar_width, dark_hex=dark_hex, light_hex=light_hex)
         self.width = barcode.image_width
         self.height = barcode.image_height
         return img
 
-    def save(self, filename: str | os.PathLike[str], bar_width: int = 3) -> None:
+    def save(
+        self,
+        filename: str | os.PathLike[str],
+        bar_width: int = 3,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> None:
         """Render the barcode to a PNG file.
 
         :param filename: Path to write the PNG to.
         :param bar_width: Width in pixels of the narrowest bar.
-        """
-        self.init_renderer().write_file(filename, bar_width)
+        :param dark_hex: Bar and text colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
 
-    def get_svg(self, bar_width: int = 3) -> str:
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
+        """
+        self.init_renderer().write_file(filename, bar_width, dark_hex=dark_hex, light_hex=light_hex)
+
+    def get_svg(
+        self,
+        bar_width: int = 3,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> str:
         """Render the barcode and return SVG markup.
 
         :param bar_width: Width in user units of the narrowest bar.
+        :param dark_hex: Bar and text colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
         :rtype: str
 
         .. versionadded:: 0.12
-        """
-        return self.init_renderer().get_svg(bar_width)
 
-    def svg_dataurl(self, bar_width: int = 3) -> str:
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
+        """
+        return self.init_renderer().get_svg(bar_width, dark_hex=dark_hex, light_hex=light_hex)
+
+    def svg_dataurl(
+        self,
+        bar_width: int = 3,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> str:
         """Render the barcode and return an SVG ``data:`` URL string.
 
         :param bar_width: Width in user units of the narrowest bar.
+        :param dark_hex: Bar and text colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
         :rtype: str
 
         .. versionadded:: 0.15
-        """
-        return svg_to_data_url(self.get_svg(bar_width))
 
-    def save_svg(self, filename: str | os.PathLike[str], bar_width: int = 3) -> None:
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
+        """
+        return svg_to_data_url(self.get_svg(bar_width, dark_hex=dark_hex, light_hex=light_hex))
+
+    def save_svg(
+        self,
+        filename: str | os.PathLike[str],
+        bar_width: int = 3,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> None:
         """Save the barcode as an SVG file. Pass a ``.svg`` filename.
 
         :param filename: SVG output path.
         :param bar_width: Width in user units of the narrowest bar.
+        :param dark_hex: Bar and text colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
 
         .. versionadded:: 0.12
-        """
-        self.init_renderer().write_svg_file(filename, bar_width)
 
-    def get_eps(self, bar_width: int = 3) -> str:
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
+        """
+        self.init_renderer().write_svg_file(
+            filename, bar_width, dark_hex=dark_hex, light_hex=light_hex
+        )
+
+    def get_eps(
+        self,
+        bar_width: int = 3,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> str:
         """Render the barcode and return EPS markup.
 
         :param bar_width: Width in PostScript points of the narrowest bar.
+        :param dark_hex: Bar and text colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``, opaque. Defaults to white.
         :rtype: str
 
         .. versionadded:: 0.12
-        """
-        return self.init_renderer().get_eps(bar_width)
 
-    def save_eps(self, filename: str | os.PathLike[str], bar_width: int = 3) -> None:
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
+        """
+        return self.init_renderer().get_eps(bar_width, dark_hex=dark_hex, light_hex=light_hex)
+
+    def save_eps(
+        self,
+        filename: str | os.PathLike[str],
+        bar_width: int = 3,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> None:
         """Save the barcode as an EPS file. Pass an ``.eps`` filename.
 
         :param filename: EPS output path.
         :param bar_width: Width in PostScript points of the narrowest bar.
+        :param dark_hex: Bar and text colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``, opaque. Defaults to white.
 
         .. versionadded:: 0.12
+
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
         """
-        self.init_renderer().write_eps_file(filename, bar_width)
+        self.init_renderer().write_eps_file(
+            filename, bar_width, dark_hex=dark_hex, light_hex=light_hex
+        )

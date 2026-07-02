@@ -21,6 +21,7 @@ from pystrich._vector_text import (
     label_geometry,
     used_chars,
 )
+from pystrich.colour import RGBA, require_opaque, resolve_colours
 from pystrich.marks import (
     BarLayout,
     MarkShape,
@@ -29,6 +30,18 @@ from pystrich.marks import (
     iter_bar_marks,
     iter_marks,
 )
+
+
+def _eps_colour(rgba: RGBA) -> str:
+    """A colour as a PostScript ``setgray``/``setrgbcolor`` command.
+
+    EPS has no alpha channel, so a translucent colour is rejected here.
+    """
+    require_opaque(rgba)
+    r, g, b = rgba.r, rgba.g, rgba.b
+    if r == g == b:
+        return f"{_fmt(r / 255)} setgray"
+    return f"{_fmt(r / 255)} {_fmt(g / 255)} {_fmt(b / 255)} setrgbcolor"
 
 
 def _label_procs(chars: Iterable[str]) -> list[str]:
@@ -77,6 +90,8 @@ def _wrap_eps(
     cellsize: int,
     *,
     body: Sequence[str],
+    dark_colour: str,
+    light_colour: str,
 ) -> str:
     bbox_w = view_w * cellsize
     bbox_h = view_h * cellsize
@@ -88,9 +103,9 @@ def _wrap_eps(
         "%%EndComments",
         "gsave",
         f"{cellsize} {cellsize} scale",
-        "1 setgray",
+        light_colour,
         f"0 0 {view_w} {view_h} rectfill",
-        "0 setgray",
+        dark_colour,
         *body,
         "grestore",
         "%%EOF",
@@ -123,6 +138,8 @@ def matrix_to_eps(
     *,
     inverse: bool = False,
     mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+    dark_hex: str | RGBA | None = None,
+    light_hex: str | RGBA | None = None,
 ) -> str:
     """Render a 2D module matrix as an EPS string.
 
@@ -141,10 +158,20 @@ def matrix_to_eps(
     else:
         body = marks_to_eps_rects(marks, height)
 
-    return _wrap_eps(width, height, cellsize, body=body)
+    dark, light = resolve_colours(dark_hex, light_hex)
+    return _wrap_eps(
+        width,
+        height,
+        cellsize,
+        body=body,
+        dark_colour=_eps_colour(dark),
+        light_colour=_eps_colour(light),
+    )
 
 
-def bars_to_eps(layout: BarLayout) -> str:
+def bars_to_eps(
+    layout: BarLayout, *, dark_hex: str | RGBA | None = None, light_hex: str | RGBA | None = None
+) -> str:
     """Render a 1D bar layout (with optional human-readable labels) as EPS.
 
     The ``%%BoundingBox`` is in PostScript points (1 pt = 1/72 in). When
@@ -174,4 +201,12 @@ def bars_to_eps(layout: BarLayout) -> str:
     if layout.labels:
         body.extend(_label_blocks(layout.labels, view_h))
 
-    return _wrap_eps(view_w, view_h, 1, body=body)
+    dark, light = resolve_colours(dark_hex, light_hex)
+    return _wrap_eps(
+        view_w,
+        view_h,
+        1,
+        body=body,
+        dark_colour=_eps_colour(dark),
+        light_colour=_eps_colour(light),
+    )

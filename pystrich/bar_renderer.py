@@ -16,6 +16,7 @@ from collections.abc import Mapping
 from io import BytesIO
 from typing import TYPE_CHECKING, Any
 
+from pystrich.colour import RGBA, resolve_pil_palette
 from pystrich.eps import bars_to_eps
 from pystrich.fonts import get_font
 from pystrich.marks import BarLayout, iter_bar_marks
@@ -46,9 +47,17 @@ class Bar1DRenderer(ABC):
     def _bar_layout(self, bar_width: int) -> BarLayout:
         """Return the pixel-precise layout used by all output formats."""
 
-    def get_pilimage(self, bar_width: int) -> PILImage:
+    def get_pilimage(
+        self,
+        bar_width: int,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> PILImage:
         """Render the symbol as a PIL image."""
         from pystrich._pillow import Image, ImageDraw, ImageFont
+
+        mode, dark_fill, light_fill = resolve_pil_palette(dark_hex, light_hex)
 
         layout = self._bar_layout(bar_width)
         self.image_width = (
@@ -56,7 +65,7 @@ class Bar1DRenderer(ABC):
         )
         self.image_height = layout.quiet_top + max(layout.heights, default=0) + layout.quiet_bottom
 
-        img = Image.new("L", (self.image_width, self.image_height), 255)
+        img = Image.new(mode, (self.image_width, self.image_height), light_fill)
         draw = ImageDraw.Draw(img)
 
         for mark in iter_bar_marks(
@@ -67,7 +76,7 @@ class Bar1DRenderer(ABC):
         ):
             draw.rectangle(
                 (mark.x, mark.y, mark.x + mark.width - 1, mark.y + mark.height - 1),
-                fill=0,
+                fill=dark_fill,
             )
 
         ttf_font = self.options.get("ttf_font")
@@ -82,34 +91,73 @@ class Bar1DRenderer(ABC):
                 x -= font.getlength(label.text) / 2
             elif label.anchor == "end":
                 x -= font.getlength(label.text)
-            draw.text((x, int(label.y)), label.text, font=font)
+            draw.text((x, int(label.y)), label.text, font=font, fill=dark_fill)
 
         return img
 
-    def write_file(self, filename: str | os.PathLike[str], bar_width: int) -> None:
+    def write_file(
+        self,
+        filename: str | os.PathLike[str],
+        bar_width: int,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> None:
         """Save the symbol as a PNG file."""
-        self.get_pilimage(bar_width).save(filename, "PNG")
+        self.get_pilimage(bar_width, dark_hex=dark_hex, light_hex=light_hex).save(filename, "PNG")
 
-    def get_imagedata(self, bar_width: int) -> bytes:
+    def get_imagedata(
+        self,
+        bar_width: int,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> bytes:
         """Render the symbol and return PNG bytes."""
         buffer = BytesIO()
-        self.get_pilimage(bar_width).save(buffer, "PNG")
+        self.get_pilimage(bar_width, dark_hex=dark_hex, light_hex=light_hex).save(buffer, "PNG")
         return buffer.getvalue()
 
-    def get_svg(self, bar_width: int) -> str:
+    def get_svg(
+        self,
+        bar_width: int,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> str:
         """Return the symbol as an SVG string."""
-        return bars_to_svg(self._bar_layout(bar_width))
+        return bars_to_svg(self._bar_layout(bar_width), dark_hex=dark_hex, light_hex=light_hex)
 
-    def write_svg_file(self, filename: str | os.PathLike[str], bar_width: int) -> None:
+    def write_svg_file(
+        self,
+        filename: str | os.PathLike[str],
+        bar_width: int,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> None:
         """Save the symbol as an SVG file."""
         with open(filename, "w", encoding="utf-8") as f:
-            f.write(self.get_svg(bar_width))
+            f.write(self.get_svg(bar_width, dark_hex=dark_hex, light_hex=light_hex))
 
-    def get_eps(self, bar_width: int) -> str:
+    def get_eps(
+        self,
+        bar_width: int,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> str:
         """Return the symbol as an EPS string."""
-        return bars_to_eps(self._bar_layout(bar_width))
+        return bars_to_eps(self._bar_layout(bar_width), dark_hex=dark_hex, light_hex=light_hex)
 
-    def write_eps_file(self, filename: str | os.PathLike[str], bar_width: int) -> None:
+    def write_eps_file(
+        self,
+        filename: str | os.PathLike[str],
+        bar_width: int,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> None:
         """Save the symbol as an EPS file."""
         with open(filename, "w", encoding="ascii") as f:
-            f.write(self.get_eps(bar_width))
+            f.write(self.get_eps(bar_width, dark_hex=dark_hex, light_hex=light_hex))

@@ -20,6 +20,7 @@ from pystrich.matrix_renderer import CellT, Matrix2DRenderer
 
 if TYPE_CHECKING:
     from pystrich._pillow import PILImage
+    from pystrich.colour import RGBA
 
 
 class Matrix2DEncoder(ABC, Generic[CellT]):
@@ -38,43 +39,96 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         returning.
         """
 
-    def save(self, filename: str | os.PathLike[str], cellsize: int = 5) -> None:
+    def save(
+        self,
+        filename: str | os.PathLike[str],
+        cellsize: int = 5,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> None:
         """Save the symbol as a PNG. Pass a ``.png`` filename.
 
         :param filename: PNG output path.
         :param cellsize: Side length in pixels of one module.
-        """
-        self.init_renderer().write_file(cellsize, filename)
+        :param dark_hex: Dark-module colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
 
-    def get_imagedata(self, cellsize: int = 5) -> bytes:
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
+        """
+        self.init_renderer().write_file(cellsize, filename, dark_hex=dark_hex, light_hex=light_hex)
+
+    def get_imagedata(
+        self,
+        cellsize: int = 5,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> bytes:
         """Render the symbol and return PNG bytes.
 
         :param cellsize: Side length in pixels of one module.
+        :param dark_hex: Dark-module colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
         :returns: PNG-encoded image data.
         :rtype: bytes
-        """
-        return self.init_renderer().get_imagedata(cellsize)
 
-    def png_dataurl(self, cellsize: int = 5) -> str:
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
+        """
+        return self.init_renderer().get_imagedata(cellsize, dark_hex=dark_hex, light_hex=light_hex)
+
+    def png_dataurl(
+        self,
+        cellsize: int = 5,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> str:
         """Render the symbol and return a PNG ``data:`` URL string.
 
         :param cellsize: Side length in pixels of one module.
+        :param dark_hex: Dark-module colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
         :rtype: str
 
         .. versionadded:: 0.15
-        """
-        return png_to_data_url(self.get_imagedata(cellsize))
 
-    def get_pilimage(self, cellsize: int = 5) -> PILImage:
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
+        """
+        return png_to_data_url(self.get_imagedata(cellsize, dark_hex=dark_hex, light_hex=light_hex))
+
+    def get_pilimage(
+        self,
+        cellsize: int = 5,
+        *,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
+    ) -> PILImage:
         """Render the symbol and return a Pillow image.
 
         :param cellsize: Side length in pixels of one module.
+        :param dark_hex: Dark-module colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
         :returns: The rendered symbol.
         :rtype: PIL.Image.Image
 
         .. versionadded:: 0.11
+
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
         """
-        return self.init_renderer().get_pilimage(cellsize)
+        return self.init_renderer().get_pilimage(cellsize, dark_hex=dark_hex, light_hex=light_hex)
 
     def get_svg(
         self,
@@ -82,17 +136,32 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         *,
         inverse: bool = False,
         mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
     ) -> str:
         """Render the symbol and return SVG markup.
 
         :param cellsize: Side length in user units of one module.
         :param inverse: If ``True``, mark the light cells instead of the dark ones.
         :param mark_shape: How matched cells are grouped and drawn.
+        :param dark_hex: Dark-module colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
         :rtype: str
 
         .. versionadded:: 0.12
+
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
         """
-        return self.init_renderer().get_svg(cellsize, inverse=inverse, mark_shape=mark_shape)
+        return self.init_renderer().get_svg(
+            cellsize,
+            inverse=inverse,
+            mark_shape=mark_shape,
+            dark_hex=dark_hex,
+            light_hex=light_hex,
+        )
 
     def svg_dataurl(
         self,
@@ -100,17 +169,34 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         *,
         inverse: bool = False,
         mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
     ) -> str:
         """Render the symbol and return an SVG ``data:`` URL string.
 
         :param cellsize: Side length in user units of one module.
         :param inverse: If ``True``, mark the light cells instead of the dark ones.
         :param mark_shape: How matched cells are grouped and drawn.
+        :param dark_hex: Dark-module colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
         :rtype: str
 
         .. versionadded:: 0.15
+
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
         """
-        return svg_to_data_url(self.get_svg(cellsize, inverse=inverse, mark_shape=mark_shape))
+        return svg_to_data_url(
+            self.get_svg(
+                cellsize,
+                inverse=inverse,
+                mark_shape=mark_shape,
+                dark_hex=dark_hex,
+                light_hex=light_hex,
+            )
+        )
 
     def save_svg(
         self,
@@ -119,6 +205,8 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         *,
         inverse: bool = False,
         mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
     ) -> None:
         """Save the symbol as an SVG file. Pass a ``.svg`` filename.
 
@@ -126,11 +214,23 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         :param cellsize: Side length in user units of one module.
         :param inverse: If ``True``, mark the light cells instead of the dark ones.
         :param mark_shape: How matched cells are grouped and drawn.
+        :param dark_hex: Dark-module colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to white.
 
         .. versionadded:: 0.12
+
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
         """
         self.init_renderer().write_svg_file(
-            cellsize, filename, inverse=inverse, mark_shape=mark_shape
+            cellsize,
+            filename,
+            inverse=inverse,
+            mark_shape=mark_shape,
+            dark_hex=dark_hex,
+            light_hex=light_hex,
         )
 
     def get_eps(
@@ -139,17 +239,32 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         *,
         inverse: bool = False,
         mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
     ) -> str:
         """Render the symbol and return EPS markup.
 
         :param cellsize: Side length in PostScript points of one module.
         :param inverse: If ``True``, mark the light cells instead of the dark ones.
         :param mark_shape: How matched cells are grouped and drawn.
+        :param dark_hex: Dark-module colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``, opaque. Defaults to white.
         :rtype: str
 
         .. versionadded:: 0.12
+
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
         """
-        return self.init_renderer().get_eps(cellsize, inverse=inverse, mark_shape=mark_shape)
+        return self.init_renderer().get_eps(
+            cellsize,
+            inverse=inverse,
+            mark_shape=mark_shape,
+            dark_hex=dark_hex,
+            light_hex=light_hex,
+        )
 
     def save_eps(
         self,
@@ -158,6 +273,8 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         *,
         inverse: bool = False,
         mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
+        dark_hex: str | RGBA | None = None,
+        light_hex: str | RGBA | None = None,
     ) -> None:
         """Save the symbol as an EPS file. Pass an ``.eps`` filename.
 
@@ -165,11 +282,23 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         :param cellsize: Side length in PostScript points of one module.
         :param inverse: If ``True``, mark the light cells instead of the dark ones.
         :param mark_shape: How matched cells are grouped and drawn.
+        :param dark_hex: Dark-module colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``. Defaults to black.
+        :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
+            ``RGBA``, opaque. Defaults to white.
 
         .. versionadded:: 0.12
+
+        .. versionchanged:: 0.16
+            Added ``dark_hex`` and ``light_hex``.
         """
         self.init_renderer().write_eps_file(
-            cellsize, filename, inverse=inverse, mark_shape=mark_shape
+            cellsize,
+            filename,
+            inverse=inverse,
+            mark_shape=mark_shape,
+            dark_hex=dark_hex,
+            light_hex=light_hex,
         )
 
     def get_ascii(self) -> str:

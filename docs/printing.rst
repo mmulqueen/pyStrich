@@ -89,6 +89,30 @@ up from 2.95). At 600 DPI, the same X-dimension requires ``bar_width=6``.
 Round *up* to the nearest integer pixel; rounding down pushes the
 X-dimension below the readable limit.
 
+Colours
+-------
+
+Symbols are black on white by default. Pass ``dark_hex`` and ``light_hex``
+-- each a 3-, 6- or 8-digit hex colour -- to any render method to recolour
+the modules (or bars) and the background consistently across PNG, SVG and
+EPS. The bars and any human-readable text take ``dark_hex``.
+
+Scanners threshold on luminance, so keep ``dark_hex`` and ``light_hex`` well
+separated in brightness; a low-contrast pair erodes read reliability the same
+way an undersized X-dimension does. The conservative navy-on-light-grey below
+stays comfortably readable.
+
+.. code-block:: python
+
+   from pystrich.qrcode import QRCodeEncoder
+
+   QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg(
+       "qrcode-navy.svg", dark_hex="#1b3a5c", light_hex="#e8e8e8"
+   )
+
+.. image:: examples/qrcode-colour.svg
+   :alt: QR Code with deep-navy modules on a light-grey background.
+
 Quiet zones
 -----------
 
