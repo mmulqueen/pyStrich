@@ -13,7 +13,7 @@ log = logging.getLogger("code39")
 
 # Code 39 (MIL-STD-1189B) requires a quiet zone of at least 10 narrow-bar
 # widths on each side of the symbol.
-QUIET_ZONE_MODULES = 10
+DEFAULT_QUIET_ZONE_MODULES = 10
 
 DEFAULT_IMAGE_HEIGHT_PX = 120
 
@@ -46,17 +46,19 @@ class Code39Renderer(Bar1DRenderer):
             return 0, 0
         default_fontsize = FONT_SIZES.get(bar_width, 24)
         fontsize = self.options.get("ttf_fontsize", default_fontsize)
-        symbol_top = bar_width * QUIET_ZONE_MODULES // 2
+        quiet_modules = self.options.get("quiet_width_multiplier", DEFAULT_QUIET_ZONE_MODULES)
+        symbol_top = bar_width * quiet_modules // 2
         return fontsize, symbol_top
 
     def _bar_layout(self, bar_width: int) -> BarLayout:
         """Pixel-precise layout shared by PNG, SVG and EPS rendering."""
         fontsize, symbol_top = self._label_metrics(bar_width)
+        quiet_modules = self.options.get("quiet_width_multiplier", DEFAULT_QUIET_ZONE_MODULES)
         image_height = self.options.get("height") or DEFAULT_IMAGE_HEIGHT_PX
         label_border = self.options.get("label_border", 0)
         bottom_border = self.options.get("bottom_border", 0)
         bar_pixel_height = image_height - label_border - fontsize - symbol_top
-        quiet_width = bar_width * QUIET_ZONE_MODULES
+        quiet_width = bar_width * quiet_modules
         heights = [bar_pixel_height if c == "1" else 0 for c in self.bars]
         labels: tuple[TextLabel, ...] = ()
         if fontsize > 0:

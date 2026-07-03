@@ -36,3 +36,7 @@ class BarcodeRenderOptions(TypedDict, total=False):
 
     bottom_border: int
     """Pixels of vertical space between the label and the bottom edge."""
+
+    quiet_width_multiplier: int
+    """Width of the quiet zone on each side, in narrow-bar widths.
+    Defaults to ``10``, the minimum required by both symbologies."""

@@ -12,7 +12,7 @@ from pystrich.types import BarcodeRenderOptions
 
 # Interleaved 2 of 5 requires a quiet zone of at least 10 narrow-bar widths on
 # each side of the symbol.
-QUIET_ZONE_MODULES = 10
+DEFAULT_QUIET_ZONE_MODULES = 10
 
 DEFAULT_IMAGE_HEIGHT_PX = 120
 
@@ -58,7 +58,8 @@ class ITFRenderer(Bar1DRenderer):
     def _bar_layout(self, bar_width: int) -> BarLayout:
         """Pixel-precise layout shared by PNG, SVG and EPS rendering."""
         bearer_px = self.options.get("bearer_width", 0) * bar_width
-        quiet_px = QUIET_ZONE_MODULES * bar_width
+        quiet_modules = self.options.get("quiet_width_multiplier", DEFAULT_QUIET_ZONE_MODULES)
+        quiet_px = quiet_modules * bar_width
 
         if self.options.get("show_label", True):
             font_size = self.options.get("ttf_fontsize", FONT_SIZES.get(bar_width, 24))

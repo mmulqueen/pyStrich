@@ -13,7 +13,7 @@ log = logging.getLogger("code128")
 
 # Code 128 specifies a quiet zone of at least 10 narrow-bar widths on each
 # side of the symbol.
-QUIET_ZONE_MODULES = 10
+DEFAULT_QUIET_ZONE_MODULES = 10
 
 FONT_SIZES = {1: 8, 2: 14, 3: 18, 4: 24}
 
@@ -44,19 +44,21 @@ class Code128Renderer(Bar1DRenderer):
             return 0, 0
         default_fontsize = FONT_SIZES.get(bar_width, 24)
         fontsize = self.options.get("ttf_fontsize", default_fontsize)
-        symbol_top = bar_width * QUIET_ZONE_MODULES // 2
+        quiet_modules = self.options.get("quiet_width_multiplier", DEFAULT_QUIET_ZONE_MODULES)
+        symbol_top = bar_width * quiet_modules // 2
         return fontsize, symbol_top
 
     def _bar_layout(self, bar_width: int) -> BarLayout:
         """Pixel-precise layout shared by PNG, SVG and EPS rendering."""
         fontsize, symbol_top = self._label_metrics(bar_width)
+        quiet_modules = self.options.get("quiet_width_multiplier", DEFAULT_QUIET_ZONE_MODULES)
         num_bars = len(self.bars)
-        image_width = (2 * bar_width * QUIET_ZONE_MODULES) + (num_bars * bar_width)
+        image_width = (2 * bar_width * quiet_modules) + (num_bars * bar_width)
         image_height = self.options.get("height") or (image_width // 3)
         label_border = self.options.get("label_border", 0)
         bottom_border = self.options.get("bottom_border", 0)
         bar_pixel_height = image_height - label_border - fontsize - symbol_top
-        quiet_width = bar_width * QUIET_ZONE_MODULES
+        quiet_width = bar_width * quiet_modules
         heights = [bar_pixel_height if c == "1" else 0 for c in self.bars]
         labels: tuple[TextLabel, ...] = ()
         if fontsize > 0:
