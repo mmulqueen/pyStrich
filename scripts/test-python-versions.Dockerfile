@@ -26,9 +26,11 @@ WORKDIR /src
 
 # Install dependencies first so the layer can be cached across source edits.
 COPY pyproject.toml uv.lock README.md ./
-RUN uv sync --frozen --no-install-project --group dev
+RUN --mount=type=cache,target=/root/.cache/uv,id=pystrich-uv \
+    uv sync --frozen --no-install-project --group dev
 
 COPY . .
-RUN uv sync --frozen --group dev
+RUN --mount=type=cache,target=/root/.cache/uv,id=pystrich-uv \
+    uv sync --frozen --group dev
 
-CMD ["uv", "run", "--frozen", "pytest"]
+CMD ["uv", "run", "--frozen", "--no-sync", "pytest"]
