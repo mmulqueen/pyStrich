@@ -20,6 +20,7 @@ keywords = [
     "ean13",
     "code39",
     "code128",
+    "interleaved-2-of-5",
     "itf14",
     "pdf417",
     "aztec",

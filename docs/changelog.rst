@@ -3,7 +3,7 @@ Changelog
 
 .. _v0-16:
 
-0.16 — unreleased
+0.16 — 2026-07-03
 -----------------
 
 - New :class:`~pystrich.itf.ITFEncoder` for plain Interleaved 2 of 5 and
@@ -15,6 +15,8 @@ Changelog
 - All encoders: render methods gain ``dark_hex`` and ``light_hex`` keywords that
   recolour the modules or bars and the background consistently across PNG, SVG and EPS.
   Can also be used in the CLI ``--dark-hex`` / ``--light-hex``.
+- Code 39, Code 128 and ITF: new ``quiet_width_multiplier`` keyword scales the
+  quiet-zone width.
 
 .. _v0-15:
 

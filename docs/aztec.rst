@@ -11,6 +11,9 @@ and medical records. It needs no quiet zone, and its strong central
 bullseye finder decodes reliably from any rotation. Symbols range from
 15x15 modules (compact) up to 151x151 (full-range).
 
+.. versionadded:: 0.14
+   Aztec Code support was added in this release.
+
 .. seealso::
 
    `Aztec Code on Wikipedia <https://en.wikipedia.org/wiki/Aztec_Code>`_

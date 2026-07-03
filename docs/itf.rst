@@ -3,8 +3,13 @@
 .. meta::
    :description: Generate GS1 ITF-14 and basic Interleaved 2 of 5 barcodes in Python with pyStrich. PNG, SVG and EPS output.
 
+.. title:: ITF
+
 ITF-14
 ======
+
+.. versionadded:: 0.16
+   ITF-14 and Interleaved 2 of 5 support were added in this release.
 
 ITF-14 is the GS1 barcode for a GTIN-14 -- the 14-digit identifier printed on
 shipping cartons and cases rather than on the retail item inside. It is an

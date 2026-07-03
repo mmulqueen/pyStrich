@@ -10,6 +10,9 @@ PDF417 is a stacked 2D symbology used on driver's licences, boarding
 passes, shipping labels and other documents that need a high-capacity
 barcode (up to 925 data codewords).
 
+.. versionadded:: 0.14
+   PDF417 support was added in this release.
+
 .. seealso::
 
    `PDF417 on Wikipedia <https://en.wikipedia.org/wiki/PDF417>`_ for
