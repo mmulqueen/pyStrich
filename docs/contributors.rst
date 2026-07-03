@@ -6,6 +6,7 @@ Contributors to pyStrich since the 2015 fork:
 * `Michael Mulqueen <https://michael.mulqueen.me.uk/>`_,
   `Method B Ltd <https://www.method-b.uk/>`_
   (`@mmulqueen <https://github.com/mmulqueen>`_)
+* Ben Dilday (`@bdilday <https://github.com/bdilday>`_)
 * Michael Jochum (`@micjoc00 <https://github.com/micjoc00>`_)
 * Mike Jones (`@imsickofmaps <https://github.com/imsickofmaps>`_)
 
