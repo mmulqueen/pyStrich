@@ -109,7 +109,10 @@ class BarLayout(NamedTuple):
     frame the symbol; ``quiet_left`` and ``quiet_top`` shift the bars,
     while ``quiet_right`` and ``quiet_bottom`` only enlarge the canvas.
     ``labels`` carries the human-readable text drawn beneath the bars,
-    rendered identically by the PNG, SVG and EPS paths.
+    rendered identically by the PNG, SVG and EPS paths. ``bearer_width``,
+    when positive, draws a bearer bar of that pixel thickness bordering the
+    bars (as used by ITF-14); it must be folded into the quiet zones, with
+    the label placed in the bottom quiet zone outside the frame.
     """
 
     heights: Sequence[int]
@@ -119,6 +122,7 @@ class BarLayout(NamedTuple):
     quiet_top: int = 0
     quiet_bottom: int = 0
     labels: Sequence[TextLabel] = ()
+    bearer_width: int = 0
 
 
 def iter_bar_marks(
@@ -164,3 +168,38 @@ def iter_bar_marks(
             (len(heights) - run_start) * bar_width,
             run_height,
         )
+
+
+def iter_bearer_marks(layout: BarLayout) -> Iterator[MatrixMark]:
+    """Yield the four rectangles of a full-frame bearer bar.
+
+    Nothing is yielded when ``layout.bearer_width`` is zero. The frame borders
+    the bars only -- the top and bottom rules abut the bars, and the label (in
+    the bottom quiet zone) sits outside the frame. ``quiet_top`` holds the top
+    rule, so the bearer thickness must be folded into the quiet zones.
+    """
+    t = layout.bearer_width
+    if t <= 0:
+        return
+    width = layout.quiet_left + len(layout.heights) * layout.bar_width + layout.quiet_right
+    bars_bottom = layout.quiet_top + max(layout.heights, default=0)
+    frame_height = bars_bottom + t
+    yield MatrixMark(0, 0, width, t)  # top rule
+    yield MatrixMark(0, bars_bottom, width, t)  # bottom rule
+    yield MatrixMark(0, 0, t, frame_height)  # left bar
+    yield MatrixMark(width - t, 0, t, frame_height)  # right bar
+
+
+def iter_barcode_marks(layout: BarLayout) -> Iterator[MatrixMark]:
+    """Yield every dark mark of a 1D barcode: its bars, then its bearer bar.
+
+    The single entry point the PNG, SVG and EPS paths render from, composing
+    the raw :func:`iter_bar_marks` primitive with :func:`iter_bearer_marks`.
+    """
+    yield from iter_bar_marks(
+        layout.heights,
+        layout.bar_width,
+        quiet_left=layout.quiet_left,
+        quiet_top=layout.quiet_top,
+    )
+    yield from iter_bearer_marks(layout)

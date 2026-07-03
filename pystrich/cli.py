@@ -27,6 +27,7 @@ from pystrich.datamatrix import (
 from pystrich.dxf import DxfUnit
 from pystrich.ean13 import EAN13Encoder, EAN13RenderOptions
 from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
+from pystrich.itf import ITF14Encoder, ITFEncoder, ITFRenderOptions
 from pystrich.marks import MarkShape
 from pystrich.matrix_encoder import Matrix2DEncoder
 from pystrich.pdf417 import (
@@ -331,6 +332,52 @@ class EAN13(OneDFormat):
         return EAN13Encoder(args.text, options=opts or None)
 
 
+class ITF(OneDFormat):
+    name = "itf"
+    help = "Interleaved 2 of 5 (1D, an even number of digits)"
+    text_help = "an even number of digits"
+
+    def add_args(self, sp: argparse.ArgumentParser) -> None:
+        super().add_args(sp)
+        sp.add_argument(
+            "--bearer-width",
+            type=int,
+            default=None,
+            help="thickness of a bearer bar's rules, in narrow-bar widths (default: none)",
+        )
+
+    def encoder(self, args: argparse.Namespace) -> ITFEncoder:
+        opts: ITFRenderOptions = {}
+        if args.height is not None:
+            opts["height"] = args.height
+        if args.bearer_width is not None:
+            opts["bearer_width"] = args.bearer_width
+        return ITFEncoder(args.text, options=opts or None)
+
+
+class ITF14(OneDFormat):
+    name = "itf14"
+    help = "ITF-14 (1D, 13 or 14 digits, with bearer bar)"
+    text_help = "13 or 14 digits"
+
+    def add_args(self, sp: argparse.ArgumentParser) -> None:
+        super().add_args(sp)
+        sp.add_argument(
+            "--bearer-width",
+            type=int,
+            default=None,
+            help="thickness of the bearer bar's rules, in narrow-bar widths (default: 4)",
+        )
+
+    def encoder(self, args: argparse.Namespace) -> ITF14Encoder:
+        opts: ITFRenderOptions = {}
+        if args.height is not None:
+            opts["height"] = args.height
+        if args.bearer_width is not None:
+            opts["bearer_width"] = args.bearer_width
+        return ITF14Encoder(args.text, options=opts or None)
+
+
 class DataMatrix(TwoDFormat):
     name = "datamatrix"
     help = "Data Matrix (2D)"
@@ -483,7 +530,17 @@ class Aztec(TwoDFormat):
         )
 
 
-FORMATS: list[Format] = [Code39(), Code128(), EAN13(), DataMatrix(), QRCode(), PDF417(), Aztec()]
+FORMATS: list[Format] = [
+    Code39(),
+    Code128(),
+    EAN13(),
+    ITF(),
+    ITF14(),
+    DataMatrix(),
+    QRCode(),
+    PDF417(),
+    Aztec(),
+]
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -495,7 +552,8 @@ def _build_parser() -> argparse.ArgumentParser:
         prog="pystrich",
         description=(
             "Generate 1D/2D barcodes "
-            "(Code 39, Code 128, EAN-13, Data Matrix, QR Code, PDF417, Aztec Code). "
+            "(Code 39, Code 128, EAN-13, Interleaved 2 of 5, ITF-14, "
+            "Data Matrix, QR Code, PDF417, Aztec Code). "
             "Pass input via --text or stdin."
         ),
     )

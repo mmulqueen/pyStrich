@@ -27,7 +27,7 @@ from pystrich.marks import (
     MarkShape,
     MatrixMark,
     TextLabel,
-    iter_bar_marks,
+    iter_barcode_marks,
     iter_marks,
 )
 
@@ -183,16 +183,7 @@ def bars_to_svg(
     body: list[str] = []
     if layout.labels:
         body.extend(_label_defs(used_chars(layout.labels)))
-    body.extend(
-        marks_to_svg_rects(
-            iter_bar_marks(
-                layout.heights,
-                layout.bar_width,
-                quiet_left=layout.quiet_left,
-                quiet_top=layout.quiet_top,
-            )
-        )
-    )
+    body.extend(marks_to_svg_rects(iter_barcode_marks(layout)))
     if layout.labels:
         body.extend(_label_groups(layout.labels))
 

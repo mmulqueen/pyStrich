@@ -6,6 +6,9 @@ Changelog
 0.16 — unreleased
 -----------------
 
+- New :class:`~pystrich.itf.ITFEncoder` for plain Interleaved 2 of 5 and
+  :class:`~pystrich.itf.ITF14Encoder` for ITF-14 (GTIN-14), with
+  PNG / SVG / EPS output and a ``pystrich itf14`` CLI subcommand. See :doc:`itf`.
 - pyStrich now imports Pillow only when producing PNGs, and PNG support is
   offered through a ``pyStrich[png]`` extra; SVG, EPS, DXF and terminal output
   no longer need it at import time. Pillow remains installed by default in this version.

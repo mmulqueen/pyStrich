@@ -87,9 +87,9 @@ There are other kinds of 2D barcodes -- but they're even more niche and
 if you needed to use them, you'd already know about them.
 
 Should you use a 1D barcode? Again, if you needed to, you'd already know.
-Chances are it would be an EAN-13 if it's a consumer product. Code 128
-remains popular in industrial settings. But if you have a choice, go 2D
-instead.
+Chances are it would be an EAN-13 if it's a consumer product, or an ITF-14
+on the shipping carton it travels in. Code 128 remains popular in industrial
+settings. But if you have a choice, go 2D instead.
 
 .. only:: not text
 

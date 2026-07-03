@@ -27,7 +27,7 @@ from pystrich.marks import (
     MarkShape,
     MatrixMark,
     TextLabel,
-    iter_bar_marks,
+    iter_barcode_marks,
     iter_marks,
 )
 
@@ -187,17 +187,7 @@ def bars_to_eps(
     body: list[str] = []
     if layout.labels:
         body.extend(_label_procs(used_chars(layout.labels)))
-    body.extend(
-        marks_to_eps_rects(
-            iter_bar_marks(
-                layout.heights,
-                layout.bar_width,
-                quiet_left=layout.quiet_left,
-                quiet_top=layout.quiet_top,
-            ),
-            view_h,
-        )
-    )
+    body.extend(marks_to_eps_rects(iter_barcode_marks(layout), view_h))
     if layout.labels:
         body.extend(_label_blocks(layout.labels, view_h))
 

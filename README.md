@@ -8,6 +8,7 @@ supports:
  * code39
  * code128 (including GS1-128)
  * ean13
+ * itf14 (and Interleaved 2 of 5)
  * datamatrix (including GS1 Data Matrix)
  * qrcode
  * pdf417

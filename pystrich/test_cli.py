@@ -21,6 +21,8 @@ PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
         pytest.param("code39", "HELLO", id="code39"),
         pytest.param("code128", "Hello, world", id="code128"),
         pytest.param("ean13", "012345678901", id="ean13"),
+        pytest.param("itf", "1234567890", id="itf"),
+        pytest.param("itf14", "1540141453698", id="itf14"),
     ],
 )
 @pytest.mark.parametrize(

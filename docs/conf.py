@@ -96,6 +96,7 @@ def _generate_example_images(app):
     from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder
     from pystrich.ean13 import EAN13Encoder
     from pystrich.gs1 import GS1Fixed, GS1Variable
+    from pystrich.itf import ITF14Encoder, ITFEncoder
     from pystrich.marks import MarkShape
     from pystrich.pdf417 import PDF417Encoder
     from pystrich.qrcode import QRCodeData, QRCodeEncoder
@@ -199,6 +200,10 @@ def _generate_example_images(app):
         str(out / "ean13-level.png"), bar_width=4
     )
     EAN13Encoder("5050070007664").save_svg(str(out / "ean13-example.svg"))
+
+    ITF14Encoder("1505007000766").save(str(out / "itf14-example.png"))
+    ITF14Encoder("1505007000766").save_svg(str(out / "itf14-example.svg"))
+    ITFEncoder("1234567890").save_svg(str(out / "itf-example.svg"))
 
     QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save(str(out / "qrcode-example.png"))
     QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg(str(out / "qrcode-example.svg"))

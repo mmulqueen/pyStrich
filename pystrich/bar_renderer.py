@@ -19,7 +19,7 @@ from typing import TYPE_CHECKING, Any
 from pystrich.colour import RGBA, resolve_pil_palette
 from pystrich.eps import bars_to_eps
 from pystrich.fonts import get_font
-from pystrich.marks import BarLayout, iter_bar_marks
+from pystrich.marks import BarLayout, iter_barcode_marks
 from pystrich.svg import bars_to_svg
 
 if TYPE_CHECKING:
@@ -68,12 +68,7 @@ class Bar1DRenderer(ABC):
         img = Image.new(mode, (self.image_width, self.image_height), light_fill)
         draw = ImageDraw.Draw(img)
 
-        for mark in iter_bar_marks(
-            layout.heights,
-            layout.bar_width,
-            quiet_left=layout.quiet_left,
-            quiet_top=layout.quiet_top,
-        ):
+        for mark in iter_barcode_marks(layout):
             draw.rectangle(
                 (mark.x, mark.y, mark.x + mark.width - 1, mark.y + mark.height - 1),
                 fill=dark_fill,

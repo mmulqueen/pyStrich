@@ -1,16 +1,17 @@
-:og:description: Generate 1D and 2D barcodes in Python with pyStrich – Code 39, Code 128, EAN-13, Data Matrix, QR Code, PDF417 and Aztec Code as PNG, SVG, EPS, DXF and terminal art.
+:og:description: Generate 1D and 2D barcodes in Python with pyStrich – Code 39, Code 128, EAN-13, ITF-14, Data Matrix, QR Code, PDF417 and Aztec Code as PNG, SVG, EPS, DXF and terminal art.
 
 .. meta::
-   :description: Generate 1D and 2D barcodes in Python with pyStrich – Code 39, Code 128, EAN-13, Data Matrix, QR Code, PDF417 and Aztec Code as PNG, SVG, EPS, DXF and terminal art.
+   :description: Generate 1D and 2D barcodes in Python with pyStrich – Code 39, Code 128, EAN-13, ITF-14, Data Matrix, QR Code, PDF417 and Aztec Code as PNG, SVG, EPS, DXF and terminal art.
 
 pyStrich
 ========
 
 pyStrich is a Python module for generating 1D and 2D barcodes. It supports
-Code 39, Code 128 (including GS1-128), EAN-13, Data Matrix (including GS1
-Data Matrix), QR Code, PDF417 and Aztec Code symbologies. All seven emit
-PNG (via :class:`Pillow <PIL.Image.Image>`), SVG and EPS. The 2D formats
-additionally render to terminal art and DXF for direct part marking.
+Code 39, Code 128 (including GS1-128), EAN-13, ITF-14 (and Interleaved 2 of
+5), Data Matrix (including GS1 Data Matrix), QR Code, PDF417 and Aztec Code
+symbologies. All eight emit PNG (via :class:`Pillow <PIL.Image.Image>`), SVG
+and EPS. The 2D formats additionally render to terminal art and DXF for
+direct part marking.
 
 pyStrich is encoder-only -- it does not read barcodes.
 
@@ -72,6 +73,14 @@ A minimal example for each of the other symbologies:
 
 .. code-block:: python
 
+   from pystrich.itf import ITF14Encoder
+   ITF14Encoder("1505007000766").save_svg("itf14-example.svg")
+
+.. image:: examples/itf14-example.svg
+   :alt: ITF-14 barcode encoding "15050070007661".
+
+.. code-block:: python
+
    from pystrich.qrcode import QRCodeEncoder
    QRCodeEncoder("https://github.com/mmulqueen/pyStrich").save_svg("qrcode-example.svg")
 
@@ -109,6 +118,7 @@ Unsure which to pick? See :doc:`symbology-choice`.
    code128
    code39
    ean13
+   itf
    qrcode
    pdf417
    aztec
