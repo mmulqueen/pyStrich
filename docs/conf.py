@@ -286,6 +286,30 @@ def _copy_text_to_html(app, exception):
         shutil.copy(src, Path(app.outdir) / src.name)
 
 
+def _filter_version_notes(app, doctree):
+    """Drop autodoc version notes at or below a page's ``:min-version:``
+    docinfo field. Symbology pages document classes whose inherited members
+    carry version notes predating or coinciding with the symbology's own
+    first release. Hand-written page-level notes (the symbology's own
+    ``versionadded``) and deprecations are kept."""
+    from packaging.version import parse as parse_version
+    from sphinx import addnodes
+
+    threshold = app.env.metadata.get(app.env.docname, {}).get("min-version")
+    if not threshold:
+        return
+    threshold = parse_version(threshold)
+    for node in list(doctree.findall(addnodes.versionmodified)):
+        if node["type"] == "deprecated" or parse_version(node["version"]) > threshold:
+            continue
+        ancestor = node.parent
+        while ancestor is not None and not isinstance(ancestor, addnodes.desc):
+            ancestor = ancestor.parent
+        if ancestor is not None:  # inside an autodoc member; not a page-level note
+            node.parent.remove(node)
+
+
 def setup(app):
     app.connect("builder-inited", _generate_example_images)
     app.connect("build-finished", _copy_text_to_html)
+    app.connect("doctree-read", _filter_version_notes)

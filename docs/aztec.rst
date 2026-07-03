@@ -1,3 +1,4 @@
+:min-version: 0.14
 :og:description: Generate Aztec Code 2D barcodes in Python with pyStrich. Strong rotation tolerance, sizes from compact to full-range. PNG, SVG, EPS, DXF.
 
 .. meta::

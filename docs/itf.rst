@@ -1,3 +1,4 @@
+:min-version: 0.16
 :og:description: Generate GS1 ITF-14 and basic Interleaved 2 of 5 barcodes in Python with pyStrich. PNG, SVG and EPS output.
 
 .. meta::
