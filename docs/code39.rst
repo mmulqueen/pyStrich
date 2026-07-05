@@ -19,6 +19,9 @@ character set is uppercase letters, digits, space and ``-.$/+%``; pass
    `Code 39 on Wikipedia <https://en.wikipedia.org/wiki/Code_39>`_ for
    background on the symbology itself.
 
+   Code 39 barcodes are defined in `ISO/IEC 16388
+   <https://www.iso.org/standard/77799.html>`_.
+
 Example
 -------
 

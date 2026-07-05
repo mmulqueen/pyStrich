@@ -25,6 +25,9 @@ Pass either 13 digits (the check digit is computed and appended) or 14 digits
    <https://en.wikipedia.org/wiki/Interleaved_2_of_5>`_ for background on the
    symbology.
 
+   Interleaved 2 of 5 barcodes are defined in `ISO/IEC 16390
+   <https://www.iso.org/standard/43898.html>`_.
+
 .. warning::
 
    Real-world GTIN-14 codes are derived from a GS1-allocated GTIN; you cannot
@@ -32,7 +35,7 @@ Pass either 13 digits (the check digit is computed and appended) or 14 digits
 
 Input must be exactly 13 or 14 digits, ASCII ``0``-``9``. Anything else raises
 :class:`~pystrich.exceptions.PyStrichInvalidInput`. The 14-digit human-readable
-label below the bars is rendered by default (see `Label`_ to suppress it).
+label below the bars is rendered by default (see :ref:`itf-label` to suppress it).
 
 The check digit is always computed by pyStrich; pass either 13 digits (it is
 appended) or 14 digits (the supplied final digit is discarded and recomputed):
@@ -70,6 +73,8 @@ adjust it with the ``bearer_width`` key of :class:`ITFRenderOptions` (set it to
 .. code-block:: python
 
    ITF14Encoder("1505007000766", options={"bearer_width": 6}).save("itf14.png")
+
+.. _itf-label:
 
 Label
 -----

@@ -189,7 +189,9 @@ the quiet zone has to be reintroduced downstream.
 
    `SAE AS9132B
    <https://www.sae.org/standards/as9132b-data-matrix-quality-requirements-parts-marking>`_
-   -- aerospace/defense quality standard for Data Matrix marks applied to metal parts.
+   -- aerospace/defense quality standard for Data Matrix marks applied to
+   metal parts; published in Europe as `BS EN 9132
+   <https://knowledge.bsigroup.com/products/aerospace-series-quality-management-systems-data-matrix-quality-requirements-for-parts-marking>`_.
 
 GS1 / FNC1
 ----------

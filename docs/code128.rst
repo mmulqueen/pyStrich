@@ -15,6 +15,9 @@ symbol length, and computes the mod-103 checksum for you.
    `Code 128 on Wikipedia <https://en.wikipedia.org/wiki/Code_128>`_ for
    background on the symbology itself.
 
+   Code 128 barcodes are defined in `ISO/IEC 15417
+   <https://www.iso.org/standard/43896.html>`_.
+
 Example
 -------
 

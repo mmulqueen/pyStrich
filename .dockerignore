@@ -1,0 +1,12 @@
+# Build context excludes for the docs image (scripts/build-docs.Dockerfile).
+# The build copies pyproject.toml/uv.lock/README.md explicitly and needs only
+# pystrich/ and docs/ beyond that -- not git history or the vendored submodule.
+.git
+vendor/
+docs/_build/
+**/__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/

@@ -6,9 +6,9 @@
 EAN-13
 ======
 
-EAN-13 is the 13-digit retail product barcode -- the same symbology as
-GTIN-13, the global identifier issued by GS1 and printed on virtually every
-consumer product. Pass either 12 digits (the check digit will be computed
+EAN-13 is the retail product barcode for a GTIN-13 -- the 13-digit global
+identifier issued by GS1 and printed on virtually every consumer product.
+Pass either 12 digits (the check digit will be computed
 and appended) or 13 digits (the final digit is treated as a check digit and
 recomputed).
 
@@ -17,6 +17,9 @@ recomputed).
    `International Article Number on Wikipedia
    <https://en.wikipedia.org/wiki/International_Article_Number>`_ for
    background on the symbology itself.
+
+   EAN-13 is defined in `ISO/IEC 15420
+   <https://www.iso.org/standard/84892.html>`_.
 
 .. warning::
 
@@ -30,7 +33,7 @@ Input must be exactly 12 or 13 digits, ASCII ``0``-``9``. Anything else
 raises :class:`~pystrich.exceptions.PyStrichInvalidInput`. The human-readable
 label below the bars is mandated by the EAN-13 specification and always
 rendered; the only customisation hook is the cosmetic
-:class:`EAN13RenderOptions` dict (see `Sizing, label, font and layout`_ below).
+:class:`EAN13RenderOptions` dict (see :ref:`ean13-sizing` below).
 
 The check digit is always computed by pyStrich; pass either 12 digits (it
 is appended) or 13 digits (the supplied final digit is discarded and
@@ -56,6 +59,8 @@ Example
 
 .. image:: examples/ean13-example.svg
    :alt: EAN-13 barcode encoding "5050070007664".
+
+.. _ean13-sizing:
 
 Sizing, label, font and layout
 ------------------------------
