@@ -1,0 +1,1103 @@
+# German (de-DE) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../../datamatrix.rst:-1
+msgid ""
+"Generate Data Matrix (ECC 200) barcodes in Python with pyStrich. Encodes up "
+"to 1558 ASCII characters; PNG, SVG, EPS, DXF and terminal art output."
+msgstr ""
+"Data-Matrix-Codes (ECC 200) mit pyStrich in Python erzeugen. Codiert bis zu "
+"1558 ASCII-Zeichen; Ausgabe als PNG, SVG, EPS, DXF und Terminal-Grafik."
+
+#: ../../datamatrix.rst:7
+msgid "Data Matrix"
+msgstr "Data Matrix"
+
+#: ../../datamatrix.rst:9
+msgid ""
+"Data Matrix (ECC 200) is a 2D symbology suitable for short payloads, capable"
+" of encoding up to 1558 ASCII characters in the largest 144x144 symbol."
+msgstr ""
+"Data Matrix (ECC 200) ist eine 2D-Symbologie für kurze Nutzdaten "
+"(*payload*), die im größten Symbol (144x144) bis zu 1558 ASCII-Zeichen "
+"codieren kann."
+
+#: ../../datamatrix.rst:14
+msgid ""
+"`Data Matrix on Wikipedia <https://en.wikipedia.org/wiki/Data_Matrix>`_ for "
+"background on the symbology itself."
+msgstr ""
+"`Datamatrixcode auf Wikipedia "
+"<https://de.wikipedia.org/wiki/Datamatrixcode>`_ für Hintergründe zur "
+"Symbologie selbst."
+
+#: ../../datamatrix.rst:17
+msgid ""
+"Data Matrix barcodes are defined in `ISO/IEC 16022 "
+"<https://www.iso.org/standard/80926.html>`_."
+msgstr ""
+"Data-Matrix-Codes sind in `ISO/IEC 16022 "
+"<https://www.dinmedia.de/de/norm/iso-iec-16022/380804759>`_ definiert "
+"(Informationstechnik -- Automatische Identifikation und "
+"Datenerfassungsverfahren -- Data Matrix-Barcode-Symbologie-Spezifikation)."
+
+#: ../../datamatrix.rst:21
+msgid "Example"
+msgstr "Beispiel"
+
+#: ../../datamatrix.rst:23
+msgid ""
+"Wrap the input in :class:`DataMatrixData`. The simplest path is "
+"``auto_encoding=True``, which picks the narrowest encoding that fits the "
+"input automatically. For control over the encoded byte sequence -- to "
+"enforce ``\"ascii\"`` for a 7-bit payload (URLs, identifiers, GS1 "
+"Application Identifier strings) or to require Latin-1 / UTF-8 -- pass an "
+"explicit ``encoding`` instead; see :ref:`datamatrix-non-ascii` below."
+msgstr ""
+"Kapseln Sie die Eingabe in :class:`DataMatrixData`. Der einfachste Weg ist "
+"``auto_encoding=True``, das automatisch die schmalste Codierung wählt, die "
+"zur Eingabe passt. Für die Kontrolle über die codierte Byte-Folge -- um "
+"``\"ascii\"`` für 7-Bit-Nutzdaten zu erzwingen (URLs, Bezeichner, "
+"GS1-Application-Identifier-Zeichenketten) oder um Latin-1 / UTF-8 zu "
+"verlangen -- übergeben Sie stattdessen ein explizites ``encoding``; siehe "
+":ref:`datamatrix-non-ascii` weiter unten."
+
+#: ../../datamatrix.rst:38
+msgid "Data Matrix encoding the pyStrich GitHub URL."
+msgstr "Data-Matrix-Symbol, das die pyStrich-GitHub-URL codiert."
+
+#: ../../datamatrix.rst:42
+msgid "Sizing and quiet zone"
+msgstr "Größe und Ruhezone"
+
+#: ../../datamatrix.rst:44
+msgid ""
+"The ``cellsize`` argument to :meth:`~DataMatrixEncoder.save` and "
+":meth:`~DataMatrixEncoder.get_imagedata` sets the pixel side length of one "
+"module (default ``5``)."
+msgstr ""
+"Das Argument ``cellsize`` von :meth:`~DataMatrixEncoder.save` und "
+":meth:`~DataMatrixEncoder.get_imagedata` legt die Kantenlänge eines Moduls "
+"in Pixeln fest (Vorgabe ``5``)."
+
+#: ../../datamatrix.rst:48
+msgid ""
+"The ``quiet_zone`` argument to :class:`DataMatrixEncoder` sets the width (in"
+" modules) of the white border applied at render time. The Data Matrix "
+"specification requires at least one module of quiet zone on each side; "
+"pyStrich defaults to ``2`` (set "
+":data:`~pystrich.datamatrix.renderer.DATAMATRIX_DEFAULT_QUIET_ZONE`). Reduce"
+" to ``1`` for the most compact symbol; increase if your printing process "
+"tends to bleed into the margin."
+msgstr ""
+"Das Argument ``quiet_zone`` von :class:`DataMatrixEncoder` legt die Breite "
+"(in Modulen) des beim Rendern angewendeten weißen Rands fest. Die Data-"
+"Matrix-Spezifikation verlangt mindestens ein Modul Ruhezone auf jeder Seite;"
+" pyStrich verwendet standardmäßig ``2`` (festgelegt in "
+":data:`~pystrich.datamatrix.renderer.DATAMATRIX_DEFAULT_QUIET_ZONE`). "
+"Reduzieren Sie ihn auf ``1`` für das kompakteste Symbol; erhöhen Sie ihn, "
+"wenn Ihr Druckverfahren dazu neigt, in den Rand zu verlaufen."
+
+#: ../../datamatrix.rst:58
+msgid ""
+":doc:`printing` for guidance on selecting ``cellsize`` for printed output."
+msgstr ""
+":doc:`printing` für Hinweise zur Wahl von ``cellsize`` bei gedruckter "
+"Ausgabe."
+
+#: ../../datamatrix.rst:66
+msgid ""
+"Data Matrix encoding the pyStrich GitHub URL rendered with cellsize=10."
+msgstr ""
+"Data-Matrix-Symbol, das die pyStrich-GitHub-URL codiert, gerendert mit "
+"cellsize=10."
+
+#: ../../datamatrix.rst:70
+msgid "Output formats"
+msgstr "Ausgabeformate"
+
+#: ../../datamatrix.rst:73
+msgid "SVG output"
+msgstr "SVG-Ausgabe"
+
+#: ../../datamatrix.rst:75
+msgid ""
+"For embedding in web pages or any workflow that benefits from resolution-"
+"independent output, use :meth:`~DataMatrixEncoder.save_svg` (or "
+":meth:`~DataMatrixEncoder.get_svg` to receive the SVG as a string)."
+msgstr ""
+"Zum Einbetten in Webseiten oder für jeden Arbeitsablauf, der von "
+"auflösungsunabhängiger Ausgabe profitiert, verwenden Sie "
+":meth:`~DataMatrixEncoder.save_svg` (oder "
+":meth:`~DataMatrixEncoder.get_svg`, um das SVG als Zeichenkette zu "
+"erhalten)."
+
+#: ../../datamatrix.rst:95
+msgid "Default"
+msgstr "Vorgabe"
+
+#: ../../datamatrix.rst:96
+msgid "``mark_shape=MarkShape.CIRCULAR_CELLS``"
+msgstr "``mark_shape=MarkShape.CIRCULAR_CELLS``"
+
+#: ../../datamatrix.rst:97
+msgid "SVG Data Matrix with the default rectangular cells."
+msgstr "SVG-Data-Matrix-Symbol mit den standardmäßigen rechteckigen Zellen."
+
+#: ../../datamatrix.rst:99
+msgid "SVG Data Matrix with circular cells."
+msgstr "SVG-Data-Matrix-Symbol mit runden Zellen."
+
+#: ../../datamatrix.rst:102
+msgid ""
+"The SVG's ``viewBox`` is in module units, while ``width`` and ``height`` "
+"scale by ``cellsize``. The ``mark_shape`` keyword selects how matched cells "
+"are drawn -- horizontal runs of rectangles (the default) or one filled "
+"circle per cell."
+msgstr ""
+"Die ``viewBox`` des SVG ist in Moduleinheiten angegeben, während ``width`` "
+"und ``height`` mit ``cellsize`` skalieren. Das Schlüsselwort ``mark_shape`` "
+"bestimmt, wie gesetzte Zellen gezeichnet werden -- horizontale Folgen von "
+"Rechtecken (die Vorgabe) oder ein gefüllter Kreis pro Zelle."
+
+#: ../../datamatrix.rst:109
+msgid ""
+"Circular cells fall outside the standard module shape and decoder support "
+"varies. Test with your target scanner before deploying."
+msgstr ""
+"Runde Zellen liegen außerhalb der standardmäßigen Modulform und die Decoder-"
+"Unterstützung variiert. Testen Sie es vor dem Einsatz mit Ihrem Zielscanner."
+
+#: ../../datamatrix.rst:115
+msgid "PNG output"
+msgstr "PNG-Ausgabe"
+
+#: ../../datamatrix.rst:117
+msgid ""
+"For raster output, use :meth:`~DataMatrixEncoder.save` to write a PNG file "
+"or :meth:`~DataMatrixEncoder.get_imagedata` to receive the raw PNG bytes."
+msgstr ""
+"Verwenden Sie für die Rasterausgabe :meth:`~DataMatrixEncoder.save`, um eine"
+" PNG-Datei zu schreiben, oder :meth:`~DataMatrixEncoder.get_imagedata`, um "
+"die rohen PNG-Bytes zu erhalten."
+
+#: ../../datamatrix.rst:126
+msgid "EPS output"
+msgstr "EPS-Ausgabe"
+
+#: ../../datamatrix.rst:128
+msgid ""
+"For embedding in LaTeX (``\\includegraphics``) or other vector print "
+"workflows, use :meth:`~DataMatrixEncoder.save_eps` (or "
+":meth:`~DataMatrixEncoder.get_eps` to receive the EPS as a string)."
+msgstr ""
+"Verwenden Sie zum Einbetten in LaTeX (``\\includegraphics``) oder andere "
+"Vektor-Druck-Arbeitsabläufe :meth:`~DataMatrixEncoder.save_eps` (oder "
+":meth:`~DataMatrixEncoder.get_eps`, um das EPS als Zeichenkette zu "
+"erhalten)."
+
+#: ../../datamatrix.rst:137
+msgid ""
+"The ``cellsize`` argument is the side length of one module in PostScript "
+"points (1 point = 1/72 inch)."
+msgstr ""
+"Das Argument ``cellsize`` ist die Kantenlänge eines Moduls in PostScript-"
+"Punkten (1 Punkt = 1/72 Zoll)."
+
+#: ../../datamatrix.rst:143
+msgid "Terminal output"
+msgstr "Terminal-Ausgabe"
+
+#: ../../datamatrix.rst:145
+msgid ""
+"For quick on-screen display, :meth:`~DataMatrixEncoder.get_terminal_art` "
+"returns a scannable rendering using Unicode half-block characters. Each "
+"character represents two matrix rows and one column, so cells appear roughly"
+" square in a typical fixed-width terminal font."
+msgstr ""
+"Für schnelle Anzeige auf dem Bildschirm liefert "
+":meth:`~DataMatrixEncoder.get_terminal_art` eine vom Scanner lesbare "
+"Darstellung mit Unicode-Halbblockzeichen. Jedes Zeichen steht für zwei "
+"Matrixzeilen und eine Spalte, sodass die Zellen in einer typischen "
+"Terminalschrift mit fester Breite ungefähr quadratisch erscheinen."
+
+#: ../../datamatrix.rst:158
+msgid ""
+"By default the output is wrapped in ANSI escape codes that force a white "
+"background and black foreground, so the symbol scans regardless of the "
+"terminal's colour scheme. Pass ``ansi_bg=False`` for plain output (correct "
+"only on a light-themed terminal)."
+msgstr ""
+"Standardmäßig wird die Ausgabe von ANSI-Escape-Codes umschlossen, die einen "
+"weißen Hintergrund und schwarzen Vordergrund erzwingen, sodass das Symbol "
+"unabhängig vom Farbschema des Terminals eingelesen werden kann. Übergeben "
+"Sie ``ansi_bg=False`` für eine einfache Ausgabe (nur auf einem hell "
+"gestalteten Terminal korrekt)."
+
+#: ../../datamatrix.rst:166
+msgid "DXF (CAD) output"
+msgstr "DXF-Ausgabe (CAD)"
+
+#: ../../datamatrix.rst:168
+msgid ""
+"For direct part marking applications -- where the symbol is engraved or "
+"laser-etched onto a physical part -- :meth:`~DataMatrixEncoder.get_dxf` "
+"returns a DXF representation of the symbol. DXF is the file format CAD and "
+"CAM tools read; the output can be handed straight to the engraving or "
+"etching tool. The ``cellsize`` is in your chosen ``units`` (default "
+"``\"mm\"``) rather than pixels."
+msgstr ""
+"Für Anwendungen zur direkten Teilekennzeichnung (*direct part marking*) -- "
+"bei denen das Symbol in ein physisches Teil graviert oder lasergeätzt wird "
+"-- liefert :meth:`~DataMatrixEncoder.get_dxf` eine DXF-Darstellung des "
+"Symbols. DXF ist das Dateiformat, das CAD- und CAM-Werkzeuge lesen; die "
+"Ausgabe kann direkt an das Gravier- oder Ätzwerkzeug übergeben werden. Die "
+"``cellsize`` ist in Ihrer gewählten Einheit ``units`` (Vorgabe ``\"mm\"``) "
+"statt in Pixeln angegeben."
+
+#: ../../datamatrix.rst:182
+msgid ""
+"The default ``inverse=True`` emits geometry for the light modules, including"
+" the quiet zone -- so the bounding box frames the symbol. Pass "
+"``inverse=False`` to emit only the dark modules instead, matching the "
+"symbol's normal appearance; the bounding box then hugs the dark cells and "
+"the quiet zone has to be reintroduced downstream."
+msgstr ""
+"Die Vorgabe ``inverse=True`` gibt Geometrie für die hellen Module aus, "
+"einschließlich der Ruhezone -- sodass der Begrenzungsrahmen (*bounding box*)"
+" das Symbol einrahmt. Übergeben Sie ``inverse=False``, um stattdessen nur "
+"die dunklen Module auszugeben, was dem normalen Erscheinungsbild des Symbols"
+" entspricht; der Begrenzungsrahmen schmiegt sich dann an die dunklen Zellen "
+"an und die Ruhezone muss in der nachgelagerten Verarbeitung wieder "
+"hinzugefügt werden."
+
+#: ../../datamatrix.rst:190
+msgid ""
+"`SAE AS9132B <https://www.sae.org/standards/as9132b-data-matrix-quality-"
+"requirements-parts-marking>`_ -- aerospace/defense quality standard for Data"
+" Matrix marks applied to metal parts; published in Europe as `BS EN 9132 "
+"<https://knowledge.bsigroup.com/products/aerospace-series-quality-"
+"management-systems-data-matrix-quality-requirements-for-parts-marking>`_."
+msgstr ""
+"`SAE AS9132B <https://www.sae.org/standards/as9132b-data-matrix-quality-"
+"requirements-parts-marking>`_ -- Qualitätsstandard aus Luft-/Raumfahrt und "
+"Verteidigung für Data-Matrix-Kennzeichnungen auf Metallteilen; in "
+"Deutschland veröffentlicht als `DIN EN 9132 "
+"<https://www.dinmedia.de/de/norm/din-en-9132/271791472>`_ (Luft- und "
+"Raumfahrt -- Qualitätsmanagementsysteme -- Data Matrix "
+"Qualitätsanforderungen für Teilemarkierung)."
+
+#: ../../datamatrix.rst:197
+msgid "GS1 / FNC1"
+msgstr "GS1 / FNC1"
+
+#: ../../datamatrix.rst:201
+msgid ""
+"`GS1 DataMatrix Guideline <https://www.gs1.org/standards/gs1-datamatrix-"
+"guideline/25>`_ -- the authoritative reference for Application Identifier "
+"selection, encoding rules and print quality requirements for GS1 Data "
+"Matrix."
+msgstr ""
+"`GS1-DataMatrix-Richtlinie <https://www.gs1.org/standards/gs1-datamatrix-"
+"guideline/25>`_ -- die maßgebliche Referenz für die Auswahl von Application "
+"Identifiern, Codierregeln und Druckqualitätsanforderungen für GS1 Data "
+"Matrix."
+
+#: ../../datamatrix.rst:206
+msgid ""
+"GS1 Data Matrix uses an FNC1 codeword as the first symbol to signal that the"
+" payload is a sequence of GS1 Application Identifiers, and again as a "
+"separator after any variable-length Application Identifier that is not the "
+"final element of the message. :meth:`DataMatrixData.gs1` builds the payload "
+"from typed field wrappers and handles separator placement automatically. "
+"Wrap each Application Identifier / value pair in "
+":class:`~pystrich.gs1.GS1Fixed` for Application Identifiers whose data "
+"length is fixed or :class:`~pystrich.gs1.GS1Variable` otherwise:"
+msgstr ""
+"GS1 Data Matrix verwendet ein FNC1-Codewort als erstes Symbol, um zu "
+"signalisieren, dass die Nutzdaten eine Folge von GS1 Application Identifiern"
+" sind, und erneut als Trenner nach jedem Application Identifier variabler "
+"Länge, der nicht das letzte Element der Nachricht ist. "
+":meth:`DataMatrixData.gs1` baut die Nutzdaten aus typisierten Feld-Wrappern "
+"auf und übernimmt die Platzierung der Trenner automatisch. Kapseln Sie jedes"
+" Paar aus Application Identifier / Wert in :class:`~pystrich.gs1.GS1Fixed`, "
+"wenn die Datenlänge des Application Identifiers fest ist, andernfalls in "
+":class:`~pystrich.gs1.GS1Variable`:"
+
+#: ../../datamatrix.rst:224
+msgid "GS1 Data Matrix encoding (01) GTIN 05050070007664."
+msgstr "GS1-Data-Matrix-Symbol, das (01) GTIN 05050070007664 codiert."
+
+#: ../../datamatrix.rst:227
+msgid ""
+"A typical pharmaceutical / medical-device payload combines a GTIN with an "
+"expiry date and a batch number. ``(01)`` and ``(17)`` are fixed-length, so "
+":class:`~pystrich.gs1.GS1Fixed` declares them; ``(10)`` is variable-length, "
+"so :class:`~pystrich.gs1.GS1Variable` carries it. The GS1 General "
+"Specifications recommend variable-length Application Identifiers come last "
+"-- positioning ``(10)`` at the end of the message means no FNC1 separator is"
+" needed between the fields:"
+msgstr ""
+"Typische Nutzdaten für Pharma- / Medizinprodukte verbinden eine GTIN mit "
+"einem Verfallsdatum und einer Chargennummer. ``(01)`` und ``(17)`` haben "
+"feste Länge, also deklariert :class:`~pystrich.gs1.GS1Fixed` sie; ``(10)`` "
+"hat variable Länge, also trägt :class:`~pystrich.gs1.GS1Variable` es. Die "
+"GS1 General Specifications empfehlen, dass Application Identifier variabler "
+"Länge zuletzt kommen -- ``(10)`` ans Ende der Nachricht zu stellen bedeutet,"
+" dass zwischen den Feldern kein FNC1-Trenner nötig ist:"
+
+#: ../../datamatrix.rst:244
+msgid ""
+"GS1 Data Matrix encoding (01) GTIN 09501234543213, (17) expiry 261231, (10) "
+"batch BF07."
+msgstr ""
+"GS1-Data-Matrix-Symbol, das (01) GTIN 09501234543213, (17) Verfall 261231, "
+"(10) Charge BF07 codiert."
+
+#: ../../datamatrix.rst:247
+msgid ""
+"When a variable-length Application Identifier is not the last field, the "
+"FNC1 separator is inserted automatically:"
+msgstr ""
+"Wenn ein Application Identifier variabler Länge nicht das letzte Feld ist, "
+"wird der FNC1-Trenner automatisch eingefügt:"
+
+#: ../../datamatrix.rst:258
+msgid ""
+"GS1 Data Matrix encoding (10) batch BF07 and (21) serial 19890519 separated "
+"by FNC1."
+msgstr ""
+"GS1-Data-Matrix-Symbol, das (10) Charge BF07 und (21) Seriennummer 19890519 "
+"durch FNC1 getrennt codiert."
+
+#: ../../datamatrix.rst:261
+msgid ""
+"For full control over the codeword stream, pass :data:`FNC1` and the plain "
+"Application Identifier / value strings to :class:`DataMatrixData` directly "
+"-- this is the path :meth:`~DataMatrixData.gs1` wraps:"
+msgstr ""
+"Übergeben Sie für volle Kontrolle über den Codewort-Strom :data:`FNC1` und "
+"die einfachen Zeichenketten aus Application Identifier / Wert direkt an "
+":class:`DataMatrixData` -- das ist der Weg, den :meth:`~DataMatrixData.gs1` "
+"kapselt:"
+
+#: ../../datamatrix.rst:274
+msgid ""
+"GS1 Data Matrix payloads must be ASCII -- the GS1 General Specifications "
+"restrict Application Identifier values to a 7-bit character set (essentially"
+" ASCII). :meth:`~DataMatrixData.gs1` hardcodes ``\"ascii\"``; when placing "
+"FNC1 yourself, do not combine it with non-ASCII encodings."
+msgstr ""
+"GS1-Data-Matrix-Nutzdaten müssen ASCII sein -- die GS1 General "
+"Specifications beschränken Application-Identifier-Werte auf einen 7-Bit-"
+"Zeichensatz (im Wesentlichen ASCII). :meth:`~DataMatrixData.gs1` verwendet "
+"fest ``\"ascii\"``; wenn Sie FNC1 selbst platzieren, kombinieren Sie es "
+"nicht mit Nicht-ASCII-Codierungen."
+
+#: ../../datamatrix.rst:282
+msgid ""
+"Older code triggered FNC1 by prefixing the payload with ``chr(231)`` -- "
+"originally a bug in this library that downstream users came to rely on (see "
+"`issue #13 <https://github.com/mmulqueen/pyStrich/issues/13>`_). The shim "
+"still works but emits a "
+":class:`~pystrich.exceptions.Fnc1WorkaroundCompatWarning`. New code should "
+"use :meth:`~DataMatrixData.gs1` (or :data:`FNC1` for the raw path)."
+msgstr ""
+"Älterer Code löste FNC1 aus, indem er den Nutzdaten ``chr(231)`` "
+"voranstellte -- ursprünglich ein Fehler in dieser Bibliothek, auf den sich "
+"nachgelagerte Nutzer zu verlassen begannen (siehe `Issue #13 "
+"<https://github.com/mmulqueen/pyStrich/issues/13>`_). Der Behelf "
+"funktioniert weiterhin, gibt aber eine "
+":class:`~pystrich.exceptions.Fnc1WorkaroundCompatWarning` aus. Neuer Code "
+"sollte :meth:`~DataMatrixData.gs1` verwenden (oder :data:`FNC1` für den "
+"direkten Weg)."
+
+#: ../../datamatrix.rst:293
+msgid "Non-ASCII text"
+msgstr "Nicht-ASCII-Text"
+
+#: ../../datamatrix.rst:295
+msgid ""
+"The Data Matrix ASCII codeword set only covers bytes 0-127. To encode "
+"anything outside that range in a non-GS1 symbol, wrap the input in "
+":class:`DataMatrixData` and either pass ``auto_encoding=True`` (the "
+"constructor picks the narrowest fitting encoding for you) or specify an "
+"encoding explicitly:"
+msgstr ""
+"Der ASCII-Codewortsatz von Data Matrix deckt nur die Bytes 0-127 ab. Um "
+"irgendetwas außerhalb dieses Bereichs in einem Nicht-GS1-Symbol zu codieren,"
+" kapseln Sie die Eingabe in :class:`DataMatrixData` und übergeben Sie "
+"entweder ``auto_encoding=True`` (der Konstruktor wählt für Sie die schmalste"
+" passende Codierung) oder geben Sie eine Codierung explizit an:"
+
+#: ../../datamatrix.rst:302
+msgid "Encoding"
+msgstr "Codierung"
+
+#: ../../datamatrix.rst:302
+msgid "Behaviour"
+msgstr "Verhalten"
+
+#: ../../datamatrix.rst:304
+msgid "``\"ascii\"``"
+msgstr "``\"ascii\"``"
+
+#: ../../datamatrix.rst:304
+msgid ""
+"Raises :class:`~pystrich.exceptions.PyStrichInvalidInput` on any byte > 127."
+msgstr ""
+"Löst :class:`~pystrich.exceptions.PyStrichInvalidInput` bei jedem Byte > 127"
+" aus."
+
+#: ../../datamatrix.rst:306
+msgid "``\"iso-8859-1\"``"
+msgstr "``\"iso-8859-1\"``"
+
+#: ../../datamatrix.rst:306
+msgid ""
+"Latin-1 -- the default character set for Data Matrix per ISO/IEC 16022. "
+"Bytes 128-255 are emitted via the Upper Shift codeword (235); no ECI prefix "
+"is required and conformant decoders pick up the encoding automatically."
+msgstr ""
+"Latin-1 -- der standardmäßige Zeichensatz für Data Matrix gemäß ISO/IEC "
+"16022. Die Bytes 128-255 werden über das Upper-Shift-Codewort (235) "
+"ausgegeben; kein ECI-Bezeichner ist nötig und konforme Decoder erkennen die "
+"Codierung automatisch."
+
+#: ../../datamatrix.rst:310
+msgid "``\"utf-8\"``"
+msgstr "``\"utf-8\"``"
+
+#: ../../datamatrix.rst:310
+msgid ""
+"Declares ECI 26 once at the start of the symbol and byte-encodes the input. "
+"Conformant decoders pick up the encoding automatically."
+msgstr ""
+"Deklariert einmal am Anfang des Symbols ECI 26 und codiert die Eingabe "
+"byteweise. Konforme Decoder erkennen die Codierung automatisch."
+
+#: ../../datamatrix.rst:312
+msgid "``\"compat\"``"
+msgstr "``\"compat\"``"
+
+#: ../../datamatrix.rst:312
+msgid ""
+"Legacy lenient mode. Non-ASCII characters emit "
+":class:`~pystrich.exceptions.DataMatrixNonAsciiWarning` and produce output "
+"that will not decode correctly. Deprecated; pick one of the above instead."
+msgstr ""
+"Nachsichtiger Legacy-Modus. Nicht-ASCII-Zeichen geben "
+":class:`~pystrich.exceptions.DataMatrixNonAsciiWarning` aus und erzeugen "
+"Ausgabe, die sich nicht korrekt decodieren lässt. Veraltet; wählen Sie "
+"stattdessen eine der obigen."
+
+#: ../../datamatrix.rst:320
+msgid ""
+"For the most compact symbol, prefer the most restrictive encoding that fits "
+"your data: ``\"ascii\"`` first, then ``\"iso-8859-1\"``, then ``\"utf-8\"``."
+" Each step adds overhead -- Latin-1 spends an extra codeword per high byte, "
+"and UTF-8 adds a two-codeword ECI prefix and emits multi-byte sequences for "
+"anything outside ASCII. ``auto_encoding=True`` makes the same choice for you"
+" if you'd rather not pick by hand."
+msgstr ""
+"Bevorzugen Sie für das kompakteste Symbol die restriktivste Codierung, die "
+"zu Ihren Daten passt: zuerst ``\"ascii\"``, dann ``\"iso-8859-1\"``, dann "
+"``\"utf-8\"``. Jeder Schritt fügt Mehraufwand hinzu -- Latin-1 verbraucht "
+"ein zusätzliches Codewort pro hohem Byte, und UTF-8 fügt einen ECI-"
+"Bezeichner aus zwei Codewörtern hinzu und gibt Mehrbyte-Folgen für alles "
+"außerhalb von ASCII aus. ``auto_encoding=True`` trifft dieselbe Wahl für "
+"Sie, wenn Sie lieber nicht von Hand wählen möchten."
+
+#: ../../datamatrix.rst:334
+msgid "Data Matrix encoding \"Ich dachte, Sie wären kräftiger\" as Latin-1."
+msgstr ""
+"Data-Matrix-Symbol, das \"Ich dachte, Sie wären kräftiger\" als Latin-1 "
+"codiert."
+
+#: ../../datamatrix.rst:342
+msgid "Data Matrix encoding \"€5 親切にしろ 🐻‍❄️\" as UTF-8 (ECI 26)."
+msgstr "Data-Matrix-Symbol, das \"€5 親切にしろ 🐻‍❄️\" als UTF-8 (ECI 26) codiert."
+
+#: ../../datamatrix.rst:345
+msgid ""
+"If you pass a string with the wrong encoding, the raised error suggests the "
+"encoding that *would* have worked:"
+msgstr ""
+"Wenn Sie eine Zeichenkette mit der falschen Codierung übergeben, schlägt der"
+" ausgelöste Fehler die Codierung vor, die funktioniert *hätte*:"
+
+#: ../../datamatrix.rst:357
+msgid "Encodation modes"
+msgstr "Codierungsmodi"
+
+#: ../../datamatrix.rst:359
+msgid ""
+"pyStrich supports the following encodation modes: ASCII/bytes (with numeric "
+"digit pairing), Text, C40 and X12. Base 256 is not currently supported. Due "
+"to concerns about decoder/scanner support, we have made the decision not to "
+"implement EDIFACT.\\ [#edifact]_"
+msgstr ""
+"pyStrich unterstützt die folgenden Codierungsmodi: ASCII/Bytes (mit Paarung "
+"numerischer Ziffern), Text, C40 und X12. Base 256 wird derzeit nicht "
+"unterstützt. Wegen Bedenken hinsichtlich der Decoder-/Scanner-Unterstützung "
+"haben wir uns entschieden, EDIFACT nicht zu implementieren.\\ [#edifact]_"
+
+#: ../../datamatrix.rst:364
+msgid ""
+"Some Honeywell scanners decode every other Data Matrix mode but not EDIFACT."
+" See `Honeywell's support article <https://sps-"
+"support.honeywell.com/s/article/Can-Honeywell-scanners-read-Data-Matrix-"
+"Base-256-mode-symbols>`_."
+msgstr ""
+"Manche Honeywell-Scanner decodieren jeden anderen Data-Matrix-Modus, aber "
+"nicht EDIFACT. Siehe `Honeywells Support-Artikel <https://sps-"
+"support.honeywell.com/s/article/Can-Honeywell-scanners-read-Data-Matrix-"
+"Base-256-mode-symbols>`_."
+
+#: ../../datamatrix.rst:374
+msgid "Anatomy"
+msgstr "Aufbau"
+
+#: ../../datamatrix.rst:376
+msgid ""
+"Each Data Matrix region is built from the same three elements. Sizes from "
+"10x10 to 26x26 use a single region; larger sizes tile the region in a 2x2, "
+"4x4 or 6x6 grid. The diagram below labels a 36x36 ECC 200 symbol (2x2 "
+"regions of 16x16)."
+msgstr ""
+"Jede Data-Matrix-Region ist aus denselben drei Elementen aufgebaut. Größen "
+"von 10x10 bis 26x26 verwenden eine einzige Region; größere Größen kacheln "
+"die Region in einem 2x2-, 4x4- oder 6x6-Raster. Das Diagramm unten "
+"beschriftet ein 36x36-ECC-200-Symbol (2x2-Regionen von 16x16)."
+
+#: ../../datamatrix.rst:381
+msgid ""
+"Annotated 36x36 Data Matrix showing the solid L finder, timing pattern, data"
+" area and quiet zone across four regions."
+msgstr ""
+"Beschriftetes 36x36-Data-Matrix-Symbol, das die durchgehende L-Begrenzung "
+"(Suchmuster), das Taktmuster, den Datenbereich und die Ruhezone über vier "
+"Regionen zeigt."
+
+#: ../../datamatrix.rst:384
+msgid ""
+"**Solid L finder** -- two solid edges (left and bottom of each region) that "
+"identify the symbol's size and orientation."
+msgstr ""
+"**Durchgehende L-Begrenzung** (Suchmuster, *finder pattern*) -- zwei "
+"durchgehende Kanten (links und unten in jeder Region), die Größe und "
+"Ausrichtung des Symbols angeben."
+
+#: ../../datamatrix.rst:386
+msgid ""
+"**Timing pattern** -- the opposite two edges of each region (top and right),"
+" alternating dark and light cells so the scanner can count modules across "
+"the region."
+msgstr ""
+"**Taktmuster** (*timing pattern*) -- die gegenüberliegenden zwei Kanten "
+"jeder Region (oben und rechts), mit abwechselnd dunklen und hellen Zellen, "
+"sodass der Scanner die Module quer über die Region zählen kann."
+
+#: ../../datamatrix.rst:389
+msgid ""
+"**Data area** -- everything inside the region's L and timing edges: the "
+"encoded :term:`codewords <codeword>` plus :term:`Reed-Solomon` error "
+"correction, mapped to cells by the ECC 200 placement algorithm."
+msgstr ""
+"**Datenbereich** (*data area*) -- alles innerhalb der L- und Taktkanten der "
+"Region: die codierten :term:`Codewörter <codeword>` plus :term:`Reed-"
+"Solomon`-Fehlerkorrektur, durch den ECC-200-Platzierungsalgorithmus auf "
+"Zellen abgebildet."
+
+#: ../../datamatrix.rst:393
+msgid ""
+"**Quiet zone** -- white margin around the symbol; the spec requires at least"
+" one module, and pyStrich defaults to two."
+msgstr ""
+"**Ruhezone** (*quiet zone*) -- weißer Rand um das Symbol; die Spezifikation "
+"verlangt mindestens ein Modul, und pyStrich verwendet standardmäßig zwei."
+
+#: ../../datamatrix.rst:397
+msgid "API"
+msgstr "API"
+
+#: of pystrich.datamatrix.DataMatrixEncoder:1
+msgid "Encode text as a Data Matrix (ECC 200) 2D barcode."
+msgstr "Codiert Text als Data-Matrix-2D-Barcode (ECC 200)."
+
+#: of pystrich.datamatrix.DataMatrixEncoder:3
+msgid ""
+"The matrix size is selected automatically based on input length. Wrap the "
+"input in :class:`DataMatrixData` and pass an explicit ``encoding`` of "
+"``\"ascii\"``, ``\"iso-8859-1\"`` or ``\"utf-8\"`` — or pass "
+"``auto_encoding=True`` to let the constructor pick the narrowest encoding "
+"that fits. To produce a GS1 Data Matrix, prefix the payload with the "
+":data:`FNC1` marker."
+msgstr ""
+"Die Matrixgröße wird automatisch anhand der Eingabelänge gewählt. Kapseln "
+"Sie die Eingabe in :class:`DataMatrixData` und übergeben Sie ein explizites "
+"``encoding`` von ``\"ascii\"``, ``\"iso-8859-1\"`` oder ``\"utf-8\"`` -- "
+"oder übergeben Sie ``auto_encoding=True``, damit der Konstruktor die "
+"schmalste passende Codierung wählt. Stellen Sie für ein GS1 Data Matrix den "
+"Nutzdaten den :data:`FNC1`-Marker voran."
+
+#: of pystrich.datamatrix.DataMatrixEncoder:10
+msgid "Typical use::"
+msgstr "Typische Verwendung::"
+
+#: of pystrich.datamatrix.DataMatrixEncoder:18
+msgid ""
+"Plain ``str`` input is also accepted but falls back to a deprecated "
+"``\"compat\"`` encoding that warns on non-ASCII bytes and produces output "
+"that does not decode correctly. New code should always wrap the input in "
+":class:`DataMatrixData`."
+msgstr ""
+"Einfache ``str``-Eingabe wird ebenfalls akzeptiert, greift aber auf eine "
+"veraltete ``\"compat\"``-Codierung zurück, die bei Nicht-ASCII-Bytes warnt "
+"und Ausgabe erzeugt, die sich nicht korrekt decodieren lässt. Neuer Code "
+"sollte die Eingabe immer in :class:`DataMatrixData` kapseln."
+
+#: ../../datamatrix.rst
+msgid "Variables"
+msgstr "Variablen"
+
+#: of pystrich.datamatrix.DataMatrixEncoder:23
+msgid ""
+"2D list of ints (``0``/``1``, or ``None`` for unset cells) describing the "
+"symbol prior to rendering."
+msgstr ""
+"2D-Liste von Ganzzahlen (``0``/``1`` oder ``None`` für ungesetzte Zellen), "
+"die das Symbol vor dem Rendern beschreibt."
+
+#: of pystrich.datamatrix.DataMatrixEncoder:25
+msgid "Number of square regions the symbol is divided into."
+msgstr "Anzahl der quadratischen Regionen, in die das Symbol unterteilt ist."
+
+#: of pystrich.datamatrix.DataMatrixEncoder:26
+msgid "Width in modules of the white border applied at render time."
+msgstr "Breite des beim Rendern angewendeten weißen Rands in Modulen."
+
+#: of pystrich.datamatrix.DataMatrixEncoder:27
+msgid ""
+"Pixel width of the most recently rendered image. ``0`` until a render method"
+" has been called."
+msgstr ""
+"Pixelbreite des zuletzt gerenderten Bildes. ``0``, bis eine Render-Methode "
+"aufgerufen wurde."
+
+#: of pystrich.datamatrix.DataMatrixEncoder:29
+msgid "Pixel height of the most recently rendered image."
+msgstr "Pixelhöhe des zuletzt gerenderten Bildes."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_ascii:1
+msgid "Return an ASCII-art rendering of the symbol."
+msgstr "Gibt eine ASCII-Art-Darstellung des Symbols zurück."
+
+#: ../../datamatrix.rst
+msgid "Return type"
+msgstr "Rückgabetyp"
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:1
+msgid "Return a DXF (CAD) representation of the symbol."
+msgstr "Gibt eine DXF-Darstellung (CAD) des Symbols zurück."
+
+#: ../../datamatrix.rst
+msgid "Parameters"
+msgstr "Parameter"
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:3
+msgid "Side length of one module in ``units``."
+msgstr "Kantenlänge eines Moduls in ``units``."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:4
+msgid ""
+"If ``True`` (the default), light modules are drawn as filled cells. If "
+"``False``, dark modules are drawn, matching the normal appearance of the "
+"symbol."
+msgstr ""
+"Wenn ``True`` (die Vorgabe), werden helle Module als gefüllte Zellen "
+"gezeichnet. Wenn ``False``, werden dunkle Module gezeichnet, was dem "
+"normalen Erscheinungsbild des Symbols entspricht."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:7
+msgid ""
+"One of ``\"in\"``, ``\"ft\"``, ``\"mi\"``, ``\"mm\"``, ``\"cm\"`` or "
+"``\"m\"``, or ``None`` for Unspecified (``$INSUNITS=0``)."
+msgstr ""
+"Eines von ``\"in\"``, ``\"ft\"``, ``\"mi\"``, ``\"mm\"``, ``\"cm\"`` oder "
+"``\"m\"`` oder ``None`` für nicht angegeben (``$INSUNITS=0``)."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:9
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_eps:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_marks:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:5
+msgid "How matched cells are grouped and drawn."
+msgstr "Wie gesetzte Zellen gruppiert und gezeichnet werden."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:14
+msgid ""
+"``units`` now supports ``\"in\"``, ``\"ft\"``, ``\"mi\"``, ``\"cm\"``, "
+"``\"m\"`` and ``None`` (Unspecified); previously any value other than "
+"``\"mm\"`` was silently treated as unspecified."
+msgstr ""
+"``units`` unterstützt jetzt ``\"in\"``, ``\"ft\"``, ``\"mi\"``, ``\"cm\"``, "
+"``\"m\"`` und ``None`` (nicht angegeben); zuvor wurde jeder andere Wert als "
+"``\"mm\"`` stillschweigend als nicht angegeben behandelt."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:1
+msgid "Render the symbol and return EPS markup."
+msgstr "Rendert das Symbol und gibt EPS-Markup zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:4
+msgid "Side length in PostScript points of one module."
+msgstr "Kantenlänge eines Moduls in PostScript-Punkten."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_marks:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:4
+msgid "If ``True``, mark the light cells instead of the dark ones."
+msgstr "Wenn ``True``, die hellen statt der dunklen Zellen markieren."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:7
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:7
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:6
+msgid ""
+"Dark-module colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. "
+"Defaults to black."
+msgstr ""
+"Farbe der dunklen Module als 3-, 6- oder 8-stelliger Hex-String oder "
+"``RGBA``. Standard ist Schwarz."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:8
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:9
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``, opaque. "
+"Defaults to white."
+msgstr ""
+"Hintergrundfarbe als 3-, 6- oder 8-stelliger Hex-String oder ``RGBA``, "
+"deckend. Standard ist Weiß."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:11
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:13
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:12
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:10
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:14
+msgid "Added ``dark_hex`` and ``light_hex``."
+msgstr "``dark_hex`` und ``light_hex`` hinzugefügt."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:1
+msgid "Render the symbol and return PNG bytes."
+msgstr "Rendert das Symbol und gibt PNG-Bytes zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:4
+msgid "Side length in pixels of one module."
+msgstr "Kantenlänge eines Moduls in Pixeln."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:8
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:7
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:9
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:8
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. Defaults"
+" to white."
+msgstr ""
+"Hintergrundfarbe als 3-, 6- oder 8-stelliger Hex-String oder ``RGBA``. "
+"Standard ist Weiß."
+
+#: ../../datamatrix.rst
+msgid "Returns"
+msgstr "Rückgabe"
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:8
+msgid "PNG-encoded image data."
+msgstr "PNG-codierte Bilddaten."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:1
+msgid "Render the symbol and return a Pillow image."
+msgstr "Rendert das Symbol und gibt ein Pillow-Bild zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:8
+msgid "The rendered symbol."
+msgstr "Das gerenderte Symbol."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg:1
+msgid "Render the symbol and return SVG markup."
+msgstr "Rendert das Symbol und gibt SVG-Markup zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:3
+msgid "Side length in user units of one module."
+msgstr "Kantenlänge eines Moduls in Benutzereinheiten."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:1
+msgid "Render the symbol using Unicode half-block characters for terminals."
+msgstr "Rendert das Symbol mit Unicode-Halbblockzeichen für Terminals."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:3
+msgid ""
+"Each character represents two matrix rows and one column, producing "
+"approximately square cells in a typical fixed-width font and yielding a "
+"result that is scannable on screen."
+msgstr ""
+"Jedes Zeichen steht für zwei Matrixzeilen und eine Spalte, erzeugt "
+"näherungsweise quadratische Zellen in einer typischen Schrift mit fester "
+"Breite und liefert ein Ergebnis, das auf dem Bildschirm vom Scanner lesbar "
+"ist."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:7
+msgid ""
+"If ``True`` (the default), wrap each line in ANSI escape codes that force a "
+"white background and black foreground, making the symbol scannable "
+"regardless of the terminal's colour scheme. Set to ``False`` for plain "
+"output (correct only on a light-themed terminal)."
+msgstr ""
+"Wenn ``True`` (die Vorgabe), jede Zeile in ANSI-Escape-Codes einschließen, "
+"die einen weißen Hintergrund und schwarzen Vordergrund erzwingen, sodass das"
+" Symbol unabhängig vom Farbschema des Terminals vom Scanner lesbar ist. "
+"Setzen Sie ihn auf ``False`` für eine einfache Ausgabe (nur auf einem hell "
+"gestalteten Terminal korrekt)."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:1
+msgid "Render the symbol and return a PNG ``data:`` URL string."
+msgstr "Rendert das Symbol und gibt einen PNG-``data:``-URL-String zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save:1
+msgid "Save the symbol as a PNG. Pass a ``.png`` filename."
+msgstr ""
+"Speichert das Symbol als PNG. Übergeben Sie einen ``.png``-Dateinamen."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save:3
+msgid "PNG output path."
+msgstr "PNG-Ausgabepfad."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_eps:1
+msgid "Save the symbol as an EPS file. Pass an ``.eps`` filename."
+msgstr ""
+"Speichert das Symbol als EPS-Datei. Übergeben Sie einen ``.eps``-Dateinamen."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_eps:3
+msgid "EPS output path."
+msgstr "EPS-Ausgabepfad."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_svg:1
+msgid "Save the symbol as an SVG file. Pass a ``.svg`` filename."
+msgstr ""
+"Speichert das Symbol als SVG-Datei. Übergeben Sie einen ``.svg``-Dateinamen."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_svg:3
+msgid "SVG output path."
+msgstr "SVG-Ausgabepfad."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:1
+msgid "Render the symbol and return an SVG ``data:`` URL string."
+msgstr "Rendert das Symbol und gibt einen SVG-``data:``-URL-String zurück."
+
+#: of pystrich.datamatrix.DataMatrixEncoder.init_renderer:1
+msgid "Construct a :class:`DataMatrixRenderer` for the encoded matrix."
+msgstr ""
+"Konstruiert einen :class:`DataMatrixRenderer` für die codierte Matrix."
+
+#: of pystrich.datamatrix.DataMatrixEncoder.init_renderer:3
+msgid ""
+"Updates :attr:`width` and :attr:`height` with the renderer's pixel "
+"dimensions and returns the renderer."
+msgstr ""
+"Aktualisiert :attr:`width` und :attr:`height` mit den Pixelmaßen des "
+"Renderers und gibt den Renderer zurück."
+
+#: of pystrich.datamatrix.data.DataMatrixData:1
+msgid "Composable encoder input mixing text chunks with raw-codeword markers."
+msgstr ""
+"Zusammensetzbare Encoder-Eingabe, die Textabschnitte mit Roh-Codewort-"
+"Markern mischt."
+
+#: of pystrich.datamatrix.data.DataMatrixData:3
+msgid ""
+"Build values by concatenating marker constants (e.g. :data:`FNC1`) with "
+"plain strings on either side, then pass the result to "
+":class:`DataMatrixEncoder` in place of a ``str``."
+msgstr ""
+"Bauen Sie Werte durch Verketten von Marker-Konstanten (z. B. :data:`FNC1`) "
+"mit einfachen Zeichenketten auf beiden Seiten auf und übergeben Sie das "
+"Ergebnis dann anstelle eines ``str`` an :class:`DataMatrixEncoder`."
+
+#: of pystrich.datamatrix.data.DataMatrixData:7
+msgid ""
+"Construction requires either an explicit ``encoding=`` (one of "
+"``\"ascii\"``, ``\"iso-8859-1\"``, ``\"utf-8\"`` or the legacy "
+"``\"compat\"``) or ``auto_encoding=True``. With ``auto_encoding=True`` the "
+"constructor picks the narrowest of ``ascii``, ``iso-8859-1``, ``utf-8`` that"
+" represents every segment; any ``encoding=`` argument passed alongside is "
+"ignored. ``\"compat\"`` is an init-time option only -- it triggers the "
+"legacy ASCII+1 codeword transform and is then stored as ``\"ascii\"``, so "
+":attr:`encoding` is always one of the three concrete charsets after "
+"construction."
+msgstr ""
+"Die Konstruktion erfordert entweder ein explizites ``encoding=`` (eines von "
+"``\"ascii\"``, ``\"iso-8859-1\"``, ``\"utf-8\"`` oder das veraltete "
+"``\"compat\"``) oder ``auto_encoding=True``. Mit ``auto_encoding=True`` "
+"wählt der Konstruktor die schmalste von ``ascii``, ``iso-8859-1``, "
+"``utf-8``, die jedes Segment darstellt; ein daneben übergebenes "
+"``encoding=``-Argument wird ignoriert. ``\"compat\"`` ist nur eine Option "
+"zur Initialisierungszeit -- es löst die veraltete ASCII+1-Codewort-"
+"Transformation aus und wird anschließend als ``\"ascii\"`` gespeichert, "
+"sodass :attr:`encoding` nach der Konstruktion immer einer der drei konkreten"
+" Zeichensätze ist."
+
+#: of pystrich.datamatrix.data.DataMatrixData:17
+msgid ""
+"After construction :attr:`segments` is normalised: consecutive str segments "
+"are merged, empty strs are dropped, and (for ``\"compat\"``) every codepoint"
+" with the high bit set is replaced by a :class:`DataMatrixCodeword` carrying"
+" the legacy ``ord + 1`` value. The encoder therefore only ever sees pure-"
+"encodable strs interleaved with raw codeword markers."
+msgstr ""
+"Nach der Konstruktion wird :attr:`segments` normalisiert: "
+"aufeinanderfolgende str-Segmente werden zusammengeführt, leere strs "
+"verworfen, und (bei ``\"compat\"``) wird jeder Codepunkt mit gesetztem "
+"höchstwertigem Bit durch ein :class:`DataMatrixCodeword` mit dem veralteten "
+"``ord + 1``-Wert ersetzt. Der Encoder sieht daher immer nur rein codierbare "
+"strs im Wechsel mit Roh-Codewort-Markern."
+
+#: of pystrich.datamatrix.data.DataMatrixData:26
+msgid ""
+"Callers must now pass either an explicit ``encoding=`` or "
+"``auto_encoding=True``. Added the ``auto_encoding`` flag."
+msgstr ""
+"Aufrufer müssen jetzt entweder ein explizites ``encoding=`` oder "
+"``auto_encoding=True`` übergeben. Das ``auto_encoding``-Flag wurde "
+"hinzugefügt."
+
+#: of pystrich.datamatrix.data.DataMatrixData:30
+msgid ""
+"The ``\"compat\"`` encoding is retained only for backwards compatibility and"
+" will be removed in a future release. New code should pick ``\"ascii\"``, "
+"``\"iso-8859-1\"`` or ``\"utf-8\"`` explicitly, or use "
+"``auto_encoding=True``."
+msgstr ""
+"Die ``\"compat\"``-Codierung wird nur aus Gründen der Abwärtskompatibilität "
+"beibehalten und in einer künftigen Version entfernt. Neuer Code sollte "
+"``\"ascii\"``, ``\"iso-8859-1\"`` oder ``\"utf-8\"`` explizit wählen oder "
+"``auto_encoding=True`` verwenden."
+
+#: of pystrich.datamatrix.data.DataMatrixData.gs1:1
+msgid ""
+"Build a GS1 Data Matrix payload from typed Application Identifier fields."
+msgstr ""
+"Baut GS1-Data-Matrix-Nutzdaten aus typisierten Application-Identifier-"
+"Feldern auf."
+
+#: of pystrich.datamatrix.data.DataMatrixData.gs1:3
+msgid ""
+"Emits a leading :data:`FNC1` (which flags the symbol as GS1 Data Matrix to "
+"conformant scanners) followed by ``application_identifier + value`` for each"
+" field, inserting a further :data:`FNC1` separator after each "
+":class:`~pystrich.gs1.GS1Variable` that is not the final element. ASCII is "
+"hardcoded -- the GS1 General Specifications restrict Application Identifier "
+"values to a 7-bit character set."
+msgstr ""
+"Gibt ein führendes :data:`FNC1` aus (das das Symbol gegenüber konformen "
+"Scannern als GS1 Data Matrix kennzeichnet), gefolgt von "
+"``application_identifier + value`` für jedes Feld, und fügt nach jedem "
+":class:`~pystrich.gs1.GS1Variable`, das nicht das letzte Element ist, einen "
+"weiteren :data:`FNC1`-Trenner ein. ASCII ist fest vorgegeben -- die GS1 "
+"General Specifications beschränken Application-Identifier-Werte auf einen "
+"7-Bit-Zeichensatz."
+
+#: of pystrich.datamatrix.data.DataMatrixData.gs1:11
+msgid ""
+"One or more :class:`~pystrich.gs1.GS1Fixed` / "
+":class:`~pystrich.gs1.GS1Variable` instances. Plain strings are not "
+"accepted; wrap each Application Identifier / value pair in the appropriate "
+"field class so we know whether to follow it with FNC1."
+msgstr ""
+"Eine oder mehrere :class:`~pystrich.gs1.GS1Fixed`- / "
+":class:`~pystrich.gs1.GS1Variable`-Instanzen. Einfache Zeichenketten werden "
+"nicht akzeptiert; kapseln Sie jedes Paar aus Application Identifier / Wert "
+"in die passende Feldklasse, damit bekannt ist, ob ihm FNC1 folgen soll."
+
+#: ../../datamatrix.rst
+msgid "Raises"
+msgstr "Löst aus"
+
+#: of pystrich.datamatrix.data.DataMatrixData.gs1:16
+msgid ""
+"if ``fields`` is empty or contains anything other than the field classes."
+msgstr ""
+"wenn ``fields`` leer ist oder etwas anderes als die Feldklassen enthält."
+
+#: of pystrich.charset.EncodableData.as_plain_text:1
+msgid "Return the concatenated text and the codec to encode it with."
+msgstr "Gibt den verketteten Text und den Codec zum Codieren zurück."
+
+#: of pystrich.charset.EncodableData.as_plain_text:3
+msgid ""
+"Raises :class:`_HasMarkers` if any segment is a raw marker rather than a "
+"string. For subclasses without markers (``MarkerT == Never``) the check is a"
+" no-op."
+msgstr ""
+"Löst :class:`_HasMarkers` aus, wenn ein Segment ein Roh-Marker statt einer "
+"Zeichenkette ist. Für Unterklassen ohne Marker (``MarkerT == Never``) ist "
+"die Prüfung ein No-op."
+
+#: of pystrich.datamatrix.data.DataMatrixCodeword:1
+msgid "A literal DataMatrix codeword value to emit verbatim."
+msgstr ""
+"Ein literaler DataMatrix-Codewort-Wert, der wortwörtlich ausgegeben wird."
+
+#: of pystrich.datamatrix.data.DataMatrixCodeword:3
+msgid ""
+"Concatenation with a plain ``str`` or another codeword (e.g. ``FNC1 + "
+"\"...\"``) is the modern API path and produces a :class:`DataMatrixData` "
+"tagged with the strict ``\"ascii\"`` encoding. Concatenation with an "
+"existing :class:`DataMatrixData` preserves that object's encoding instead."
+msgstr ""
+"Die Verkettung mit einem einfachen ``str`` oder einem anderen Codewort (z. "
+"B. ``FNC1 + \"...\"``) ist der moderne API-Weg und erzeugt ein "
+":class:`DataMatrixData` mit der strikten ``\"ascii\"``-Codierung. Die "
+"Verkettung mit einem bestehenden :class:`DataMatrixData` bewahrt stattdessen"
+" die Codierung dieses Objekts."
+
+#: ../../datamatrix.rst:407
+msgid ""
+"The GS1 FNC1 marker (Data Matrix codeword 232). An instance of "
+":class:`DataMatrixCodeword`; concatenate with strings via ``+`` to build a "
+"GS1 payload."
+msgstr ""
+"Der GS1-FNC1-Marker (Data-Matrix-Codewort 232). Eine Instanz von "
+":class:`DataMatrixCodeword`; hängen Sie ihn mit ``+`` an Zeichenketten an, "
+"um GS1-Nutzdaten aufzubauen."

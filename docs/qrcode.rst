@@ -292,7 +292,7 @@ the Wi-Fi Alliance WPA3 Specification v3.5:
    QRCodeEncoder(payload).save("wifi.png")
 
 .. image:: examples/qrcode-wifi.svg
-   :alt: QR code joining the DoubleDeuceGuest network
+   :alt: QR code for joining the DoubleDeuceGuest network
 
 Omit the password for an open network (the type field is left out), and
 pass ``hidden=True`` for a network that does not broadcast its SSID.

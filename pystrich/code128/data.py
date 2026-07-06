@@ -142,7 +142,7 @@ class Code128Data(EncodableData[Code128Encoding, Code128Marker]):
     Pass ``encoding="iso-8859-1"`` (or ``auto_encoding=True``) to embed
     Latin-1 supplement characters; the encoder transparently emits the
     Code 128 FNC4 shifts. With ``encoding="ascii"`` the legacy magic-byte
-    codepoints (``\\xf1``..``\\xf4``) are rejected with a message
+    codepoints (``\\xf1..\\xf4``) are rejected with a message
     pointing at the typed marker constants.
     """
 
@@ -204,7 +204,7 @@ class Code128Data(EncodableData[Code128Encoding, Code128Marker]):
 def _reject_legacy_marker_bytes(
     segments: tuple[str | Code128Marker, ...],
 ) -> None:
-    """Reject ``\\xf1``..``\\xf4`` from ASCII-mode str segments with a
+    """Reject ``\\xf1..\\xf4`` from ASCII-mode str segments with a
     message pointing at the typed marker constants (or, for ``\\xf4``,
     the Latin-1 encoding path). The base class trial-encode would
     otherwise reject them with the generic "can't encode" message.
@@ -234,7 +234,7 @@ def _reject_legacy_marker_bytes(
 
 
 def fnc_marker_bytes_compat(text: str) -> Code128Data | str:
-    """Promote legacy FNC shortcut bytes (``\\xf1``..``\\xf4``) in a bare
+    """Promote legacy FNC shortcut bytes (``\\xf1..\\xf4``) in a bare
     ``str`` to typed marker tokens on a :class:`Code128Data`, emitting a
     deprecation warning.
 

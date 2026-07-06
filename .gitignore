@@ -17,3 +17,6 @@ venv/
 .idea/
 docs/_build/
 docs/examples/
+# Compiled gettext catalogues (auto-built by sphinx-build -D language=xx)
+docs/locale/*/LC_MESSAGES/*.mo
+docs/locale_overrides/*/LC_MESSAGES/*.mo

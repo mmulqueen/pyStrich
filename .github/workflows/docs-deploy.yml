@@ -27,9 +27,11 @@ jobs:
 
       - name: Build docs
         run: |
-          uv run --frozen sphinx-build -W --keep-going -b doctest docs docs/_build/doctest
-          uv run --frozen sphinx-build -W --keep-going -b text docs docs/_build/text
-          uv run --frozen sphinx-build -W --keep-going -b html docs docs/_build/html
+          uv run --frozen sphinx-build -W --keep-going -b doctest -d docs/_build/.doctrees docs docs/_build/doctest
+          uv run --frozen sphinx-build -W --keep-going -b text -d docs/_build/.doctrees docs docs/_build/text
+          uv run --frozen sphinx-build -W --keep-going -b html -d docs/_build/.doctrees docs docs/_build/html
+          uv run --frozen sphinx-build -W --keep-going -b text -D language=de_DE -d docs/_build/.doctrees-de_DE docs docs/_build/text-de_DE
+          uv run --frozen sphinx-build -W --keep-going -b html -D language=de_DE -D html_baseurl=https://www.method-b.uk/pyStrich/docs/de/ -d docs/_build/.doctrees-de_DE docs docs/_build/html/de
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6

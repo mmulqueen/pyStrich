@@ -66,7 +66,7 @@ class Fnc1WorkaroundCompatWarning(PyStrichWarning):
 
 
 class Code128MarkerBytesCompatWarning(PyStrichWarning):
-    """The legacy ``\\xf1``..``\\xf4`` FNC shortcut bytes in bare-str input
+    """The legacy ``\\xf1..\\xf4`` FNC shortcut bytes in bare-str input
     triggered the compat shim; use :class:`~pystrich.code128.Code128Data`
     with the typed marker constants instead.
     """

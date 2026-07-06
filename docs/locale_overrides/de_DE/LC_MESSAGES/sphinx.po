@@ -1,0 +1,24 @@
+# Hand-maintained overrides for Sphinx built-in strings whose bundled German
+# catalogue is missing or reads inconsistently with our prose. This lives in a
+# SEPARATE locale dir (locale_overrides/, listed first in conf.py's
+# locale_dirs) so `sphinx-intl update -d locale` -- which manages locale/ only
+# -- never obsoletes these entries. sphinx-intl once commented the
+# versionadded override out as obsolete, silently reintroducing the English
+# label on every API page; keeping it here prevents that regression.
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Sphinx renders `.. versionadded::` as "Added in version %s"; the bundled
+# German catalogue only carries the older "New in version %s", so it leaks.
+msgid "Added in version %s"
+msgstr "Neu in Version %s"
+
+# Bundled German renders the :raises: field label as "Verursacht" (i.e.
+# "causes"); our prose consistently says "loest ... aus", so align the label.
+msgid "Raises"
+msgstr "Löst aus"

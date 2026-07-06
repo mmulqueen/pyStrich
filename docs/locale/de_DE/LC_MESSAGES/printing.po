@@ -1,0 +1,471 @@
+# German (de-DE) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../../printing.rst:2
+msgid "Printing barcodes"
+msgstr "Barcodes drucken"
+
+#: ../../printing.rst:4
+msgid ""
+"The most common cause of \"my barcode does not scan\" is not encoding -- the"
+" bars are too small. Scanners need the narrowest bar (1D) or one module (2D)"
+" -- the *X-dimension* -- to be wide enough for their optics to resolve. As "
+"features shrink below that threshold, read rates drop like a stone."
+msgstr ""
+"Die häufigste Ursache für „mein Barcode scannt nicht“ ist nicht die "
+"Codierung -- die Striche sind zu klein. Der schmalste Strich (1D) oder ein "
+"Modul (2D) -- die *X-Dimension* -- muss breit genug sein, damit die Optik "
+"des Scanners ihn auflösen kann. Wenn Merkmale unter diese Schwelle "
+"schrumpfen, brechen die Leseraten drastisch ein."
+
+#: ../../printing.rst:10
+msgid ""
+"Most symbology specs leave X-dimension to the application. The figures below"
+" are practical recommendations for the typical pyStrich print chain: a "
+"consumer-grade laser printer (300-600 DPI) plus either a low-cost handheld "
+"scanner or a modern mobile phone camera. Push the X-dimension up if either "
+"end of that chain is weaker -- worn ribbons, blurry cameras, scans from a "
+"distance -- or if the printed surface is reflective or contoured."
+msgstr ""
+"Die meisten Symbologie-Spezifikationen überlassen die X-Dimension der "
+"Anwendung. Die folgenden Werte sind praktische Empfehlungen für die typische"
+" pyStrich-Druckkette: ein handelsüblicher Laserdrucker (300-600 DPI) plus "
+"entweder ein günstiger Handscanner oder eine moderne Handykamera. Erhöhen "
+"Sie die X-Dimension, wenn eines der beiden Enden dieser Kette schwächer ist "
+"-- abgenutzte Farbbänder, verschwommene Kameras, Scans aus der Entfernung --"
+" oder wenn die bedruckte Oberfläche reflektierend oder gewölbt ist."
+
+#: ../../printing.rst:19 ../../printing.rst:125
+msgid "Symbology"
+msgstr "Symbologie"
+
+#: ../../printing.rst:19
+msgid "X-dimension"
+msgstr "X-Dimension"
+
+#: ../../printing.rst:19
+msgid "Notes"
+msgstr "Anmerkungen"
+
+#: ../../printing.rst:21 ../../printing.rst:127
+msgid "Code 39"
+msgstr "Code 39"
+
+#: ../../printing.rst:21 ../../printing.rst:23
+msgid "0.19 - 0.50 mm"
+msgstr "0,19 - 0,50 mm"
+
+#: ../../printing.rst:21
+msgid "0.25 mm is a safe default for industrial labelling."
+msgstr "0,25 mm ist eine sichere Vorgabe für die industrielle Kennzeichnung."
+
+#: ../../printing.rst:23 ../../printing.rst:128
+msgid "Code 128"
+msgstr "Code 128"
+
+#: ../../printing.rst:23
+msgid "0.25 mm reads reliably with most fixed and handheld scanners."
+msgstr ""
+"0,25 mm wird von den meisten stationären und Handscannern zuverlässig "
+"gelesen."
+
+#: ../../printing.rst:25
+msgid "EAN-13 (retail)"
+msgstr "EAN-13 (Einzelhandel)"
+
+#: ../../printing.rst:25
+msgid "0.26 - 0.66 mm"
+msgstr "0,26 - 0,66 mm"
+
+#: ../../printing.rst:25
+#, python-format
+msgid ""
+"GS1 specifies a nominal X of 0.33 mm (100% magnification); retail scanning "
+"typically allows 80%-200% of nominal."
+msgstr ""
+"GS1 gibt ein nominales X von 0,33 mm an (100 % Vergrößerung); das Scannen "
+"im Einzelhandel erlaubt typischerweise 80 %-200 % des Nominalwerts."
+
+#: ../../printing.rst:29 ../../printing.rst:130 ../../printing.rst:168
+msgid "Data Matrix"
+msgstr "Data Matrix"
+
+#: ../../printing.rst:29 ../../printing.rst:31 ../../printing.rst:33
+msgid "0.25 - 0.50 mm"
+msgstr "0,25 - 0,50 mm"
+
+#: ../../printing.rst:29
+msgid "~0.3 mm is the common practical floor for handheld imagers."
+msgstr "~0,3 mm ist die übliche praktische Untergrenze für Handheld-Imager."
+
+#: ../../printing.rst:31 ../../printing.rst:132
+msgid "QR Code"
+msgstr "QR-Code"
+
+#: ../../printing.rst:31
+msgid "Mobile phone cameras typically need >=0.4 mm at arm's length."
+msgstr ""
+"Handykameras benötigen typischerweise >=0,4 mm aus etwa einer Armlänge "
+"Entfernung."
+
+#: ../../printing.rst:33 ../../printing.rst:133
+msgid "PDF417"
+msgstr "PDF417"
+
+#: ../../printing.rst:33
+msgid "Row height must be >=3x the X-dimension (pyStrich default)."
+msgstr "Die Zeilenhöhe muss >=3x der X-Dimension betragen (pyStrich-Vorgabe)."
+
+#: ../../printing.rst:35 ../../printing.rst:135
+msgid "Aztec Code"
+msgstr "Aztec-Code"
+
+#: ../../printing.rst:35
+msgid "0.38 - 0.76 mm"
+msgstr "0,38 - 0,76 mm"
+
+#: ../../printing.rst:35
+msgid ""
+"Most reliable range; smaller works with good imagers, but mobile-camera "
+"reads degrade quickly below ~0.4 mm."
+msgstr ""
+"Zuverlässigster Bereich; kleiner funktioniert mit guten Imagern, aber "
+"Handykamera-Lesungen verschlechtern sich unterhalb von ~0,4 mm schnell."
+
+#: ../../printing.rst:41
+msgid ""
+"For print-quality verification, see ISO/IEC 15415 (2D) or ISO/IEC 15416 "
+"(1D); for retail and supply-chain applications, follow the GS1 General "
+"Specifications."
+msgstr ""
+"Zur Druckqualitätsprüfung siehe ISO/IEC 15415 (2D) oder ISO/IEC 15416 (1D); "
+"für Anwendungen im Handel und in der Lieferkette folgen Sie den GS1 General "
+"Specifications."
+
+#: ../../printing.rst:47
+msgid ""
+"Reach for SVG or EPS where your toolchain supports them. Vector output "
+"scales losslessly, so you size the symbol at layout time rather than locking"
+" in a physical size at encode time."
+msgstr ""
+"Greifen Sie zu SVG oder EPS, sofern Ihre Werkzeugkette sie unterstützt. "
+"Vektorausgabe skaliert verlustfrei, sodass Sie das Symbol beim Layout "
+"dimensionieren, statt eine physische Größe beim Codieren festzulegen."
+
+#: ../../printing.rst:52
+msgid "Vector output (SVG / EPS)"
+msgstr "Vektorausgabe (SVG / EPS)"
+
+#: ../../printing.rst:54
+msgid ""
+"For SVG and EPS, pyStrich doesn't determine the print size at all. The "
+"output is resolution-independent -- pick any ``bar_width`` (or "
+"``cellsize``), and let the consuming layout tool scale to the X-dimension "
+"you need:"
+msgstr ""
+"Bei SVG und EPS bestimmt pyStrich die Druckgröße überhaupt nicht. Die "
+"Ausgabe ist auflösungsunabhängig -- wählen Sie eine beliebige ``bar_width`` "
+"(oder ``cellsize``) und lassen Sie das verarbeitende Layout-Werkzeug auf die"
+" benötigte X-Dimension skalieren:"
+
+#: ../../printing.rst:59
+msgid ""
+"**SVG**: set ``width`` and ``height`` in HTML / CSS, or via the ``viewBox`` "
+"in your design tool."
+msgstr ""
+"**SVG**: ``width`` und ``height`` in HTML / CSS setzen oder über die "
+"``viewBox`` in Ihrem Design-Werkzeug."
+
+#: ../../printing.rst:61
+#, python-brace-format
+msgid ""
+"**EPS**: scale at inclusion time -- ``\\includegraphics[width=40mm]{...}`` "
+"in LaTeX, or via the placement size in Illustrator / InDesign."
+msgstr ""
+"**EPS**: zur Einbindungszeit skalieren -- "
+"``\\includegraphics[width=40mm]{...}`` in LaTeX oder über die "
+"Platzierungsgröße in Illustrator / InDesign."
+
+#: ../../printing.rst:64
+msgid ""
+"The EPS ``bar_width`` is in PostScript points (1 pt = 1/72 inch ≈ 0.353 mm),"
+" so the default already produces a physically sensible size if you don't "
+"override it at inclusion time."
+msgstr ""
+"Die EPS-``bar_width`` ist in PostScript-Punkten (1 pt = 1/72 Zoll ≈ 0,353 "
+"mm), sodass die Vorgabe bereits eine physisch sinnvolle Größe erzeugt, wenn "
+"Sie sie beim Einbinden nicht überschreiben."
+
+#: ../../printing.rst:70
+msgid ""
+"For PDF output, embed the SVG in an HTML template and render with "
+"`WeasyPrint <https://weasyprint.org/>`_. This is a clean route to multi-up "
+"label sheets, packing slips and similar print-ready documents."
+msgstr ""
+"Für PDF-Ausgabe betten Sie das SVG in eine HTML-Vorlage ein und rendern mit "
+"`WeasyPrint <https://weasyprint.org/>`_. Das ist ein sauberer Weg zu "
+"Etikettenbögen mit mehreren Nutzen, Lieferscheinen und ähnlichen "
+"druckfertigen Dokumenten."
+
+#: ../../printing.rst:76
+msgid "Raster output (PNG)"
+msgstr "Rasterausgabe (PNG)"
+
+#: ../../printing.rst:78
+msgid ""
+"PNG is the only output format where ``bar_width`` / ``cellsize`` fixes the "
+"print size, because raster images don't scale losslessly. Working back from "
+"a target X-dimension and printer DPI:"
+msgstr ""
+"PNG ist das einzige Ausgabeformat, bei dem ``bar_width`` / ``cellsize`` die "
+"Druckgröße festlegt, weil Rasterbilder nicht verlustfrei skalieren. "
+"Ausgehend von einer Ziel-X-Dimension und der Drucker-DPI:"
+
+#: ../../printing.rst:86
+msgid ""
+"At 300 DPI, an X-dimension of 0.25 mm requires ``bar_width=3`` (rounded up "
+"from 2.95). At 600 DPI, the same X-dimension requires ``bar_width=6``."
+msgstr ""
+"Bei 300 DPI erfordert eine X-Dimension von 0,25 mm ``bar_width=3`` "
+"(aufgerundet von 2,95). Bei 600 DPI erfordert dieselbe X-Dimension "
+"``bar_width=6``."
+
+#: ../../printing.rst:89
+msgid ""
+"Round *up* to the nearest integer pixel; rounding down pushes the "
+"X-dimension below the readable limit."
+msgstr ""
+"Immer *aufrunden* auf das nächste ganzzahlige Pixel; Abrunden drückt die "
+"X-Dimension unter die lesbare Grenze."
+
+#: ../../printing.rst:93
+msgid "Colours"
+msgstr "Farben"
+
+#: ../../printing.rst:95
+msgid ""
+"Symbols are black on white by default. Pass ``dark_hex`` and ``light_hex`` "
+"-- each a 3-, 6- or 8-digit hex colour -- to any render method to recolour "
+"the modules (or bars) and the background consistently across PNG, SVG and "
+"EPS. The bars and any human-readable text take ``dark_hex``."
+msgstr ""
+"Symbole sind standardmäßig schwarz auf weiß. Übergeben Sie ``dark_hex`` und "
+"``light_hex`` -- jeweils eine 3-, 6- oder 8-stellige Hex-Farbe -- an eine "
+"beliebige Render-Methode, um die Module (oder Striche) und den Hintergrund "
+"konsistent über PNG, SVG und EPS hinweg umzufärben. Die Striche und jegliche"
+" Klarschrift nehmen ``dark_hex`` an."
+
+#: ../../printing.rst:100
+msgid ""
+"Scanners threshold on luminance, so keep ``dark_hex`` and ``light_hex`` well"
+" separated in brightness; a low-contrast pair erodes read reliability the "
+"same way an undersized X-dimension does. The conservative navy-on-light-grey"
+" below stays comfortably readable."
+msgstr ""
+"Scanner werten die Luminanz gegen einen Schwellwert aus, halten Sie daher "
+"``dark_hex`` und ``light_hex`` in der Helligkeit deutlich getrennt; ein "
+"kontrastarmes Paar untergräbt die Lesezuverlässigkeit genauso wie eine zu "
+"kleine X-Dimension. Das dezente Marineblau auf Hellgrau unten bleibt gut "
+"lesbar."
+
+#: ../../printing.rst:113
+msgid "QR Code with deep-navy modules on a light-grey background."
+msgstr "QR-Code mit tiefmarineblauen Modulen auf hellgrauem Hintergrund."
+
+#: ../../printing.rst:117
+msgid "Quiet zones"
+msgstr "Ruhezonen"
+
+#: ../../printing.rst:119
+msgid ""
+"Every symbology requires white space (the *quiet zone*) around the symbol so"
+" scanners can locate its boundaries. pyStrich emits a quiet zone "
+"automatically; do not crop into the white margin when compositing the output"
+" into another image."
+msgstr ""
+"Jede Symbologie benötigt Weißraum (die *Ruhezone*) um das Symbol, damit "
+"Scanner seine Grenzen finden können. pyStrich gibt automatisch eine Ruhezone"
+" aus; schneiden Sie nicht in den weißen Rand hinein, wenn Sie die Ausgabe in"
+" ein anderes Bild montieren."
+
+#: ../../printing.rst:125
+msgid "Quiet zone applied by pyStrich"
+msgstr "Von pyStrich angewendete Ruhezone"
+
+#: ../../printing.rst:127 ../../printing.rst:128
+msgid "10x ``bar_width`` on each side."
+msgstr "10x ``bar_width`` auf jeder Seite."
+
+#: ../../printing.rst:129
+msgid "EAN-13"
+msgstr "EAN-13"
+
+#: ../../printing.rst:129
+msgid "11x ``bar_width`` left, 7x right (mandated by GS1)."
+msgstr "11x ``bar_width`` links, 7x rechts (von GS1 vorgeschrieben)."
+
+#: ../../printing.rst:130
+msgid ""
+"Configurable via ``quiet_zone`` (default 2 modules, spec minimum 1 module)."
+msgstr ""
+"Konfigurierbar über ``quiet_zone`` (Vorgabe 2 Module, Spezifikationsminimum "
+"1 Modul)."
+
+#: ../../printing.rst:132
+msgid "4 modules on each side (mandated by spec)."
+msgstr "4 Module auf jeder Seite (von der Spezifikation vorgeschrieben)."
+
+#: ../../printing.rst:133
+msgid ""
+"Configurable via ``quiet_zone`` (default 2 modules, spec minimum 2 modules "
+"on every side)."
+msgstr ""
+"Konfigurierbar über ``quiet_zone`` (Vorgabe 2 Module, Spezifikationsminimum "
+"2 Module auf jeder Seite)."
+
+#: ../../printing.rst:135
+msgid ""
+"Configurable via ``quiet_zone`` (default 2 modules; spec does not require "
+"any quiet zone)."
+msgstr ""
+"Konfigurierbar über ``quiet_zone`` (Vorgabe 2 Module; die Spezifikation "
+"verlangt keine Ruhezone)."
+
+#: ../../printing.rst:140
+msgid "Damage tolerance"
+msgstr "Schadenstoleranz"
+
+#: ../../printing.rst:142
+msgid ""
+"2D barcodes offer some tolerance to physical and environmental damage -- "
+"scuffing, smudging, marking, partial occlusion -- thanks to their Reed-"
+"Solomon error correction. This tolerance can be improved by increasing the "
+"error correction level, increasing print dimensions, and positioning the "
+"barcode away from the edges of the label or document (which take the most "
+"wear). Using suitable media and printing is essential."
+msgstr ""
+"2D-Barcodes vertragen dank ihrer Reed-Solomon-Fehlerkorrektur ein gewisses "
+"Maß an physischen und umweltbedingten Schäden -- Abrieb, Verschmieren, "
+"Markierungen, teilweise Verdeckung. Diese Toleranz lässt sich verbessern, "
+"indem man die Fehlerkorrekturstufe erhöht, die Druckabmessungen vergrößert "
+"und den Barcode von den Rändern des Etiketts oder Dokuments fernhält (die am"
+" meisten Verschleiß abbekommen). Geeignete Medien und geeigneter Druck sind "
+"unerlässlich."
+
+#: ../../printing.rst:150
+msgid ""
+"For harsh environments, if the encoded data has a predictable length and "
+"character set, raise the error correction level as high as the available "
+"label or document space permits at a sensible module size."
+msgstr ""
+"Für raue Umgebungen: Wenn die codierten Daten eine vorhersehbare Länge und "
+"einen vorhersehbaren Zeichensatz haben, erhöhen Sie die Fehlerkorrekturstufe"
+" so hoch, wie es der verfügbare Etiketten- oder Dokumentenplatz bei einer "
+"sinnvollen Modulgröße zulässt."
+
+#: ../../printing.rst:154
+msgid ""
+"Error correction protects only the data area: the symbol's fixed patterns "
+"(finder, locator or bullseye) must remain identifiable for the decoder to "
+"lock on at all."
+msgstr ""
+"Die Fehlerkorrektur schützt nur den Datenbereich: Die festen Muster des "
+"Symbols (Suchmuster, L-Begrenzung oder Bullseye) müssen erkennbar bleiben, "
+"damit der Decoder überhaupt darauf einrasten kann."
+
+#: ../../printing.rst:160
+msgid ""
+"The examples below each survive a dramatic diagonal smudge placed clear of "
+"those fixed patterns."
+msgstr ""
+"Die folgenden Beispiele überstehen jeweils einen dramatischen diagonalen "
+"Fleck, der abseits dieser festen Muster platziert ist."
+
+#: ../../printing.rst:167
+msgid "Aztec (``ecc=50``)"
+msgstr "Aztec (``ecc=50``)"
+
+#: ../../printing.rst:169
+msgid "QR Code (``ecl=\"H\"``)"
+msgstr "QR-Code (``ecl=\"H\"``)"
+
+#: ../../printing.rst:170
+msgid ""
+"Aztec Code with a diagonal smudge over its lower-right corner; still "
+"scannable."
+msgstr ""
+"Aztec-Code mit einem diagonalen Fleck über der unteren rechten Ecke; "
+"weiterhin lesbar."
+
+#: ../../printing.rst:172
+msgid "Data Matrix with a diagonal smudge over its interior; still scannable."
+msgstr ""
+"Data-Matrix-Symbol mit einem diagonalen Fleck über dem Inneren; weiterhin "
+"lesbar."
+
+#: ../../printing.rst:174
+msgid ""
+"QR Code with a diagonal smudge over its middle, clear of the corner finder "
+"patterns; still scannable."
+msgstr ""
+"QR-Code mit einem diagonalen Fleck über der Mitte, abseits der "
+"Ecksuchmuster; weiterhin lesbar."
+
+#: ../../printing.rst:178
+msgid "Verification"
+msgstr "Überprüfung"
+
+#: ../../printing.rst:180
+msgid "If a printed barcode does not scan reliably:"
+msgstr "Wenn sich ein gedruckter Barcode nicht zuverlässig scannen lässt:"
+
+#: ../../printing.rst:182
+msgid ""
+"Try to scan it on screen first. If it fails on screen, the encoding or "
+"sizing is wrong; if it succeeds on screen but fails in print, the print "
+"process is the issue."
+msgstr ""
+"Versuchen Sie zuerst, ihn auf dem Bildschirm zu scannen. Scheitert er auf "
+"dem Bildschirm, sind Codierung oder Dimensionierung falsch; gelingt er auf "
+"dem Bildschirm, scheitert aber im Druck, liegt das Problem am Druckprozess."
+
+#: ../../printing.rst:185
+msgid ""
+"Measure the X-dimension with a ruler or loupe and verify the quiet zone is "
+"intact -- not cropped, not printed against a coloured background."
+msgstr ""
+"Messen Sie die X-Dimension mit einem Lineal oder einer Lupe und prüfen Sie, "
+"dass die Ruhezone intakt ist -- nicht beschnitten, nicht auf einen farbigen "
+"Hintergrund gedruckt."
+
+#: ../../printing.rst:188
+msgid ""
+"Check print contrast -- low-DPI thermal printers or worn ribbons can produce"
+" bars that are too grey to be read."
+msgstr ""
+"Prüfen Sie den Druckkontrast -- Thermodrucker mit niedriger DPI oder "
+"abgenutzte Farbbänder können Striche erzeugen, die zu grau sind, um gelesen "
+"zu werden."
+
+#: ../../printing.rst:191
+msgid ""
+"For production deployments printing barcodes at scale, consider using a "
+"print-quality verifier (an instrument that scores symbols against ISO/IEC "
+"15415 / 15416). A passing grade once during integration is worth more than "
+"re-printing a thousand failed labels."
+msgstr ""
+"Für Produktionseinsätze, die Barcodes in großem Maßstab drucken, ziehen Sie "
+"einen Druckqualitätsprüfer in Betracht (ein Instrument, das Symbole gegen "
+"ISO/IEC 15415 / 15416 bewertet). Eine einmal bestandene Bewertung während "
+"der Integration ist mehr wert als das Neudrucken von tausend "
+"fehlgeschlagenen Etiketten."

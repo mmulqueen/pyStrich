@@ -1,0 +1,812 @@
+# German (de-DE) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../../aztec.rst:-1
+msgid ""
+"Generate Aztec Code 2D barcodes in Python with pyStrich. Strong rotation "
+"tolerance, sizes from compact to full-range. PNG, SVG, EPS, DXF."
+msgstr ""
+"Aztec-Code-2D-Barcodes mit pyStrich in Python erzeugen. Starke "
+"Rotationstoleranz, Größen von kompakt bis Full-Range. PNG, SVG, EPS, DXF."
+
+#: ../../aztec.rst:8
+msgid "Aztec Code"
+msgstr "Aztec-Code"
+
+#: ../../aztec.rst:10
+msgid ""
+"Aztec Code is a 2D symbology used on transport tickets, boarding passes and "
+"medical records. It needs no quiet zone, and its strong central bullseye "
+"finder decodes reliably from any rotation. Symbols range from 15x15 modules "
+"(compact) up to 151x151 (full-range)."
+msgstr ""
+"Aztec-Code ist eine 2D-Symbologie, die auf Fahrscheinen, Bordkarten und in "
+"Patientenakten verwendet wird. Er benötigt keine Ruhezone, und sein starkes "
+"zentrales Bullseye-Suchmuster wird in jeder Drehlage zuverlässig decodiert. "
+"Symbole reichen von 15x15 Modulen (kompakt) bis 151x151 (Full-Range)."
+
+#: ../../aztec.rst:15
+msgid "Aztec Code support was added in this release."
+msgstr "Die Unterstützung für Aztec-Code wurde in dieser Version hinzugefügt."
+
+#: ../../aztec.rst:20
+msgid ""
+"`Aztec Code on Wikipedia <https://en.wikipedia.org/wiki/Aztec_Code>`_ for "
+"background on the symbology itself."
+msgstr ""
+"`Aztec-Code auf Wikipedia <https://de.wikipedia.org/wiki/Aztec-Code>`_ für "
+"Hintergründe zur Symbologie selbst."
+
+#: ../../aztec.rst:23
+msgid ""
+"Aztec Code is defined in `ISO/IEC 24778 "
+"<https://www.iso.org/standard/82441.html>`_."
+msgstr ""
+"Aztec-Code ist in `ISO/IEC 24778 <https://www.dinmedia.de/de/norm/iso-"
+"iec-24778/379852242>`_ definiert (Informationstechnik -- Automatische "
+"Identifikations- und Datenerfassungsverfahren -- Spezifikation der Barcode-"
+"Symbologie Aztec Code)."
+
+#: ../../aztec.rst:27
+msgid "Example"
+msgstr "Beispiel"
+
+#: ../../aztec.rst:36
+msgid "Aztec Code encoding the pyStrich GitHub URL."
+msgstr "Aztec-Code, der die pyStrich-GitHub-URL codiert."
+
+#: ../../aztec.rst:40
+msgid "Sizing"
+msgstr "Größe"
+
+#: ../../aztec.rst:42
+msgid ""
+"The ``cellsize`` argument to :meth:`~AztecEncoder.save` and "
+":meth:`~AztecEncoder.get_imagedata` sets the pixel side length of one module"
+" (default ``5``)."
+msgstr ""
+"Das Argument ``cellsize`` von :meth:`~AztecEncoder.save` und "
+":meth:`~AztecEncoder.get_imagedata` legt die Kantenlänge eines Moduls in "
+"Pixeln fest (Vorgabe ``5``)."
+
+#: ../../aztec.rst:46
+msgid ""
+"Aztec Code does not require a quiet zone, but pyStrich adds a 2-module "
+"margin by default to give scanners a stable background. Pass ``quiet_zone=``"
+" to :class:`AztecEncoder` to change the border width (in modules) per call; "
+"pass ``0`` to drop the margin entirely."
+msgstr ""
+"Aztec-Code benötigt keine Ruhezone, aber pyStrich fügt standardmäßig einen "
+"Rand von 2 Modulen hinzu, um Scannern einen stabilen Hintergrund zu geben. "
+"Übergeben Sie ``quiet_zone=`` an :class:`AztecEncoder`, um die Randbreite "
+"(in Modulen) pro Aufruf zu ändern; übergeben Sie ``0``, um den Rand ganz "
+"wegzulassen."
+
+#: ../../aztec.rst:57
+msgid ""
+":doc:`printing` for guidance on selecting ``cellsize`` for printed output."
+msgstr ""
+":doc:`printing` für Hinweise zur Wahl von ``cellsize`` bei gedruckter "
+"Ausgabe."
+
+#: ../../aztec.rst:65
+msgid "Aztec Code encoding the pyStrich GitHub URL rendered with cellsize=10."
+msgstr ""
+"Aztec-Code, der die pyStrich-GitHub-URL codiert, gerendert mit cellsize=10."
+
+#: ../../aztec.rst:69
+msgid "Output formats"
+msgstr "Ausgabeformate"
+
+#: ../../aztec.rst:72
+msgid "SVG output"
+msgstr "SVG-Ausgabe"
+
+#: ../../aztec.rst:74
+msgid ""
+"For embedding in web pages or any workflow that benefits from resolution-"
+"independent output, use :meth:`~AztecEncoder.save_svg` (or "
+":meth:`~AztecEncoder.get_svg` to receive the SVG as a string)."
+msgstr ""
+"Zum Einbetten in Webseiten oder für jeden Arbeitsablauf, der von "
+"auflösungsunabhängiger Ausgabe profitiert, verwenden Sie "
+":meth:`~AztecEncoder.save_svg` (oder :meth:`~AztecEncoder.get_svg`, um das "
+"SVG als Zeichenkette zu erhalten)."
+
+#: ../../aztec.rst:87
+msgid ""
+"The SVG's ``viewBox`` is in module units, while ``width`` and ``height`` "
+"scale by ``cellsize``. The ``mark_shape`` keyword selects how matched cells "
+"are drawn -- horizontal runs of rectangles (the default) or one filled "
+"circle per cell."
+msgstr ""
+"Die ``viewBox`` des SVG ist in Moduleinheiten angegeben, während ``width`` "
+"und ``height`` mit ``cellsize`` skalieren. Das Schlüsselwort ``mark_shape`` "
+"bestimmt, wie gesetzte Zellen gezeichnet werden -- horizontale Folgen von "
+"Rechtecken (die Vorgabe) oder ein gefüllter Kreis pro Zelle."
+
+#: ../../aztec.rst:93
+msgid "PNG output"
+msgstr "PNG-Ausgabe"
+
+#: ../../aztec.rst:95
+msgid ""
+"For raster output, use :meth:`~AztecEncoder.save` to write a PNG file or "
+":meth:`~AztecEncoder.get_imagedata` to receive the raw PNG bytes."
+msgstr ""
+"Verwenden Sie für die Rasterausgabe :meth:`~AztecEncoder.save`, um eine PNG-"
+"Datei zu schreiben, oder :meth:`~AztecEncoder.get_imagedata`, um die rohen "
+"PNG-Bytes zu erhalten."
+
+#: ../../aztec.rst:103
+msgid "EPS output"
+msgstr "EPS-Ausgabe"
+
+#: ../../aztec.rst:105
+msgid ""
+"For embedding in LaTeX (``\\includegraphics``) or other vector print "
+"workflows, use :meth:`~AztecEncoder.save_eps` (or "
+":meth:`~AztecEncoder.get_eps` to receive the EPS as a string)."
+msgstr ""
+"Verwenden Sie zum Einbetten in LaTeX (``\\includegraphics``) oder andere "
+"Vektor-Druck-Arbeitsabläufe :meth:`~AztecEncoder.save_eps` (oder "
+":meth:`~AztecEncoder.get_eps`, um das EPS als Zeichenkette zu erhalten)."
+
+#: ../../aztec.rst:113
+msgid ""
+"The ``cellsize`` argument is the side length of one module in PostScript "
+"points (1 point = 1/72 inch)."
+msgstr ""
+"Das Argument ``cellsize`` ist die Kantenlänge eines Moduls in PostScript-"
+"Punkten (1 Punkt = 1/72 Zoll)."
+
+#: ../../aztec.rst:117
+msgid "Terminal output"
+msgstr "Terminal-Ausgabe"
+
+#: ../../aztec.rst:119
+msgid ""
+"For quick on-screen display, :meth:`~AztecEncoder.get_terminal_art` returns "
+"a scannable rendering using Unicode half-block characters. Each character "
+"represents two matrix rows and one column, so cells appear roughly square in"
+" a typical fixed-width terminal font."
+msgstr ""
+"Für schnelle Anzeige auf dem Bildschirm liefert "
+":meth:`~AztecEncoder.get_terminal_art` eine vom Scanner lesbare Darstellung "
+"mit Unicode-Halbblockzeichen. Jedes Zeichen steht für zwei Matrixzeilen und "
+"eine Spalte, sodass die Zellen in einer typischen Terminalschrift mit fester"
+" Breite ungefähr quadratisch erscheinen."
+
+#: ../../aztec.rst:132
+msgid ""
+"By default the output is wrapped in ANSI escape codes that force a white "
+"background and black foreground, so the symbol scans regardless of the "
+"terminal's colour scheme. Pass ``ansi_bg=False`` for plain output (correct "
+"only on a light-themed terminal)."
+msgstr ""
+"Standardmäßig wird die Ausgabe von ANSI-Escape-Codes umschlossen, die einen "
+"weißen Hintergrund und schwarzen Vordergrund erzwingen, sodass das Symbol "
+"unabhängig vom Farbschema des Terminals eingelesen werden kann. Übergeben "
+"Sie ``ansi_bg=False`` für eine einfache Ausgabe (nur auf einem hell "
+"gestalteten Terminal korrekt)."
+
+#: ../../aztec.rst:138
+msgid "DXF (CAD) output"
+msgstr "DXF-Ausgabe (CAD)"
+
+#: ../../aztec.rst:140
+msgid ""
+"For direct part marking applications, :meth:`~AztecEncoder.get_dxf` returns "
+"a DXF representation of the symbol that CAD and CAM tools can read directly."
+" The ``cellsize`` is in your chosen ``units`` (default ``\"mm\"``) rather "
+"than pixels."
+msgstr ""
+"Für Anwendungen zur direkten Teilekennzeichnung (*direct part marking*) "
+"liefert :meth:`~AztecEncoder.get_dxf` eine DXF-Darstellung des Symbols, die "
+"CAD- und CAM-Werkzeuge direkt lesen können. Die ``cellsize`` ist in Ihrer "
+"gewählten Einheit ``units`` (Vorgabe ``\"mm\"``) statt in Pixeln angegeben."
+
+#: ../../aztec.rst:151
+msgid ""
+"The default ``inverse=True`` emits geometry for the light modules, including"
+" the quiet zone -- so the bounding box frames the symbol. Pass "
+"``inverse=False`` to emit only the dark modules instead, matching the "
+"symbol's normal appearance; the bounding box then hugs the dark cells and "
+"the quiet zone has to be reintroduced downstream."
+msgstr ""
+"Die Vorgabe ``inverse=True`` gibt Geometrie für die hellen Module aus, "
+"einschließlich der Ruhezone -- sodass der Begrenzungsrahmen (*bounding box*)"
+" das Symbol einrahmt. Übergeben Sie ``inverse=False``, um stattdessen nur "
+"die dunklen Module auszugeben, was dem normalen Erscheinungsbild des Symbols"
+" entspricht; der Begrenzungsrahmen schmiegt sich dann an die dunklen Zellen "
+"an und die Ruhezone muss in der nachgelagerten Verarbeitung wieder "
+"hinzugefügt werden."
+
+#: ../../aztec.rst:158
+msgid "Symbol kind and size"
+msgstr "Symboltyp und -größe"
+
+#: ../../aztec.rst:160
+msgid "Aztec Code comes in two formats:"
+msgstr "Aztec-Code gibt es in zwei Formaten:"
+
+#: ../../aztec.rst:162
+msgid ""
+"**Compact** symbols are 15x15 to 27x27 modules (1-4 data layers) and carry "
+"up to 76 codewords. Use them for short payloads where space is tight."
+msgstr ""
+"**Kompakt**-Symbole sind 15x15 bis 27x27 Module groß (1-4 Datenschichten) "
+"und tragen bis zu 76 Codewörter. Verwenden Sie sie für kurze Nutzdaten, wenn"
+" der Platz knapp ist."
+
+#: ../../aztec.rst:165
+msgid ""
+"**Full-range** symbols are 19x19 to 151x151 modules (1-32 data layers) and "
+"carry up to 1664 codewords. A reference grid runs through the larger symbols"
+" to keep scanners aligned across the whole symbol."
+msgstr ""
+"**Full-Range**-Symbole sind 19x19 bis 151x151 Module groß (1-32 "
+"Datenschichten) und tragen bis zu 1664 Codewörter. Ein Referenzraster "
+"durchzieht die größeren Symbole, um Scanner über das gesamte Symbol "
+"ausgerichtet zu halten."
+
+#: ../../aztec.rst:169
+msgid ""
+"With the default ``symbol_kind=\"auto\"`` the encoder picks the smallest "
+"symbol that fits the payload at the requested error-correction percentage. "
+"Compact is preferred over full-range at the same module count."
+msgstr ""
+"Mit der Vorgabe ``symbol_kind=\"auto\"`` wählt der Encoder das kleinste "
+"Symbol, das die Nutzdaten beim angeforderten Fehlerkorrektur-Prozentsatz "
+"aufnimmt. Bei gleicher Modulanzahl wird Kompakt gegenüber Full-Range "
+"bevorzugt."
+
+#: ../../aztec.rst:184
+msgid ""
+"Pinning ``layers`` requires an explicit ``symbol_kind``; the encoder raises "
+":class:`~pystrich.exceptions.PyStrichInvalidOption` otherwise. If the "
+"payload does not fit at the requested size, it raises "
+":class:`~pystrich.exceptions.PyStrichInvalidInput`."
+msgstr ""
+"Das Festlegen von ``layers`` erfordert ein explizites ``symbol_kind``; "
+"andernfalls löst der Encoder "
+":class:`~pystrich.exceptions.PyStrichInvalidOption` aus. Wenn die Nutzdaten "
+"in der angeforderten Größe nicht passen, löst er "
+":class:`~pystrich.exceptions.PyStrichInvalidInput` aus."
+
+#: ../../aztec.rst:190
+msgid "Error correction"
+msgstr "Fehlerkorrektur"
+
+#: ../../aztec.rst:192
+msgid ""
+"Aztec Code embeds redundant data so that a partly-damaged symbol can still "
+"be read. Unlike QR Code's discrete levels, the redundancy is set as an "
+"integer percentage 5-95 via the ``ecc`` argument; the encoder adds the "
+"requested percentage of the symbol capacity plus 3 codewords:"
+msgstr ""
+"Aztec-Code bettet redundante Daten ein, sodass ein teilweise beschädigtes "
+"Symbol noch gelesen werden kann. Anders als die diskreten Stufen des QR-"
+"Codes wird die Redundanz als ganzzahliger Prozentsatz von 5-95 über das "
+"Argument ``ecc`` festgelegt; der Encoder fügt den angeforderten Prozentsatz "
+"der Symbolkapazität plus 3 Codewörter hinzu:"
+
+#: ../../aztec.rst:205
+msgid ""
+"Higher percentages produce a denser symbol for the same payload (or, "
+"equivalently, require a larger symbol to fit the same payload). The default "
+"of 23% is the spec's recommended minimum for general use; pick higher values"
+" for symbols likely to be partly obscured or printed on surfaces likely to "
+"be scratched, smudged or torn."
+msgstr ""
+"Höhere Prozentsätze erzeugen ein dichteres Symbol für dieselben Nutzdaten "
+"(oder erfordern entsprechend ein größeres Symbol, um dieselben Nutzdaten "
+"aufzunehmen). Die Vorgabe von 23 % ist der in der Spezifikation empfohlene "
+"Mindestwert für den allgemeinen Gebrauch; wählen Sie höhere Werte für "
+"Symbole, die wahrscheinlich teilweise verdeckt oder auf Oberflächen gedruckt"
+" werden, die zerkratzt, verschmiert oder eingerissen werden könnten."
+
+#: ../../aztec.rst:212
+msgid "Non-ASCII text"
+msgstr "Nicht-ASCII-Text"
+
+#: ../../aztec.rst:214
+msgid ""
+":class:`AztecEncoder` accepts any Unicode string directly and picks the "
+"narrowest character set that fits. Wrap the input in :class:`AztecData` only"
+" when you want to constrain that choice -- for example, to enforce "
+"``\"ascii\"`` so a stray non-ASCII character raises instead of silently "
+"growing the symbol:"
+msgstr ""
+":class:`AztecEncoder` akzeptiert jede Unicode-Zeichenkette direkt und wählt "
+"den schmalsten passenden Zeichensatz. Kapseln Sie die Eingabe nur dann in "
+":class:`AztecData`, wenn Sie diese Wahl einschränken möchten -- zum "
+"Beispiel, um ``\"ascii\"`` zu erzwingen, sodass ein versehentliches Nicht-"
+"ASCII-Zeichen einen Fehler auslöst, statt das Symbol stillschweigend zu "
+"vergrößern:"
+
+#: ../../aztec.rst:221
+msgid "Encoding"
+msgstr "Codierung"
+
+#: ../../aztec.rst:221
+msgid "Behaviour"
+msgstr "Verhalten"
+
+#: ../../aztec.rst:223
+msgid "``\"ascii\"``"
+msgstr "``\"ascii\"``"
+
+#: ../../aztec.rst:223
+msgid ""
+"Raises :class:`~pystrich.exceptions.PyStrichInvalidInput` on any byte > 127."
+msgstr ""
+"Löst :class:`~pystrich.exceptions.PyStrichInvalidInput` bei jedem Byte > 127"
+" aus."
+
+#: ../../aztec.rst:225
+msgid "``\"iso-8859-1\"``"
+msgstr "``\"iso-8859-1\"``"
+
+#: ../../aztec.rst:225
+msgid ""
+"Latin-1. Declares ECI 3 at the start of the symbol so decoders do not fall "
+"back to ASCII heuristics on high bytes."
+msgstr ""
+"Latin-1. Deklariert am Anfang des Symbols ECI 3, damit Decoder bei hohen "
+"Bytes nicht auf ASCII-Heuristiken zurückfallen."
+
+#: ../../aztec.rst:227
+msgid "``\"utf-8\"``"
+msgstr "``\"utf-8\"``"
+
+#: ../../aztec.rst:227
+msgid ""
+"Declares ECI 26 and byte-encodes the input. Conformant decoders pick up the "
+"encoding automatically."
+msgstr ""
+"Deklariert ECI 26 und codiert die Eingabe byteweise. Konforme Decoder "
+"erkennen die Codierung automatisch."
+
+#: ../../aztec.rst:233
+msgid ""
+"The auto-selected encoding is always the narrowest one that fits, so passing"
+" a plain ``str`` already gives you the smallest symbol. Picking an encoding "
+"by hand is mostly useful for input validation -- e.g. reject anything "
+"outside ASCII at the boundary."
+msgstr ""
+"Die automatisch gewählte Codierung ist immer die schmalste passende, sodass "
+"die Übergabe eines einfachen ``str`` bereits das kleinste Symbol ergibt. "
+"Eine Codierung von Hand zu wählen ist vor allem für die Eingabevalidierung "
+"nützlich -- z. B. um an der Grenze alles außerhalb von ASCII abzulehnen."
+
+#: ../../aztec.rst:243
+msgid "Aztec Code encoding \"Ich dachte, Sie wären kräftiger\" as Latin-1."
+msgstr "Aztec-Code, der \"Ich dachte, Sie wären kräftiger\" als Latin-1 codiert."
+
+#: ../../aztec.rst:251
+msgid "Aztec Code encoding \"€5 親切にしろ 🐻‍❄️\" as UTF-8 (ECI 26)."
+msgstr "Aztec-Code, der \"€5 親切にしろ 🐻‍❄️\" als UTF-8 (ECI 26) codiert."
+
+#: ../../aztec.rst:254
+msgid ""
+"If you pin an encoding that does not fit the input, the raised error "
+"suggests the encoding that *would* have worked:"
+msgstr ""
+"Wenn Sie eine Codierung festlegen, die nicht zur Eingabe passt, schlägt der "
+"ausgelöste Fehler die Codierung vor, die funktioniert *hätte*:"
+
+#: ../../aztec.rst:266
+msgid "Aztec Runes"
+msgstr "Aztec Runes"
+
+#: ../../aztec.rst:268
+msgid ""
+"Aztec Runes -- tiny single-byte Aztec-like symbols -- are not supported. If "
+"you need them, you can build them on top of the geometry primitives in "
+":mod:`pystrich.aztec.placement`. Please file an issue on GitHub describing "
+"what you need."
+msgstr ""
+"Aztec Runes -- winzige Ein-Byte-Symbole im Aztec-Stil -- werden nicht "
+"unterstützt. Falls Sie sie benötigen, können Sie sie auf den Geometrie-"
+"Primitiven in :mod:`pystrich.aztec.placement` aufbauen. Bitte eröffnen Sie "
+"ein Issue auf GitHub, das beschreibt, was Sie brauchen."
+
+#: ../../aztec.rst:274
+msgid "Anatomy"
+msgstr "Aufbau"
+
+#: ../../aztec.rst:276
+msgid ""
+"Aztec symbols combine a few fixed structural elements with a variable data "
+"area. The diagram below labels a full-range 5-layer symbol (37x37 modules); "
+"compact symbols use the same parts in a smaller core and skip the reference "
+"grid."
+msgstr ""
+"Aztec-Symbole kombinieren einige feste Strukturelemente mit einem variablen "
+"Datenbereich. Das Diagramm unten beschriftet ein Full-Range-Symbol mit 5 "
+"Schichten (37x37 Module); kompakte Symbole verwenden dieselben Teile in "
+"einem kleineren Kern und lassen das Referenzraster weg."
+
+#: ../../aztec.rst:281
+msgid ""
+"Annotated Aztec Code showing the bullseye finder, orientation marks, mode "
+"message, reference grid, data layers and quiet zone."
+msgstr ""
+"Beschrifteter Aztec-Code, der das Bullseye-Suchmuster, die "
+"Orientierungsmarken, die Modusinformation, das Referenzraster, die "
+"Datenschichten und die Ruhezone zeigt."
+
+#: ../../aztec.rst:284
+msgid ""
+"**Bullseye finder** -- concentric central squares (9x9 in compact symbols, "
+"13x13 in full-range). The Aztec's signature pattern; scanners lock onto it "
+"from any rotation."
+msgstr ""
+"**Bullseye-Suchmuster** (*bullseye finder*) -- konzentrische zentrale "
+"Quadrate (9x9 in kompakten Symbolen, 13x13 in Full-Range). Das "
+"charakteristische Muster des Aztec; Scanner rasten in jeder Drehlage darauf "
+"ein."
+
+#: ../../aztec.rst:287
+msgid ""
+"**Orientation marks** -- L-shaped three-cell patterns at each corner of the "
+"core; the dark-cell count decreases clockwise (3, 2, 1, 0), encoding the "
+"symbol's rotation."
+msgstr ""
+"**Orientierungsmarken** (*orientation marks*) -- L-förmige Drei-Zellen-"
+"Muster an jeder Ecke des Kerns; die Anzahl der dunklen Zellen nimmt im "
+"Uhrzeigersinn ab (3, 2, 1, 0) und codiert die Drehung des Symbols."
+
+#: ../../aztec.rst:290
+msgid ""
+"**Mode message** -- the outermost ring of the core (one cell wide), encoding"
+" the symbol's layer count and :term:`codeword` count so the decoder knows "
+"how big the data area is."
+msgstr ""
+"**Modusinformation** (*mode message*) -- der äußerste Ring des Kerns (eine "
+"Zelle breit), der die Anzahl der Schichten und :term:`Codewörter <codeword>`"
+" des Symbols codiert, sodass der Decoder weiß, wie groß der Datenbereich "
+"ist."
+
+#: ../../aztec.rst:293
+msgid ""
+"**Reference grid** -- sparse strips of alternating dark and light cells that"
+" run across full-range symbols every 16 modules to keep scanners aligned. "
+"Compact symbols do not need them."
+msgstr ""
+"**Referenzraster** (*reference grid*) -- vereinzelte Streifen aus "
+"abwechselnd dunklen und hellen Zellen, die Full-Range-Symbole alle 16 Module"
+" durchziehen, um Scanner ausgerichtet zu halten. Kompakte Symbole benötigen "
+"es nicht."
+
+#: ../../aztec.rst:296
+msgid ""
+"**Data layers** -- concentric rings of modules carrying the payload plus "
+":term:`Reed-Solomon` error correction. The number of layers determines the "
+"symbol size."
+msgstr ""
+"**Datenschichten** (*data layers*) -- konzentrische Modulringe, die die "
+"Nutzdaten plus :term:`Reed-Solomon`-Fehlerkorrektur tragen. Die Anzahl der "
+"Schichten bestimmt die Symbolgröße."
+
+#: ../../aztec.rst:299
+msgid ""
+"**Quiet zone** -- white margin around the symbol; not required by the spec."
+msgstr ""
+"**Ruhezone** (*quiet zone*) -- weißer Rand um das Symbol; von der "
+"Spezifikation nicht verlangt."
+
+#: ../../aztec.rst:303
+msgid "API"
+msgstr "API"
+
+#: of pystrich.aztec.AztecEncoder:1
+msgid "Encode text as an Aztec Code 2D barcode."
+msgstr "Codiert Text als Aztec-Code-2D-Barcode."
+
+#: of pystrich.aztec.AztecEncoder:3
+msgid ""
+"A plain ``str`` is encoded with the narrowest character set that fits: "
+"ASCII, Latin-1 (ECI 3) or UTF-8 (ECI 26). Pass an :class:`AztecData` to pin "
+"the encoding explicitly."
+msgstr ""
+"Ein einfacher ``str`` wird mit dem schmalsten passenden Zeichensatz codiert:"
+" ASCII, Latin-1 (ECI 3) oder UTF-8 (ECI 26). Übergeben Sie ein "
+":class:`AztecData`, um die Codierung explizit festzulegen."
+
+#: of pystrich.aztec.AztecEncoder:7
+msgid "Typical use::"
+msgstr "Typische Verwendung::"
+
+#: ../../aztec.rst
+msgid "Variables"
+msgstr "Variablen"
+
+#: of pystrich.aztec.AztecEncoder:12
+msgid "2D list describing the symbol prior to rendering."
+msgstr "2D-Liste, die das Symbol vor dem Rendern beschreibt."
+
+#: of pystrich.aztec.AztecEncoder:13
+msgid "Width in modules of the white border applied at render time."
+msgstr "Breite des beim Rendern angewendeten weißen Rands in Modulen."
+
+#: of pystrich.aztec.AztecEncoder:14
+msgid "Pixel width of the most recently rendered image."
+msgstr "Pixelbreite des zuletzt gerenderten Bildes."
+
+#: of pystrich.aztec.AztecEncoder:15
+msgid "Pixel height of the most recently rendered image."
+msgstr "Pixelhöhe des zuletzt gerenderten Bildes."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_ascii:1
+msgid "Return an ASCII-art rendering of the symbol."
+msgstr "Gibt eine ASCII-Art-Darstellung des Symbols zurück."
+
+#: ../../aztec.rst
+msgid "Return type"
+msgstr "Rückgabetyp"
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:1
+msgid "Return a DXF (CAD) representation of the symbol."
+msgstr "Gibt eine DXF-Darstellung (CAD) des Symbols zurück."
+
+#: ../../aztec.rst
+msgid "Parameters"
+msgstr "Parameter"
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:3
+msgid "Side length of one module in ``units``."
+msgstr "Kantenlänge eines Moduls in ``units``."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:4
+msgid ""
+"If ``True`` (the default), light modules are drawn as filled cells. If "
+"``False``, dark modules are drawn, matching the normal appearance of the "
+"symbol."
+msgstr ""
+"Wenn ``True`` (die Vorgabe), werden helle Module als gefüllte Zellen "
+"gezeichnet. Wenn ``False``, werden dunkle Module gezeichnet, was dem "
+"normalen Erscheinungsbild des Symbols entspricht."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:7
+msgid ""
+"One of ``\"in\"``, ``\"ft\"``, ``\"mi\"``, ``\"mm\"``, ``\"cm\"`` or "
+"``\"m\"``, or ``None`` for Unspecified (``$INSUNITS=0``)."
+msgstr ""
+"Eines von ``\"in\"``, ``\"ft\"``, ``\"mi\"``, ``\"mm\"``, ``\"cm\"`` oder "
+"``\"m\"`` oder ``None`` für nicht angegeben (``$INSUNITS=0``)."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:9
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_eps:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_marks:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:5
+msgid "How matched cells are grouped and drawn."
+msgstr "Wie gesetzte Zellen gruppiert und gezeichnet werden."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:1
+msgid "Render the symbol and return EPS markup."
+msgstr "Rendert das Symbol und gibt EPS-Markup zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:4
+msgid "Side length in PostScript points of one module."
+msgstr "Kantenlänge eines Moduls in PostScript-Punkten."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_marks:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:4
+msgid "If ``True``, mark the light cells instead of the dark ones."
+msgstr "Wenn ``True``, die hellen statt der dunklen Zellen markieren."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:7
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:7
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:6
+msgid ""
+"Dark-module colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. "
+"Defaults to black."
+msgstr ""
+"Farbe der dunklen Module als 3-, 6- oder 8-stelliger Hex-String oder "
+"``RGBA``. Standard ist Schwarz."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:8
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:9
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``, opaque. "
+"Defaults to white."
+msgstr ""
+"Hintergrundfarbe als 3-, 6- oder 8-stelliger Hex-String oder ``RGBA``, "
+"deckend. Standard ist Weiß."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:11
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:13
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:12
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:10
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:14
+msgid "Added ``dark_hex`` and ``light_hex``."
+msgstr "``dark_hex`` und ``light_hex`` hinzugefügt."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:1
+msgid "Render the symbol and return PNG bytes."
+msgstr "Rendert das Symbol und gibt PNG-Bytes zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:4
+msgid "Side length in pixels of one module."
+msgstr "Kantenlänge eines Moduls in Pixeln."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:8
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:7
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:9
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:8
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. Defaults"
+" to white."
+msgstr ""
+"Hintergrundfarbe als 3-, 6- oder 8-stelliger Hex-String oder ``RGBA``. "
+"Standard ist Weiß."
+
+#: ../../aztec.rst
+msgid "Returns"
+msgstr "Rückgabe"
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:8
+msgid "PNG-encoded image data."
+msgstr "PNG-codierte Bilddaten."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:1
+msgid "Render the symbol and return a Pillow image."
+msgstr "Rendert das Symbol und gibt ein Pillow-Bild zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:8
+msgid "The rendered symbol."
+msgstr "Das gerenderte Symbol."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg:1
+msgid "Render the symbol and return SVG markup."
+msgstr "Rendert das Symbol und gibt SVG-Markup zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:3
+msgid "Side length in user units of one module."
+msgstr "Kantenlänge eines Moduls in Benutzereinheiten."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:1
+msgid "Render the symbol using Unicode half-block characters for terminals."
+msgstr "Rendert das Symbol mit Unicode-Halbblockzeichen für Terminals."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:3
+msgid ""
+"Each character represents two matrix rows and one column, producing "
+"approximately square cells in a typical fixed-width font and yielding a "
+"result that is scannable on screen."
+msgstr ""
+"Jedes Zeichen steht für zwei Matrixzeilen und eine Spalte, erzeugt "
+"näherungsweise quadratische Zellen in einer typischen Schrift mit fester "
+"Breite und liefert ein Ergebnis, das auf dem Bildschirm vom Scanner lesbar "
+"ist."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:7
+msgid ""
+"If ``True`` (the default), wrap each line in ANSI escape codes that force a "
+"white background and black foreground, making the symbol scannable "
+"regardless of the terminal's colour scheme. Set to ``False`` for plain "
+"output (correct only on a light-themed terminal)."
+msgstr ""
+"Wenn ``True`` (die Vorgabe), jede Zeile in ANSI-Escape-Codes einschließen, "
+"die einen weißen Hintergrund und schwarzen Vordergrund erzwingen, sodass das"
+" Symbol unabhängig vom Farbschema des Terminals vom Scanner lesbar ist. "
+"Setzen Sie ihn auf ``False`` für eine einfache Ausgabe (nur auf einem hell "
+"gestalteten Terminal korrekt)."
+
+#: of pystrich.aztec.AztecEncoder.init_renderer:1
+msgid "Construct an :class:`AztecRenderer` for the encoded matrix."
+msgstr "Konstruiert einen :class:`AztecRenderer` für die codierte Matrix."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:1
+msgid "Render the symbol and return a PNG ``data:`` URL string."
+msgstr "Rendert das Symbol und gibt einen PNG-``data:``-URL-String zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save:1
+msgid "Save the symbol as a PNG. Pass a ``.png`` filename."
+msgstr ""
+"Speichert das Symbol als PNG. Übergeben Sie einen ``.png``-Dateinamen."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save:3
+msgid "PNG output path."
+msgstr "PNG-Ausgabepfad."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_eps:1
+msgid "Save the symbol as an EPS file. Pass an ``.eps`` filename."
+msgstr ""
+"Speichert das Symbol als EPS-Datei. Übergeben Sie einen ``.eps``-Dateinamen."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_eps:3
+msgid "EPS output path."
+msgstr "EPS-Ausgabepfad."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_svg:1
+msgid "Save the symbol as an SVG file. Pass a ``.svg`` filename."
+msgstr ""
+"Speichert das Symbol als SVG-Datei. Übergeben Sie einen ``.svg``-Dateinamen."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_svg:3
+msgid "SVG output path."
+msgstr "SVG-Ausgabepfad."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:1
+msgid "Render the symbol and return an SVG ``data:`` URL string."
+msgstr "Rendert das Symbol und gibt einen SVG-``data:``-URL-String zurück."
+
+#: of pystrich.aztec.data.AztecData:1
+msgid "Encoder input with an explicit character-set choice."
+msgstr "Encoder-Eingabe mit expliziter Zeichensatz-Wahl."
+
+#: of pystrich.aztec.data.AztecData:3
+msgid ""
+":class:`AztecEncoder` accepts a plain ``str`` and selects the encoding "
+"automatically. Use :class:`AztecData` only to pin the encoding -- for "
+"example, force ``\"ascii\"`` to reject non-ASCII input."
+msgstr ""
+":class:`AztecEncoder` akzeptiert einen einfachen ``str`` und wählt die "
+"Codierung automatisch. Verwenden Sie :class:`AztecData` nur, um die "
+"Codierung festzulegen -- erzwingen Sie zum Beispiel ``\"ascii\"``, um Nicht-"
+"ASCII-Eingaben abzulehnen."
+
+#: of pystrich.aztec.data.AztecData:7
+msgid ""
+"Pass either ``encoding=`` (one of ``\"ascii\"``, ``\"iso-8859-1\"``, "
+"``\"utf-8\"``) or ``auto_encoding=True``. With ``auto_encoding=True`` the "
+"constructor picks the narrowest fitting encoding; any ``encoding=`` argument"
+" is then ignored."
+msgstr ""
+"Übergeben Sie entweder ``encoding=`` (eines von ``\"ascii\"``, "
+"``\"iso-8859-1\"``, ``\"utf-8\"``) oder ``auto_encoding=True``. Mit "
+"``auto_encoding=True`` wählt der Konstruktor die schmalste passende "
+"Codierung; ein etwaiges ``encoding=``-Argument wird dann ignoriert."
+
+#: of pystrich.charset.EncodableData.as_plain_text:1
+msgid "Return the concatenated text and the codec to encode it with."
+msgstr "Gibt den verketteten Text und den Codec zum Codieren zurück."
+
+#: of pystrich.charset.EncodableData.as_plain_text:3
+msgid ""
+"Raises :class:`_HasMarkers` if any segment is a raw marker rather than a "
+"string. For subclasses without markers (``MarkerT == Never``) the check is a"
+" no-op."
+msgstr ""
+"Löst :class:`_HasMarkers` aus, wenn ein Segment ein Roh-Marker statt einer "
+"Zeichenkette ist. Für Unterklassen ohne Marker (``MarkerT == Never``) ist "
+"die Prüfung ein No-op."

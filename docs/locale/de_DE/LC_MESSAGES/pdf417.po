@@ -1,0 +1,834 @@
+# German (de-DE) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../../pdf417.rst:-1
+msgid ""
+"Generate PDF417 stacked 2D barcodes in Python with pyStrich. High-capacity "
+"codes for IDs, boarding passes and shipping labels; PNG, SVG and EPS."
+msgstr ""
+"Gestapelte PDF417-2D-Barcodes mit pyStrich in Python erzeugen. Codes hoher "
+"Kapazität für Ausweise, Bordkarten und Versandetiketten; PNG, SVG und EPS."
+
+#: ../../pdf417.rst:8
+msgid "PDF417"
+msgstr "PDF417"
+
+#: ../../pdf417.rst:10
+msgid ""
+"PDF417 is a stacked 2D symbology used on driver's licences, boarding passes,"
+" shipping labels and other documents that need a high-capacity barcode (up "
+"to 925 data codewords)."
+msgstr ""
+"PDF417 ist eine gestapelte 2D-Symbologie, die auf Führerscheinen, "
+"Bordkarten, Versandetiketten und anderen Dokumenten verwendet wird, die "
+"einen Barcode hoher Kapazität benötigen (bis zu 925 Daten-Codewörter)."
+
+#: ../../pdf417.rst:14
+msgid "PDF417 support was added in this release."
+msgstr "Die Unterstützung für PDF417 wurde in dieser Version hinzugefügt."
+
+#: ../../pdf417.rst:19
+msgid ""
+"`PDF417 on Wikipedia <https://en.wikipedia.org/wiki/PDF417>`_ for background"
+" on the symbology itself."
+msgstr ""
+"`PDF417 auf Wikipedia <https://de.wikipedia.org/wiki/PDF417>`_ für "
+"Hintergründe zur Symbologie selbst."
+
+#: ../../pdf417.rst:22
+msgid ""
+"PDF417 is defined in `ISO/IEC 15438 "
+"<https://www.iso.org/standard/65502.html>`_."
+msgstr ""
+"PDF417 ist in `ISO/IEC 15438 <https://www.dinmedia.de/de/norm/iso-"
+"iec-15438/242624078>`_ definiert (Informationstechnik -- Verfahren der "
+"automatischen Identifikation und Datenerfassung -- Spezifikation der "
+"Strichcodesymbologie PDF417)."
+
+#: ../../pdf417.rst:26
+msgid "Example"
+msgstr "Beispiel"
+
+#: ../../pdf417.rst:35
+msgid "PDF417 encoding \"WDBCA45D2HA327260\"."
+msgstr "PDF417, das \"WDBCA45D2HA327260\" codiert."
+
+#: ../../pdf417.rst:39
+msgid "Sizing and quiet zone"
+msgstr "Größe und Ruhezone"
+
+#: ../../pdf417.rst:41
+msgid ""
+"The ``cellsize`` argument to :meth:`~PDF417Encoder.save` and "
+":meth:`~PDF417Encoder.get_imagedata` sets the pixel side length of one "
+"module (default ``5``)."
+msgstr ""
+"Das Argument ``cellsize`` von :meth:`~PDF417Encoder.save` und "
+":meth:`~PDF417Encoder.get_imagedata` legt die Kantenlänge eines Moduls in "
+"Pixeln fest (Vorgabe ``5``)."
+
+#: ../../pdf417.rst:45
+msgid ""
+"The ``quiet_zone`` argument to :class:`PDF417Encoder` sets the width (in "
+"modules) of the white border applied at render time. The PDF417 "
+"specification requires at least two modules on every side; pyStrich defaults"
+" to that minimum."
+msgstr ""
+"Das Argument ``quiet_zone`` von :class:`PDF417Encoder` legt die Breite (in "
+"Modulen) des beim Rendern angewendeten weißen Rands fest. Die "
+"PDF417-Spezifikation verlangt mindestens zwei Module auf jeder Seite; "
+"pyStrich verwendet standardmäßig dieses Minimum."
+
+#: ../../pdf417.rst:50
+msgid ""
+"PDF417 modules are not square -- the spec recommends a row height of at "
+"least three times the module width (``Y >= 3X``). The ``row_height`` "
+"argument expresses that ratio; the default ``3`` matches the spec "
+"recommendation. Decreasing it produces a denser symbol but reduces scanner "
+"robustness."
+msgstr ""
+"PDF417-Module sind nicht quadratisch -- die Spezifikation empfiehlt eine "
+"Zeilenhöhe von mindestens dem Dreifachen der Modulbreite (``Y >= 3X``). Das "
+"Argument ``row_height`` drückt dieses Verhältnis aus; die Vorgabe ``3`` "
+"entspricht der Empfehlung der Spezifikation. Ein Verringern erzeugt ein "
+"dichteres Symbol, verringert aber die Scanner-Robustheit."
+
+#: ../../pdf417.rst:58
+msgid ""
+":doc:`printing` for guidance on selecting ``cellsize`` for printed output."
+msgstr ""
+":doc:`printing` für Hinweise zur Wahl von ``cellsize`` bei gedruckter "
+"Ausgabe."
+
+#: ../../pdf417.rst:66
+msgid "PDF417 encoding \"WDBCA45D2HA327260\" rendered with cellsize=10."
+msgstr "PDF417, das \"WDBCA45D2HA327260\" codiert, gerendert mit cellsize=10."
+
+#: ../../pdf417.rst:70
+msgid "Output formats"
+msgstr "Ausgabeformate"
+
+#: ../../pdf417.rst:73
+msgid "SVG output"
+msgstr "SVG-Ausgabe"
+
+#: ../../pdf417.rst:75
+msgid ""
+"For embedding in web pages or any workflow that benefits from resolution-"
+"independent output, use :meth:`~PDF417Encoder.save_svg` (or "
+":meth:`~PDF417Encoder.get_svg` to receive the SVG as a string)."
+msgstr ""
+"Zum Einbetten in Webseiten oder für jeden Arbeitsablauf, der von "
+"auflösungsunabhängiger Ausgabe profitiert, verwenden Sie "
+":meth:`~PDF417Encoder.save_svg` (oder :meth:`~PDF417Encoder.get_svg`, um das"
+" SVG als Zeichenkette zu erhalten)."
+
+#: ../../pdf417.rst:83
+msgid ""
+"The SVG's ``viewBox`` is in module units, while ``width`` and ``height`` "
+"scale by ``cellsize``."
+msgstr ""
+"Die ``viewBox`` des SVG ist in Moduleinheiten angegeben, während ``width`` "
+"und ``height`` mit ``cellsize`` skalieren."
+
+#: ../../pdf417.rst:87
+msgid "PNG output"
+msgstr "PNG-Ausgabe"
+
+#: ../../pdf417.rst:89
+msgid ""
+"For raster output, use :meth:`~PDF417Encoder.save` to write a PNG file or "
+":meth:`~PDF417Encoder.get_imagedata` to receive the raw PNG bytes."
+msgstr ""
+"Verwenden Sie für die Rasterausgabe :meth:`~PDF417Encoder.save`, um eine "
+"PNG-Datei zu schreiben, oder :meth:`~PDF417Encoder.get_imagedata`, um die "
+"rohen PNG-Bytes zu erhalten."
+
+#: ../../pdf417.rst:97
+msgid "EPS output"
+msgstr "EPS-Ausgabe"
+
+#: ../../pdf417.rst:99
+msgid ""
+"For embedding in LaTeX (``\\includegraphics``) or other vector print "
+"workflows, use :meth:`~PDF417Encoder.save_eps` (or "
+":meth:`~PDF417Encoder.get_eps` to receive the EPS as a string)."
+msgstr ""
+"Verwenden Sie zum Einbetten in LaTeX (``\\includegraphics``) oder andere "
+"Vektor-Druck-Arbeitsabläufe :meth:`~PDF417Encoder.save_eps` (oder "
+":meth:`~PDF417Encoder.get_eps`, um das EPS als Zeichenkette zu erhalten)."
+
+#: ../../pdf417.rst:107
+msgid ""
+"The ``cellsize`` argument is the side length of one module in PostScript "
+"points (1 point = 1/72 inch)."
+msgstr ""
+"Das Argument ``cellsize`` ist die Kantenlänge eines Moduls in PostScript-"
+"Punkten (1 Punkt = 1/72 Zoll)."
+
+#: ../../pdf417.rst:111
+msgid "Terminal output"
+msgstr "Terminal-Ausgabe"
+
+#: ../../pdf417.rst:113
+msgid ""
+"For quick on-screen display, :meth:`~PDF417Encoder.get_terminal_art` returns"
+" an on-screen rendering using horizontal half-block characters "
+"(``▌``/``▐``): one codeword row per line, two modules per character. That "
+"keeps codeword-row boundaries aligned with character boundaries and gives an"
+" on-screen aspect ratio close to the spec's ``Y >= 3X``."
+msgstr ""
+"Für schnelle Anzeige auf dem Bildschirm liefert "
+":meth:`~PDF417Encoder.get_terminal_art` eine Bildschirmdarstellung mit "
+"horizontalen Halbblockzeichen (``▌``/``▐``): eine Codewort-Zeile pro Zeile, "
+"zwei Module pro Zeichen. Das hält die Grenzen der Codewort-Zeilen an den "
+"Zeichengrenzen ausgerichtet und ergibt ein Seitenverhältnis auf dem "
+"Bildschirm nahe dem ``Y >= 3X`` der Spezifikation."
+
+#: ../../pdf417.rst:127
+msgid ""
+"By default the output is wrapped in ANSI escape codes that force a white "
+"background and black foreground, so the symbol scans regardless of the "
+"terminal's colour scheme. Pass ``ansi_bg=False`` for plain output (correct "
+"only on a light-themed terminal)."
+msgstr ""
+"Standardmäßig wird die Ausgabe von ANSI-Escape-Codes umschlossen, die einen "
+"weißen Hintergrund und schwarzen Vordergrund erzwingen, sodass das Symbol "
+"unabhängig vom Farbschema des Terminals eingelesen werden kann. Übergeben "
+"Sie ``ansi_bg=False`` für eine einfache Ausgabe (nur auf einem hell "
+"gestalteten Terminal korrekt)."
+
+#: ../../pdf417.rst:133
+msgid "DXF (CAD) output"
+msgstr "DXF-Ausgabe (CAD)"
+
+#: ../../pdf417.rst:135
+msgid ""
+"For direct part marking applications, :meth:`~PDF417Encoder.get_dxf` returns"
+" a DXF representation of the symbol that CAD and CAM tools can read "
+"directly. The ``cellsize`` is in your chosen ``units`` (default ``\"mm\"``) "
+"rather than pixels."
+msgstr ""
+"Für Anwendungen zur direkten Teilekennzeichnung (*direct part marking*) "
+"liefert :meth:`~PDF417Encoder.get_dxf` eine DXF-Darstellung des Symbols, die"
+" CAD- und CAM-Werkzeuge direkt lesen können. Die ``cellsize`` ist in Ihrer "
+"gewählten Einheit ``units`` (Vorgabe ``\"mm\"``) statt in Pixeln angegeben."
+
+#: ../../pdf417.rst:146
+msgid ""
+"The default ``inverse=True`` emits geometry for the light modules, including"
+" the quiet zone -- so the bounding box frames the symbol. Pass "
+"``inverse=False`` to emit only the dark modules instead, matching the "
+"symbol's normal appearance; the bounding box then hugs the dark cells and "
+"the quiet zone has to be reintroduced downstream."
+msgstr ""
+"Die Vorgabe ``inverse=True`` gibt Geometrie für die hellen Module aus, "
+"einschließlich der Ruhezone -- sodass der Begrenzungsrahmen (*bounding box*)"
+" das Symbol einrahmt. Übergeben Sie ``inverse=False``, um stattdessen nur "
+"die dunklen Module auszugeben, was dem normalen Erscheinungsbild des Symbols"
+" entspricht; der Begrenzungsrahmen schmiegt sich dann an die dunklen Zellen "
+"an und die Ruhezone muss in der nachgelagerten Verarbeitung wieder "
+"hinzugefügt werden."
+
+#: ../../pdf417.rst:153
+msgid "Symbol shape"
+msgstr "Symbolform"
+
+#: ../../pdf417.rst:155
+msgid ""
+"PDF417 symbols are rectangular: ``rows`` (3-90) and ``columns`` (1-30, "
+"counting data columns only -- the start/stop patterns and row indicators are"
+" added on top). pyStrich picks both automatically to give a roughly square "
+"aspect at the default ``row_height=3``."
+msgstr ""
+"PDF417-Symbole sind rechteckig: ``rows`` (3-90) und ``columns`` (1-30, wobei"
+" nur Datenspalten gezählt werden -- die Start-/Stoppmuster und "
+"Zeilenindikatoren kommen zusätzlich hinzu). pyStrich wählt beide "
+"automatisch, um bei der Vorgabe ``row_height=3`` ein annähernd quadratisches"
+" Seitenverhältnis zu erreichen."
+
+#: ../../pdf417.rst:160
+msgid ""
+"For applications that need a fixed width -- for example a label of known "
+"size -- pin ``columns`` and let pyStrich choose the row count:"
+msgstr ""
+"Legen Sie für Anwendungen, die eine feste Breite benötigen -- zum Beispiel "
+"ein Etikett bekannter Größe -- ``columns`` fest und lassen Sie pyStrich die "
+"Zeilenanzahl wählen:"
+
+#: ../../pdf417.rst:167
+msgid ""
+"Increasing ``columns`` makes the symbol wider and shorter; decreasing it "
+"narrower and taller. The encoder raises "
+":class:`~pystrich.exceptions.PyStrichInvalidInput` if the data does not fit "
+"at the chosen column count."
+msgstr ""
+"Ein Erhöhen von ``columns`` macht das Symbol breiter und niedriger; ein "
+"Verringern schmaler und höher. Der Encoder löst "
+":class:`~pystrich.exceptions.PyStrichInvalidInput` aus, wenn die Daten bei "
+"der gewählten Spaltenanzahl nicht passen."
+
+#: ../../pdf417.rst:173
+msgid "Error correction level"
+msgstr "Fehlerkorrekturstufe"
+
+#: ../../pdf417.rst:175
+msgid ""
+"PDF417 embeds redundant data so that a partly-damaged symbol can still be "
+"read. The error correction level (ECL) is an integer 0-8; each level doubles"
+" the number of error-correction codewords:"
+msgstr ""
+"PDF417 bettet redundante Daten ein, sodass ein teilweise beschädigtes Symbol"
+" noch gelesen werden kann. Die Fehlerkorrekturstufe (ECL) ist eine Ganzzahl "
+"von 0-8; jede Stufe verdoppelt die Anzahl der Fehlerkorrektur-Codewörter:"
+
+#: ../../pdf417.rst:180
+msgid "ECL"
+msgstr "ECL"
+
+#: ../../pdf417.rst:180
+msgid "EC codewords"
+msgstr "EC-Codewörter"
+
+#: ../../pdf417.rst:180
+msgid "Typical use"
+msgstr "Typische Verwendung"
+
+#: ../../pdf417.rst:182
+msgid "``0``"
+msgstr "``0``"
+
+#: ../../pdf417.rst:182
+msgid "2"
+msgstr "2"
+
+#: ../../pdf417.rst:182
+msgid "Verification only, no recovery."
+msgstr "Nur Verifikation, keine Wiederherstellung."
+
+#: ../../pdf417.rst:183
+msgid "``1``"
+msgstr "``1``"
+
+#: ../../pdf417.rst:183
+msgid "4"
+msgstr "4"
+
+#: ../../pdf417.rst:183
+msgid "Tiny symbols where space is at a premium."
+msgstr "Winzige Symbole, bei denen Platz knapp ist."
+
+#: ../../pdf417.rst:184
+msgid "``2``"
+msgstr "``2``"
+
+#: ../../pdf417.rst:184
+msgid "8"
+msgstr "8"
+
+#: ../../pdf417.rst:184
+msgid "**Default** for up to 40 data codewords."
+msgstr "**Vorgabe** für bis zu 40 Daten-Codewörter."
+
+#: ../../pdf417.rst:185
+msgid "``3``"
+msgstr "``3``"
+
+#: ../../pdf417.rst:185
+msgid "16"
+msgstr "16"
+
+#: ../../pdf417.rst:185
+msgid "Default for 41-160 data codewords."
+msgstr "Vorgabe für 41-160 Daten-Codewörter."
+
+#: ../../pdf417.rst:186
+msgid "``4``"
+msgstr "``4``"
+
+#: ../../pdf417.rst:186
+msgid "32"
+msgstr "32"
+
+#: ../../pdf417.rst:186
+msgid "Default for 161-320 data codewords."
+msgstr "Vorgabe für 161-320 Daten-Codewörter."
+
+#: ../../pdf417.rst:187
+msgid "``5``"
+msgstr "``5``"
+
+#: ../../pdf417.rst:187
+msgid "64"
+msgstr "64"
+
+#: ../../pdf417.rst:187
+msgid "Default for 321-863 data codewords."
+msgstr "Vorgabe für 321-863 Daten-Codewörter."
+
+#: ../../pdf417.rst:188
+msgid "``6``"
+msgstr "``6``"
+
+#: ../../pdf417.rst:188
+msgid "128"
+msgstr "128"
+
+#: ../../pdf417.rst:188
+msgid "Hostile environments (label damage likely)."
+msgstr "Raue Umgebungen (Etikettenschäden wahrscheinlich)."
+
+#: ../../pdf417.rst:189
+msgid "``7``"
+msgstr "``7``"
+
+#: ../../pdf417.rst:189
+msgid "256"
+msgstr "256"
+
+#: ../../pdf417.rst:189
+msgid "As above; large symbols only."
+msgstr "Wie oben; nur große Symbole."
+
+#: ../../pdf417.rst:190
+msgid "``8``"
+msgstr "``8``"
+
+#: ../../pdf417.rst:190
+msgid "512"
+msgstr "512"
+
+#: ../../pdf417.rst:190
+msgid "As above; only fits up to 415 data codewords."
+msgstr "Wie oben; passt nur für bis zu 415 Daten-Codewörter."
+
+#: ../../pdf417.rst:193
+msgid ""
+"The defaults follow the spec's minimum-level recommendation. Pick a higher "
+"level for symbols likely to be partly obscured -- scratched, smudged or torn"
+" -- and the symbol will grow to fit the extra correction."
+msgstr ""
+"Die Vorgaben folgen der Mindeststufen-Empfehlung der Spezifikation. Wählen "
+"Sie eine höhere Stufe für Symbole, die wahrscheinlich teilweise verdeckt "
+"werden -- zerkratzt, verschmiert oder eingerissen --, und das Symbol wächst,"
+" um die zusätzliche Korrektur aufzunehmen."
+
+#: ../../pdf417.rst:203
+msgid "Non-ASCII text"
+msgstr "Nicht-ASCII-Text"
+
+#: ../../pdf417.rst:205
+msgid ""
+":class:`PDF417Encoder` accepts any Unicode string directly and picks the "
+"narrowest character set that fits. Wrap the input in :class:`PDF417Data` "
+"only when you want to constrain that choice -- for example, to enforce "
+"``\"ascii\"`` so a stray non-ASCII character raises instead of silently "
+"growing the symbol:"
+msgstr ""
+":class:`PDF417Encoder` akzeptiert jede Unicode-Zeichenkette direkt und wählt"
+" den schmalsten passenden Zeichensatz. Kapseln Sie die Eingabe nur dann in "
+":class:`PDF417Data`, wenn Sie diese Wahl einschränken möchten -- zum "
+"Beispiel, um ``\"ascii\"`` zu erzwingen, sodass ein versehentliches Nicht-"
+"ASCII-Zeichen einen Fehler auslöst, statt das Symbol stillschweigend zu "
+"vergrößern:"
+
+#: ../../pdf417.rst:212
+msgid "Encoding"
+msgstr "Codierung"
+
+#: ../../pdf417.rst:212
+msgid "Behaviour"
+msgstr "Verhalten"
+
+#: ../../pdf417.rst:214
+msgid "``\"ascii\"``"
+msgstr "``\"ascii\"``"
+
+#: ../../pdf417.rst:214
+msgid ""
+"Raises :class:`~pystrich.exceptions.PyStrichInvalidInput` on any byte > 127."
+msgstr ""
+"Löst :class:`~pystrich.exceptions.PyStrichInvalidInput` bei jedem Byte > 127"
+" aus."
+
+#: ../../pdf417.rst:216
+msgid "``\"iso-8859-1\"``"
+msgstr "``\"iso-8859-1\"``"
+
+#: ../../pdf417.rst:216
+msgid ""
+"Latin-1 -- the PDF417 default character interpretation. No ECI prefix; "
+"conformant decoders pick it up automatically."
+msgstr ""
+"Latin-1 -- die Standard-Zeicheninterpretation von PDF417. Kein ECI-"
+"Bezeichner; konforme Decoder erkennen sie automatisch."
+
+#: ../../pdf417.rst:218
+msgid "``\"utf-8\"``"
+msgstr "``\"utf-8\"``"
+
+#: ../../pdf417.rst:218
+msgid ""
+"Emits codeword 927 + 26 (ECI 000026) once at the start of the symbol and "
+"byte-encodes the input. Conformant decoders pick up the encoding "
+"automatically."
+msgstr ""
+"Gibt einmal am Anfang des Symbols Codewort 927 + 26 (ECI 000026) aus und "
+"codiert die Eingabe byteweise. Konforme Decoder erkennen die Codierung "
+"automatisch."
+
+#: ../../pdf417.rst:225
+msgid ""
+"The auto-selected encoding is always the narrowest one that fits, so passing"
+" a plain ``str`` already gives you the smallest symbol. Picking an encoding "
+"by hand is mostly useful for input validation -- e.g. reject anything "
+"outside ASCII at the boundary."
+msgstr ""
+"Die automatisch gewählte Codierung ist immer die schmalste passende, sodass "
+"die Übergabe eines einfachen ``str`` bereits das kleinste Symbol ergibt. "
+"Eine Codierung von Hand zu wählen ist vor allem für die Eingabevalidierung "
+"nützlich -- z. B. um an der Grenze alles außerhalb von ASCII abzulehnen."
+
+#: ../../pdf417.rst:235
+msgid "PDF417 encoding \"Ich dachte, Sie wären kräftiger\" as Latin-1."
+msgstr "PDF417, das \"Ich dachte, Sie wären kräftiger\" als Latin-1 codiert."
+
+#: ../../pdf417.rst:243
+msgid "PDF417 encoding \"€5 親切にしろ 🐻‍❄️\" as UTF-8 (ECI 26)."
+msgstr "PDF417, das \"€5 親切にしろ 🐻‍❄️\" als UTF-8 (ECI 26) codiert."
+
+#: ../../pdf417.rst:246
+msgid ""
+"If you pin an encoding that does not fit the input, the raised error "
+"suggests the encoding that *would* have worked:"
+msgstr ""
+"Wenn Sie eine Codierung festlegen, die nicht zur Eingabe passt, schlägt der "
+"ausgelöste Fehler die Codierung vor, die funktioniert *hätte*:"
+
+#: ../../pdf417.rst:258
+msgid "API"
+msgstr "API"
+
+#: of pystrich.pdf417.PDF417Encoder:1
+msgid "Encode text as a PDF417 2D barcode."
+msgstr "Codiert Text als PDF417-2D-Barcode."
+
+#: of pystrich.pdf417.PDF417Encoder:3
+msgid ""
+"The matrix shape is determined by the data length, the error correction "
+"level, and an optional explicit column count. When ``ecl`` is omitted, it is"
+" chosen to match the spec's minimum-level recommendation for the given data "
+"length."
+msgstr ""
+"Die Matrixform wird durch die Datenlänge, die Fehlerkorrekturstufe und eine "
+"optionale explizite Spaltenanzahl bestimmt. Wenn ``ecl`` weggelassen wird, "
+"wird sie so gewählt, dass sie der Mindeststufen-Empfehlung der Spezifikation"
+" für die gegebene Datenlänge entspricht."
+
+#: ../../pdf417.rst
+msgid "Variables"
+msgstr "Variablen"
+
+#: of pystrich.pdf417.PDF417Encoder:8
+msgid "0/1 module grid built from the codeword stream."
+msgstr "0/1-Modulraster, aus dem Codewort-Strom aufgebaut."
+
+#: of pystrich.pdf417.PDF417Encoder:9
+msgid "Number of codeword rows in the symbol."
+msgstr "Anzahl der Codewort-Zeilen im Symbol."
+
+#: of pystrich.pdf417.PDF417Encoder:10
+msgid "Number of data columns (excluding row indicators)."
+msgstr "Anzahl der Datenspalten (ohne Zeilenindikatoren)."
+
+#: of pystrich.pdf417.PDF417Encoder:11
+msgid "Error correction level in effect."
+msgstr "Wirksame Fehlerkorrekturstufe."
+
+#: of pystrich.pdf417.PDF417Encoder:12
+msgid "Matrix rows per codeword row (default 3)."
+msgstr "Matrixzeilen pro Codewort-Zeile (Vorgabe 3)."
+
+#: of pystrich.pdf417.PDF417Encoder:13
+msgid "White border applied by the renderer, in modules."
+msgstr "Vom Renderer angewendeter weißer Rand, in Modulen."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_ascii:1
+msgid "Return an ASCII-art rendering of the symbol."
+msgstr "Gibt eine ASCII-Art-Darstellung des Symbols zurück."
+
+#: ../../pdf417.rst
+msgid "Return type"
+msgstr "Rückgabetyp"
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:1
+msgid "Return a DXF (CAD) representation of the symbol."
+msgstr "Gibt eine DXF-Darstellung (CAD) des Symbols zurück."
+
+#: ../../pdf417.rst
+msgid "Parameters"
+msgstr "Parameter"
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:3
+msgid "Side length of one module in ``units``."
+msgstr "Kantenlänge eines Moduls in ``units``."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:4
+msgid ""
+"If ``True`` (the default), light modules are drawn as filled cells. If "
+"``False``, dark modules are drawn, matching the normal appearance of the "
+"symbol."
+msgstr ""
+"Wenn ``True`` (die Vorgabe), werden helle Module als gefüllte Zellen "
+"gezeichnet. Wenn ``False``, werden dunkle Module gezeichnet, was dem "
+"normalen Erscheinungsbild des Symbols entspricht."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:7
+msgid ""
+"One of ``\"in\"``, ``\"ft\"``, ``\"mi\"``, ``\"mm\"``, ``\"cm\"`` or "
+"``\"m\"``, or ``None`` for Unspecified (``$INSUNITS=0``)."
+msgstr ""
+"Eines von ``\"in\"``, ``\"ft\"``, ``\"mi\"``, ``\"mm\"``, ``\"cm\"`` oder "
+"``\"m\"`` oder ``None`` für nicht angegeben (``$INSUNITS=0``)."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:9
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_eps:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_marks:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:5
+msgid "How matched cells are grouped and drawn."
+msgstr "Wie gesetzte Zellen gruppiert und gezeichnet werden."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:1
+msgid "Render the symbol and return EPS markup."
+msgstr "Rendert das Symbol und gibt EPS-Markup zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:4
+msgid "Side length in PostScript points of one module."
+msgstr "Kantenlänge eines Moduls in PostScript-Punkten."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_marks:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:4
+msgid "If ``True``, mark the light cells instead of the dark ones."
+msgstr "Wenn ``True``, die hellen statt der dunklen Zellen markieren."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:5
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:7
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:7
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:6
+msgid ""
+"Dark-module colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. "
+"Defaults to black."
+msgstr ""
+"Farbe der dunklen Module als 3-, 6- oder 8-stelliger Hex-String oder "
+"``RGBA``. Standard ist Schwarz."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:8
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:9
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``, opaque. "
+"Defaults to white."
+msgstr ""
+"Hintergrundfarbe als 3-, 6- oder 8-stelliger Hex-String oder ``RGBA``, "
+"deckend. Standard ist Weiß."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:11
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:13
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:12
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:10
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:14
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:14
+msgid "Added ``dark_hex`` and ``light_hex``."
+msgstr "``dark_hex`` und ``light_hex`` hinzugefügt."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:1
+msgid "Render the symbol and return PNG bytes."
+msgstr "Rendert das Symbol und gibt PNG-Bytes zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:4
+msgid "Side length in pixels of one module."
+msgstr "Kantenlänge eines Moduls in Pixeln."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:8
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:6
+#: pystrich.matrix_encoder.Matrix2DEncoder.save:7
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:9
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:8
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. Defaults"
+" to white."
+msgstr ""
+"Hintergrundfarbe als 3-, 6- oder 8-stelliger Hex-String oder ``RGBA``. "
+"Standard ist Weiß."
+
+#: ../../pdf417.rst
+msgid "Returns"
+msgstr "Rückgabe"
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:8
+msgid "PNG-encoded image data."
+msgstr "PNG-codierte Bilddaten."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:1
+msgid "Render the symbol and return a Pillow image."
+msgstr "Rendert das Symbol und gibt ein Pillow-Bild zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:8
+msgid "The rendered symbol."
+msgstr "Das gerenderte Symbol."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg:1
+msgid "Render the symbol and return SVG markup."
+msgstr "Rendert das Symbol und gibt SVG-Markup zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg:3
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:4
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:3
+msgid "Side length in user units of one module."
+msgstr "Kantenlänge eines Moduls in Benutzereinheiten."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:1
+msgid "Render the symbol using Unicode half-block characters for terminals."
+msgstr "Rendert das Symbol mit Unicode-Halbblockzeichen für Terminals."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:3
+msgid ""
+"Each character represents two matrix rows and one column, producing "
+"approximately square cells in a typical fixed-width font and yielding a "
+"result that is scannable on screen."
+msgstr ""
+"Jedes Zeichen steht für zwei Matrixzeilen und eine Spalte, erzeugt "
+"näherungsweise quadratische Zellen in einer typischen Schrift mit fester "
+"Breite und liefert ein Ergebnis, das auf dem Bildschirm vom Scanner lesbar "
+"ist."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:7
+msgid ""
+"If ``True`` (the default), wrap each line in ANSI escape codes that force a "
+"white background and black foreground, making the symbol scannable "
+"regardless of the terminal's colour scheme. Set to ``False`` for plain "
+"output (correct only on a light-themed terminal)."
+msgstr ""
+"Wenn ``True`` (die Vorgabe), jede Zeile in ANSI-Escape-Codes einschließen, "
+"die einen weißen Hintergrund und schwarzen Vordergrund erzwingen, sodass das"
+" Symbol unabhängig vom Farbschema des Terminals vom Scanner lesbar ist. "
+"Setzen Sie ihn auf ``False`` für eine einfache Ausgabe (nur auf einem hell "
+"gestalteten Terminal korrekt)."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:1
+msgid "Render the symbol and return a PNG ``data:`` URL string."
+msgstr "Rendert das Symbol und gibt einen PNG-``data:``-URL-String zurück."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save:1
+msgid "Save the symbol as a PNG. Pass a ``.png`` filename."
+msgstr ""
+"Speichert das Symbol als PNG. Übergeben Sie einen ``.png``-Dateinamen."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save:3
+msgid "PNG output path."
+msgstr "PNG-Ausgabepfad."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_eps:1
+msgid "Save the symbol as an EPS file. Pass an ``.eps`` filename."
+msgstr ""
+"Speichert das Symbol als EPS-Datei. Übergeben Sie einen ``.eps``-Dateinamen."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_eps:3
+msgid "EPS output path."
+msgstr "EPS-Ausgabepfad."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_svg:1
+msgid "Save the symbol as an SVG file. Pass a ``.svg`` filename."
+msgstr ""
+"Speichert das Symbol als SVG-Datei. Übergeben Sie einen ``.svg``-Dateinamen."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_svg:3
+msgid "SVG output path."
+msgstr "SVG-Ausgabepfad."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:1
+msgid "Render the symbol and return an SVG ``data:`` URL string."
+msgstr "Rendert das Symbol und gibt einen SVG-``data:``-URL-String zurück."
+
+#: of pystrich.pdf417.PDF417Encoder.init_renderer:1
+msgid "Construct a :class:`PDF417Renderer` for the encoded matrix."
+msgstr "Konstruiert einen :class:`PDF417Renderer` für die codierte Matrix."
+
+#: of pystrich.pdf417.PDF417Encoder.init_renderer:3
+msgid ""
+"Wraps the matrix in a quiet zone before handing it back and updates "
+":attr:`width` and :attr:`height` to the renderer's module dimensions."
+msgstr ""
+"Wickelt die Matrix vor der Rückgabe in eine Ruhezone und aktualisiert "
+":attr:`width` und :attr:`height` auf die Modulmaße des Renderers."
+
+#: of pystrich.pdf417.data.PDF417Data:1
+msgid "Encoder input with an explicit character-set choice."
+msgstr "Encoder-Eingabe mit expliziter Zeichensatz-Wahl."
+
+#: of pystrich.pdf417.data.PDF417Data:3
+msgid ""
+":class:`PDF417Encoder` accepts a plain ``str`` and selects the encoding "
+"automatically. Use :class:`PDF417Data` only to pin the encoding -- for "
+"example, force ``\"ascii\"`` to reject non-ASCII input."
+msgstr ""
+":class:`PDF417Encoder` akzeptiert einen einfachen ``str`` und wählt die "
+"Codierung automatisch. Verwenden Sie :class:`PDF417Data` nur, um die "
+"Codierung festzulegen -- erzwingen Sie zum Beispiel ``\"ascii\"``, um Nicht-"
+"ASCII-Eingaben abzulehnen."
+
+#: of pystrich.pdf417.data.PDF417Data:7
+msgid ""
+"Pass either ``encoding=`` (one of ``\"ascii\"``, ``\"iso-8859-1\"``, "
+"``\"utf-8\"``) or ``auto_encoding=True``. With ``auto_encoding=True`` the "
+"constructor picks the narrowest fitting encoding; any ``encoding=`` argument"
+" is then ignored."
+msgstr ""
+"Übergeben Sie entweder ``encoding=`` (eines von ``\"ascii\"``, "
+"``\"iso-8859-1\"``, ``\"utf-8\"``) oder ``auto_encoding=True``. Mit "
+"``auto_encoding=True`` wählt der Konstruktor die schmalste passende "
+"Codierung; ein etwaiges ``encoding=``-Argument wird dann ignoriert."
+
+#: of pystrich.charset.EncodableData.as_plain_text:1
+msgid "Return the concatenated text and the codec to encode it with."
+msgstr "Gibt den verketteten Text und den Codec zum Codieren zurück."
+
+#: of pystrich.charset.EncodableData.as_plain_text:3
+msgid ""
+"Raises :class:`_HasMarkers` if any segment is a raw marker rather than a "
+"string. For subclasses without markers (``MarkerT == Never``) the check is a"
+" no-op."
+msgstr ""
+"Löst :class:`_HasMarkers` aus, wenn ein Segment ein Roh-Marker statt einer "
+"Zeichenkette ist. Für Unterklassen ohne Marker (``MarkerT == Never``) ist "
+"die Prüfung ein No-op."

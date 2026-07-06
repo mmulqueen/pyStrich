@@ -1,0 +1,387 @@
+# German (de-DE) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../../types.rst:4
+msgid "Shared types"
+msgstr "Gemeinsame Typen"
+
+#: of pystrich.types:1
+msgid "Shared typing helpers for pyStrich encoders and renderers."
+msgstr "Gemeinsame Typisierungshilfen für pyStrich-Encoder und -Renderer."
+
+#: of pystrich.types.BarcodeRenderOptions:1
+msgid "Optional render-time tweaks for label-bearing 1D barcodes."
+msgstr ""
+"Optionale Anpassungen zur Renderzeit für 1D-Barcodes mit Beschriftung."
+
+#: of pystrich.types.BarcodeRenderOptions:3
+msgid ""
+"Currently used by :class:`pystrich.code128.Code128Encoder` and "
+":class:`pystrich.code39.Code39Encoder`. All keys are optional; omitted keys "
+"fall back to library defaults."
+msgstr ""
+"Derzeit verwendet von :class:`pystrich.code128.Code128Encoder` und "
+":class:`pystrich.code39.Code39Encoder`. Alle Schlüssel sind optional; "
+"ausgelassene Schlüssel greifen auf die Bibliotheksvorgaben zurück."
+
+#: of pystrich.types.BarcodeRenderOptions.show_label:1
+msgid ""
+"Whether to render the human-readable label underneath the bars. Defaults to "
+"``True``; set to ``False`` to suppress it."
+msgstr ""
+"Ob die Klarschriftzeile unter den Strichen gerendert wird. Vorgabe ``True``;"
+" setzen Sie ihn auf ``False``, um sie zu unterdrücken."
+
+#: of pystrich.types.BarcodeRenderOptions.ttf_font:1
+msgid ""
+"Absolute path to a TrueType font file used for the label in PNG output. "
+"Defaults to a bundled bitmap font if unset. SVG and EPS output always render"
+" the label using the bundled Courier Prime glyph paths and ignore this "
+"option."
+msgstr ""
+"Absoluter Pfad zu einer TrueType-Schriftdatei, die für die Beschriftung in "
+"der PNG-Ausgabe verwendet wird. Ohne Angabe wird eine mitgelieferte Bitmap-"
+"Schrift verwendet. SVG- und EPS-Ausgabe rendern die Beschriftung immer mit "
+"den mitgelieferten Courier-Prime-Glyphenpfaden und ignorieren diese Option."
+
+#: of pystrich.types.BarcodeRenderOptions.ttf_fontsize:1
+msgid ""
+"Font size in points (PNG output only — SVG/EPS use the bundled Courier Prime"
+" glyph paths)."
+msgstr ""
+"Schriftgröße in Punkt (nur PNG-Ausgabe -- SVG/EPS verwenden die "
+"mitgelieferten Courier-Prime-Glyphenpfade)."
+
+#: of pystrich.types.BarcodeRenderOptions.height:1
+msgid ""
+"Total image height in pixels. Defaults to roughly a third of the image width"
+" for Code 128, and to ``120`` for Code 39."
+msgstr ""
+"Gesamte Bildhöhe in Pixeln. Vorgabe ist etwa ein Drittel der Bildbreite für "
+"Code 128 und ``120`` für Code 39."
+
+#: of pystrich.types.BarcodeRenderOptions.label_border:1
+msgid "Pixels of vertical space between the bars and the label."
+msgstr ""
+"Pixel an vertikalem Abstand zwischen den Strichen und der Beschriftung."
+
+#: of pystrich.types.BarcodeRenderOptions.bottom_border:1
+msgid "Pixels of vertical space between the label and the bottom edge."
+msgstr ""
+"Pixel an vertikalem Abstand zwischen der Beschriftung und der Unterkante."
+
+#: of pystrich.types.BarcodeRenderOptions.quiet_width_multiplier:1
+msgid ""
+"Width of the quiet zone on each side, in narrow-bar widths. Defaults to "
+"``10``, the minimum required by both symbologies."
+msgstr ""
+"Breite der Ruhezone auf jeder Seite, in Schmalstrichbreiten. Vorgabe ``10``,"
+" das von beiden Symbologien geforderte Minimum."
+
+#: of pystrich.marks:1
+msgid "Matrix mark extraction shared by vector renderers (SVG, EPS, DXF)."
+msgstr ""
+"Matrix-Mark-Extraktion, gemeinsam genutzt von den Vektor-Renderern (SVG, "
+"EPS, DXF)."
+
+#: of pystrich.marks.MatrixMark:1
+msgid "A rectangular region of a matrix to be drawn as a single shape."
+msgstr ""
+"Ein rechteckiger Bereich einer Matrix, der als eine einzige Form gezeichnet "
+"wird."
+
+#: of pystrich.marks.BarLayout.heights:1 pystrich.marks.MatrixMark.x:1
+#: pystrich.marks.SymbolMarks.marks:1 pystrich.marks.TextLabel.text:1
+msgid "Alias for field number 0"
+msgstr "Alias für Feldnummer 0"
+
+#: of pystrich.marks.BarLayout.bar_width:1 pystrich.marks.MatrixMark.y:1
+#: pystrich.marks.SymbolMarks.width:1 pystrich.marks.TextLabel.x:1
+msgid "Alias for field number 1"
+msgstr "Alias für Feldnummer 1"
+
+#: of pystrich.marks.BarLayout.quiet_left:1 pystrich.marks.MatrixMark.width:1
+#: pystrich.marks.SymbolMarks.height:1 pystrich.marks.TextLabel.y:1
+msgid "Alias for field number 2"
+msgstr "Alias für Feldnummer 2"
+
+#: of pystrich.marks.BarLayout.quiet_right:1
+#: pystrich.marks.MatrixMark.height:1 pystrich.marks.TextLabel.font_size:1
+msgid "Alias for field number 3"
+msgstr "Alias für Feldnummer 3"
+
+#: of pystrich.marks.MarkShape:1
+msgid "How marked cells are grouped and drawn in vector output."
+msgstr ""
+"Wie gesetzte Zellen in der Vektorausgabe gruppiert und gezeichnet werden."
+
+#: of pystrich.marks.MarkShape:3
+msgid ""
+"Each value selects a grouping (one ``MatrixMark`` per cell, or one per "
+"horizontal run) and -- where the renderer supports it -- the drawing "
+"primitive used per mark."
+msgstr ""
+"Jeder Wert wählt eine Gruppierung (ein ``MatrixMark`` pro Zelle oder eines "
+"pro horizontaler Folge) und -- wo der Renderer es unterstützt -- das pro "
+"Mark verwendete Zeichen-Primitiv."
+
+#: of pystrich.marks.MarkShape.HORIZONTAL_RUNS:1
+msgid "Maximal horizontal runs of matched cells, drawn as filled rectangles."
+msgstr ""
+"Maximale horizontale Folgen gesetzter Zellen, als gefüllte Rechtecke "
+"gezeichnet."
+
+#: of pystrich.marks.MarkShape.SQUARE_CELLS:1
+msgid "One 1x1 region per matched cell, drawn as a filled rectangle."
+msgstr ""
+"Ein 1x1-Bereich pro gesetzter Zelle, als gefülltes Rechteck gezeichnet."
+
+#: of pystrich.marks.MarkShape.CIRCULAR_CELLS:1
+msgid ""
+"One 1x1 region per matched cell, drawn as a filled circle inscribed in the "
+"cell."
+msgstr ""
+"Ein 1x1-Bereich pro gesetzter Zelle, als in die Zelle einbeschriebener "
+"gefüllter Kreis gezeichnet."
+
+#: of pystrich.marks.iter_horizontal_runs:1
+msgid ""
+"Yield each maximal horizontal run of cells whose truthiness equals "
+"``mark_values_when``."
+msgstr ""
+"Liefert jede maximale horizontale Folge von Zellen, deren Wahrheitswert "
+"``mark_values_when`` entspricht."
+
+#: of pystrich.marks.iter_horizontal_runs:3
+msgid ""
+"``mark_values_when=True`` marks the dark (truthy) cells; ``False`` marks the"
+" light cells (``0`` or ``None``). Each yielded mark has ``height=1``."
+msgstr ""
+"``mark_values_when=True`` markiert die dunklen (wahren) Zellen; ``False`` "
+"markiert die hellen Zellen (``0`` oder ``None``). Jeder gelieferte Mark hat "
+"``height=1``."
+
+#: of pystrich.marks.iter_cells:1
+msgid ""
+"Yield a 1x1 mark for every cell whose truthiness equals "
+"``mark_values_when``."
+msgstr ""
+"Liefert einen 1x1-Mark für jede Zelle, deren Wahrheitswert "
+"``mark_values_when`` entspricht."
+
+#: of pystrich.marks.iter_marks:1
+msgid "Yield ``MatrixMark`` regions for the chosen ``mark_shape``."
+msgstr "Liefert ``MatrixMark``-Bereiche für das gewählte ``mark_shape``."
+
+#: of pystrich.marks.TextLabel:1
+msgid "A run of text to render below the bars in vector output."
+msgstr ""
+"Ein Textstück, das in der Vektorausgabe unter den Strichen gerendert wird."
+
+#: of pystrich.marks.TextLabel:3
+msgid ""
+"Coordinates are in pixels (= user units for SVG/EPS at default DPI), and "
+"``y`` is the *top* edge of the text — matching the convention used by "
+"``PIL.ImageDraw.text(xy, ...)`` for the corresponding raster path. "
+"``anchor`` controls how ``x`` relates to the text run: ``\"start\"`` is the "
+"left edge, ``\"middle\"`` the centre, ``\"end\"`` the right edge."
+msgstr ""
+"Koordinaten sind in Pixeln (= Benutzereinheiten für SVG/EPS bei Standard-"
+"DPI), und ``y`` ist die *obere* Kante des Textes -- passend zur Konvention "
+"von ``PIL.ImageDraw.text(xy, ...)`` für den entsprechenden Rasterpfad. "
+"``anchor`` steuert, wie sich ``x`` auf das Textstück bezieht: ``\"start\"`` "
+"ist die linke Kante, ``\"middle\"`` die Mitte, ``\"end\"`` die rechte Kante."
+
+#: of pystrich.marks.BarLayout.quiet_top:1 pystrich.marks.TextLabel.anchor:1
+msgid "Alias for field number 4"
+msgstr "Alias für Feldnummer 4"
+
+#: of pystrich.marks.BarLayout:1
+msgid "Pixel-precise layout of a 1D barcode for any output format."
+msgstr "Pixelgenaues Layout eines 1D-Barcodes für jedes Ausgabeformat."
+
+#: of pystrich.marks.BarLayout:3
+msgid ""
+"All values are in pixels (= user units for SVG/EPS at default DPI). "
+"``heights[i]`` is the bar's pixel height at column ``i`` (``0`` is a gap). "
+"Each column is ``bar_width`` pixels wide. The four quiet zones frame the "
+"symbol; ``quiet_left`` and ``quiet_top`` shift the bars, while "
+"``quiet_right`` and ``quiet_bottom`` only enlarge the canvas. ``labels`` "
+"carries the human-readable text drawn beneath the bars, rendered identically"
+" by the PNG, SVG and EPS paths. ``bearer_width``, when positive, draws a "
+"bearer bar of that pixel thickness bordering the bars (as used by ITF-14); "
+"it must be folded into the quiet zones, with the label placed in the bottom "
+"quiet zone outside the frame."
+msgstr ""
+"Alle Werte sind in Pixeln (= Benutzereinheiten für SVG/EPS bei Standard-"
+"DPI). ``heights[i]`` ist die Pixelhöhe des Strichs in Spalte ``i`` (``0`` "
+"ist eine Lücke). Jede Spalte ist ``bar_width`` Pixel breit. Die vier "
+"Ruhezonen rahmen das Symbol; ``quiet_left`` und ``quiet_top`` verschieben "
+"die Striche, während ``quiet_right`` und ``quiet_bottom`` nur die Zeichenfläche "
+"vergrößern. ``labels`` trägt die Klarschrift, die unter den Strichen "
+"gezeichnet wird, von den PNG-, SVG- und EPS-Pfaden identisch gerendert. "
+"``bearer_width`` zeichnet, wenn positiv, einen Trägerbalken dieser "
+"Pixelstärke, der die Striche umrandet (wie von ITF-14 verwendet); er muss in"
+" die Ruhezonen eingerechnet werden, wobei die Beschriftung in der unteren "
+"Ruhezone außerhalb des Rahmens platziert wird."
+
+#: of pystrich.marks.BarLayout.quiet_bottom:1
+msgid "Alias for field number 5"
+msgstr "Alias für Feldnummer 5"
+
+#: of pystrich.marks.BarLayout.labels:1
+msgid "Alias for field number 6"
+msgstr "Alias für Feldnummer 6"
+
+#: of pystrich.marks.BarLayout.bearer_width:1
+msgid "Alias for field number 7"
+msgstr "Alias für Feldnummer 7"
+
+#: of pystrich.marks.iter_bar_marks:1
+msgid "Yield a ``MatrixMark`` per maximal run of equal positive heights."
+msgstr ""
+"Liefert einen ``MatrixMark`` pro maximaler Folge gleicher positiver Höhen."
+
+#: of pystrich.marks.iter_bar_marks:3
+msgid ""
+"Coordinates and dimensions are in pixels. ``heights[i]`` is the bar's pixel "
+"height at column ``i`` (``0`` is a gap; positive values are bars sharing a "
+"top edge at ``y = quiet_top``). Each column is ``bar_width`` pixels wide. "
+"Adjacent columns with the same positive height collapse into one mark."
+msgstr ""
+"Koordinaten und Abmessungen sind in Pixeln. ``heights[i]`` ist die Pixelhöhe"
+" des Strichs in Spalte ``i`` (``0`` ist eine Lücke; positive Werte sind "
+"Striche mit gemeinsamer Oberkante bei ``y = quiet_top``). Jede Spalte ist "
+"``bar_width`` Pixel breit. Benachbarte Spalten mit derselben positiven Höhe "
+"werden zu einem Mark zusammengefasst."
+
+#: of pystrich.marks.iter_bar_marks:9
+msgid ""
+"Only ``quiet_left`` and ``quiet_top`` are accepted because they are the only"
+" offsets that affect mark coordinates; the right and bottom quiet zones are "
+"a renderer concern (canvas / viewBox sizing)."
+msgstr ""
+"Nur ``quiet_left`` und ``quiet_top`` werden akzeptiert, weil sie die "
+"einzigen Versätze sind, die die Mark-Koordinaten beeinflussen; die rechte "
+"und untere Ruhezone sind Sache des Renderers (Zeichenflächen-/viewBox-"
+"Dimensionierung)."
+
+#: of pystrich.marks.iter_bearer_marks:1
+msgid "Yield the four rectangles of a full-frame bearer bar."
+msgstr "Liefert die vier Rechtecke eines Vollrahmen-Trägerbalkens."
+
+#: of pystrich.marks.iter_bearer_marks:3
+msgid ""
+"Nothing is yielded when ``layout.bearer_width`` is zero. The frame borders "
+"the bars only -- the top and bottom rules abut the bars, and the label (in "
+"the bottom quiet zone) sits outside the frame. ``quiet_top`` holds the top "
+"rule, so the bearer thickness must be folded into the quiet zones."
+msgstr ""
+"Es wird nichts geliefert, wenn ``layout.bearer_width`` null ist. Der Rahmen "
+"umrandet nur die Striche -- die obere und untere Linie grenzen an die "
+"Striche, und die Beschriftung (in der unteren Ruhezone) sitzt außerhalb des "
+"Rahmens. ``quiet_top`` nimmt die obere Linie auf, daher muss die "
+"Trägerstärke in die Ruhezonen eingerechnet werden."
+
+#: of pystrich.marks.iter_barcode_marks:1
+msgid "Yield every dark mark of a 1D barcode: its bars, then its bearer bar."
+msgstr ""
+"Liefert jeden dunklen Mark eines 1D-Barcodes: seine Striche, dann seinen "
+"Trägerbalken."
+
+#: of pystrich.marks.iter_barcode_marks:3
+msgid ""
+"The single entry point the PNG, SVG and EPS paths render from, composing the"
+" raw :func:`iter_bar_marks` primitive with :func:`iter_bearer_marks`."
+msgstr ""
+"Der einzige Einstiegspunkt, aus dem die PNG-, SVG- und EPS-Pfade rendern; er"
+" kombiniert das rohe :func:`iter_bar_marks`-Primitiv mit "
+":func:`iter_bearer_marks`."
+
+#: of pystrich.gs1:1
+msgid "User-friendly composition of GS1 Application Identifier payloads."
+msgstr ""
+"Benutzerfreundliche Zusammenstellung von GS1-Application-Identifier-"
+"Nutzdaten."
+
+#: of pystrich.gs1:3
+msgid ""
+"Pair :class:`GS1Fixed` and :class:`GS1Variable` instances with the matching "
+":meth:`gs1` classmethod on :class:`pystrich.code128.Code128Data` or "
+":class:`pystrich.datamatrix.DataMatrixData` to emit a GS1-128 or GS1 Data "
+"Matrix payload without managing FNC1 separators by hand."
+msgstr ""
+"Kombinieren Sie :class:`GS1Fixed`- und :class:`GS1Variable`-Instanzen mit "
+"der passenden Klassenmethode :meth:`gs1` auf "
+":class:`pystrich.code128.Code128Data` oder "
+":class:`pystrich.datamatrix.DataMatrixData`, um GS1-128- oder GS1-Data-"
+"Matrix-Nutzdaten auszugeben, ohne FNC1-Trenner von Hand zu verwalten."
+
+#: of pystrich.gs1:8
+msgid ""
+"The library does not ship an Application Identifier registry: callers tell "
+"us whether each field is fixed- or variable-length by choosing the wrapper "
+"class. FNC1 separators are inserted after variable-length fields that are "
+"not the final element of the payload, and once at the very start of the "
+"message."
+msgstr ""
+"Die Bibliothek liefert kein Application-Identifier-Register: Aufrufer teilen"
+" mit, ob jedes Feld feste oder variable Länge hat, indem sie die Wrapper-"
+"Klasse wählen. FNC1-Trenner werden nach Feldern variabler Länge eingefügt, "
+"die nicht das letzte Element der Nutzdaten sind, sowie einmal ganz am Anfang"
+" der Nachricht."
+
+#: of pystrich.gs1.GS1Fixed:1
+msgid "A fixed-length GS1 Application Identifier field."
+msgstr "Ein GS1-Application-Identifier-Feld fester Länge."
+
+#: of pystrich.gs1.GS1Fixed:3
+msgid ""
+"The reader knows the data length from the Application Identifier alone, so "
+"no FNC1 separator is needed after the field. Use for Application Identifiers"
+" such as ``(01)`` GTIN-14, ``(17)`` expiry date, or ``(11)`` production "
+"date."
+msgstr ""
+"Das Lesegerät kennt die Datenlänge allein aus dem Application Identifier, "
+"daher ist nach dem Feld kein FNC1-Trenner nötig. Verwenden Sie es für "
+"Application Identifier wie ``(01)`` GTIN-14, ``(17)`` Verfallsdatum oder "
+"``(11)`` Herstellungsdatum."
+
+#: ../../types.rst
+msgid "Parameters"
+msgstr "Parameter"
+
+#: of pystrich.gs1.GS1Fixed:8 pystrich.gs1.GS1Variable:9
+msgid "The 2-4 digit Application Identifier."
+msgstr "Der 2- bis 4-stellige Application Identifier."
+
+#: of pystrich.gs1.GS1Fixed:9 pystrich.gs1.GS1Variable:10
+msgid "The data string. Must be non-empty printable ASCII."
+msgstr "Die Datenzeichenkette. Muss nichtleeres druckbares ASCII sein."
+
+#: of pystrich.gs1.GS1Variable:1
+msgid "A variable-length GS1 Application Identifier field."
+msgstr "Ein GS1-Application-Identifier-Feld variabler Länge."
+
+#: of pystrich.gs1.GS1Variable:3
+msgid ""
+"The reader cannot determine where the data ends from the Application "
+"Identifier alone, so an FNC1 separator follows unless this is the last field"
+" of the payload. Use for Application Identifiers such as ``(10)`` batch, "
+"``(21)`` serial number, or ``(240)`` additional product identification."
+msgstr ""
+"Das Lesegerät kann allein aus dem Application Identifier nicht bestimmen, wo"
+" die Daten enden, daher folgt ein FNC1-Trenner, es sei denn, dies ist das "
+"letzte Feld der Nutzdaten. Verwenden Sie es für Application Identifier wie "
+"``(10)`` Charge, ``(21)`` Seriennummer oder ``(240)`` zusätzliche "
+"Produktidentifikation."

@@ -1,0 +1,66 @@
+# German translations for pyStrich documentation chrome.
+# These strings come from the custom _templates/page.html (Furo ships no
+# German catalogue), so without them the German site shows English navigation.
+# Built-in Sphinx label overrides (versionadded, Raises) live in
+# locale_overrides/de/LC_MESSAGES/sphinx.po instead, to survive sphinx-intl.
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../../_templates/page.html:16
+msgid "Next"
+msgstr "Weiter"
+
+#: ../../_templates/page.html:26
+msgid "Previous"
+msgstr "Zurück"
+
+#: ../../_templates/page.html:28
+msgid "Home"
+msgstr "Startseite"
+
+#: ../../_templates/page.html:41
+#, python-format
+msgid "<a href=\"%(path)s\">Copyright</a> &#169; %(copyright)s"
+msgstr ""
+
+#: ../../_templates/page.html:45
+#, python-format
+msgid "Copyright &#169; %(copyright)s"
+msgstr ""
+
+#: ../../_templates/page.html:51
+msgid ""
+"pyStrich is a project of <a class=\"muted-link\" "
+"href=\"https://www.method-b.uk/\">Method B Ltd</a>."
+msgstr ""
+"pyStrich ist ein Projekt von <a class=\"muted-link\" "
+"href=\"https://www.method-b.uk/\">Method B Ltd</a>."
+
+#. "QR Code" and "DENSO WAVE INCORPORATED" are the mark and the proprietor,
+#. kept verbatim; only the notice wording is translated. "QR Code" stays two
+#. words here (the registered mark), NOT the hyphenated "QR-Code" used
+#. elsewhere.
+#: ../../_templates/page.html:52
+msgid "QR Code is a registered trademark of DENSO WAVE INCORPORATED."
+msgstr "QR Code ist eine eingetragene Marke von DENSO WAVE INCORPORATED."
+
+#: ../../_templates/page.html:53
+msgid "Docs made with "
+msgstr "Erstellt mit "
+
+#: ../../_templates/page.html:55
+msgid "<a href=\"https://www.sphinx-doc.org/\">Sphinx</a> and "
+msgstr "<a href=\"https://www.sphinx-doc.org/\">Sphinx</a> und "
+
+#: ../../_templates/page.html:58
+msgid ""
+"\n"
+"    <a href=\"https://github.com/pradyunsg/furo\">Furo</a>\n"
+"    "
+msgstr ""

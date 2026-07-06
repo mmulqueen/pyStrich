@@ -11,3 +11,8 @@
     /* Tight line spacing so the half-block glyphs join without gaps. */
     line-height: 1 !important;
 }
+
+.language-switcher {
+    /* Sit just below the "Erstellt mit … Furo" footer line. */
+    margin-top: 0.5rem;
+}

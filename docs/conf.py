@@ -1,10 +1,13 @@
 """Sphinx configuration for pyStrich documentation."""
 
+import re
 import shutil
 import sys
 from pathlib import Path
 
 import tomllib
+from docutils import nodes
+from sphinx.transforms import SphinxTransform
 
 # Docs-only helpers (anatomy diagrams) live alongside conf.py.
 sys.path.insert(0, str(Path(__file__).parent))
@@ -47,6 +50,10 @@ autodoc_type_aliases = {
     "PILImage": "PIL.Image.Image",
 }
 add_module_names = False
+
+language = "en_GB"
+locale_dirs = ["locale_overrides/", "locale/"]
+gettext_compact = False
 
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
@@ -279,7 +286,13 @@ def _copy_text_to_html(app, exception):
     """
     if exception is not None or app.builder.name != "html":
         return
-    text_dir = Path(app.srcdir) / "_build" / "text"
+    # Per-language plain text: English lives in _build/text, translated builds
+    # in _build/text-<lang>, matching the build-docs pipeline. Without this a
+    # translated HTML build would serve the English .txt behind its "View as
+    # plain text" links.
+    lang = app.config.language or "en"
+    text_subdir = "text" if lang.startswith("en") else f"text-{lang}"
+    text_dir = Path(app.srcdir) / "_build" / text_subdir
     if not text_dir.exists():
         return
     for src in text_dir.glob("*.txt"):
@@ -309,7 +322,78 @@ def _filter_version_notes(app, doctree):
             node.parent.remove(node)
 
 
+class _StampArgparseSource(SphinxTransform):
+    """Make the argparse reference block on cli.rst translatable.
+
+    sphinx-argparse synthesises the per-subcommand help paragraphs without a
+    ``source``, and Sphinx's ``is_translatable`` skips any ``TextElement``
+    whose ``source`` is unset -- so the argument help never reaches the
+    gettext catalogue. Stamping a source here, before the i18n ``Locale``
+    transform (priority 20), routes those strings through the normal
+    ``locale/<lang>/LC_MESSAGES/cli.po`` pipeline like any other content.
+    """
+
+    default_priority = 5
+
+    def apply(self):
+        docsource = self.document.get("source") or ""
+        if not docsource.endswith("cli.rst"):
+            return
+        for node in self.document.findall(nodes.TextElement):
+            if not node.source:
+                node.source = docsource
+                node.line = node.line or 1
+
+
+_OPTION_TOKEN = re.compile(r"--[a-zA-Z][a-zA-Z0-9-]*")
+
+
+class _CodeArgparseOptionRefs(SphinxTransform):
+    """Mark up option names in argparse help prose as inline literals.
+
+    The smartquotes transform (priority 750) collapses the ``--`` in
+    plain-text help like "Pass input via --text" to an en dash. Wrapping
+    the token in a literal protects it and matches how the hand-written
+    prose on the page marks up options. Runs after the i18n ``Locale``
+    transform (priority 20) so translated help is covered too.
+    """
+
+    default_priority = 100
+
+    def apply(self):
+        docsource = self.document.get("source") or ""
+        if not docsource.endswith("cli.rst") or self.app.builder.name == "gettext":
+            return
+        for text in list(self.document.findall(nodes.Text)):
+            if "--" not in text or not isinstance(text.parent, nodes.paragraph):
+                continue
+            parts = _OPTION_TOKEN.split(text)
+            if len(parts) == 1:
+                continue
+            tokens = _OPTION_TOKEN.findall(text)
+            replacement = []
+            for i, part in enumerate(parts):
+                if part:
+                    replacement.append(nodes.Text(part))
+                if i < len(tokens):
+                    replacement.append(nodes.literal(tokens[i], tokens[i]))
+            text.parent.replace(text, replacement)
+
+
+def _localise_title(app, config):
+    # html_title / ogp_image_alt are config values, not doctree content, so
+    # gettext never extracts them; a German build otherwise keeps the English
+    # title. config-inited fires after the -D language override is applied, so
+    # config.language is the build language here (unlike the module-level one).
+    if config.language and config.language.startswith("de"):
+        config.html_title = "pyStrich — der Python-Encoder für 1D/2D-Barcodes"
+        config.ogp_image_alt = "pyStrich — Python-Encoder für 1D/2D-Barcodes"
+
+
 def setup(app):
+    app.add_transform(_StampArgparseSource)
+    app.add_transform(_CodeArgparseOptionRefs)
+    app.connect("config-inited", _localise_title)
     app.connect("builder-inited", _generate_example_images)
     app.connect("build-finished", _copy_text_to_html)
     app.connect("doctree-read", _filter_version_notes)

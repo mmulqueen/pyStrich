@@ -78,7 +78,7 @@ class Code128Encoder(Bar1DEncoder):
             composing plain text with typed :class:`Code128Marker` tokens
             (the recommended path for GS1-128 and Latin-1 input), or a
             plain ASCII ``str``. A plain ``str`` containing the legacy
-            FNC shortcut bytes (``\\xf1``..``\\xf4``) is accepted and
+            FNC shortcut bytes (``\\xf1..\\xf4``) is accepted and
             silently promoted to a :class:`Code128Data` with the typed
             markers, emitting a
             :class:`pystrich.exceptions.Code128MarkerBytesCompatWarning`.

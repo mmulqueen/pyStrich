@@ -1,5 +1,26 @@
 {%- extends "!page.html" %}
 
+{%- block extrahead %}
+{{ super() }}
+{#- Reciprocal rel=alternate hreflang links pairing the English (root) and
+    German (/de/) translations so search engines serve the right language and
+    do not treat them as duplicate content. Emitted on both builds; each page
+    lists every version including itself, with English as x-default. Skipped on
+    nested pages (e.g. _modules/) and pages without a canonical URL. -#}
+{%- if pageurl and "/" not in pagename %}
+{%- if "/docs/de/" in pageurl %}
+{%- set en_url = pageurl | replace("/docs/de/", "/docs/") %}
+{%- set de_url = pageurl %}
+{%- else %}
+{%- set en_url = pageurl %}
+{%- set de_url = pageurl | replace("/docs/", "/docs/de/") %}
+{%- endif %}
+<link rel="alternate" hreflang="en-GB" href="{{ en_url }}" />
+<link rel="alternate" hreflang="de-DE" href="{{ de_url }}" />
+<link rel="alternate" hreflang="x-default" href="{{ en_url }}" />
+{%- endif %}
+{%- endblock %}
+
 {%- block footer %}
 <div class="related-pages">
   <a class="next-page" href="{{ pathto(pagename + '.txt', resource=True) }}">
@@ -48,8 +69,8 @@
       {%- endif %}
     </div>
     {%- endif %}
-    <div>pyStrich is a project of <a class="muted-link" href="https://www.method-b.uk/">Method B Ltd</a>.</div>
-    <div>QR Code is a registered trademark of DENSO WAVE INCORPORATED.</div>
+    <div>{% trans %}pyStrich is a project of <a class="muted-link" href="https://www.method-b.uk/">Method B Ltd</a>.{% endtrans %}</div>
+    <div>{% trans %}QR Code is a registered trademark of DENSO WAVE INCORPORATED.{% endtrans %}</div>
     {% trans %}Docs made with {% endtrans -%}
     {%- if show_sphinx -%}
     {% trans %}<a href="https://www.sphinx-doc.org/">Sphinx</a> and {% endtrans -%}
@@ -58,6 +79,19 @@
     {% trans %}
     <a href="https://github.com/pradyunsg/furo">Furo</a>
     {% endtrans %}
+    {%- if "/" not in pagename %}
+    {#- Two-language switcher. English is at the docs root, German under de/;
+        pages are flat, so a sibling-relative link is depth-correct. The current
+        language shows as plain text, the other as a link. Skipped on nested
+        pages (e.g. _modules/) where the relative path would not resolve. -#}
+    <div class="language-switcher">
+      {%- if language.startswith("de") -%}
+      <a class="muted-link" href="../{{ pagename }}.html">English</a> &middot; Deutsch
+      {%- else -%}
+      English &middot; <a class="muted-link" href="de/{{ pagename }}.html">Deutsch</a>
+      {%- endif -%}
+    </div>
+    {%- endif %}
   </div>
   <div class="right-details">
     <div class="icons">

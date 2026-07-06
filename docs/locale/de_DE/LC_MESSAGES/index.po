@@ -1,0 +1,170 @@
+# German (de-DE) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../../index.rst:-1
+msgid ""
+"Generate 1D and 2D barcodes in Python with pyStrich – Code 39, Code 128, "
+"EAN-13, ITF-14, Data Matrix, QR Code, PDF417 and Aztec Code as PNG, SVG, "
+"EPS, DXF and terminal art."
+msgstr ""
+"1D- und 2D-Barcodes mit pyStrich in Python erzeugen – Code 39, Code 128, "
+"EAN-13, ITF-14, Data Matrix, QR-Code, PDF417 und Aztec-Code als PNG, SVG, "
+"EPS, DXF und Terminal-Grafik."
+
+#: ../../index.rst:7
+msgid "pyStrich"
+msgstr "pyStrich"
+
+#: ../../index.rst:9
+msgid ""
+"pyStrich is a Python module for generating 1D and 2D barcodes. It supports "
+"Code 39, Code 128 (including GS1-128), EAN-13, ITF-14 (and Interleaved 2 of "
+"5), Data Matrix (including GS1 Data Matrix), QR Code, PDF417 and Aztec Code "
+"symbologies. All eight emit PNG (via :class:`Pillow <PIL.Image.Image>`), SVG"
+" and EPS. The 2D formats additionally render to terminal art and DXF for "
+"direct part marking."
+msgstr ""
+"pyStrich ist ein Python-Modul zum Erzeugen von 1D- und 2D-Barcodes. Es "
+"unterstützt die Symbologien Code 39, Code 128 (einschließlich GS1-128), "
+"EAN-13, ITF-14 (und Interleaved 2 of 5), Data Matrix (einschließlich GS1 "
+"Data Matrix), QR-Code, PDF417 und Aztec-Code. Alle acht unterstützen die "
+"Ausgabe als PNG (über :class:`Pillow <PIL.Image.Image>`), SVG und EPS. Die "
+"2D-Formate rendern zusätzlich Terminal-Grafik und DXF für die direkte "
+"Teilekennzeichnung."
+
+#: ../../index.rst:16
+msgid "pyStrich is encoder-only -- it does not read barcodes."
+msgstr "pyStrich ist ein reiner Encoder -- es liest keine Barcodes."
+
+#: ../../index.rst:18
+msgid "Source: https://github.com/mmulqueen/pyStrich"
+msgstr "Quellcode: https://github.com/mmulqueen/pyStrich"
+
+#: ../../index.rst:19
+msgid "PyPI: https://pypi.org/project/pyStrich/"
+msgstr "PyPI: https://pypi.org/project/pyStrich/"
+
+#: ../../index.rst:22
+msgid "Installation"
+msgstr "Installation"
+
+#: ../../index.rst:28
+msgid ""
+"PNG output relies on Pillow; SVG, EPS, DXF and terminal output do not. "
+"Install the ``png`` extra to be sure Pillow is present:"
+msgstr ""
+"Die PNG-Ausgabe benötigt Pillow; SVG-, EPS-, DXF- und Terminal-Ausgabe "
+"nicht. Installieren Sie das ``png``-Extra, um sicherzustellen, dass Pillow "
+"vorhanden ist:"
+
+#: ../../index.rst:36
+msgid "Quick start"
+msgstr "Schnellstart"
+
+#: ../../index.rst:45
+msgid "Data Matrix encoding the pyStrich GitHub URL."
+msgstr "Data-Matrix-Symbol, das die pyStrich-GitHub-URL codiert."
+
+#: ../../index.rst:48
+msgid "A minimal example for each of the other symbologies:"
+msgstr "Ein minimales Beispiel für jede der anderen Symbologien:"
+
+#: ../../index.rst:55
+msgid "Code 39 barcode encoding \"64755\"."
+msgstr "Code-39-Barcode, der \"64755\" codiert."
+
+#: ../../index.rst:63
+msgid "Code 128 barcode encoding \"WDBCA45D2HA327260\"."
+msgstr "Code-128-Barcode, der \"WDBCA45D2HA327260\" codiert."
+
+#: ../../index.rst:71
+msgid "EAN-13 barcode encoding \"5050070007664\"."
+msgstr "EAN-13-Barcode, der \"5050070007664\" codiert."
+
+#: ../../index.rst:79
+msgid "ITF-14 barcode encoding \"15050070007661\"."
+msgstr "ITF-14-Barcode, der \"15050070007661\" codiert."
+
+#: ../../index.rst:87
+msgid "QR code encoding the pyStrich GitHub URL."
+msgstr "QR-Code, der die pyStrich-GitHub-URL codiert."
+
+#: ../../index.rst:95
+msgid "PDF417 encoding \"WDBCA45D2HA327260\"."
+msgstr "PDF417, das \"WDBCA45D2HA327260\" codiert."
+
+#: ../../index.rst:103
+msgid "Aztec Code encoding the pyStrich GitHub URL."
+msgstr "Aztec-Code, der die pyStrich-GitHub-URL codiert."
+
+#: ../../index.rst:106
+msgid ""
+"For more patterns -- serving barcodes from a web request, generating in "
+"bulk, compositing onto a label -- see :doc:`recipes`."
+msgstr ""
+"Weitere Muster -- Barcodes aus einer Web-Anfrage ausliefern, in großer Menge"
+" erzeugen, auf ein Etikett montieren -- finden Sie unter :doc:`recipes`."
+
+#: ../../index.rst:110
+msgid "Symbologies"
+msgstr "Symbologien"
+
+#: ../../index.rst:112
+msgid "Unsure which to pick? See :doc:`symbology-choice`."
+msgstr "Unsicher, welche Sie wählen sollen? Siehe :doc:`symbology-choice`."
+
+#: ../../index.rst:127
+msgid "Guides"
+msgstr "Anleitungen"
+
+#: ../../index.rst:138
+msgid "Reference"
+msgstr "Referenz"
+
+#: ../../index.rst:149
+msgid "Background"
+msgstr "Hintergrund"
+
+#: ../../index.rst:151
+msgid ""
+"pyStrich was originally a fork of `huBarcode "
+"<https://github.com/hudora/huBarcode>`_. huBarcode was developed by `HuDoRa "
+"<https://www.hudora.de/de-en/>`_ from at least 2007, and has not been active"
+" since late 2013. `Method B Ltd <https://www.method-b.uk/>`_ forked "
+"huBarcode as pyStrich to provide Python 3 support and to continue "
+"development. pyStrich has been substantially enhanced over the years and has"
+" gone far beyond a simple port to Python 3. As of 2026, pyStrich is a modern"
+" Python package with full use of typing, linting and a comprehensive test "
+"suite."
+msgstr ""
+"pyStrich war ursprünglich ein Fork von `huBarcode "
+"<https://github.com/hudora/huBarcode>`_. huBarcode wurde von `HuDoRa "
+"<https://www.hudora.de/de-en/>`_ seit mindestens 2007 entwickelt und ist "
+"seit Ende 2013 nicht mehr aktiv. `Method B Ltd <https://www.method-b.uk/>`_ "
+"hat huBarcode als pyStrich geforkt, um Python 3 zu unterstützen und die "
+"Entwicklung fortzuführen. pyStrich wurde über die Jahre erheblich erweitert "
+"und ist weit über eine einfache Portierung auf Python 3 hinausgegangen. Seit"
+" 2026 ist pyStrich ein modernes Python-Paket mit vollständigem Einsatz von "
+"Typisierung, Linting und einer umfassenden Testsuite."
+
+#: ../../index.rst:161
+msgid ""
+"Thanks to the folks at HuDoRa for the original huBarcode library that "
+"pyStrich grew out of."
+msgstr ""
+"Dank an die Leute bei HuDoRa für die ursprüngliche huBarcode-Bibliothek, aus"
+" der pyStrich hervorgegangen ist."
+
+#: ../../index.rst:165
+msgid "Licence"
+msgstr "Lizenz"

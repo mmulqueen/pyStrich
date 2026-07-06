@@ -77,6 +77,8 @@ docs = [
     "sphinx-argparse>=0.5",
     "sphinxext-opengraph>=0.13.0",
     "sphinx-sitemap>=2.9.0",
+    "sphinx-intl>=2.3.2",
+    "polib>=1.2.0",
 ]
 
 [build-system]

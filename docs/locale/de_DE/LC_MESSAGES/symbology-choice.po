@@ -1,0 +1,220 @@
+# German (de-DE) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../../symbology-choice.rst:2
+msgid "Choosing the right symbology"
+msgstr "Die richtige Symbologie wählen"
+
+#: ../../symbology-choice.rst:4
+msgid ""
+"This is meant to be an accessible introduction to the different kinds of "
+"barcodes that can be used and some rules of thumb for picking the right one."
+" This article probably isn't for you if you're planning a mass rollout, but "
+"I hope it'll be a useful starting point. Similarly, if you're generating a "
+"label or document that's been standardised, the decision may already have "
+"been made for you."
+msgstr ""
+"Dies soll eine zugängliche Einführung in die verschiedenen Arten von "
+"Barcodes sein, die verwendet werden können, sowie einige Faustregeln für die"
+" Wahl der richtigen. Dieser Artikel ist wahrscheinlich nichts für Sie, wenn "
+"Sie eine groß angelegte Einführung planen, aber ich hoffe, er ist ein "
+"nützlicher Ausgangspunkt. Ebenso ist die Entscheidung möglicherweise bereits"
+" für Sie getroffen, wenn Sie ein Etikett oder Dokument erzeugen, das "
+"standardisiert wurde."
+
+#: ../../symbology-choice.rst:12
+msgid "Everyone gets QR codes"
+msgstr "QR-Codes versteht jeder"
+
+#: ../../symbology-choice.rst:14
+msgid ""
+"QR codes are the most famous 2D barcode, everyone has heard of a QR code and"
+" probably scanned many of them. They have a distinctive appearance, even "
+"when stylised. They're supported by every modern smartphone without "
+"installing anything. If you want members of the public to scan it, QR codes "
+"should be your default choice. QR codes are likely to become even more "
+"popular over the next couple of years as GS1 Digital Link QR codes start to "
+"take over from classic 1D EAN barcodes in the shops."
+msgstr ""
+"QR-Codes sind der bekannteste 2D-Barcode; jeder hat von einem QR-Code gehört"
+" und wahrscheinlich viele davon gescannt. Sie haben ein unverwechselbares "
+"Erscheinungsbild, selbst wenn sie stilisiert sind. Sie werden von jedem "
+"modernen Smartphone ohne Installation unterstützt. Wenn die Öffentlichkeit "
+"ihn scannen soll, sollten QR-Codes Ihre Standardwahl sein. QR-Codes dürften "
+"in den nächsten Jahren noch beliebter werden, da GS1-Digital-Link-QR-Codes "
+"beginnen, die klassischen 1D-EAN-Barcodes in den Geschäften abzulösen."
+
+#: ../../symbology-choice.rst:22
+msgid ""
+"The downside of QR codes is that they're relatively bulky as 2D barcodes go "
+"and while they're somewhat damage tolerant, it depends on where that damage "
+"is."
+msgstr ""
+"Der Nachteil von QR-Codes ist, dass sie für 2D-Barcodes relativ sperrig "
+"sind, und obwohl sie einigermaßen schadenstolerant sind, hängt es davon ab, "
+"wo der Schaden liegt."
+
+#: ../../symbology-choice.rst:28
+msgid "QR Code example."
+msgstr "QR-Code-Beispiel."
+
+#: ../../symbology-choice.rst:31
+msgid "QR Code"
+msgstr "QR-Code"
+
+#: ../../symbology-choice.rst:34
+msgid "But consider Data Matrix and Aztec"
+msgstr "Aber ziehen Sie Data Matrix und Aztec in Betracht"
+
+#: ../../symbology-choice.rst:36
+msgid ""
+"If you have more control over who/how you scan, Data Matrix and Aztec codes "
+"are well worth considering. They can be denser for typical payloads. Aztec "
+"codes are especially suited to environments where they might get damaged "
+"because the locator is in the middle, which is less exposed to edge wear "
+"than the corner locators on a QR code or the border locator on a Data Matrix"
+" symbol. Data Matrix is well established for part marking and its simple "
+"structure lends itself to many different physical marking methods like "
+"engraving, dot peening and laser. While not as well-known to the general "
+"public, Data Matrix barcodes are everywhere -- just looking around my home I"
+" see them on the packaging for medicines, Amazon deliveries, letters from "
+"banks -- and it's even more popular in industrial and healthcare settings. I"
+" see Aztec codes far less in the wild, I've spotted them on brewery kegs, "
+"rail tickets, airline boarding passes and the Tesco Clubcard."
+msgstr ""
+"Wenn Sie mehr Kontrolle darüber haben, wer scannt und wie, sind Data Matrix "
+"und Aztec-Codes durchaus eine Überlegung wert. Sie können bei typischen "
+"Nutzdaten dichter sein. Aztec-Codes eignen sich besonders für Umgebungen, in"
+" denen sie beschädigt werden könnten, weil das Suchmuster in der Mitte "
+"liegt, das weniger Kantenverschleiß ausgesetzt ist als die Eck-Suchmuster "
+"eines QR-Codes oder das Rand-Suchmuster eines Data-Matrix-Symbols. Data "
+"Matrix ist für die Teilekennzeichnung gut etabliert, und seine einfache "
+"Struktur eignet sich für viele verschiedene physische Markierungsverfahren "
+"wie Gravieren, Nadelprägen und Laser. Obwohl der breiten Öffentlichkeit "
+"weniger bekannt, sind Data-Matrix-Barcodes überall -- wenn ich mich bei mir "
+"zu Hause umsehe, sehe ich sie auf Medikamentenverpackungen, Amazon-"
+"Lieferungen, Briefen von Banken -- und in industriellen und "
+"Gesundheitsumgebungen sind sie noch verbreiteter. Aztec-Codes sehe ich weit "
+"seltener in freier Wildbahn; entdeckt habe ich sie auf Brauereifässern, "
+"Bahntickets, Bordkarten von Fluggesellschaften und der Tesco Clubcard."
+
+#: ../../symbology-choice.rst:52
+msgid ""
+"The central locator on an Aztec code bears some similarity to the locators "
+"on QR codes, which may be a helpful affordance to users understanding how to"
+" scan it. This may not always be an advantage, because it may cause "
+"frustration if someone tries to scan an Aztec code with their phone's built-"
+"in camera app and it doesn't work. The iOS/Android camera app supports QR "
+"codes and my Samsung Android phone at least supports Data Matrix too. If the"
+" symbol is being scanned in your own app, this isn't a problem, Google's ML "
+"Kit and Apple's VisionKit easily support any of these."
+msgstr ""
+"Das zentrale Suchmuster eines Aztec-Codes hat eine gewisse Ähnlichkeit mit "
+"den Suchmustern von QR-Codes, was Nutzern intuitiv helfen kann zu verstehen,"
+" wie man ihn scannt. Das ist nicht immer ein Vorteil, denn es kann zu "
+"Frustration führen, wenn jemand versucht, einen Aztec-Code mit der "
+"eingebauten Kamera-App seines Telefons zu scannen, und es nicht "
+"funktioniert. Die Kamera-App von iOS/Android unterstützt QR-Codes, und mein "
+"Samsung-Android-Telefon unterstützt zumindest auch Data Matrix. Wird das "
+"Symbol in Ihrer eigenen App gescannt, ist das kein Problem: Googles ML Kit "
+"und Apples VisionKit unterstützen all diese problemlos."
+
+#: ../../symbology-choice.rst:68
+msgid "Data Matrix"
+msgstr "Data Matrix"
+
+#: ../../symbology-choice.rst:69
+msgid "Aztec Code"
+msgstr "Aztec-Code"
+
+#: ../../symbology-choice.rst:70
+msgid "Data Matrix example."
+msgstr "Data-Matrix-Beispiel."
+
+#: ../../symbology-choice.rst:72
+msgid "Aztec Code example."
+msgstr "Aztec-Code-Beispiel."
+
+#: ../../symbology-choice.rst:76
+msgid "Anything else needs a good reason"
+msgstr "Alles andere braucht einen guten Grund"
+
+#: ../../symbology-choice.rst:78
+msgid ""
+"I haven't mentioned PDF417 yet, and that's because I think the only good "
+"reason to use them in 2026 is if you have to. They take up a lot of physical"
+" space and in my experience, scanners struggle with larger PDF417 symbols "
+"too. They made sense in a world of linear scanners, which have largely died "
+"out as other 2D barcodes and on-screen scanning has been popularised. I do "
+"still come across them -- Eurostar boarding passes spring to mind."
+msgstr ""
+"PDF417 habe ich noch nicht erwähnt, und das liegt daran, dass es meiner "
+"Meinung nach nur einen guten Grund gibt, sie 2026 zu verwenden: dass man "
+"muss. Sie brauchen viel Platz, und meiner Erfahrung nach haben Scanner auch "
+"mit größeren PDF417-Symbolen zu kämpfen. Sie ergaben in einer Welt linearer "
+"Scanner Sinn -- einer Welt, die weitgehend verschwunden ist, da sich andere "
+"2D-Barcodes und das Scannen vom Bildschirm durchgesetzt haben. Ich begegne "
+"ihnen dennoch gelegentlich -- Eurostar-Bordkarten fallen mir ein."
+
+#: ../../symbology-choice.rst:86
+msgid ""
+"There are other kinds of 2D barcodes -- but they're even more niche and if "
+"you needed to use them, you'd already know about them."
+msgstr ""
+"Es gibt weitere Arten von 2D-Barcodes -- aber sie sind noch nischiger, und "
+"wenn Sie sie verwenden müssten, wüssten Sie bereits davon."
+
+#: ../../symbology-choice.rst:89
+msgid ""
+"Should you use a 1D barcode? Again, if you needed to, you'd already know. "
+"Chances are it would be an EAN-13 if it's a consumer product, or an ITF-14 "
+"on the shipping carton it travels in. Code 128 remains popular in industrial"
+" settings. But if you have a choice, go 2D instead."
+msgstr ""
+"Sollten Sie einen 1D-Barcode verwenden? Auch hier gilt: Wenn Sie müssten, "
+"wüssten Sie es bereits. Wahrscheinlich wäre es eine EAN-13 bei einem "
+"Konsumprodukt oder eine ITF-14 auf dem Versandkarton, in dem es "
+"transportiert wird. Code 128 bleibt in industriellen Umgebungen beliebt. "
+"Aber wenn Sie die Wahl haben, nehmen Sie stattdessen 2D."
+
+#: ../../symbology-choice.rst:100
+msgid "PDF417"
+msgstr "PDF417"
+
+#: ../../symbology-choice.rst:101
+msgid "Code 128"
+msgstr "Code 128"
+
+#: ../../symbology-choice.rst:102
+msgid "EAN-13"
+msgstr "EAN-13"
+
+#: ../../symbology-choice.rst:103
+msgid "PDF417 example."
+msgstr "PDF417-Beispiel."
+
+#: ../../symbology-choice.rst:105
+msgid "Code 128 example."
+msgstr "Code-128-Beispiel."
+
+#: ../../symbology-choice.rst:107
+msgid "EAN-13 example."
+msgstr "EAN-13-Beispiel."
+
+#: ../../symbology-choice.rst:112
+msgid ""
+":doc:`printing` once you've chosen -- how to size a symbol so it scans "
+"reliably."
+msgstr ""
+":doc:`printing`, sobald Sie gewählt haben -- wie man ein Symbol so "
+"dimensioniert, dass es sich zuverlässig scannen lässt."
