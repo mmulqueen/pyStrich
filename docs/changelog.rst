@@ -8,6 +8,8 @@ Changelog
 
 - Aztec Code: Byte-mode run segmentation is now linear-time, sharply reducing
   encode time for large payloads.
+- Faster Reed-Solomon error-correction encoding for Data Matrix, QR Code,
+  Aztec and PDF417, most noticeable on large payloads.
 - QR Code: the frame, module-placement, mask and error-correction-block data
   is now constructed at encode time instead of being shipped as 200
   pre-computed data files, shrinking the installed package by about 6 MB.

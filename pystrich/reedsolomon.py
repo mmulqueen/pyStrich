@@ -90,6 +90,51 @@ GF1024_0x409 = BinaryExtensionGaloisField(0x409, size=1024)  # x^10 + x^3 + 1
 GF4096_0x1069 = BinaryExtensionGaloisField(0x1069, size=4096)  # x^12 + x^6 + x^5 + x^3 + 1
 
 
+class _ScaledGenerator:
+    """Packed multiples of a Reed-Solomon generator, one big int per lead.
+
+    For a fixed generator, :meth:`packed` returns ``[mul(lead, gen[j]) for j]``
+    with each product in its own byte-aligned lane, highest power first. XORing
+    that into the packed remainder is the encoder's whole inner loop done as one
+    carry-free big-int operation. Lanes are byte-aligned (1 byte for fields up
+    to 256 symbols, 2 bytes beyond) so the packed values build with
+    :func:`int.from_bytes`; they are computed lazily per ``lead`` and cached.
+    """
+
+    def __init__(self, field: BinaryExtensionGaloisField, num_ec: int, first_root: int) -> None:
+        self._exp = field._exp
+        self._log = field._log
+        self.lane_bytes = 1 if field.size <= 256 else 2
+        gen = field.generator_coefficients(num_ec, first_root=first_root)
+        # -1 marks a zero coefficient: its lane is always 0, and ``_log[0]`` is
+        # not a real logarithm so it must not go through the exp table.
+        self._log_gen = [self._log[g] if g else -1 for g in gen]
+        self._packed: dict[int, int] = {}
+
+    def packed(self, lead: int) -> int:
+        """Scaled generator for ``lead`` as a packed big int (lead != 0)."""
+        value = self._packed.get(lead)
+        if value is None:
+            exp = self._exp
+            base = self._log[lead]
+            if self.lane_bytes == 1:
+                raw = bytes(exp[base + lg] if lg >= 0 else 0 for lg in self._log_gen)
+            else:
+                raw = b"".join(
+                    (exp[base + lg] if lg >= 0 else 0).to_bytes(2, "big") for lg in self._log_gen
+                )
+            self._packed[lead] = value = int.from_bytes(raw, "big")
+        return value
+
+
+@functools.cache
+def _scaled_generator(
+    field: BinaryExtensionGaloisField, num_ec: int, first_root: int
+) -> _ScaledGenerator:
+    """One cached :class:`_ScaledGenerator` per (field, num_ec, first_root)."""
+    return _ScaledGenerator(field, num_ec, first_root)
+
+
 def reed_solomon_encode(
     data: Sequence[int],
     field: BinaryExtensionGaloisField,
@@ -102,28 +147,68 @@ def reed_solomon_encode(
     QR Code uses ``first_root=0``; DataMatrix uses ``first_root=1``. The two
     specs differ on which root the generator polynomial starts at.
 
+    The remainder is carried in a single big int -- one byte-aligned lane per
+    symbol -- so each division step XORs a whole scaled generator in one
+    operation instead of looping over ``num_ec`` field multiplies. Field
+    addition is XOR, which never carries between lanes, so the packed form is
+    exact. :func:`simple_reed_solomon_encode` is the plain equivalent this is
+    checked against.
+
     :param data: Data symbols, highest power first.
     :param field: The field to do arithmetic in.
     :param num_ec: How many EC bytes to produce.
     :param first_root: Forwarded to :meth:`BinaryExtensionGaloisField.generator_coefficients`.
     :returns: EC bytes, length ``num_ec``, highest power first.
     """
+    data_len = len(data)
+    if data_len == 0:
+        return [0] * num_ec
+    scaled = _scaled_generator(field, num_ec, first_root)
+    lb = scaled.lane_bytes
+    lane_bits = 8 * lb
+    mask = (1 << lane_bits) - 1
+
+    if lb == 1:
+        buffer = int.from_bytes(bytes(data), "big") << (lane_bits * num_ec)
+    else:
+        buffer = int.from_bytes(b"".join(d.to_bytes(lb, "big") for d in data), "big")
+        buffer <<= lane_bits * num_ec
+
+    packed = scaled.packed
+    top = lane_bits * (data_len + num_ec - 1)  # shift of the leading (MSB) lane
+    for i in range(data_len):
+        lead = (buffer >> (top - lane_bits * i)) & mask
+        if lead:
+            buffer ^= packed(lead) << (lane_bits * (data_len - 1 - i))
+
+    tail = (buffer & ((1 << (lane_bits * num_ec)) - 1)).to_bytes(lb * num_ec, "big")
+    if lb == 1:
+        return list(tail)
+    return [int.from_bytes(tail[k : k + lb], "big") for k in range(0, lb * num_ec, lb)]
+
+
+def simple_reed_solomon_encode(
+    data: Sequence[int],
+    field: BinaryExtensionGaloisField,
+    num_ec: int,
+    *,
+    first_root: int = 0,
+) -> list[int]:
+    """Textbook Reed-Solomon EC bytes, kept as the reference for the fast path.
+
+    Plain synthetic division using only :meth:`BinaryExtensionGaloisField.mul`,
+    with no lane packing -- obviously correct and independent of the tricks in
+    :func:`reed_solomon_encode`, which the tests hold equal to this. Not used at
+    runtime. Arguments and return value match :func:`reed_solomon_encode`.
+    """
     gen = field.generator_coefficients(num_ec, first_root=first_root)
-    log = field._log
-    exp = field._exp
-    # Pair each non-zero generator coefficient with its offset and log, so the
-    # inner loop is a table lookup and XOR -- no per-symbol ``mul`` call, and no
-    # modulo (``exp`` is doubled to absorb the log sum).
-    gen_terms = [(j, log[g]) for j, g in enumerate(gen) if g]
     data_len = len(data)
     buffer = list(data) + [0] * num_ec
     for i in range(data_len):
         lead = buffer[i]
         if lead:
-            log_lead = log[lead]
-            offset = i + 1
-            for j, log_g in gen_terms:
-                buffer[offset + j] ^= exp[log_lead + log_g]
+            for j in range(num_ec):
+                buffer[i + 1 + j] ^= field.mul(lead, gen[j])
     return buffer[data_len:]
 
 

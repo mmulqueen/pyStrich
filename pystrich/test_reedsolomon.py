@@ -19,6 +19,8 @@ mirror that split:
 import random
 
 import pytest
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 from pystrich.reedsolomon import (
     GF929,
@@ -32,7 +34,62 @@ from pystrich.reedsolomon import (
     PrimeGaloisField,
     reed_solomon_encode,
     reed_solomon_encode_pdf417,
+    simple_reed_solomon_encode,
 )
+
+_BINARY_FIELDS = [
+    GF16_0x13,
+    GF64_0x43,
+    GF256_0x11D,
+    GF256_0x12D,
+    GF1024_0x409,
+    GF4096_0x1069,
+]
+
+
+@st.composite
+def _binary_encode_case(draw):
+    """A (field, data, num_ec, first_root) tuple for a random binary field.
+
+    ``num_ec`` is capped so the plain reference stays quick; the small fields
+    still reach their maximum degree, covering the zero-coefficient generators.
+    """
+    field = draw(st.sampled_from(_BINARY_FIELDS))
+    order = field.size - 1
+    num_ec = draw(st.integers(min_value=1, max_value=min(order, 96)))
+    first_root = draw(st.integers(min_value=0, max_value=1))
+    data = draw(st.lists(st.integers(min_value=0, max_value=order), max_size=200))
+    return field, data, num_ec, first_root
+
+
+@given(case=_binary_encode_case())
+@settings(max_examples=400, deadline=None)
+def test_packed_encode_matches_simple_reference(case):
+    """The packed :func:`reed_solomon_encode` equals the plain reference for
+    random data across every binary field, both lane widths and both roots."""
+    field, data, num_ec, first_root = case
+    expected = simple_reed_solomon_encode(data, field, num_ec, first_root=first_root)
+    assert reed_solomon_encode(data, field, num_ec, first_root=first_root) == expected
+
+
+@pytest.mark.parametrize(
+    "field, num_ec",
+    [
+        pytest.param(GF16_0x13, 15, id="gf16"),
+        pytest.param(GF64_0x43, 63, id="gf64"),
+        pytest.param(GF256_0x11D, 255, id="gf256-11d"),
+        pytest.param(GF256_0x12D, 255, id="gf256-12d"),
+    ],
+)
+def test_packed_encode_handles_zero_generator_coefficient(field, num_ec):
+    """These generators contain a zero coefficient; the packed encoder must emit
+    a zero lane there rather than route ``mul(lead, 0)`` through the log table."""
+    assert 0 in field.generator_coefficients(num_ec)
+    rng = random.Random(1)
+    data = [rng.randint(1, field.size - 1) for _ in range(30)]
+    assert reed_solomon_encode(data, field, num_ec) == simple_reed_solomon_encode(
+        data, field, num_ec
+    )
 
 
 @pytest.mark.parametrize("primitive", [0x11D, 0x12D])
