@@ -30,22 +30,27 @@ class BinaryExtensionGaloisField:
     def __init__(self, primitive: int, *, size: int = 256) -> None:
         self.size = size
         self.primitive = primitive
-        self._exp = [0] * size
+        order = size - 1
+        # ``_exp`` is doubled to length ``2*order`` so multiply can index
+        # ``_exp[log_a + log_b]`` directly -- the sum never exceeds 2*order - 2,
+        # sparing a ``% order`` reduction on the hot path.
+        self._exp = [0] * (2 * order)
         self._log = [0] * size
         x = 1
-        for i in range(size - 1):
+        for i in range(order):
             self._exp[i] = x
             self._log[x] = i
             x <<= 1
             if x >= size:
                 x ^= primitive
-        self._exp[size - 1] = 1
+        for i in range(order, 2 * order):
+            self._exp[i] = self._exp[i - order]
 
     def mul(self, a: int, b: int) -> int:
         """Multiply two field symbols."""
         if a == 0 or b == 0:
             return 0
-        return self._exp[(self._log[a] + self._log[b]) % (self.size - 1)]
+        return self._exp[self._log[a] + self._log[b]]
 
     # B019: the cache pins `self`, but instances are module-level
     # singletons that already live forever.
@@ -104,13 +109,21 @@ def reed_solomon_encode(
     :returns: EC bytes, length ``num_ec``, highest power first.
     """
     gen = field.generator_coefficients(num_ec, first_root=first_root)
+    log = field._log
+    exp = field._exp
+    # Pair each non-zero generator coefficient with its offset and log, so the
+    # inner loop is a table lookup and XOR -- no per-symbol ``mul`` call, and no
+    # modulo (``exp`` is doubled to absorb the log sum).
+    gen_terms = [(j, log[g]) for j, g in enumerate(gen) if g]
     data_len = len(data)
     buffer = list(data) + [0] * num_ec
     for i in range(data_len):
         lead = buffer[i]
-        if lead != 0:
-            for j in range(num_ec):
-                buffer[i + 1 + j] ^= field.mul(lead, gen[j])
+        if lead:
+            log_lead = log[lead]
+            offset = i + 1
+            for j, log_g in gen_terms:
+                buffer[offset + j] ^= exp[log_lead + log_g]
     return buffer[data_len:]
 
 
@@ -173,9 +186,14 @@ def reed_solomon_encode_pdf417(data: Sequence[int], num_ec: int) -> list[int]:
     gen = GF929.generator_coefficients(num_ec, first_root=1)
     data_len = len(data)
     buffer = list(data) + [0] * num_ec
+    # Reduce the leading coefficient on read and defer the per-cell modulo to
+    # the return: the running entries stay congruent mod p, so the quotient
+    # digits -- and hence the remainder -- are identical, at one modulo per row
+    # instead of one per cell.
     for i in range(data_len):
-        lead = buffer[i]
-        if lead != 0:
+        lead = buffer[i] % p
+        if lead:
+            offset = i + 1
             for j in range(num_ec):
-                buffer[i + 1 + j] = (buffer[i + 1 + j] - lead * gen[j]) % p
+                buffer[offset + j] -= lead * gen[j]
     return [(p - r) % p for r in buffer[data_len:]]
