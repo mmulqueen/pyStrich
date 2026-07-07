@@ -5,11 +5,6 @@ from __future__ import annotations
 import functools
 import re
 from collections.abc import Iterable, Sequence
-from pathlib import Path
-
-from pystrich.exceptions import PyStrichError
-
-_DATA_DIR = Path(__file__).parent / "qrcode_data"
 
 # fmt: off
 MAX_DATA_BITS: list[int] = [
@@ -46,7 +41,199 @@ MATRIX_REMAIN_BIT: list[int] = [0, 0, 7, 7, 7, 7, 7, 0,
                      3, 3, 3, 3, 3, 4, 4, 4,
                      4, 4, 4, 4, 3, 3, 3, 3,
                      3, 3, 3, 0, 0, 0, 0, 0, 0]
+
+
+# Error correction codewords per Reed-Solomon block and block count,
+# indexed version - 1 + 40 * ecl like MAX_DATA_BITS (ECL rows: M, L, H, Q).
+RS_ECC_CODEWORDS: tuple[int, ...] = (
+    10, 16, 26, 18, 24, 16, 18, 22, 22, 26,
+    30, 22, 22, 24, 24, 28, 28, 26, 26, 26,
+    26, 28, 28, 28, 28, 28, 28, 28, 28, 28,
+    28, 28, 28, 28, 28, 28, 28, 28, 28, 28,
+
+    7, 10, 15, 20, 26, 18, 20, 24, 30, 18,
+    20, 24, 26, 30, 22, 24, 28, 30, 28, 28,
+    28, 28, 30, 30, 26, 28, 30, 30, 30, 30,
+    30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
+
+    17, 28, 22, 16, 22, 28, 26, 26, 24, 28,
+    24, 28, 22, 24, 24, 30, 28, 28, 26, 28,
+    30, 24, 30, 30, 30, 30, 30, 30, 30, 30,
+    30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
+
+    13, 22, 18, 26, 18, 24, 18, 22, 20, 24,
+    28, 26, 24, 20, 30, 24, 28, 28, 26, 30,
+    28, 30, 30, 30, 30, 28, 30, 30, 30, 30,
+    30, 30, 30, 30, 30, 30, 30, 30, 30, 30)
+
+
+RS_BLOCK_COUNT: tuple[int, ...] = (
+    1, 1, 1, 2, 2, 4, 4, 4, 5, 5,
+    5, 8, 9, 9, 10, 10, 11, 13, 14, 16,
+    17, 17, 18, 20, 21, 23, 25, 26, 28, 29,
+    31, 33, 35, 37, 38, 40, 43, 45, 47, 49,
+
+    1, 1, 1, 1, 1, 2, 2, 2, 2, 4,
+    4, 4, 4, 4, 6, 6, 6, 6, 7, 8,
+    8, 9, 9, 10, 12, 12, 12, 13, 14, 15,
+    16, 17, 18, 19, 19, 20, 21, 22, 24, 25,
+
+    1, 1, 2, 4, 4, 4, 5, 6, 8, 8,
+    11, 11, 16, 16, 18, 16, 19, 21, 25, 25,
+    25, 34, 30, 32, 35, 37, 40, 42, 45, 48,
+    51, 54, 57, 60, 63, 66, 70, 74, 77, 81,
+
+    1, 1, 2, 2, 4, 4, 6, 6, 8, 8,
+    8, 10, 12, 16, 12, 17, 16, 18, 21, 20,
+    23, 23, 25, 27, 29, 34, 34, 35, 38, 40,
+    43, 45, 48, 51, 53, 56, 59, 62, 65, 68)
+
+
+# Alignment-pattern centre coordinates, indexed version - 1. The spacing
+# is irregular (version 32 breaks every closed-form rule), so the whole
+# table is kept literal.
+ALIGNMENT_CENTRES: tuple[tuple[int, ...], ...] = (
+    (), (6, 18), (6, 22), (6, 26), (6, 30), (6, 34),
+    (6, 22, 38), (6, 24, 42), (6, 26, 46), (6, 28, 50), (6, 30, 54),
+    (6, 32, 58), (6, 34, 62), (6, 26, 46, 66), (6, 26, 48, 70),
+    (6, 26, 50, 74), (6, 30, 54, 78), (6, 30, 56, 82), (6, 30, 58, 86),
+    (6, 34, 62, 90), (6, 28, 50, 72, 94), (6, 26, 50, 74, 98),
+    (6, 30, 54, 78, 102), (6, 28, 54, 80, 106), (6, 32, 58, 84, 110),
+    (6, 30, 58, 86, 114), (6, 34, 62, 90, 118), (6, 26, 50, 74, 98, 122),
+    (6, 30, 54, 78, 102, 126), (6, 26, 52, 78, 104, 130),
+    (6, 30, 56, 82, 108, 134), (6, 34, 60, 86, 112, 138),
+    (6, 30, 58, 86, 114, 142), (6, 34, 62, 90, 118, 146),
+    (6, 30, 54, 78, 102, 126, 150), (6, 24, 50, 76, 102, 128, 154),
+    (6, 28, 54, 80, 106, 132, 158), (6, 32, 58, 84, 110, 136, 162),
+    (6, 26, 54, 82, 110, 138, 166), (6, 30, 58, 86, 114, 142, 170))
 # fmt: on
+
+
+def _version_info_bits(version: int) -> int:
+    """Return the 18-bit version information: 6 version bits followed by
+    a 12-bit BCH error-correction remainder."""
+
+    remainder = version << 12
+    for bit in range(17, 11, -1):
+        if remainder & (1 << bit):
+            remainder ^= 0x1F25 << (bit - 12)
+    return (version << 12) | remainder
+
+
+def _build_frame(version: int) -> tuple[list[list[int]], list[list[bool]]]:
+    """Build the function-pattern frame for a version.
+
+    Returns ``(frame, occupied)``, both indexed ``[row][col]``: ``frame``
+    holds the dark function modules that overlay the data matrix, while
+    ``occupied`` additionally marks light function modules and the
+    reserved format/version information areas so codeword placement
+    skips them.
+    """
+
+    size = 17 + (version << 2)
+    frame = [[0] * size for _ in range(size)]
+    occupied = [[False] * size for _ in range(size)]
+
+    def set_module(row: int, col: int, dark: bool) -> None:
+        frame[row][col] = int(dark)
+        occupied[row][col] = True
+
+    # Finder patterns with their light separators at three corners.
+    for row0, col0 in ((0, 0), (0, size - 7), (size - 7, 0)):
+        for r in range(-1, 8):
+            for c in range(-1, 8):
+                row, col = row0 + r, col0 + c
+                if 0 <= row < size and 0 <= col < size:
+                    ring = r in (0, 6) or c in (0, 6)
+                    core = 2 <= r <= 4 and 2 <= c <= 4
+                    set_module(row, col, 0 <= r <= 6 and 0 <= c <= 6 and (ring or core))
+
+    # Timing patterns: row and column 6, dark at even coordinates.
+    for i in range(8, size - 8):
+        set_module(6, i, i % 2 == 0)
+        set_module(i, 6, i % 2 == 0)
+
+    # Alignment patterns: 5x5 ring plus centre dot at each centre pair,
+    # except the three that would sit on finder corners. Overlaps with
+    # the timing patterns agree, so drawing over them is harmless.
+    centres = ALIGNMENT_CENTRES[version - 1]
+    for cr in centres:
+        for cc in centres:
+            if (cr < 9 and cc < 9) or (cr < 9 and cc > size - 10) or (cr > size - 10 and cc < 9):
+                continue
+            for r in range(-2, 3):
+                for c in range(-2, 3):
+                    set_module(cr + r, cc + c, max(abs(r), abs(c)) != 1)
+
+    # Reserve the format information areas (light, filled in later) and
+    # place the always-dark module above the bottom-left finder.
+    for i in range(9):
+        occupied[8][i] = True
+        occupied[i][8] = True
+    for i in range(8):
+        occupied[8][size - 1 - i] = True
+        occupied[size - 1 - i][8] = True
+    set_module(size - 8, 8, True)
+
+    # Version information for versions 7 and up: 18 bits in a 6x3 block
+    # beside the top-right finder and its transpose above the bottom-left.
+    if version >= 7:
+        bits = _version_info_bits(version)
+        for i in range(18):
+            dark = bool((bits >> i) & 1)
+            row, col = i // 3, size - 11 + i % 3
+            set_module(row, col, dark)
+            set_module(col, row, dark)
+
+    return frame, occupied
+
+
+def _placement_sequence(size: int, occupied: list[list[bool]]) -> list[tuple[int, int]]:
+    """Return the data-module placement order as ``(col, row)`` pairs.
+
+    Walks two-module column pairs right to left, alternating upward and
+    downward, skipping the vertical timing column and occupied modules.
+    """
+
+    sequence: list[tuple[int, int]] = []
+    col = size - 1
+    upward = True
+    while col > 0:
+        if col == 6:
+            col -= 1
+        rows = range(size - 1, -1, -1) if upward else range(size)
+        for row in rows:
+            for c in (col, col - 1):
+                if not occupied[row][c]:
+                    sequence.append((c, row))
+        upward = not upward
+        col -= 2
+    return sequence
+
+
+def _mask_byte(row: int, col: int) -> int:
+    """Pack the eight data-mask patterns for a module: bit ``i`` is set
+    when mask pattern ``i`` darkens the module at ``(row, col)``."""
+
+    product = row * col
+    conditions = (
+        (row + col) % 2 == 0,
+        row % 2 == 0,
+        col % 3 == 0,
+        (row + col) % 3 == 0,
+        (row // 2 + col // 3) % 2 == 0,
+        product % 2 + product % 3 == 0,
+        (product % 2 + product % 3) % 2 == 0,
+        ((row + col) % 2 + product % 3) % 2 == 0,
+    )
+    return sum(1 << i for i, dark in enumerate(conditions) if dark)
+
+
+# Every mask predicate is periodic: 12 rows (row parity, mod 3 and
+# ``row // 2`` parity) by 6 columns (column parity, mod 3 and
+# ``col // 3`` parity), so mask bytes come from this table as
+# ``_MASK_BYTES[row % 12][col % 6]``.
+_MASK_BYTES = tuple(tuple(_mask_byte(row, col) for col in range(6)) for row in range(12))
 
 
 class MatrixInfo:
@@ -61,30 +248,60 @@ class MatrixInfo:
     frame_data: list[list[int]]
 
     def __init__(self, version: int, ecl: int) -> None:
-        self.byte_num = MATRIX_REMAIN_BIT[version] + (MAX_CODEWORDS[version] << 3)
+        total_codewords = MAX_CODEWORDS[version]
+        self.byte_num = MATRIX_REMAIN_BIT[version] + (total_codewords << 3)
 
-        with (_DATA_DIR / f"qrv{version}_{ecl}.dat").open("rb") as f:
-            self.matrix_d = [
-                list(f.read(self.byte_num)),
-                list(f.read(self.byte_num)),
-                list(f.read(self.byte_num)),
-            ]
-            self.format_info = [list(f.read(15)), list(f.read(15))]
-            self.rs_ecc_codewords = ord(f.read(1))
-            self.rs_block_order = list(f.read(128))
+        table_index = version - 1 + 40 * ecl
+        self.rs_ecc_codewords = RS_ECC_CODEWORDS[table_index]
+        block_count = RS_BLOCK_COUNT[table_index]
+        short_block, long_blocks = divmod(total_codewords, block_count)
+        self.rs_block_order = [short_block] * (block_count - long_blocks) + [
+            short_block + 1
+        ] * long_blocks
 
-        with (_DATA_DIR / f"qrvfr{version}.dat").open(encoding="ascii") as f:
-            self.frame_data = []
-            for line in f.read().splitlines():
-                frame_line: list[int] = []
-                for char in line:
-                    if char == "1":
-                        frame_line.append(1)
-                    elif char == "0":
-                        frame_line.append(0)
-                    else:
-                        raise PyStrichError(f"Corrupted frame data file, found char: {char}")
-                self.frame_data.append(frame_line)
+        size = 17 + (version << 2)
+        self.frame_data, occupied = _build_frame(version)
+        walk = _placement_sequence(size, occupied)
+
+        # The codeword buffer holds the data blocks back to back followed
+        # by the error-correction blocks, but the symbol carries the
+        # codewords interleaved round-robin across blocks. Map each stream
+        # position back to its buffer codeword so the coordinate arrays
+        # can stay indexed by buffer position.
+        data_lengths = [block - self.rs_ecc_codewords for block in self.rs_block_order]
+        data_starts = [sum(data_lengths[:b]) for b in range(block_count)]
+        data_total = sum(data_lengths)
+        buffer_order: list[int] = []
+        for i in range(max(data_lengths)):
+            buffer_order.extend(
+                data_starts[b] + i for b in range(block_count) if i < data_lengths[b]
+            )
+        for i in range(self.rs_ecc_codewords):
+            buffer_order.extend(
+                data_total + b * self.rs_ecc_codewords + i for b in range(block_count)
+            )
+
+        xs = [0] * self.byte_num
+        ys = [0] * self.byte_num
+        for stream_pos, buffer_pos in enumerate(buffer_order):
+            for bit in range(8):
+                col, row = walk[(stream_pos << 3) + bit]
+                xs[(buffer_pos << 3) + bit] = col
+                ys[(buffer_pos << 3) + bit] = row
+        for idx in range(total_codewords << 3, self.byte_num):  # remainder bits
+            xs[idx], ys[idx] = walk[idx]
+        self.matrix_d = [
+            xs,
+            ys,
+            [_MASK_BYTES[ys[i] % 12][xs[i] % 6] for i in range(self.byte_num)],
+        ]
+
+        # Second format-information copy: below the top-right finder and
+        # beside the bottom-left one.
+        self.format_info = [
+            [8] * 7 + list(range(size - 8, size)),
+            [size - 1 - i for i in range(7)] + [8] * 8,
+        ]
 
     def create_matrix(self, version: int, codewords: Sequence[int]) -> list[list[int]]:
         """Create matrix based on version and fills it w/ codewords"""

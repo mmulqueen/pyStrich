@@ -5,11 +5,19 @@ encoder tries: direct character encoding, Punct digraph compression, single-
 character shifts, multi-character latches (composed one hop at a time so the
 DP finds the cheapest path), and Byte mode runs of 1..2047 bytes.
 
+Byte runs are relaxed as they *close* at a position rather than enumerated by
+length from each start, keeping the whole encode linear in the payload: a run
+of ``j`` bytes ending at ``pos`` costs ``dp[start] + byte-shift + prefix(j) +
+8j``, so for each length-prefix regime (1..31 bytes uses a 5-bit prefix,
+32..2047 a 16-bit one) the cheapest start is a sliding-window minimum of
+``dp[start] - 8*start`` maintained by a monotonic deque.
+
 The output is an MSB-first bit list ready for the codeword chunker.
 """
 
 from __future__ import annotations
 
+from collections import deque
 from typing import NamedTuple
 
 from pystrich.aztec.modes import (
@@ -30,6 +38,10 @@ from pystrich.exceptions import PyStrichInvalidInput
 
 _INF = 10**18
 _MAX_BYTE_RUN = 2047
+
+# Byte-run length regimes: (shortest run, longest run, length-prefix bits).
+# 1..31 bytes carry a 5-bit length; 32.. carry a 5-bit escape plus 11-bit count.
+_BYTE_REGIMES = ((1, 31, 5), (32, _MAX_BYTE_RUN, 16))
 
 Emission = list[tuple[int, int]]
 
@@ -85,9 +97,23 @@ class _HighLevelEncoder:
         self.dp: dict[State, int] = {start: eci_cost}
         self.prev: dict[State, tuple[State | None, Emission]] = {start: (None, eci_em)}
 
+        # Sliding-window state for closing Byte-mode runs. For each byte-capable
+        # caller mode, ``_byte_start_term`` holds ``dp[State(mode, start)] -
+        # 8*start`` at every reachable start -- the part of a run's cost that
+        # depends only on where it starts. ``_byte_windows`` keeps one monotonic
+        # deque per length regime holding the in-window starts, cheapest at the
+        # front, so each close is a sliding-window minimum of that term.
+        self._byte_modes = tuple(m for m in ALL_MODES if m in BYTE_SHIFT_FROM)
+        self._byte_start_term: dict[str, dict[int, int]] = {m: {} for m in self._byte_modes}
+        self._byte_windows: dict[str, list[deque[int]]] = {
+            m: [deque() for _ in _BYTE_REGIMES] for m in self._byte_modes
+        }
+
     def encode(self) -> list[int]:
         for pos in range(self.n + 1):
+            self._byte_mode_close(pos)
             self._close_latches(pos)
+            self._record_byte_starts(pos)
             if pos == self.n:
                 continue
             for mode in ALL_MODES:
@@ -96,7 +122,6 @@ class _HighLevelEncoder:
                 self._direct_encode(mode, pos)
                 self._punct_digraph(mode, pos)
                 self._shifts(mode, pos)
-                self._byte_mode(mode, pos)
         return self._reconstruct()
 
     def _relax(self, state: State, new_cost: int, src_state: State, emission: Emission) -> bool:
@@ -176,30 +201,57 @@ class _HighLevelEncoder:
                         [(shift_cw, shift_bits), (cw, 5)],
                     )
 
-    def _byte_mode(self, mode: str, pos: int) -> None:
-        """Try Byte mode runs of 1..2047 bytes starting at ``pos``.
+    def _record_byte_starts(self, pos: int) -> None:
+        """Note that a byte run may start at ``pos`` in each byte-capable mode.
 
-        Runs of 1..31 use a 5-bit length prefix; longer runs use a 5+11 prefix.
-        Inlines the relax check so the per-k emission is only built when accepted.
+        Stores the start-only part of a run's cost, ``dp[start] - 8*start``, so
+        :meth:`_byte_mode_close` can pick the cheapest start with a plain
+        sliding-window minimum -- the shared ``8*pos`` and prefix terms cancel.
         """
-        if mode not in BYTE_SHIFT_FROM:
-            return
-        bs_cw, bs_bits = BYTE_SHIFT_CODEWORDS[mode]
-        src = State(mode, pos)
-        cost_here = self.dp[src]
-        max_k = min(_MAX_BYTE_RUN, self.n - pos)
-        for k in range(1, max_k + 1):
-            length_bits = 5 if k <= 31 else 16
-            new_cost = cost_here + bs_bits + length_bits + 8 * k
-            dst = State(mode, pos + k)
-            if new_cost >= self.dp.get(dst, _INF):
+        for m in self._byte_modes:
+            src = State(m, pos)
+            if src in self.dp:
+                self._byte_start_term[m][pos] = self.dp[src] - 8 * pos
+
+    def _byte_mode_close(self, pos: int) -> None:
+        """Relax every Byte-mode run ending at ``pos``, for each caller mode.
+
+        A run of ``j = pos - start`` bytes costs ``dp[start] + byte-shift +
+        prefix(j) + 8j``. Within each length regime the cheapest start is the
+        front of a monotonic deque of the starts currently in range: a start
+        enters when its offset reaches the regime's shortest run and leaves once
+        the offset passes the longest.
+        """
+        for m in self._byte_modes:
+            term = self._byte_start_term[m]
+            bs_cw, bs_bits = BYTE_SHIFT_CODEWORDS[m]
+            best_cost, best_start = _INF, -1
+
+            for window, (shortest, longest, prefix_bits) in zip(
+                self._byte_windows[m], _BYTE_REGIMES, strict=True
+            ):
+                entering = pos - shortest
+                if entering in term:
+                    while window and term[window[-1]] >= term[entering]:
+                        window.pop()
+                    window.append(entering)
+                while window and window[0] < pos - longest:
+                    window.popleft()
+                if window:
+                    cost = bs_bits + prefix_bits + 8 * pos + term[window[0]]
+                    if cost < best_cost:
+                        best_cost, best_start = cost, window[0]
+
+            if best_start < 0:
                 continue
-            if k <= 31:
-                prefix: Emission = [(bs_cw, bs_bits), (k, 5)]
+
+            j = pos - best_start
+            if j <= 31:
+                prefix: Emission = [(bs_cw, bs_bits), (j, 5)]
             else:
-                prefix = [(bs_cw, bs_bits), (0, 5), (k - 31, 11)]
-            self.dp[dst] = new_cost
-            self.prev[dst] = (src, prefix + self.payload_emission[pos : pos + k])
+                prefix = [(bs_cw, bs_bits), (0, 5), (j - 31, 11)]
+            emission = prefix + self.payload_emission[best_start:pos]
+            self._relax(State(m, pos), best_cost, State(m, best_start), emission)
 
     def _reconstruct(self) -> list[int]:
         """Walk back-pointers from the cheapest end state and concatenate emissions."""

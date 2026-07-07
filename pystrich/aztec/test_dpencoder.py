@@ -62,11 +62,12 @@ def test_byte_mode_for_high_byte():
 
 
 def test_byte_mode_splits_50_bytes_into_two_short_runs():
-    """50 bytes of high-bit data: DP picks two short runs (25 + 25), one bit
+    """50 bytes of high-bit data: DP uses two runs of at most 31 bytes, one bit
     cheaper than the single extended-length encoding (21 + 8*50 = 421)."""
     payload = b"\x80" * 50
     bits = encode_high_level(payload)
-    assert len(bits) == 2 * (5 + 5 + 25 * 8)
+    # Two runs, each a B/S (5) + 5-bit length prefix, over 50 data bytes.
+    assert len(bits) == 2 * (5 + 5) + 50 * 8
 
 
 def test_byte_mode_uses_extended_length_for_long_unsplittable_run():
@@ -75,6 +76,22 @@ def test_byte_mode_uses_extended_length_for_long_unsplittable_run():
     bits = encode_high_level(payload)
     # B/S (5) + length-prefix 0 (5) + extended length 63-31=32 (11) + 63*8 = 525 bits.
     assert len(bits) == 5 + 5 + 11 + 63 * 8
+
+
+@pytest.mark.parametrize(
+    "length, expected_bits",
+    [
+        # A single extended run tops out at 2047 bytes: B/S (5) + escape (5) +
+        # 11-bit count + data.
+        pytest.param(2047, 5 + 5 + 11 + 2047 * 8, id="single-run-at-cap"),
+        # One byte past the cap forces a second run: the extended run plus a
+        # short B/S (5) + 5-bit length run carrying the trailing byte.
+        pytest.param(2048, (5 + 5 + 11) + (5 + 5) + 2048 * 8, id="over-cap-splits"),
+    ],
+)
+def test_byte_mode_run_capped_at_2047_bytes(length, expected_bits):
+    """A Byte run spans at most 2047 bytes; longer high-bit data splits."""
+    assert len(encode_high_level(b"\x80" * length)) == expected_bits
 
 
 @pytest.mark.parametrize(

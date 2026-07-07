@@ -1,6 +1,17 @@
 Changelog
 =========
 
+.. _v0-17:
+
+0.17 — unreleased
+-----------------
+
+- Aztec Code: Byte-mode run segmentation is now linear-time, sharply reducing
+  encode time for large payloads.
+- QR Code: the frame, module-placement, mask and error-correction-block data
+  is now constructed at encode time instead of being shipped as 200
+  pre-computed data files, shrinking the installed package by about 6 MB.
+
 .. _v0-16:
 
 0.16 — 2026-07-03

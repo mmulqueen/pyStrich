@@ -1,20 +1,21 @@
 """Unit test for QR Code barcode encoder"""
 
 from datetime import timedelta
+from string import ascii_lowercase
 
 import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
-from pystrich.qrcode import QRCodeData, QRCodeEncoder, isodata
+from pystrich.qrcode import QRCodeData, QRCodeEncoder, QRErrorCorrectionLevel, isodata
 from pystrich.qrcode.isodata import (
     _mask_penalty_n1,
     _mask_penalty_n2,
     _mask_penalty_n3,
     _mask_penalty_n4,
 )
-from pystrich.qrcode.textencoder import TextEncoder
+from pystrich.qrcode.textencoder import STR2ECL, TextEncoder
 
 
 @pytest.mark.parametrize(
@@ -265,6 +266,32 @@ def test_scanner_round_trip(string, ecl, tmp_path, decode_barcode):
     assert decode_barcode(img) == string
 
 
+# The payloads above top out around version 6; sweep a payload sized for
+# every version so each frame, alignment grid and block structure is
+# decode-verified by an independent implementation. Asserting the reported
+# error correction level also proves the format information: zxing must
+# read it to unmask the data.
+@pytest.mark.png
+def test_scanner_round_trip_every_version(tmp_path, decode_barcode):
+    img = tmp_path / "qrcode-test.png"
+    ecls: tuple[QRErrorCorrectionLevel, ...] = ("L", "M", "Q", "H")
+    for version in range(1, 41):
+        ecl = ecls[version % 4]
+        if version == 1:
+            payload = "hi"
+        else:
+            # One byte more than the previous version holds, so byte mode
+            # lands exactly on the target version.
+            capacity = isodata.MAX_DATA_BITS[version - 2 + 40 * STR2ECL[ecl]]
+            payload = (ascii_lowercase * 200)[: capacity // 8]
+        encoder = QRCodeEncoder(payload, ecl)
+        assert (len(encoder.matrix) - 17) // 4 == version
+        encoder.save(str(img), 3)
+        result = decode_barcode(img, full=True)
+        assert str(result.text) == payload
+        assert result.ec_level == ecl
+
+
 @pytest.mark.parametrize("ecl", ["L", "M", "Q", "H"])
 @pytest.mark.parametrize(
     "string",
@@ -334,6 +361,37 @@ def test_property_roundtrip(text, tmp_path, decode_barcode):
     img = tmp_path / "qrcode-property.png"
     QRCodeEncoder(text).save(str(img), 3)
     assert decode_barcode(img) == text
+
+
+@given(text=_qr_payload(), ecl=st.sampled_from(["L", "M", "Q", "H"]))
+@settings(max_examples=100, deadline=timedelta(seconds=2), print_blob=True)
+def test_chosen_mask_minimises_penalty(text, ecl):
+    """The emitted symbol scores no worse than its seven re-maskings, and
+    its data modules carry the mask the selection picked."""
+    enc = TextEncoder()
+    matrix = enc.encode(QRCodeData(text, auto_encoding=True), ecl)
+    content = enc.minfo.create_matrix(enc.version, enc.codewords)
+    chosen = enc.minfo.calc_mask_number(content)
+    size = len(matrix)
+
+    scores = []
+    for mask in range(8):
+        rows = [bytes((content[c][r] >> mask) & 1 for c in range(size)) for r in range(size)]
+        cols = [bytes(row[c] for row in rows) for c in range(size)]
+        lines = rows + cols
+        scores.append(
+            _mask_penalty_n1(lines)
+            + _mask_penalty_n2(rows)
+            + _mask_penalty_n3(lines)
+            + _mask_penalty_n4(rows, size * size)
+        )
+    assert scores[chosen] == min(scores)
+
+    _, occupied = isodata._build_frame(enc.version)
+    for row in range(size):
+        for col in range(size):
+            if not occupied[row][col]:
+                assert matrix[row][col] == (content[col][row] >> chosen) & 1
 
 
 @pytest.mark.parametrize("cellsize", [5, 10])
@@ -638,3 +696,244 @@ def test_qrcode_smudge_tolerance(tmp_path, decode_barcode):
     path = tmp_path / "qrcode-damaged.png"
     qrcode_smudge_demo(text).save(path)
     assert decode_barcode(path) == text
+
+
+def test_rs_block_order_consistency():
+    """The expanded error-correction block structure adds up for every
+    version and error correction level."""
+    for ecl in range(4):
+        for version in range(1, 41):
+            minfo = isodata.MatrixInfo(version, ecl)
+            index = version - 1 + 40 * ecl
+            assert len(minfo.rs_block_order) == isodata.RS_BLOCK_COUNT[index]
+            assert sum(minfo.rs_block_order) == isodata.MAX_CODEWORDS[version]
+            data_codewords = [block - minfo.rs_ecc_codewords for block in minfo.rs_block_order]
+            assert all(length > 0 for length in data_codewords)
+            assert sum(data_codewords) * 8 == isodata.MAX_DATA_BITS[index]
+
+
+def test_version_info_bits():
+    assert isodata._version_info_bits(7) == 0x07C94
+    assert isodata._version_info_bits(8) == 0x085BC
+
+
+def test_placement_covers_every_data_module_once():
+    """Every version's coordinate arrays address ``byte_num`` distinct
+    modules, none of them function-pattern or reserved ones."""
+    for version in range(1, 41):
+        minfo = isodata.MatrixInfo(version, 0)
+        coords = set(zip(minfo.matrix_d[0], minfo.matrix_d[1], strict=True))
+        assert len(coords) == minfo.byte_num
+        _, occupied = isodata._build_frame(version)
+        assert not any(occupied[row][col] for col, row in coords)
+
+
+def test_version_information_blocks():
+    """Version 7+ frames carry two mirrored version-information blocks
+    whose value BCH-checks and encodes the version number."""
+    for version in range(7, 41):
+        frame, _ = isodata._build_frame(version)
+        size = 17 + 4 * version
+        top_right = [frame[i // 3][size - 11 + i % 3] for i in range(18)]
+        bottom_left = [frame[size - 11 + i % 3][i // 3] for i in range(18)]
+        assert bottom_left == top_right
+        value = sum(bit << i for i, bit in enumerate(top_right))
+        assert value >> 12 == version
+        remainder = value
+        for bit in range(17, 11, -1):
+            if remainder & (1 << bit):
+                remainder ^= 0b1111100100101 << (bit - 12)
+        assert remainder == 0
+
+
+# Transcribed by hand so it cannot inherit a bug from the drawing code.
+_FINDER = (
+    "1111111",
+    "1000001",
+    "1011101",
+    "1011101",
+    "1011101",
+    "1000001",
+    "1111111",
+)
+
+
+def test_finder_patterns_match_transcribed_tile():
+    frame, _ = isodata._build_frame(2)
+    size = 25
+    for row0, col0 in ((0, 0), (0, size - 7), (size - 7, 0)):
+        for r in range(7):
+            for c in range(7):
+                assert frame[row0 + r][col0 + c] == int(_FINDER[r][c])
+    # Light separators along each finder's inner edges.
+    assert all(frame[7][c] == 0 for c in range(8))
+    assert all(frame[r][7] == 0 for r in range(8))
+    assert all(frame[7][c] == 0 for c in range(size - 8, size))
+    assert all(frame[r][size - 8] == 0 for r in range(8))
+    assert all(frame[size - 8][c] == 0 for c in range(8))
+    assert all(frame[r][7] == 0 for r in range(size - 8, size))
+
+
+# Transcribed by hand from the eight mask-pattern definitions. Each
+# pattern repeats within six rows except the fourth, which needs twelve.
+_MASK_TILES = (
+    ("101010", "010101", "101010", "010101", "101010", "010101"),
+    ("111111", "000000", "111111", "000000", "111111", "000000"),
+    ("100100", "100100", "100100", "100100", "100100", "100100"),
+    ("100100", "001001", "010010", "100100", "001001", "010010"),
+    (
+        "111000",
+        "111000",
+        "000111",
+        "000111",
+        "111000",
+        "111000",
+        "000111",
+        "000111",
+        "111000",
+        "111000",
+        "000111",
+        "000111",
+    ),
+    ("111111", "100000", "100100", "101010", "100100", "100000"),
+    ("111111", "111000", "110110", "101010", "101101", "100011"),
+    ("101010", "000111", "100011", "010101", "111000", "011100"),
+)
+
+
+def test_mask_patterns_match_transcribed_tiles():
+    for mask, tile in enumerate(_MASK_TILES):
+        for row in range(12):
+            for col in range(6):
+                bit = (isodata._MASK_BYTES[row][col] >> mask) & 1
+                assert bit == int(tile[row % len(tile)][col]), (mask, row, col)
+
+
+def test_emitted_format_information_is_valid():
+    """Both format-information copies match, BCH-check, and name the
+    error correction level and mask actually used."""
+    for ecl in ("L", "M", "Q", "H"):
+        enc = TextEncoder()
+        matrix = enc.encode(QRCodeData("HuDoRa", auto_encoding=True), ecl)
+        size = len(matrix)
+        cols = [0, 1, 2, 3, 4, 5, 7, 8, 8, 8, 8, 8, 8, 8, 8]
+        rows = [8, 8, 8, 8, 8, 8, 8, 8, 7, 5, 4, 3, 2, 1, 0]
+        first = [matrix[r][c] for r, c in zip(rows, cols, strict=True)]
+        second = [matrix[size - 1 - i][8] for i in range(7)] + [
+            matrix[8][size - 8 + i] for i in range(8)
+        ]
+        assert second == first
+        value = sum(bit << (14 - i) for i, bit in enumerate(first))
+        unmasked = value ^ 0b101010000010010
+        remainder = unmasked
+        for bit in range(14, 9, -1):
+            if remainder & (1 << bit):
+                remainder ^= 0b10100110111 << (bit - 10)
+        assert remainder == 0
+        content = enc.minfo.create_matrix(enc.version, enc.codewords)
+        chosen = enc.minfo.calc_mask_number(content)
+        assert unmasked >> 10 == (STR2ECL[ecl] << 3) | chosen
+
+
+# The golden grids pin the exact module pattern — including frame bits and
+# mask choice — that decode round-trips would forgive drifting.
+def test_module_grid_golden_version_1():
+    matrix = QRCodeEncoder("HuDoRa", ecl="M").matrix
+    assert ["".join(str(module) for module in row) for row in matrix] == [
+        "111111101101001111111",
+        "100000101011001000001",
+        "101110101110001011101",
+        "101110100100101011101",
+        "101110101010101011101",
+        "100000100111101000001",
+        "111111101010101111111",
+        "000000000111100000000",
+        "100111111110110010111",
+        "000011010000101011110",
+        "010101101110011010111",
+        "011010000111000000100",
+        "110111100000001001110",
+        "000000001101100001111",
+        "111111101110111110100",
+        "100000101001110111100",
+        "101110101011101101011",
+        "101110101001100000000",
+        "101110100100001010011",
+        "100000100110011011111",
+        "111111101011000111100",
+    ]
+
+
+def test_module_grid_golden_version_11():
+    """A version 11 symbol additionally exercises version-information
+    placement (versions 7 and up)."""
+    data = QRCodeData.wifi_network(
+        ssid="MyNet",
+        password="a2bc-de3f-ghi4",
+        transition_disable=3,
+        public_key="MDkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDIgADURzxmttZoIRIPWGoQMV00XHWCAQIhXruVWOz0NjlkIA=",
+    )
+    matrix = QRCodeEncoder(data, ecl="H").matrix
+    assert ["".join(str(module) for module in row) for row in matrix] == [
+        "1111111011001011010001101010001010000010111111010001101111111",
+        "1000001011101100011101001000101100011111000100111101101000001",
+        "1011101001001010110001001101010001000110100001111011101011101",
+        "1011101011100110100001111001101110001010110010001110101011101",
+        "1011101011111111111000000101111110001101110110000011001011101",
+        "1000001011011010101010101011100011001011001100111110001000001",
+        "1111111010101010101010101010101010101010101010101010101111111",
+        "0000000000010000111011000111100011110010110101110101000000000",
+        "0001001000100001100111011100111110001011101111111100000111011",
+        "0011010110011011010010111011101101100011110001100011001101011",
+        "0011101101000111110011110100001001010010111111011101011010010",
+        "0001010101111010100100110010110001001111101110001010111110100",
+        "1101011100110101110011111011000100111011001111111110111100000",
+        "1111100101101001101011001001101101011001001101100101011000000",
+        "0011101101001100101011111100011111011001010101111001100101101",
+        "0111010111111000001000011111110000001111110101110011101111100",
+        "0111111110101000011011001110000000110100001110011010111000101",
+        "1000100011101000110001001111001101001101011010110110110110010",
+        "1101011111110011101011110001101110001110100100110110100101101",
+        "1111000011111011010110110110000010011100111101111100000101100",
+        "1111001111001000101101101011111011101010011111100101101100011",
+        "0010000011111100101010100100000000101010111001000101110000011",
+        "1001101111001111110101010111111010100010110001000101011101010",
+        "0000110111101001011100110011100101011101011011000110110011010",
+        "0110111100101100101010000110000110101001111001110111111010010",
+        "0100000000010101111100110010001101111000110101010011100100111",
+        "1011011101010111010010110011111110111110001111010011111001111",
+        "1010010101110010001110001100100111010001100000011011001011100",
+        "1011111111000110101011010000111110111001111001000101111111001",
+        "0111100011000000000010100011100010101010010011010000100010001",
+        "0001101011111010010000101100101010010001101111000010101011101",
+        "0110100010011101010000101010100011011000100001101110100010100",
+        "0001111111000000010110100101111110001100001111111111111110100",
+        "1001100101100001111111001000100000011000111000100111000101011",
+        "0010011000011000100100100000011001011010101110000001001011001",
+        "0101000111011000001111101011001111100100000110010101100110010",
+        "1010101011110010111000011000001000110110111100100110000011101",
+        "0111110110101011111000010110101111001100100010000001000001011",
+        "0101011110001001001001000101011010010010110111001110010100111",
+        "0110100111101011111101111111011100001011010111011011111010100",
+        "0101011101011101100101011111011101101111101001010110110100011",
+        "1111110111011101010010101011100101101001111111010101001110101",
+        "0000011010111000101001000110011010011101001111111100010110011",
+        "1111000110110011101111101110010101100100011101100111010010000",
+        "0010101001001110010001111010110111111010101110111000010000100",
+        "0101000101001010010000101010001100101000000001000011011100000",
+        "0111011010000101100100000111011111010111111100000100010010100",
+        "1000100001010010001111010101011111010011111011110010011000110",
+        "1100011101100101100000011010010000100011101111101110010100111",
+        "1011100100100100011110010101101100110100110101000111100011010",
+        "0011111110011100011011111101101101011100111101111011101100101",
+        "1110100101100111101100110110101111001010101000011110110010100",
+        "1111001111110100100110100011111110010010100000001010111110010",
+        "0000000011010010011001110101100010001100011010110100100011100",
+        "1111111000111000010100110111101010010100001110110000101011111",
+        "1000001000001101101100000100100010001100100001111010100011000",
+        "1011101001101111000111101010111111011110101001110101111110100",
+        "1011101011110111000111111010110111011100001001100011111111010",
+        "1011101001100001000111101101101011000111111110111101111111001",
+        "1000001001011101010111110101011110101011110111011001001011101",
+        "1111111001101100101110111100110101111101111011100110101010001",
+    ]

@@ -3,7 +3,7 @@ import subprocess
 import sys
 import types
 from shutil import which
-from typing import NoReturn
+from typing import Any, NoReturn
 
 import pytest
 
@@ -30,6 +30,10 @@ def simulate_missing_pillow(
     stub = types.ModuleType("pystrich._pillow")
 
     def missing(name: str) -> NoReturn:
+        # Dunder probes (__file__, __spec__, ...) come from tools that
+        # introspect sys.modules; only real attribute use should raise.
+        if name.startswith("__"):
+            raise AttributeError(name)
         raise PyStrichPillowNotInstalled()
 
     # PEP 562 module __getattr__: any attribute access on the stub raises.
@@ -43,16 +47,18 @@ def decode_barcode():
 
     Covers every symbology this project generates -- Code 39, Code 128,
     EAN-13, Data Matrix, QR Code and PDF417 -- through one Python binding.
+    Returns the decoded text; pass ``full=True`` for the raw zxing-cpp
+    result (e.g. ``ec_level``).
     """
     zxingcpp = pytest.importorskip("zxingcpp")
     PIL_Image = pytest.importorskip("PIL.Image")
 
-    def _read(image_path: "str | os.PathLike[str]") -> str:
+    def _read(image_path: "str | os.PathLike[str]", *, full: bool = False) -> "str | Any":
         with PIL_Image.open(os.fspath(image_path)) as image:
             results = zxingcpp.read_barcodes(image)
         if not results:
             raise AssertionError(f"zxing-cpp could not decode {image_path}")
-        return str(results[0].text)
+        return results[0] if full else str(results[0].text)
 
     return _read
 
