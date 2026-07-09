@@ -13,6 +13,8 @@ Changelog
 - QR Code: the frame, module-placement, mask and error-correction-block data
   is now constructed at encode time instead of being shipped as 200
   pre-computed data files, shrinking the installed package by about 6 MB.
+- QR Code: mask selection is substantially faster, roughly halving encode
+  time at every symbol size.
 
 .. _v0-16:
 

@@ -10,6 +10,7 @@ from hypothesis import strategies as st
 from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
 from pystrich.qrcode import QRCodeData, QRCodeEncoder, QRErrorCorrectionLevel, isodata
 from pystrich.qrcode.isodata import (
+    _LINE_SEP,
     _mask_penalty_n1,
     _mask_penalty_n2,
     _mask_penalty_n3,
@@ -378,11 +379,11 @@ def test_chosen_mask_minimises_penalty(text, ecl):
     for mask in range(8):
         rows = [bytes((content[c][r] >> mask) & 1 for c in range(size)) for r in range(size)]
         cols = [bytes(row[c] for row in rows) for c in range(size)]
-        lines = rows + cols
+        lines_blob = _LINE_SEP.join(rows + cols)
         scores.append(
-            _mask_penalty_n1(lines)
+            _mask_penalty_n1(lines_blob)
             + _mask_penalty_n2(rows)
-            + _mask_penalty_n3(lines)
+            + _mask_penalty_n3(lines_blob)
             + _mask_penalty_n4(rows, size * size)
         )
     assert scores[chosen] == min(scores)
@@ -619,18 +620,19 @@ def test_wifi_network_uri_structure(kwargs, expected):
 # (N3 4-module light buffer, N4 full module count denominator) cannot
 # silently regress.
 @pytest.mark.parametrize(
-    "lines, expected",
+    "lines_blob, expected",
     [
-        pytest.param([b""], 0, id="empty"),
-        pytest.param([b"\x00\x00\x00\x00"], 0, id="run-of-4-no-penalty"),
-        pytest.param([b"\x00\x00\x00\x00\x00"], 3, id="run-of-5-scores-3"),
-        pytest.param([b"\x01\x01\x01\x01\x01\x01"], 4, id="run-of-6-scores-4"),
-        pytest.param([b"\x01" * 7], 5, id="run-of-7-scores-5"),
-        pytest.param([b"\x00\x00\x00\x00\x00", b"\x01" * 6], 7, id="two-runs-sum"),
+        pytest.param(b"", 0, id="empty"),
+        pytest.param(b"\x00\x00\x00\x00", 0, id="run-of-4-no-penalty"),
+        pytest.param(b"\x00\x00\x00\x00\x00", 3, id="run-of-5-scores-3"),
+        pytest.param(b"\x01\x01\x01\x01\x01\x01", 4, id="run-of-6-scores-4"),
+        pytest.param(b"\x01" * 7, 5, id="run-of-7-scores-5"),
+        pytest.param(_LINE_SEP.join([b"\x00" * 5, b"\x01" * 6]), 7, id="two-runs-sum"),
+        pytest.param(_LINE_SEP.join([b"\x00" * 3, b"\x00" * 3]), 0, id="separator-breaks-runs"),
     ],
 )
-def test_mask_penalty_n1(lines, expected):
-    assert _mask_penalty_n1(lines) == expected
+def test_mask_penalty_n1(lines_blob, expected):
+    assert _mask_penalty_n1(lines_blob) == expected
 
 
 @pytest.mark.parametrize(
@@ -638,6 +640,8 @@ def test_mask_penalty_n1(lines, expected):
     [
         pytest.param([b"\x00\x00", b"\x00\x00"], 3, id="2x2-all-same-scores-3"),
         pytest.param([b"\x00\x01", b"\x01\x00"], 0, id="checker-scores-0"),
+        # A same-colour left-edge column pair is not a block on its own.
+        pytest.param([b"\x00\x01", b"\x00\x00"], 0, id="left-edge-column-not-a-block"),
         # 3x3 same: four overlapping 2x2 blocks * 3 = 12.
         pytest.param([b"\x01\x01\x01"] * 3, 12, id="3x3-all-same-scores-12"),
     ],
@@ -647,27 +651,29 @@ def test_mask_penalty_n2(rows, expected):
 
 
 @pytest.mark.parametrize(
-    "lines, expected",
+    "lines_blob, expected",
     [
         # A bare 7-module finder with no light flank scores 0: the
         # 4-module light buffer is required for the 40-point hit.
-        pytest.param([b"\x01\x00\x01\x01\x01\x00\x01"], 0, id="finder-no-flanks"),
-        pytest.param(
-            [b"\x00\x00\x00\x00\x01\x00\x01\x01\x01\x00\x01"], 40, id="finder-light-before"
-        ),
-        pytest.param(
-            [b"\x01\x00\x01\x01\x01\x00\x01\x00\x00\x00\x00"], 40, id="finder-light-after"
-        ),
+        pytest.param(b"\x01\x00\x01\x01\x01\x00\x01", 0, id="finder-no-flanks"),
+        pytest.param(b"\x00\x00\x00\x00\x01\x00\x01\x01\x01\x00\x01", 40, id="finder-light-before"),
+        pytest.param(b"\x01\x00\x01\x01\x01\x00\x01\x00\x00\x00\x00", 40, id="finder-light-after"),
         # Flanks on both sides counts twice (one each pattern).
         pytest.param(
-            [b"\x00\x00\x00\x00\x01\x00\x01\x01\x01\x00\x01\x00\x00\x00\x00"],
+            b"\x00\x00\x00\x00\x01\x00\x01\x01\x01\x00\x01\x00\x00\x00\x00",
             80,
             id="finder-both-flanks",
         ),
+        # A light flank on the far side of a line boundary does not count.
+        pytest.param(
+            _LINE_SEP.join([b"\x00" * 4, b"\x01\x00\x01\x01\x01\x00\x01"]),
+            0,
+            id="flank-split-across-lines",
+        ),
     ],
 )
-def test_mask_penalty_n3(lines, expected):
-    assert _mask_penalty_n3(lines) == expected
+def test_mask_penalty_n3(lines_blob, expected):
+    assert _mask_penalty_n3(lines_blob) == expected
 
 
 @pytest.mark.parametrize(

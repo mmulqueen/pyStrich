@@ -383,20 +383,19 @@ class MatrixInfo:
         module is dark under mask ``i``.
         """
         mtx_size = len(matrix_content)
+        packed_cols = [bytes(col) for col in matrix_content]
+        packed_rows = [bytes(t) for t in zip(*packed_cols, strict=True)]
         best_mask = 0
         best_score = 0
         for mask_index in range(8):
-            mask_bit = 1 << mask_index
-            rows = [
-                bytes((matrix_content[x][y] & mask_bit) != 0 for x in range(mtx_size))
-                for y in range(mtx_size)
-            ]
-            cols = [bytes(row[x] for row in rows) for x in range(mtx_size)]
-            lines = rows + cols
+            table = _MASK_EXTRACT[mask_index]
+            rows = [line.translate(table) for line in packed_rows]
+            cols = [line.translate(table) for line in packed_cols]
+            lines_blob = _LINE_SEP.join(rows + cols)
             score = (
-                _mask_penalty_n1(lines)
+                _mask_penalty_n1(lines_blob)
                 + _mask_penalty_n2(rows)
-                + _mask_penalty_n3(lines)
+                + _mask_penalty_n3(lines_blob)
                 + _mask_penalty_n4(rows, mtx_size * mtx_size)
             )
             if mask_index == 0 or score <= best_score:
@@ -413,41 +412,57 @@ _FINDER_BEFORE = re.compile(b"(?=\x00\x00\x00\x00\x01\x00\x01\x01\x01\x00\x01)")
 _FINDER_AFTER = re.compile(b"(?=\x01\x00\x01\x01\x01\x00\x01\x00\x00\x00\x00)")
 _N1_RUN_RE = re.compile(rb"\x00{5,}|\x01{5,}")
 
+# Lines are joined with a byte that is neither module colour, so one regex
+# pass covers the whole symbol without a run or finder pattern matching
+# across a line boundary.
+_LINE_SEP = b"\x02"
 
-def _mask_penalty_n1(lines: Iterable[bytes]) -> int:
+# One translate table per mask pattern: packed cell byte -> the 0/1 module
+# colour under that mask.
+_MASK_EXTRACT = tuple(
+    bytes(1 if value & (1 << mask) else 0 for value in range(256)) for mask in range(8)
+)
+
+
+def _mask_penalty_n1(lines_blob: bytes) -> int:
     """N1: runs of 5+ same-colour modules in a row or column.
 
     Each run of length ``L >= 5`` contributes ``L - 2`` (i.e. 3 + (L - 5)).
     """
-    score = 0
-    for line in lines:
-        for m in _N1_RUN_RE.finditer(line):
-            score += m.end() - m.start() - 2
-    return score
+    runs = _N1_RUN_RE.findall(lines_blob)
+    return sum(map(len, runs)) - 2 * len(runs)
 
 
 def _mask_penalty_n2(rows: Sequence[bytes]) -> int:
-    """N2: 2x2 blocks of same-colour modules. 3 per block; overlaps count."""
+    """N2: 2x2 blocks of same-colour modules. 3 per block; overlaps count.
+
+    Each row is loaded into a big int -- one byte lane per module -- and
+    ``row + (row >> 8)`` puts the sum of each horizontally adjacent module
+    pair in its right-hand module's lane, with no carries since lane values
+    stay at most 4. Adding two adjacent rows' pair sums makes a lane 0 or 4
+    exactly at the 2x2 same-colour blocks. Lane 0 holds only the left-edge
+    column sum, not a pair, so it is masked off and dropped before counting.
+    """
+    width = len(rows[0])
+    edge_mask = (1 << (8 * (width - 1))) - 1
     score = 0
-    n = len(rows)
-    for y in range(n - 1):
-        top = rows[y]
-        bot = rows[y + 1]
-        for x in range(n - 1):
-            if top[x] == top[x + 1] == bot[x] == bot[x + 1]:
-                score += 3
+    prev = int.from_bytes(rows[0], "big")
+    prev += prev >> 8
+    for y in range(1, len(rows)):
+        cur = int.from_bytes(rows[y], "big")
+        cur += cur >> 8
+        lanes = ((prev + cur) & edge_mask).to_bytes(width - 1, "big")
+        score += 3 * (lanes.count(0) + lanes.count(4))
+        prev = cur
     return score
 
 
-def _mask_penalty_n3(lines: Iterable[bytes]) -> int:
+def _mask_penalty_n3(lines_blob: bytes) -> int:
     """N3: 1:1:3:1:1 dark/light pattern flanked by ≥4 light modules in a row or column.
 
     40 per occurrence; a finder pattern with light runs on both sides counts twice.
     """
-    score = 0
-    for line in lines:
-        score += len(_FINDER_BEFORE.findall(line)) + len(_FINDER_AFTER.findall(line))
-    return score * 40
+    return 40 * (len(_FINDER_BEFORE.findall(lines_blob)) + len(_FINDER_AFTER.findall(lines_blob)))
 
 
 def _mask_penalty_n4(rows: Iterable[bytes], total_modules: int) -> int:
