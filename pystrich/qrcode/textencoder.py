@@ -78,19 +78,32 @@ class TextEncoder:
         encoded = text.encode(charset)
         eci = _ECI_DESIGNATOR[charset]
 
-        bits_by_bracket = [
-            encode_high_level(encoded, version_bracket=b, eci=eci) for b in (0, 1, 2)
-        ]
+        # Bit cost never decreases from one bracket to the next (only the
+        # segment headers widen), so a computed bracket's bit count is a
+        # lower bound for higher brackets and rules versions out without
+        # re-running the encoder.
+        bits_by_bracket: dict[int, list[int]] = {}
+        bound = 0
         for self.version in range(1, 41):
-            bits = bits_by_bracket[bracket_for_version(self.version)]
             max_bits = isodata.MAX_DATA_BITS[self.version - 1 + 40 * self.ecl]
+            if max_bits < bound:
+                continue
+            bracket = bracket_for_version(self.version)
+            if bracket not in bits_by_bracket:
+                bits_by_bracket[bracket] = encode_high_level(
+                    encoded, version_bracket=bracket, eci=eci
+                )
+                bound = len(bits_by_bracket[bracket])
+            bits = bits_by_bracket[bracket]
             if max_bits >= len(bits):
                 terminator_len = min(4, max_bits - len(bits))
                 self.max_data_codewords = max_bits // 8
                 break
         else:
+            if (bits_at_40 := bits_by_bracket.get(2)) is None:
+                bits_at_40 = encode_high_level(encoded, version_bracket=2, eci=eci)
             raise PyStrichInvalidInput(
-                f"payload needs {len(bits_by_bracket[2])} bits at version 40; "
+                f"payload needs {len(bits_at_40)} bits at version 40; "
                 f"no QR symbol at ECL {self.ecl} holds this"
             )
 
