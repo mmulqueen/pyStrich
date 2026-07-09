@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import functools
-import re
 from collections.abc import Iterable, Sequence
 
 # fmt: off
@@ -404,13 +403,14 @@ class MatrixInfo:
         return best_mask
 
 
-# The 1:1:3:1:1 dark/light finder pattern only scores N3 when it has a
-# 4-module light run on at least one side. Both flanks count separately,
-# so a finder flanked on both sides contributes twice. Lookahead so
-# overlapping occurrences are still counted.
-_FINDER_BEFORE = re.compile(b"(?=\x00\x00\x00\x00\x01\x00\x01\x01\x01\x00\x01)")
-_FINDER_AFTER = re.compile(b"(?=\x01\x00\x01\x01\x01\x00\x01\x00\x00\x00\x00)")
-_N1_RUN_RE = re.compile(rb"\x00{5,}|\x01{5,}")
+# The 1:1:3:1:1 finder pattern with its 4-module light flank before or
+# after. Neither can overlap a copy of itself (the flank can't fall
+# inside the dark-heavy core), so non-overlapping ``bytes.count`` is exact.
+_FINDER_BEFORE = b"\x00\x00\x00\x00\x01\x00\x01\x01\x01\x00\x01"
+_FINDER_AFTER = b"\x01\x00\x01\x01\x01\x00\x01\x00\x00\x00\x00"
+
+# Module byte -> 1 where light; the line separator maps to 0, breaking runs.
+_LIGHT_INDICATOR = bytes(1 if value == 0 else 0 for value in range(256))
 
 # Lines are joined with a byte that is neither module colour, so one regex
 # pass covers the whole symbol without a run or finder pattern matching
@@ -427,10 +427,22 @@ _MASK_EXTRACT = tuple(
 def _mask_penalty_n1(lines_blob: bytes) -> int:
     """N1: runs of 5+ same-colour modules in a row or column.
 
-    Each run of length ``L >= 5`` contributes ``L - 2`` (i.e. 3 + (L - 5)).
+    A run of length ``L >= 5`` scores ``L - 2``. With one byte lane per
+    module, ANDing a colour's 0/1 indicator against itself shifted by
+    1..k-1 lanes leaves a set bit where each k-module window of that
+    colour starts, so ``bit_count`` gives ``W_k = sum(L - k + 1)``. Per
+    run ``L - 2 == 3(L - 4) - 2(L - 5)``, so the score is ``3*W_5 - 2*W_6``.
     """
-    runs = _N1_RUN_RE.findall(lines_blob)
-    return sum(map(len, runs)) - 2 * len(runs)
+    score = 0
+    # The raw blob serves as the dark indicator: the separator's bit 1
+    # dies in the ANDs, as no other byte within five lanes ever sets it.
+    for indicator in (lines_blob.translate(_LIGHT_INDICATOR), lines_blob):
+        lanes = int.from_bytes(indicator, "big")
+        w4 = lanes & (lanes >> 8) & (lanes >> 16) & (lanes >> 24)
+        w5 = w4 & (lanes >> 32)
+        w6 = w5 & (lanes >> 40)
+        score += 3 * w5.bit_count() - 2 * w6.bit_count()
+    return score
 
 
 def _mask_penalty_n2(rows: Sequence[bytes]) -> int:
@@ -462,7 +474,7 @@ def _mask_penalty_n3(lines_blob: bytes) -> int:
 
     40 per occurrence; a finder pattern with light runs on both sides counts twice.
     """
-    return 40 * (len(_FINDER_BEFORE.findall(lines_blob)) + len(_FINDER_AFTER.findall(lines_blob)))
+    return 40 * (lines_blob.count(_FINDER_BEFORE) + lines_blob.count(_FINDER_AFTER))
 
 
 def _mask_penalty_n4(rows: Iterable[bytes], total_modules: int) -> int:

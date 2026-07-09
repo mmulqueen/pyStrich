@@ -629,6 +629,9 @@ def test_wifi_network_uri_structure(kwargs, expected):
         pytest.param(b"\x01" * 7, 5, id="run-of-7-scores-5"),
         pytest.param(_LINE_SEP.join([b"\x00" * 5, b"\x01" * 6]), 7, id="two-runs-sum"),
         pytest.param(_LINE_SEP.join([b"\x00" * 3, b"\x00" * 3]), 0, id="separator-breaks-runs"),
+        pytest.param(
+            _LINE_SEP.join([b"\x01" * 3, b"\x01" * 3]), 0, id="separator-breaks-dark-runs"
+        ),
     ],
 )
 def test_mask_penalty_n1(lines_blob, expected):
