@@ -96,12 +96,10 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         }
         # PIL writes image buffers from the bottom up, so feed in rows in
         # reverse.
-        buf = b""
-        for row in self.matrix[::-1]:
-            bufrow = b"".join([pixel[cell] * cellsize for cell in row])
-            for _ in range(0, cellsize):
-                buf += bufrow
-        return buf
+        return b"".join(
+            b"".join([pixel[cell] * cellsize for cell in row]) * cellsize
+            for row in self.matrix[::-1]
+        )
 
     def get_ascii(self) -> str:
         """Return an ASCII-art rendering of the matrix."""
