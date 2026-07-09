@@ -154,8 +154,9 @@ Symbol shape
 
 PDF417 symbols are rectangular: ``rows`` (3-90) and ``columns`` (1-30,
 counting data columns only -- the start/stop patterns and row indicators
-are added on top). pyStrich picks both automatically to give a roughly
-square aspect at the default ``row_height=3``.
+are added on top). pyStrich picks both automatically to minimise the
+symbol's area while keeping the wide aspect scanners expect at the
+default ``row_height=3``.
 
 For applications that need a fixed width -- for example a label of known
 size -- pin ``columns`` and let pyStrich choose the row count:

@@ -8,11 +8,11 @@ Typical use::
 
 The :class:`PDF417Encoder` constructor picks sensible defaults: an
 error correction level matching the spec's recommendation for the
-data length when ``ecl`` is omitted, a near-square matrix shape when
-``columns`` is omitted, and the narrowest fitting character encoding
-when the input is a plain ``str``. Set ``row_height`` to change the
-default Y/X = 3 row aspect; wrap the input in :class:`PDF417Data` to
-pin the character encoding by hand.
+data length when ``ecl`` is omitted, the smallest scanner-friendly
+matrix shape when ``columns`` is omitted, and the narrowest fitting
+character encoding when the input is a plain ``str``. Set
+``row_height`` to change the default Y/X = 3 row aspect; wrap the
+input in :class:`PDF417Data` to pin the character encoding by hand.
 
 Macro PDF417, Compact PDF417, and optimal mode-switching are not
 implemented.

@@ -23,12 +23,11 @@ the linear codeword stream that a later stage lays out on the bar grid.
 
 from __future__ import annotations
 
-import math
-
 from pystrich.exceptions import PyStrichInvalidInput
 from pystrich.reedsolomon import reed_solomon_encode_pdf417
 
 from .data import PDF417Data, PDF417Encoding
+from .layout import DEFAULT_ROW_HEIGHT, row_modules
 from .tables import (
     CHAR_TO_SUBMODE_VALUE,
     ECI_SMALL,
@@ -284,23 +283,39 @@ def _pick_rows(source_count: int, ecl: int, columns: int) -> int:
 
 
 def _auto_columns(total_codewords: int) -> int:
-    """Pick a column count that yields a roughly-square symbol.
+    """Pick the column count that minimises symbol area at a scannable aspect.
 
-    With the default Y/X = 3 row-height ratio the rendered symbol is
-    square when the row width in modules (``17 * c + 69``) equals
-    three times the row count (``3 * T / c``). Setting those equal gives
-    ``17 c^2 + 69 c - 3 T = 0``; the positive root is the estimate
-    below, clamped to the valid 1..30 column range.
+    Every row repeats a fixed 69 modules of start/stop/indicator overhead,
+    so tall narrow layouts pay it many times over. Candidates keep the
+    rendered width:height ratio (at the default row height) between 1.5
+    and 8 -- decoders reject taller-than-wide PDF417 symbols and very flat
+    ones with few rows -- and the smallest module area wins, ties going to
+    the wider layout. Payloads too small to reach the band fall back to
+    the least flat layout.
     """
-    raw = (-69 + math.sqrt(69**2 + 4 * 17 * 3 * total_codewords)) / (2 * 17)
-    return max(1, min(30, round(raw)))
+    in_band = []
+    feasible = []
+    for columns in range(1, 31):
+        rows = max(3, -(-total_codewords // columns))
+        if rows > 90:
+            continue
+        width = row_modules(columns)
+        aspect = width / (DEFAULT_ROW_HEIGHT * rows)
+        feasible.append((aspect, columns))
+        if 1.5 <= aspect <= 8:
+            in_band.append((rows * width, -columns))
+    if in_band:
+        return -min(in_band)[1]
+    if feasible:
+        return min(feasible)[1]
+    return 30  # nothing fits in 90 rows; _pick_rows reports the overflow
 
 
 def pick_dimensions(source_count: int, ecl: int, columns: int | None = None) -> tuple[int, int]:
     """Choose ``(rows, columns)`` for ``source_count`` source codewords at ``ecl``.
 
     When ``columns`` is given, only ``rows`` is computed; otherwise both are
-    chosen to make the rendered symbol roughly square.
+    chosen to minimise symbol area within a scanner-friendly aspect ratio.
     """
     if columns is None:
         columns = _auto_columns(source_count + 1 + ec_codeword_count(ecl))
@@ -333,8 +348,8 @@ def encode(text: PDF417Data | str, ecl: int, *, columns: int | None = None) -> l
         :class:`PDF417Data` to pin the encoding to ``"ascii"``,
         ``"iso-8859-1"`` or ``"utf-8"``.
     :param ecl: Error correction level 0..8.
-    :param columns: Number of data columns (1..30). When omitted, a
-        roughly-square layout is chosen.
+    :param columns: Number of data columns (1..30). When omitted, the
+        smallest scanner-friendly layout is chosen.
     :returns: The full codeword stream. Length equals ``columns * rows``.
     :raises pystrich.exceptions.PyStrichInvalidInput: when the data does not
         fit at the chosen ``columns``/``ecl``.

@@ -15,6 +15,10 @@ Changelog
   pre-computed data files, shrinking the installed package by about 6 MB.
 - QR Code: mask selection is substantially faster, roughly halving encode
   time at every symbol size.
+- PDF417: automatic column selection now minimises physical symbol area
+  within a scanner-friendly aspect band instead of targeting a square
+  symbol, producing markedly smaller, wider symbols for small and medium
+  payloads.
 
 .. _v0-16:
 

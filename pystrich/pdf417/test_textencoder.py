@@ -16,6 +16,7 @@ import pytest
 
 from pystrich.exceptions import PyStrichInvalidInput
 from pystrich.pdf417 import textencoder
+from pystrich.pdf417.layout import row_modules
 from pystrich.pdf417.tables import (
     LATCH_BYTE,
     LATCH_BYTE_MULT6,
@@ -183,23 +184,32 @@ def test_encode_auto_sizes_when_columns_omitted():
     assert any(1 <= c <= 30 and 3 <= n // c <= 90 and c * (n // c) == n for c in range(1, 31))
 
 
-@pytest.mark.parametrize("total_codewords", [13, 30, 92, 200, 500, 928])
-def test_auto_columns_yields_roughly_square_symbol(total_codewords):
-    """``_auto_columns`` picks ``c`` close to the closed-form for a square symbol.
+@pytest.mark.parametrize(
+    "total_codewords, expected_columns",
+    [
+        # Fewer than 3 codewords cannot reach the aspect band at the
+        # 3-row minimum; the least flat layout (1 column) wins.
+        pytest.param(3, 1, id="tiny-falls-back-least-flat"),
+        pytest.param(15, 3, id="small"),
+        pytest.param(56, 7, id="medium"),
+        pytest.param(928, 30, id="max-capacity"),
+    ],
+)
+def test_auto_columns_minimises_area(total_codewords, expected_columns):
+    assert textencoder._auto_columns(total_codewords) == expected_columns
 
-    For ``c`` data columns and a row count near ``total_codewords / c``, the
-    rendered width in modules is ``17 c + 69`` and the rendered height at
-    the default ``row_height=3`` is ``3 * total_codewords / c``. Setting
-    these equal gives the closed-form ``c`` -- the picked column count
-    should land within one of that ideal.
+
+@pytest.mark.parametrize("total_codewords", [13, 30, 92, 200, 500, 928])
+def test_auto_columns_yields_scannable_aspect(total_codewords):
+    """The picked layout renders inside the decoder-safe aspect band.
+
+    Real decoders reject taller-than-wide PDF417 symbols and very flat
+    ones with few rows; the automatic layout must keep clear of both.
     """
     c = textencoder._auto_columns(total_codewords)
-    width = 17 * c + 69
-    height = 3 * total_codewords / c
-    # The ideal column count puts width = height. Anything that turns the
-    # symbol into a long strip (aspect > 4 in either direction) means the
-    # quadratic was solved wrong.
-    assert 0.25 <= width / height <= 4
+    rows = max(3, -(-total_codewords // c))
+    aspect = row_modules(c) / (3 * rows)
+    assert 1.5 <= aspect <= 8
 
 
 @pytest.mark.parametrize(
