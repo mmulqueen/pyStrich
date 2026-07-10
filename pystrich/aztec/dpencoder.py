@@ -18,7 +18,6 @@ The output is an MSB-first bit list ready for the codeword chunker.
 from __future__ import annotations
 
 from collections import deque
-from typing import NamedTuple
 
 from pystrich.aztec.modes import (
     ALL_MODES,
@@ -27,9 +26,9 @@ from pystrich.aztec.modes import (
     CHAR_BITS,
     CHAR_TABLE_DIGIT,
     CHAR_TABLES,
-    LATCH_CODEWORDS,
+    LATCH_BY_SRC,
     PUNCT_DIGRAPHS,
-    SHIFT_CODEWORDS,
+    SHIFT_BY_SRC,
     P,
     U,
 )
@@ -45,10 +44,10 @@ _BYTE_REGIMES = ((1, 31, 5), (32, _MAX_BYTE_RUN, 16))
 
 Emission = list[tuple[int, int]]
 
-
-class State(NamedTuple):
-    mode: str
-    pos: int
+# DP state key: (mode, position). A plain tuple rather than a NamedTuple -- it is
+# only ever a dict key, never attribute-accessed, and construction is on the hot
+# path, so the tuple literal ``(mode, pos)`` avoids the NamedTuple ``__new__``.
+State = tuple[str, int]
 
 
 def _eci_emission(eci: int) -> Emission:
@@ -91,14 +90,14 @@ class _HighLevelEncoder:
         self.n = len(payload)
         eci_em: Emission = _eci_emission(eci) if eci is not None else []
         eci_cost = sum(w for _, w in eci_em)
-        start = State(U, 0)
+        start: State = (U, 0)
         # dp[state] = minimum bits to reach this state.
         # prev[state] = (source state, emission to get here).
         self.dp: dict[State, int] = {start: eci_cost}
         self.prev: dict[State, tuple[State | None, Emission]] = {start: (None, eci_em)}
 
         # Sliding-window state for closing Byte-mode runs. For each byte-capable
-        # caller mode, ``_byte_start_term`` holds ``dp[State(mode, start)] -
+        # caller mode, ``_byte_start_term`` holds ``dp[(mode, start)] -
         # 8*start`` at every reachable start -- the part of a run's cost that
         # depends only on where it starts. ``_byte_windows`` keeps one monotonic
         # deque per length regime holding the in-window starts, cheapest at the
@@ -117,7 +116,7 @@ class _HighLevelEncoder:
             if pos == self.n:
                 continue
             for mode in ALL_MODES:
-                if State(mode, pos) not in self.dp:
+                if (mode, pos) not in self.dp:
                     continue
                 self._direct_encode(mode, pos)
                 self._punct_digraph(mode, pos)
@@ -142,14 +141,12 @@ class _HighLevelEncoder:
         while changed:
             changed = False
             for mode in ALL_MODES:
-                src = State(mode, pos)
-                if src not in self.dp:
+                src: State = (mode, pos)
+                cost = self.dp.get(src)
+                if cost is None:
                     continue
-                cost = self.dp[src]
-                for (src_mode, dst_mode), (cw_val, cw_bits) in LATCH_CODEWORDS.items():
-                    if src_mode != mode:
-                        continue
-                    if self._relax(State(dst_mode, pos), cost + cw_bits, src, [(cw_val, cw_bits)]):
+                for dst_mode, cw_val, cw_bits in LATCH_BY_SRC[mode]:
+                    if self._relax((dst_mode, pos), cost + cw_bits, src, [(cw_val, cw_bits)]):
                         changed = True
 
     def _direct_encode(self, mode: str, pos: int) -> None:
@@ -159,8 +156,8 @@ class _HighLevelEncoder:
             return
         cw = CHAR_TABLES[mode][byte]
         bits = CHAR_BITS[mode]
-        src = State(mode, pos)
-        self._relax(State(mode, pos + 1), self.dp[src] + bits, src, [(cw, bits)])
+        src: State = (mode, pos)
+        self._relax((mode, pos + 1), self.dp[src] + bits, src, [(cw, bits)])
 
     def _punct_digraph(self, mode: str, pos: int) -> None:
         """In Punct mode, try compressing the current byte pair into one codeword."""
@@ -170,22 +167,20 @@ class _HighLevelEncoder:
         if pair not in PUNCT_DIGRAPHS:
             return
         cw = PUNCT_DIGRAPHS[pair]
-        src = State(P, pos)
-        self._relax(State(P, pos + 2), self.dp[src] + 5, src, [(cw, 5)])
+        src: State = (P, pos)
+        self._relax((P, pos + 2), self.dp[src] + 5, src, [(cw, 5)])
 
     def _shifts(self, mode: str, pos: int) -> None:
         """Try every shift edge out of ``mode``: shift + char (or shift + digraph)."""
         byte = self.payload[pos]
-        src = State(mode, pos)
+        src: State = (mode, pos)
         cost = self.dp[src]
-        for (src_mode, dst_mode), (shift_cw, shift_bits) in SHIFT_CODEWORDS.items():
-            if src_mode != mode:
-                continue
+        for dst_mode, shift_cw, shift_bits in SHIFT_BY_SRC[mode]:
             if byte in CHAR_TABLES[dst_mode]:
                 char_cw = CHAR_TABLES[dst_mode][byte]
                 char_bits = CHAR_BITS[dst_mode]
                 self._relax(
-                    State(mode, pos + 1),
+                    (mode, pos + 1),
                     cost + shift_bits + char_bits,
                     src,
                     [(shift_cw, shift_bits), (char_cw, char_bits)],
@@ -195,7 +190,7 @@ class _HighLevelEncoder:
                 if pair in PUNCT_DIGRAPHS:
                     cw = PUNCT_DIGRAPHS[pair]
                     self._relax(
-                        State(mode, pos + 2),
+                        (mode, pos + 2),
                         cost + shift_bits + 5,
                         src,
                         [(shift_cw, shift_bits), (cw, 5)],
@@ -209,7 +204,7 @@ class _HighLevelEncoder:
         sliding-window minimum -- the shared ``8*pos`` and prefix terms cancel.
         """
         for m in self._byte_modes:
-            src = State(m, pos)
+            src: State = (m, pos)
             if src in self.dp:
                 self._byte_start_term[m][pos] = self.dp[src] - 8 * pos
 
@@ -251,14 +246,14 @@ class _HighLevelEncoder:
             else:
                 prefix = [(bs_cw, bs_bits), (0, 5), (j - 31, 11)]
             emission = prefix + self.payload_emission[best_start:pos]
-            self._relax(State(m, pos), best_cost, State(m, best_start), emission)
+            self._relax((m, pos), best_cost, (m, best_start), emission)
 
     def _reconstruct(self) -> list[int]:
         """Walk back-pointers from the cheapest end state and concatenate emissions."""
         end_cost = _INF
         end_mode = U
         for mode in ALL_MODES:
-            c = self.dp.get(State(mode, self.n), _INF)
+            c = self.dp.get((mode, self.n), _INF)
             if c < end_cost:
                 end_cost = c
                 end_mode = mode
@@ -266,7 +261,7 @@ class _HighLevelEncoder:
             raise PyStrichInvalidInput("could not encode payload")
 
         emissions: list[Emission] = []
-        state: State | None = State(end_mode, self.n)
+        state: State | None = (end_mode, self.n)
         while state is not None:
             src_state, emission = self.prev[state]
             emissions.append(emission)

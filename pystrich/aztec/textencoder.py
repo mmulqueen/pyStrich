@@ -137,10 +137,15 @@ class TextEncoder:
         """Pick the smallest symbol that holds the bit-stuffed payload plus EC."""
         candidates = _candidate_sizes(kind_pref, layers_override)
         last_err: PyStrichInvalidInput | None = None
+        # ``to_codewords`` depends only on the codeword width, of which there are
+        # four; candidates sharing a width chunk to the same codewords.
+        codewords_by_width: dict[int, list[int]] = {}
         for kind, n_layers in candidates:
             width = codeword_bits(kind, n_layers)
             total = total_codewords(kind, n_layers)
-            codewords = to_codewords(bits, width)
+            codewords = codewords_by_width.get(width)
+            if codewords is None:
+                codewords = codewords_by_width[width] = to_codewords(bits, width)
             min_ec = _min_ec_needed(total, ecc_pct)
             if len(codewords) + min_ec <= total:
                 # Fill all spare capacity with extra EC codewords.

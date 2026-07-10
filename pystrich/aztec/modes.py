@@ -109,6 +109,20 @@ SHIFT_CODEWORDS: dict[tuple[str, str], tuple[int, int]] = {
 # fmt: on
 
 
+# Latch / shift edges grouped by source mode as ``(dst, codeword, bits)`` tuples,
+# so the DP iterates only a mode's own out-edges instead of filtering the whole
+# table on the hot path.
+LATCH_BY_SRC: dict[str, tuple[tuple[str, int, int], ...]] = {
+    src: tuple((dst, val, bits) for (s, dst), (val, bits) in LATCH_CODEWORDS.items() if s == src)
+    for src in ALL_MODES
+}
+
+SHIFT_BY_SRC: dict[str, tuple[tuple[str, int, int], ...]] = {
+    src: tuple((dst, val, bits) for (s, dst), (val, bits) in SHIFT_CODEWORDS.items() if s == src)
+    for src in ALL_MODES
+}
+
+
 # Byte-shift codewords by source mode (B/S is always value 31, 5 bits, but
 # only available from U/L/M; from P/D the encoder must latch first).
 BYTE_SHIFT_CODEWORDS: dict[str, tuple[int, int]] = {
