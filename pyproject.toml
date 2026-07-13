@@ -34,8 +34,8 @@ classifiers = [
 ]
 dependencies = [
     # Pillow is needed only for PNG output and is also offered as the ``png``
-    # extra. It stays a hard dependency until 0.17, when these two lines are
-    # removed to make it opt-in.
+    # extra. It stays a hard dependency until a future release, when these two
+    # lines are removed to make it opt-in.
     "pillow>=10.3; python_version < '3.11'",
     "pillow>=12.2; python_version >= '3.11'",
     "typing-extensions>=4.15.0",
@@ -66,7 +66,7 @@ dev = [
     "zxing-cpp>=2.2",
     "hypothesis>=6.155.2",
     # Tests need Pillow for the png-marked cases; kept here so they still run
-    # once Pillow leaves the core dependencies in 0.17.
+    # once Pillow leaves the core dependencies.
     "pillow>=10.3; python_version < '3.11'",
     "pillow>=12.2; python_version >= '3.11'",
 ]
