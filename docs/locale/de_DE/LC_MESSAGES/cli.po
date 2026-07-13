@@ -335,6 +335,22 @@ msgid "replace each occurrence of CHAR in --text with an FNC1 codeword"
 msgstr "jedes Vorkommen von CHAR in --text durch ein FNC1-Codewort ersetzen"
 
 #: ../../cli.rst:1
+msgid "--symbol-shape"
+msgstr "--symbol-shape"
+
+#: ../../cli.rst:1
+msgid "Possible choices: square, rectangular, auto"
+msgstr "Mögliche Werte: square, rectangular, auto"
+
+#: ../../cli.rst:1
+msgid "Data Matrix shape (default: square)"
+msgstr "Data-Matrix-Form (Vorgabe: square)"
+
+#: ../../cli.rst:1
+msgid "Default: ``'square'``"
+msgstr "Vorgabe: ``'square'``"
+
+#: ../../cli.rst:1
 msgid "qrcode"
 msgstr "qrcode"
 
@@ -383,8 +399,8 @@ msgstr ""
 "18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30"
 
 #: ../../cli.rst:1
-msgid "data columns 1-30 (default: near-square layout)"
-msgstr "Datenspalten 1-30 (Vorgabe: annähernd quadratisches Layout)"
+msgid "data columns 1-30 (default: minimal-area layout)"
+msgstr "Datenspalten 1-30 (Vorgabe: flächenminimales Layout)"
 
 #: ../../cli.rst:1
 msgid "--row-height"

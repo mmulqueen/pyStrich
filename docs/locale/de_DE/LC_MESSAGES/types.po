@@ -94,12 +94,6 @@ msgstr ""
 "Matrix-Mark-Extraktion, gemeinsam genutzt von den Vektor-Renderern (SVG, "
 "EPS, DXF)."
 
-#: of pystrich.marks.MatrixMark:1
-msgid "A rectangular region of a matrix to be drawn as a single shape."
-msgstr ""
-"Ein rechteckiger Bereich einer Matrix, der als eine einzige Form gezeichnet "
-"wird."
-
 #: of pystrich.marks.BarLayout.heights:1 pystrich.marks.MatrixMark.x:1
 #: pystrich.marks.SymbolMarks.marks:1 pystrich.marks.TextLabel.text:1
 msgid "Alias for field number 0"

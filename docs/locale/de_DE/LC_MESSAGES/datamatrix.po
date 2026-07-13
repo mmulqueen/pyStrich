@@ -122,7 +122,35 @@ msgstr ""
 "Data-Matrix-Symbol, das die pyStrich-GitHub-URL codiert, gerendert mit "
 "cellsize=10."
 
-#: ../../datamatrix.rst:70
+#: ../../datamatrix.rst:69
+msgid "Symbol shape"
+msgstr "Symbolform"
+
+#: ../../datamatrix.rst:72
+msgid ""
+"Data Matrix symbols are square by default, but can also be rectangular -- "
+"useful where a label strip is wider than it is tall. The ``symbol_shape`` "
+"argument to :class:`DataMatrixEncoder` selects between them: ``\"square\"`` "
+"(the default) always produces a square symbol, ``\"rectangular\"`` always "
+"produces one of the six rectangular sizes (raising if the payload is too "
+"long for the largest of them), and ``\"auto\"`` picks whichever fitting "
+"symbol has the smallest area."
+msgstr ""
+"Data-Matrix-Symbole sind standardmäßig quadratisch, können aber auch "
+"rechteckig sein -- nützlich, wenn ein Etikettenstreifen breiter als hoch "
+"ist. Das Argument ``symbol_shape`` von :class:`DataMatrixEncoder` wählt "
+"zwischen ihnen: ``\"square\"`` (die Vorgabe) erzeugt stets ein quadratisches "
+"Symbol, ``\"rectangular\"`` erzeugt stets eine der sechs rechteckigen Größen "
+"(und löst eine Ausnahme aus, wenn die Nutzdaten für die größte davon zu lang "
+"sind), und ``\"auto\"`` wählt unter den passenden Symbolen dasjenige mit der "
+"geringsten Fläche."
+
+#: ../../datamatrix.rst:86
+msgid "Rectangular Data Matrix encoding the part number A1268172415."
+msgstr ""
+"Rechteckiges Data-Matrix-Symbol, das die Teilenummer A1268172415 codiert."
+
+#: ../../datamatrix.rst:90
 msgid "Output formats"
 msgstr "Ausgabeformate"
 
@@ -680,8 +708,12 @@ msgstr ""
 "die das Symbol vor dem Rendern beschreibt."
 
 #: of pystrich.datamatrix.DataMatrixEncoder:25
-msgid "Number of square regions the symbol is divided into."
-msgstr "Anzahl der quadratischen Regionen, in die das Symbol unterteilt ist."
+msgid ""
+"``(h_regions, v_regions)`` — the number of regions the symbol is divided "
+"into horizontally and vertically."
+msgstr ""
+"``(h_regions, v_regions)`` — die Anzahl der Regionen, in die das Symbol "
+"horizontal und vertikal unterteilt ist."
 
 #: of pystrich.datamatrix.DataMatrixEncoder:26
 msgid "Width in modules of the white border applied at render time."

@@ -48,23 +48,6 @@ msgstr ""
 "Symbologie QR Code)."
 
 #: ../../qrcode.rst:21
-msgid ""
-"The QR support in pyStrich is less actively maintained than the other "
-"symbologies. If your project's main need is QR codes, consider whether "
-"`python-qrcode <https://github.com/lincolnloop/python-qrcode>`_ is a better "
-"fit -- it has a larger feature set (logos, styled modules). pyStrich's QR "
-"support is most useful when you also need one of its other symbologies and "
-"want a single dependency."
-msgstr ""
-"Die QR-Unterstützung in pyStrich wird weniger aktiv gepflegt als die anderen"
-" Symbologien. Wenn Ihr Projekt hauptsächlich QR-Codes benötigt, prüfen Sie, "
-"ob `python-qrcode <https://github.com/lincolnloop/python-qrcode>`_ besser "
-"passt -- es hat einen größeren Funktionsumfang (Logos, gestaltete Module). "
-"Die QR-Unterstützung von pyStrich ist am nützlichsten, wenn Sie zusätzlich "
-"eine der anderen Symbologien benötigen und mit einer einzigen Abhängigkeit "
-"auskommen möchten."
-
-#: ../../qrcode.rst:29
 msgid "Example"
 msgstr "Beispiel"
 

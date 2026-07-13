@@ -45,9 +45,11 @@ engraving, dot peening and laser. While not as well-known to the general
 public, Data Matrix barcodes are everywhere -- just looking around my
 home I see them on the packaging for medicines, Amazon deliveries,
 letters from banks -- and it's even more popular in industrial and
-healthcare settings. I see Aztec codes far less in the wild, I've
-spotted them on brewery kegs, rail tickets, airline boarding passes and
-the Tesco Clubcard.
+healthcare settings. Most Data Matrix symbols are square, but
+rectangular ones exist too -- a rarer sight, though I've spotted a
+rectangular GS1 Data Matrix on H&M clothing tags. I see Aztec codes
+far less in the wild, I've spotted them on brewery kegs, rail tickets,
+airline boarding passes and the Tesco Clubcard.
 
 The central locator on an Aztec code bears some similarity to the
 locators on QR codes, which may be a helpful affordance to users

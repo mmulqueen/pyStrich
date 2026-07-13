@@ -6,7 +6,8 @@
 pyStrich
 ========
 
-pyStrich is a Python module for generating 1D and 2D barcodes. It supports
+pyStrich is a fast pure-Python module for generating 1D and 2D barcodes. It
+supports
 Code 39, Code 128 (including GS1-128), EAN-13, ITF-14 (and Interleaved 2 of
 5), Data Matrix (including GS1 Data Matrix), QR Code, PDF417 and Aztec Code
 symbologies. All eight emit PNG (via :class:`Pillow <PIL.Image.Image>`), SVG
@@ -152,8 +153,8 @@ pyStrich was originally a fork of `huBarcode
 <https://github.com/hudora/huBarcode>`_. huBarcode was developed by
 `HuDoRa <https://www.hudora.de/de-en/>`_ from at least 2007, and has not
 been active since late 2013. `Method B Ltd <https://www.method-b.uk/>`_
-forked huBarcode as pyStrich to provide Python 3 support and to continue
-development.
+forked huBarcode as pyStrich in 2015 to provide Python 3 support and to
+continue development.
 pyStrich has been substantially enhanced over the years and has gone far
 beyond a simple port to Python 3. As of 2026, pyStrich is a modern Python
 package with full use of typing, linting and a comprehensive test suite.

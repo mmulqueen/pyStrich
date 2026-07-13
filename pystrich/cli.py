@@ -469,7 +469,7 @@ class PDF417(TwoDFormat):
             type=int,
             choices=range(1, 31),
             metavar="N",
-            help="data columns 1-30 (default: near-square layout)",
+            help="data columns 1-30 (default: minimal-area layout)",
         )
         sp.add_argument(
             "--row-height",

@@ -16,15 +16,6 @@ QR Code is a 2D symbology widely used for URLs and contact details.
    QR codes are defined in `ISO/IEC 18004
    <https://www.iso.org/standard/83389.html>`_.
 
-.. note::
-
-   The QR support in pyStrich is less actively maintained than the other
-   symbologies. If your project's main need is QR codes, consider whether
-   `python-qrcode <https://github.com/lincolnloop/python-qrcode>`_ is a
-   better fit -- it has a larger feature set (logos, styled modules).
-   pyStrich's QR support is most useful when you also need one of its other
-   symbologies and want a single dependency.
-
 Example
 -------
 
