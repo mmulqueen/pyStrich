@@ -201,6 +201,19 @@ def test_substitute_with_fnc1_multichar_errors(capsys, tmp_path):
     assert "--substitute-with-fnc1" in capsys.readouterr().err
 
 
+@pytest.mark.parametrize("shape", ["square", "rectangular", "auto"])
+def test_symbol_shape_matches_direct_api(shape, tmp_path):
+    via_cli = tmp_path / "cli.dxf"
+    argv = ["datamatrix", "--text", "banana", "--symbol-shape", shape, "-o", str(via_cli)]
+    assert cli.main(argv) == 0
+    direct = (
+        DataMatrixEncoder(DataMatrixData("banana", encoding="ascii"), symbol_shape=shape)
+        .get_dxf()
+        .encode("utf-8")
+    )
+    assert via_cli.read_bytes() == direct
+
+
 @pytest.mark.parametrize(
     "subcommand, extension",
     [

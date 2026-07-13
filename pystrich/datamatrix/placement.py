@@ -3,6 +3,26 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from typing import NamedTuple
+
+
+class _Plan(NamedTuple):
+    """A replayable placement for one symbol size.
+
+    ``groups[k]`` holds the eight matrix cells that carry codeword ``k``'s
+    bits, in MSB-to-LSB order. ``corner`` and ``zero_cells`` capture the
+    geometry-only tail (corner module and unused-cell fill) so the whole
+    layout is data-independent and can be cached per ``(rows, cols)``.
+    """
+
+    groups: list[list[tuple[int, int]]]
+    corner: list[tuple[int, int, int]]
+    zero_cells: list[tuple[int, int]]
+
+
+# The snake traversal maps codeword bits to cells purely from the symbol
+# geometry, so each size's plan is computed once and replayed thereafter.
+_PLAN_CACHE: dict[tuple[int, int], _Plan] = {}
 
 
 class DataMatrixPlacer:
@@ -12,12 +32,14 @@ class DataMatrixPlacer:
     matrix: list[list[int | None]]
     rows: int
     cols: int
+    _record: list[tuple[int, int]] | None
 
     def __init__(self) -> None:
         """Initialise with an empty matrix"""
         self.matrix = []
         self.rows = 0
         self.cols = 0
+        self._record = None
 
     def place_bit(self, position: tuple[int, int], bit: int) -> None:
         """Place bit in the correct location in the matrix"""
@@ -34,6 +56,8 @@ class DataMatrixPlacer:
             posx += 4 - ((self.cols + 4) % 8)
 
         self.matrix[posx][posy] = bit
+        if self._record is not None:
+            self._record.append((posx, posy))
 
     def place_special_1(self, codeword: int) -> None:
         """Special corner case 1
@@ -131,32 +155,56 @@ class DataMatrixPlacer:
         """Place all the given codewords into the given matrix
         Matrix should be correctly pre-sized"""
 
-        self.matrix = matrix
-        self.rows = len(matrix)
-        self.cols = len(matrix[0])
+        rows = len(matrix)
+        cols = len(matrix[0])
+
+        plan = _PLAN_CACHE.get((rows, cols))
+        if plan is None:
+            plan = _PLAN_CACHE[(rows, cols)] = self._build_plan(rows, cols)
+
+        for k, cells in enumerate(plan.groups):
+            codeword = codewords[k]
+            for bit, (posx, posy) in enumerate(cells):
+                matrix[posx][posy] = (codeword >> (7 - bit)) & 0x01
+        for posx, posy, bit in plan.corner:
+            matrix[posx][posy] = bit
+        for posx, posy in plan.zero_cells:
+            matrix[posx][posy] = 0
+
+    def _build_plan(self, rows: int, cols: int) -> _Plan:
+        """Run the snake once on a scratch matrix, recording where each bit lands.
+
+        Codeword values are irrelevant to the layout, so this places zeros and
+        captures the resolved cell of every ``place_bit`` call. Each codeword
+        emits exactly eight bits (MSB first), so the flat record chunks cleanly
+        into per-codeword groups.
+        """
+        self.matrix = [[None] * cols for _ in range(rows)]
+        self.rows = rows
+        self.cols = cols
+        record: list[tuple[int, int]] = []
+        self._record = record
 
         row, col = 4, 0
-
-        cw_list = list(codewords)
 
         while True:
             # Special corner cases
             if row == self.rows and col == 0:
-                self.place_special_1(cw_list.pop(0))
+                self.place_special_1(0)
 
             elif row == self.rows - 2 and col == 0 and self.cols % 4:
-                self.place_special_2(cw_list.pop(0))
+                self.place_special_2(0)
 
             elif row == self.rows - 2 and col == 0 and (self.cols % 8 == 4):
-                self.place_special_3(cw_list.pop(0))
+                self.place_special_3(0)
 
             elif row == self.rows + 4 and col == 2 and (self.cols % 8 == 0):
-                self.place_special_4(cw_list.pop(0))
+                self.place_special_4(0)
 
             # Sweep upwards diagonally
             while True:
                 if row < self.rows and col >= 0 and self.matrix[row][col] is None:
-                    self.place_standard_shape((row, col), cw_list.pop(0))
+                    self.place_standard_shape((row, col), 0)
 
                 row -= 2
                 col += 2
@@ -170,7 +218,7 @@ class DataMatrixPlacer:
             # Sweep downwards diagonally
             while True:
                 if row >= 0 and col < self.cols and self.matrix[row][col] is None:
-                    self.place_standard_shape((row, col), cw_list.pop(0))
+                    self.place_standard_shape((row, col), 0)
 
                 row += 2
                 col -= 2
@@ -184,18 +232,21 @@ class DataMatrixPlacer:
             if row >= self.rows and col >= self.cols:
                 break
 
-        self._set_corner_module()
+        self._record = None
+        groups = [record[i : i + 8] for i in range(0, len(record), 8)]
 
-        # Fill in any remaining Nones
-        for matrix_row in self.matrix:
-            for i in range(len(matrix_row)):
-                if matrix_row[i] is None:
-                    matrix_row[i] = 0
+        # Corner module: when the snake leaves the bottom-right cell untouched,
+        # set the diagonal pattern. Geometry-only, so it lives in the plan.
+        corner: list[tuple[int, int, int]] = []
+        if self.matrix[rows - 1][cols - 1] is None:
+            corner = [
+                (rows - 1, cols - 1, 1),
+                (rows - 2, cols - 2, 1),
+                (rows - 1, cols - 2, 0),
+                (rows - 2, cols - 1, 0),
+            ]
+            for posx, posy, bit in corner:
+                self.matrix[posx][posy] = bit
 
-    def _set_corner_module(self) -> None:
-        """When the snake leaves the bottom-right cell untouched, set the diagonal pattern."""
-        if self.matrix[self.rows - 1][self.cols - 1] is None:
-            self.matrix[self.rows - 1][self.cols - 1] = 1
-            self.matrix[self.rows - 2][self.cols - 2] = 1
-            self.matrix[self.rows - 1][self.cols - 2] = 0
-            self.matrix[self.rows - 2][self.cols - 1] = 0
+        zero_cells = [(r, c) for r in range(rows) for c in range(cols) if self.matrix[r][c] is None]
+        return _Plan(groups, corner, zero_cells)

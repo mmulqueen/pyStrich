@@ -203,7 +203,7 @@ def datamatrix_anatomy_svg() -> str:
     encoder = DataMatrixEncoder(
         DataMatrixData(payload, encoding="ascii"), quiet_zone=qz, force_byte_mode=True
     )
-    assert encoder.regions == 2, (
+    assert encoder.regions == (2, 2), (
         f"Data Matrix anatomy expects a 2x2-region symbol, got regions={encoder.regions}. "
         "Pick a payload that still encodes to a 36x36 symbol."
     )

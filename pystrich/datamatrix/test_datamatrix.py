@@ -115,6 +115,7 @@ def _datamatrix_payload(draw):
     return "".join(parts)
 
 
+@pytest.mark.parametrize("symbol_shape", ["square", "auto"])
 @given(text=_datamatrix_payload())
 @settings(
     max_examples=100,
@@ -127,10 +128,45 @@ def _datamatrix_payload(draw):
     ],
 )
 @pytest.mark.png
-def test_property_roundtrip(text, tmp_path, decode_barcode):
-    """Class-banded payloads roundtrip through encode + render + decode."""
+def test_property_roundtrip(text, symbol_shape, tmp_path, decode_barcode):
+    """Class-banded payloads roundtrip through encode + render + decode.
+
+    ``auto`` accepts any length (it falls back to square past the largest
+    rectangle), so the full strategy runs under both shapes.
+    """
     img = tmp_path / "datamatrix-property.png"
-    DataMatrixEncoder(DataMatrixData(text, auto_encoding=True)).save(str(img))
+    DataMatrixEncoder(DataMatrixData(text, auto_encoding=True), symbol_shape=symbol_shape).save(
+        str(img)
+    )
+    assert decode_barcode(img) == text
+
+
+@given(
+    # Printable ASCII bounded to 45 chars: ASCII mode emits at most one codeword
+    # per char (digit pairs and C40/Text only shrink it), so every payload fits
+    # the largest rectangle (49 data words) and no example overflows.
+    text=st.text(
+        alphabet=st.characters(min_codepoint=0x20, max_codepoint=0x7E),
+        min_size=1,
+        max_size=45,
+    )
+)
+@settings(
+    max_examples=100,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[
+        HealthCheck.function_scoped_fixture,
+        HealthCheck.data_too_large,
+    ],
+)
+@pytest.mark.png
+def test_property_roundtrip_rectangular(text, tmp_path, decode_barcode):
+    """Forced-rectangular symbols roundtrip across the six sizes for arbitrary content."""
+    img = tmp_path / "datamatrix-rect-property.png"
+    DataMatrixEncoder(DataMatrixData(text, encoding="ascii"), symbol_shape="rectangular").save(
+        str(img)
+    )
     assert decode_barcode(img) == text
 
 
@@ -679,23 +715,17 @@ def test_pad_randomisation_matches_spec(position, expected):
     assert _randomise_pad(position) == expected
 
 
-def test_set_corner_module_applies_pattern_when_corner_unset():
-    placer = DataMatrixPlacer()
-    placer.matrix = [[None] * 4 for _ in range(4)]
-    placer.rows, placer.cols = 4, 4
-    placer._set_corner_module()
-    assert (placer.matrix[3][3], placer.matrix[2][2]) == (1, 1)
-    assert (placer.matrix[3][2], placer.matrix[2][3]) == (0, 0)
+def test_plan_corner_module_pattern_when_snake_leaves_corner_unset():
+    # The 10x10 snake leaves the bottom-right cell untouched, so the plan
+    # carries the corner-module diagonal pattern.
+    plan = DataMatrixPlacer()._build_plan(10, 10)
+    assert plan.corner == [(9, 9, 1), (8, 8, 1), (9, 8, 0), (8, 9, 0)]
 
 
-def test_set_corner_module_noop_when_corner_already_placed():
-    placer = DataMatrixPlacer()
-    placer.matrix = [[None] * 4 for _ in range(4)]
-    placer.matrix[3][3] = 0  # snake already placed something here
-    placer.rows, placer.cols = 4, 4
-    placer._set_corner_module()
-    assert placer.matrix[3][3] == 0
-    assert placer.matrix[2][2] is None
+def test_plan_no_corner_module_when_snake_fills_corner():
+    # The 12x12 snake reaches the bottom-right cell, so no corner module.
+    plan = DataMatrixPlacer()._build_plan(12, 12)
+    assert plan.corner == []
 
 
 @pytest.mark.png
@@ -724,6 +754,95 @@ def test_capacity_overflow_raises():
     enc = TextEncoder()
     with pytest.raises(DataTooLongForImplementation):
         enc.encode(DataMatrixData("A" * 3000, encoding="ascii"))
+
+
+# (payload length in byte-mode codewords, symbol rows, cols, (h_regions, v_regions)).
+_RECT_SIZES = [
+    pytest.param(5, 8, 18, (1, 1), id="8x18"),
+    pytest.param(10, 8, 32, (2, 1), id="8x32"),
+    pytest.param(16, 12, 26, (1, 1), id="12x26"),
+    pytest.param(22, 12, 36, (2, 1), id="12x36"),
+    pytest.param(32, 16, 36, (2, 1), id="16x36"),
+    pytest.param(49, 16, 48, (2, 1), id="16x48"),
+]
+
+
+@pytest.mark.parametrize("length, rows, cols, regions", _RECT_SIZES)
+@pytest.mark.png
+def test_rectangular_round_trip(length, rows, cols, regions, tmp_path, dmtxread, decode_barcode):
+    """Each of the six rectangular symbol sizes encodes and decodes back."""
+    payload = "A" * length
+    data = DataMatrixData(payload, encoding="ascii")
+    encoder = DataMatrixEncoder(data, symbol_shape="rectangular", force_byte_mode=True)
+    assert encoder.regions == regions
+    img = tmp_path / "rect.png"
+    encoder.save(str(img))
+    assert dmtxread(img) == payload
+    assert decode_barcode(img) == payload
+
+
+@pytest.mark.parametrize("length, rows, cols, regions", _RECT_SIZES)
+def test_rectangular_selects_expected_size(length, rows, cols, regions):
+    """Forced rectangular picks the smallest rectangle whose data capacity fits."""
+    enc = TextEncoder()
+    enc.encode(
+        DataMatrixData("A" * length, encoding="ascii"),
+        force_byte_mode=True,
+        symbol_shape="rectangular",
+    )
+    h_regions, v_regions = regions
+    assert (enc.spec.h_regions, enc.spec.v_regions) == regions
+    assert (enc.spec.region_rows + 2) * v_regions == rows
+    assert (enc.spec.region_cols + 2) * h_regions == cols
+
+
+def test_rectangular_overflow_raises():
+    """Payloads beyond the largest rectangle (49 data words) raise even though a square fits."""
+    enc = TextEncoder()
+    with pytest.raises(DataTooLongForImplementation, match="rectangular"):
+        enc.encode(
+            DataMatrixData("A" * 60, encoding="ascii"),
+            force_byte_mode=True,
+            symbol_shape="rectangular",
+        )
+
+
+@pytest.mark.parametrize(
+    "length, expected_shape",
+    [
+        # 16 cw: rectangle 12x26 (312 modules) beats square 18x18 (324).
+        pytest.param(16, "rectangular", id="16cw-rectangle-12x26-beats-18x18-square"),
+        # 5 cw: square 12x12 and rectangle 8x18 both 144 modules; tie-breaks to square.
+        pytest.param(5, "square", id="5cw-area-tie-prefers-square"),
+        pytest.param(3, "square", id="3cw-square-10x10-is-smallest"),
+        pytest.param(60, "square", id="60cw-past-largest-rectangle-uses-square"),
+    ],
+)
+def test_auto_picks_smallest_area(length, expected_shape):
+    """``auto`` chooses the fitting symbol with the smallest total module area."""
+    enc = TextEncoder()
+    enc.encode(
+        DataMatrixData("A" * length, encoding="ascii"),
+        force_byte_mode=True,
+        symbol_shape="auto",
+    )
+    assert enc.spec.shape == expected_shape
+
+
+def test_square_is_default_and_unaffected():
+    """The default path still selects a square symbol."""
+    enc = TextEncoder()
+    enc.encode(DataMatrixData("A" * 5, encoding="ascii"), force_byte_mode=True)
+    assert enc.spec.shape == "square"
+    assert enc.spec.h_regions == enc.spec.v_regions == 1
+
+
+def test_invalid_symbol_shape_raises():
+    with pytest.raises(PyStrichInvalidOption, match="symbol_shape"):
+        DataMatrixEncoder(
+            DataMatrixData("x", encoding="ascii"),
+            symbol_shape="round",  # type: ignore[arg-type]
+        )
 
 
 @pytest.mark.parametrize(

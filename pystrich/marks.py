@@ -6,14 +6,11 @@ from collections.abc import Iterator, Sequence
 from enum import Enum, auto
 from typing import NamedTuple
 
-
-class MatrixMark(NamedTuple):
-    """A rectangular region of a matrix to be drawn as a single shape."""
-
-    x: int
-    y: int
-    width: int
-    height: int
+# A rectangular region of a matrix to be drawn as a single shape:
+# ``(x, y, width, height)`` in module (2D) or pixel (1D) units. A plain tuple
+# rather than a NamedTuple — a dense matrix yields one per run, so consumers
+# unpack it directly and skip the per-mark object construction.
+MatrixMark = tuple[int, int, int, int]
 
 
 class MarkShape(Enum):
@@ -51,10 +48,10 @@ def iter_horizontal_runs(
                 if run_start is None:
                     run_start = x
             elif run_start is not None:
-                yield MatrixMark(run_start, y, x - run_start, 1)
+                yield (run_start, y, x - run_start, 1)
                 run_start = None
         if run_start is not None:
-            yield MatrixMark(run_start, y, len(row) - run_start, 1)
+            yield (run_start, y, len(row) - run_start, 1)
 
 
 def iter_cells(
@@ -66,7 +63,7 @@ def iter_cells(
     for y, row in enumerate(matrix):
         for x, cell in enumerate(row):
             if bool(cell) == mark_values_when:
-                yield MatrixMark(x, y, 1, 1)
+                yield (x, y, 1, 1)
 
 
 def iter_marks(
@@ -150,7 +147,7 @@ def iter_bar_marks(
         if h == run_height and run_start is not None:
             continue
         if run_start is not None:
-            yield MatrixMark(
+            yield (
                 quiet_left + run_start * bar_width,
                 quiet_top,
                 (col - run_start) * bar_width,
@@ -162,7 +159,7 @@ def iter_bar_marks(
             run_start = col
             run_height = h
     if run_start is not None:
-        yield MatrixMark(
+        yield (
             quiet_left + run_start * bar_width,
             quiet_top,
             (len(heights) - run_start) * bar_width,
@@ -184,10 +181,10 @@ def iter_bearer_marks(layout: BarLayout) -> Iterator[MatrixMark]:
     width = layout.quiet_left + len(layout.heights) * layout.bar_width + layout.quiet_right
     bars_bottom = layout.quiet_top + max(layout.heights, default=0)
     frame_height = bars_bottom + t
-    yield MatrixMark(0, 0, width, t)  # top rule
-    yield MatrixMark(0, bars_bottom, width, t)  # bottom rule
-    yield MatrixMark(0, 0, t, frame_height)  # left bar
-    yield MatrixMark(width - t, 0, t, frame_height)  # right bar
+    yield (0, 0, width, t)  # top rule
+    yield (0, bars_bottom, width, t)  # bottom rule
+    yield (0, 0, t, frame_height)  # left bar
+    yield (width - t, 0, t, frame_height)  # right bar
 
 
 def iter_barcode_marks(layout: BarLayout) -> Iterator[MatrixMark]:

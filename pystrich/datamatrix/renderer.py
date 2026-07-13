@@ -19,8 +19,10 @@ class DataMatrixRenderer(Matrix2DRenderer[int | None]):
     it will add edge handles and render to either to an image
     (including quiet zone) or ascii printout"""
 
-    regions: int
-    region_size: int
+    h_regions: int
+    v_regions: int
+    region_rows: int
+    region_cols: int
     quiet_zone: int
 
     # Double-width glyphs make terminal output roughly square given the
@@ -30,14 +32,20 @@ class DataMatrixRenderer(Matrix2DRenderer[int | None]):
     def __init__(
         self,
         matrix: list[list[int | None]],
-        regions: int,
+        regions: tuple[int, int],
         *,
         quiet_zone: int = DATAMATRIX_DEFAULT_QUIET_ZONE,
     ) -> None:
-        self.width = len(matrix)
-        self.height = len(matrix[0])
-        self.regions = regions
-        self.region_size = self.width // regions
+        # matrix is the mapping matrix (data regions only, no finder pattern):
+        # region_rows*v_regions rows by region_cols*h_regions columns.
+        n_rows = len(matrix)
+        n_cols = len(matrix[0])
+        self.h_regions, self.v_regions = regions
+        self.region_rows = n_rows // self.v_regions
+        self.region_cols = n_cols // self.h_regions
+        # width/height track the rendered module extents (columns, rows).
+        self.width = n_cols
+        self.height = n_rows
         if quiet_zone < 0:
             raise PyStrichInvalidOption("Quiet zone must be non-negative")
         self.quiet_zone = quiet_zone
@@ -59,12 +67,12 @@ class DataMatrixRenderer(Matrix2DRenderer[int | None]):
     def add_handles(self) -> None:
         """Set up the edge handles"""
 
-        for x_index in range(self.regions):
-            for y_index in range(self.regions):
-                x_origin = x_index * (self.region_size + 2) + self.quiet_zone
-                y_origin = y_index * (self.region_size + 2) + self.quiet_zone
-                x_max = x_origin + self.region_size + 1
-                y_max = y_origin + self.region_size + 1
+        for x_index in range(self.h_regions):
+            for y_index in range(self.v_regions):
+                x_origin = x_index * (self.region_cols + 2) + self.quiet_zone
+                y_origin = y_index * (self.region_rows + 2) + self.quiet_zone
+                x_max = x_origin + self.region_cols + 1
+                y_max = y_origin + self.region_rows + 1
 
                 # bottom solid border
                 for posx in range(x_origin, x_max):
@@ -87,23 +95,23 @@ class DataMatrixRenderer(Matrix2DRenderer[int | None]):
         and colour"""
 
         a_gap = 1  # Gap for alignment/"handles"
-        self.width += a_gap * 2 + self.quiet_zone * 2 + (self.regions - 1) * a_gap * 2
-        self.height += a_gap * 2 + self.quiet_zone * 2 + (self.regions - 1) * a_gap * 2
+        self.width += a_gap * 2 + self.quiet_zone * 2 + (self.h_regions - 1) * a_gap * 2
+        self.height += a_gap * 2 + self.quiet_zone * 2 + (self.v_regions - 1) * a_gap * 2
 
         new_matrix: list[list[int | None]] = []
         for _ in range(a_gap + self.quiet_zone):
             new_matrix += [[colour] * self.width]
 
         for row_n, row in enumerate(self.matrix):
-            if row_n > 0 and row_n % self.region_size == 0:
+            if row_n > 0 and row_n % self.region_rows == 0:
                 # Vertical gap between regions
                 for _ in range(a_gap * 2):
                     new_matrix += [[colour] * self.width]
             # Left gap
             new_row: list[int | None] = [colour] * (a_gap + self.quiet_zone)
             # Split according to regions
-            for i in range(self.regions):
-                part = row[i * self.region_size : (i + 1) * self.region_size]
+            for i in range(self.h_regions):
+                part = row[i * self.region_cols : (i + 1) * self.region_cols]
                 if i > 0:
                     # Add the space for the alignment gap
                     new_row += [colour] * (a_gap * 2)

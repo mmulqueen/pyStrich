@@ -35,18 +35,22 @@ You may use this under a BSD License.
 
 from __future__ import annotations
 
+from typing import get_args
+
+from pystrich.exceptions import PyStrichInvalidOption
 from pystrich.matrix_encoder import Matrix2DEncoder
 
 from .data import FNC1, DataMatrixCodeword, DataMatrixData
 from .placement import DataMatrixPlacer
 from .renderer import DATAMATRIX_DEFAULT_QUIET_ZONE, DataMatrixRenderer
-from .textencoder import TextEncoder
+from .textencoder import SymbolShape, TextEncoder
 
 __all__ = [
     "FNC1",
     "DataMatrixCodeword",
     "DataMatrixData",
     "DataMatrixEncoder",
+    "SymbolShape",
 ]
 
 
@@ -75,14 +79,15 @@ class DataMatrixEncoder(Matrix2DEncoder[int | None]):
 
     :ivar matrix: 2D list of ints (``0``/``1``, or ``None`` for unset cells)
         describing the symbol prior to rendering.
-    :ivar regions: Number of square regions the symbol is divided into.
+    :ivar regions: ``(h_regions, v_regions)`` — the number of regions the symbol
+        is divided into horizontally and vertically.
     :ivar quiet_zone: Width in modules of the white border applied at render time.
     :ivar width: Pixel width of the most recently rendered image. ``0`` until a
         render method has been called.
     :ivar height: Pixel height of the most recently rendered image.
     """
 
-    regions: int
+    regions: tuple[int, int]
     quiet_zone: int
 
     def __init__(
@@ -91,6 +96,7 @@ class DataMatrixEncoder(Matrix2DEncoder[int | None]):
         *,
         quiet_zone: int = DATAMATRIX_DEFAULT_QUIET_ZONE,
         force_byte_mode: bool = False,
+        symbol_shape: SymbolShape = "square",
     ) -> None:
         """Encode ``text`` and lay it out in a Data Matrix grid.
 
@@ -106,8 +112,13 @@ class DataMatrixEncoder(Matrix2DEncoder[int | None]):
             ``True`` forces the byte-by-byte path for any payload, giving
             a predictable codeword stream at the cost of larger symbols
             for content the DP would otherwise pack into C40/Text/X12.
+        :param symbol_shape: ``"square"`` (the default) forces a square symbol;
+            ``"rectangular"`` forces one of the six rectangular sizes;
+            ``"auto"`` picks whichever fitting symbol has the smallest area.
         :raises pystrich.exceptions.PyStrichInvalidInput: if ``text`` cannot
             be encoded (e.g. exceeds the supported capacity).
+        :raises pystrich.exceptions.PyStrichInvalidOption: if ``symbol_shape``
+            is not one of the accepted values.
 
         .. versionchanged:: 0.10
            Added the ``quiet_zone`` parameter; previously the quiet zone was
@@ -115,17 +126,28 @@ class DataMatrixEncoder(Matrix2DEncoder[int | None]):
 
         .. versionchanged:: 0.15
            Added the ``force_byte_mode`` parameter.
+
+        .. versionadded:: 0.17
+           The ``symbol_shape`` parameter and rectangular symbol support.
+
+        .. versionchanged:: 0.17
+           :attr:`regions` is now a ``(h_regions, v_regions)`` tuple; it was
+           previously a single ``int`` that only described square symbols.
         """
 
+        if symbol_shape not in get_args(SymbolShape):
+            raise PyStrichInvalidOption(
+                f"symbol_shape must be one of {get_args(SymbolShape)}, got {symbol_shape!r}"
+            )
+
         enc = TextEncoder()
-        codewords = enc.encode(text, force_byte_mode=force_byte_mode)
+        codewords = enc.encode(text, force_byte_mode=force_byte_mode, symbol_shape=symbol_shape)
         self.width = 0
         self.height = 0
-        matrix_size = enc.mtx_size * enc.regions
-        self.regions = enc.regions
+        self.regions = (enc.spec.h_regions, enc.spec.v_regions)
         self.quiet_zone = quiet_zone
 
-        self.matrix = [[None] * matrix_size for _ in range(0, matrix_size)]
+        self.matrix = [[None] * enc.mapping_cols for _ in range(enc.mapping_rows)]
 
         placer = DataMatrixPlacer()
         placer.place(codewords, self.matrix)

@@ -58,12 +58,12 @@ def matrix_to_dxf(
         f"9\n$INSUNITS\n70\n{_INSUNITS[units]}\n",
         "0\nENDSEC\n0\nSECTION\n2\nENTITIES\n",
     ]
-    for mark in iter_marks(matrix, mark_values_when=not inverse, mark_shape=mark_shape):
+    for mx, my, mw, mh in iter_marks(matrix, mark_values_when=not inverse, mark_shape=mark_shape):
         # DXF y-axis points up, so flip.
         if mark_shape is MarkShape.CIRCULAR_CELLS:
-            cx = (mark.x + mark.width / 2) * cellsize
-            cy = (matrix_height - mark.y - mark.height / 2) * cellsize
-            r = (mark.width / 2) * cellsize
+            cx = (mx + mw / 2) * cellsize
+            cy = (matrix_height - my - mh / 2) * cellsize
+            r = (mw / 2) * cellsize
             # Solid-filled HATCH with a single circular-arc boundary path:
             # 91/92/93 = 1 path / external / 1 edge; 72=2 marks the edge as a
             # circular arc; 10/20 are the arc centre and 40 the radius.
@@ -80,10 +80,10 @@ def matrix_to_dxf(
             )
         else:
             # (x0, y0) is the top-left corner.
-            x0 = mark.x * cellsize
-            y0 = (matrix_height - mark.y) * cellsize
-            x1 = x0 + mark.width * cellsize
-            y1 = y0 - mark.height * cellsize
+            x0 = mx * cellsize
+            y0 = (matrix_height - my) * cellsize
+            x1 = x0 + mw * cellsize
+            y1 = y0 - mh * cellsize
             # Group codes 10/20/30, 11/21/31, 12/22/32, 13/23/33 are X/Y/Z for
             # SOLID corners 0..3; corners 2 and 3 are the bottom edge.
             parts.append(

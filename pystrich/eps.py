@@ -118,7 +118,7 @@ def marks_to_eps_rects(marks: Iterable[MatrixMark], view_h: int) -> list[str]:
 
     PostScript's y-axis points up, so y is flipped against ``view_h``.
     """
-    return [f"{m.x} {view_h - m.y - m.height} {m.width} {m.height} rectfill" for m in marks]
+    return [f"{x} {view_h - y - h} {w} {h} rectfill" for x, y, w, h in marks]
 
 
 def marks_to_eps_circles(marks: Iterable[MatrixMark], view_h: int) -> list[str]:
@@ -127,8 +127,7 @@ def marks_to_eps_circles(marks: Iterable[MatrixMark], view_h: int) -> list[str]:
     ``newpath`` is required because ``arc`` adds to the current path.
     """
     return [
-        f"newpath {m.x + m.width / 2} {view_h - m.y - m.height / 2} {m.width / 2} 0 360 arc fill"
-        for m in marks
+        f"newpath {x + w / 2} {view_h - y - h / 2} {w / 2} 0 360 arc fill" for x, y, w, h in marks
     ]
 
 

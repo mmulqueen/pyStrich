@@ -68,9 +68,9 @@ class Bar1DRenderer(ABC):
         img = Image.new(mode, (self.image_width, self.image_height), light_fill)
         draw = ImageDraw.Draw(img)
 
-        for mark in iter_barcode_marks(layout):
+        for mx, my, mw, mh in iter_barcode_marks(layout):
             draw.rectangle(
-                (mark.x, mark.y, mark.x + mark.width - 1, mark.y + mark.height - 1),
+                (mx, my, mx + mw - 1, my + mh - 1),
                 fill=dark_fill,
             )
 

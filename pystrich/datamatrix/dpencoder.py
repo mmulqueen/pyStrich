@@ -147,12 +147,16 @@ class _HighLevelEncoder:
         self.dp: list[list[list[int]]] = [
             [[_INF] * 3 for _ in range(self.n + 1)] for _ in ALL_MODES
         ]
-        # prev[(mode, pos, phase)] = src_state | None.
-        self.prev: dict[tuple[int, int, int], tuple[int, int, int] | None] = {}
+        # prev[mode][pos][phase] = src_state | None. A 3D list parallel to dp
+        # rather than a dict keyed by (mode, pos, phase): the DP relaxes each
+        # state hundreds of thousands of times, and list indexing avoids
+        # allocating and hashing a tuple key on every write and read.
+        self.prev: list[list[list[tuple[int, int, int] | None]]] = [
+            [[None] * 3 for _ in range(self.n + 1)] for _ in ALL_MODES
+        ]
         # Seed every mode at pos 0: ASCII is free; non-ASCII pays its latch.
         for m in ALL_MODES:
             self.dp[m][0][0] = eci_cost + _HEADER[m]
-            self.prev[(m, 0, 0)] = None
 
     def encode(self) -> list[int]:
         for p in range(self.n + 1):
@@ -168,9 +172,13 @@ class _HighLevelEncoder:
         single relaxation per (src, dst) pair. Multi-hop chains at the same
         position are never cheaper than direct ones.
         """
+        dp = self.dp
+        prev = self.prev
         for m_src in ALL_MODES:
+            close_src = CLOSE_COST[m_src]
+            dp_src_p = dp[m_src][p]
             for phase in range(3):
-                base = self.dp[m_src][p][phase] + CLOSE_COST[m_src][phase]
+                base = dp_src_p[phase] + close_src[phase]
                 if base >= _INF:
                     continue
                 src_state = (m_src, p, phase)
@@ -178,26 +186,30 @@ class _HighLevelEncoder:
                     if m_dst == m_src:
                         continue
                     new_cost = base + _HEADER[m_dst]
-                    if new_cost < self.dp[m_dst][p][0]:
-                        self.dp[m_dst][p][0] = new_cost
-                        self.prev[(m_dst, p, 0)] = src_state
+                    if new_cost < dp[m_dst][p][0]:
+                        dp[m_dst][p][0] = new_cost
+                        prev[m_dst][p][0] = src_state
 
     def _advance(self, p: int) -> None:
         """Advance every reachable state at ``p`` by one (or two) byte(s)."""
-        byte = self.payload[p]
+        dp = self.dp
+        prev = self.prev
+        payload = self.payload
+        byte = payload[p]
 
         # ASCII direct (and digit-pair when both this byte and the next are digits).
-        cost = self.dp[ASCII][p][0]
+        cost = dp[ASCII][p][0]
         if cost < _INF:
+            dp_ascii_next = dp[ASCII][p + 1]
             new_cost = cost + ASCII_COST[byte]
-            if new_cost < self.dp[ASCII][p + 1][0]:
-                self.dp[ASCII][p + 1][0] = new_cost
-                self.prev[(ASCII, p + 1, 0)] = (ASCII, p, 0)
-            if p + 1 < self.n and 0x30 <= byte <= 0x39 and 0x30 <= self.payload[p + 1] <= 0x39:
+            if new_cost < dp_ascii_next[0]:
+                dp_ascii_next[0] = new_cost
+                prev[ASCII][p + 1][0] = (ASCII, p, 0)
+            if p + 1 < self.n and 0x30 <= byte <= 0x39 and 0x30 <= payload[p + 1] <= 0x39:
                 pair_cost = cost + 3
-                if pair_cost < self.dp[ASCII][p + 2][0]:
-                    self.dp[ASCII][p + 2][0] = pair_cost
-                    self.prev[(ASCII, p + 2, 0)] = (ASCII, p, 0)
+                if pair_cost < dp[ASCII][p + 2][0]:
+                    dp[ASCII][p + 2][0] = pair_cost
+                    prev[ASCII][p + 2][0] = (ASCII, p, 0)
 
         # C40 and TEXT share the same triplet-packing structure; only the
         # per-byte set-value count differs.
@@ -205,27 +217,33 @@ class _HighLevelEncoder:
             set_values = count_table[byte]
             cost_per_byte = 2 * set_values
             phase_step = set_values % 3
+            dp_mode_p = dp[mode][p]
+            dp_mode_next = dp[mode][p + 1]
+            prev_mode_next = prev[mode][p + 1]
             for phase in range(3):
-                cost = self.dp[mode][p][phase]
+                cost = dp_mode_p[phase]
                 if cost >= _INF:
                     continue
                 new_phase = (phase + phase_step) % 3
                 new_cost = cost + cost_per_byte
-                if new_cost < self.dp[mode][p + 1][new_phase]:
-                    self.dp[mode][p + 1][new_phase] = new_cost
-                    self.prev[(mode, p + 1, new_phase)] = (mode, p, phase)
+                if new_cost < dp_mode_next[new_phase]:
+                    dp_mode_next[new_phase] = new_cost
+                    prev_mode_next[new_phase] = (mode, p, phase)
 
         # X12 (only for bytes in the X12 set).
         if X12_VALUE[byte] >= 0:
+            dp_x12_p = dp[X12][p]
+            dp_x12_next = dp[X12][p + 1]
+            prev_x12_next = prev[X12][p + 1]
             for phase in range(3):
-                cost = self.dp[X12][p][phase]
+                cost = dp_x12_p[phase]
                 if cost >= _INF:
                     continue
                 new_phase = (phase + 1) % 3
                 new_cost = cost + 2
-                if new_cost < self.dp[X12][p + 1][new_phase]:
-                    self.dp[X12][p + 1][new_phase] = new_cost
-                    self.prev[(X12, p + 1, new_phase)] = (X12, p, phase)
+                if new_cost < dp_x12_next[new_phase]:
+                    dp_x12_next[new_phase] = new_cost
+                    prev_x12_next[new_phase] = (X12, p, phase)
 
     def _reconstruct(self) -> list[int]:
         """Walk back-pointers from the cheapest end state and emit codewords."""
@@ -244,7 +262,8 @@ class _HighLevelEncoder:
         cur: tuple[int, int, int] | None = best_state
         while cur is not None:
             chain.append(cur)
-            cur = self.prev[cur]
+            m, pos, phase = cur
+            cur = self.prev[m][pos][phase]
         chain.reverse()
 
         # Emit each maximal same-mode run as one segment. CLOSE_COST forbids

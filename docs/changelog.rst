@@ -6,6 +6,9 @@ Changelog
 0.17 — unreleased
 -----------------
 
+- Data Matrix: new ``symbol_shape`` option (``"square"`` default,
+  ``"rectangular"``, ``"auto"``, also ``--symbol-shape`` in the CLI) adds the
+  six rectangular ECC-200 sizes; ``"auto"`` picks the smallest-area symbol.
 - Aztec Code: Byte-mode run segmentation is now linear-time, sharply reducing
   encode time for large payloads.
 - Faster Reed-Solomon error-correction encoding for Data Matrix, QR Code,

@@ -112,15 +112,12 @@ def _wrap_svg(
 
 def marks_to_svg_rects(marks: Iterable[MatrixMark]) -> list[str]:
     """Render each mark as an SVG ``<rect>`` element."""
-    return [f'<rect x="{m.x}" y="{m.y}" width="{m.width}" height="{m.height}"/>' for m in marks]
+    return [f'<rect x="{x}" y="{y}" width="{w}" height="{h}"/>' for x, y, w, h in marks]
 
 
 def marks_to_svg_circles(marks: Iterable[MatrixMark]) -> list[str]:
     """Render each mark as an SVG ``<circle>`` inscribed in its bounding box."""
-    return [
-        f'<circle cx="{m.x + m.width / 2}" cy="{m.y + m.height / 2}" r="{m.width / 2}"/>'
-        for m in marks
-    ]
+    return [f'<circle cx="{x + w / 2}" cy="{y + h / 2}" r="{w / 2}"/>' for x, y, w, h in marks]
 
 
 def matrix_to_svg(

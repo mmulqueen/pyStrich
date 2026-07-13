@@ -66,6 +66,27 @@ tends to bleed into the margin.
 .. image:: examples/datamatrix-large.png
    :alt: Data Matrix encoding the pyStrich GitHub URL rendered with cellsize=10.
 
+Symbol shape
+------------
+
+Data Matrix symbols are square by default, but can also be rectangular --
+useful where a label strip is wider than it is tall. The
+``symbol_shape`` argument to :class:`DataMatrixEncoder` selects between them:
+``"square"`` (the default) always produces a square symbol, ``"rectangular"``
+always produces one of the six rectangular sizes (raising if the payload is too
+long for the largest of them), and ``"auto"`` picks whichever fitting symbol
+has the smallest area.
+
+.. code-block:: python
+
+   payload = DataMatrixData("A1268172415", encoding="ascii")
+   DataMatrixEncoder(payload, symbol_shape="rectangular").save_svg("datamatrix-rectangular.svg")
+
+.. image:: examples/datamatrix-rectangular.svg
+   :alt: Rectangular Data Matrix encoding the part number A1268172415.
+
+.. versionadded:: 0.17
+
 Output formats
 --------------
 

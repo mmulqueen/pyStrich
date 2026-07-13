@@ -181,6 +181,9 @@ def _generate_example_images(app):
         mark_shape=MarkShape.CIRCULAR_CELLS,
     )
     DataMatrixEncoder(pystrich_url).save(str(out / "datamatrix-large.png"), cellsize=10)
+    DataMatrixEncoder(
+        DataMatrixData("A1268172415", encoding="ascii"), symbol_shape="rectangular"
+    ).save_svg(str(out / "datamatrix-rectangular.svg"))
     DataMatrixEncoder(DataMatrixData.gs1(GS1Fixed("01", "05050070007664"))).save(
         str(out / "datamatrix-gs1.png"), cellsize=8
     )

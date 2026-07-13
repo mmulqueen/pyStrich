@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal, NamedTuple
+
 from pystrich.charset import Charset, _HasMarkers
 from pystrich.exceptions import PyStrichInvalidInput
 from pystrich.reedsolomon import GF256_0x12D, reed_solomon_encode
@@ -41,7 +43,67 @@ rs_blocks: tuple[int, ...] = (1, 1, 1, 1, 1, 1, 1, 1, 1,
                               6, 6, 8, 10)
 # fmt: on
 
-_DATA_WORD_LENGTH_SET: frozenset[int] = frozenset(data_word_length)
+SymbolShape = Literal["square", "rectangular", "auto"]
+
+
+class _SymbolSpec(NamedTuple):
+    """One ECC-200 symbol size: its data capacity and grid geometry.
+
+    ``region_rows``/``region_cols`` size a single data region (finder pattern
+    excluded); ``h_regions``/``v_regions`` are how many regions tile the symbol
+    horizontally and vertically. The full mapping matrix the placer fills is
+    ``region_rows * v_regions`` by ``region_cols * h_regions``.
+    """
+
+    data_words: int
+    error_words: int
+    rs_blocks: int
+    region_rows: int
+    region_cols: int
+    h_regions: int
+    v_regions: int
+    shape: Literal["square", "rectangular"]
+
+
+_SQUARE_SPECS: tuple[_SymbolSpec, ...] = tuple(
+    _SymbolSpec(dw, ew, rb, region, region, hv, hv, "square")
+    for dw, ew, region, hv, rb in zip(
+        data_word_length, error_word_length, data_region_size, hv_regions, rs_blocks, strict=True
+    )
+)
+
+# fmt: off
+_RECT_SPECS: tuple[_SymbolSpec, ...] = (
+    _SymbolSpec(5,  7,  1, 6,  16, 1, 1, "rectangular"),  # 8x18
+    _SymbolSpec(10, 11, 1, 6,  14, 2, 1, "rectangular"),  # 8x32
+    _SymbolSpec(16, 14, 1, 10, 24, 1, 1, "rectangular"),  # 12x26
+    _SymbolSpec(22, 18, 1, 10, 16, 2, 1, "rectangular"),  # 12x36
+    _SymbolSpec(32, 24, 1, 14, 16, 2, 1, "rectangular"),  # 16x36
+    _SymbolSpec(49, 28, 1, 14, 22, 2, 1, "rectangular"),  # 16x48
+)
+# fmt: on
+
+_ALL_SPECS: tuple[_SymbolSpec, ...] = _SQUARE_SPECS + _RECT_SPECS
+
+# Data-word capacities per shape, for the trailing-Unlatch exact-fit check.
+_SQUARE_DATA_WORDS: frozenset[int] = frozenset(s.data_words for s in _SQUARE_SPECS)
+_RECT_DATA_WORDS: frozenset[int] = frozenset(s.data_words for s in _RECT_SPECS)
+_ALL_DATA_WORDS: frozenset[int] = _SQUARE_DATA_WORDS | _RECT_DATA_WORDS
+
+
+def _total_area(spec: _SymbolSpec) -> int:
+    """Total module count of the rendered symbol (each region adds a 2-module finder)."""
+    return (spec.region_rows + 2) * spec.v_regions * ((spec.region_cols + 2) * spec.h_regions)
+
+
+def _candidate_data_words(symbol_shape: SymbolShape) -> frozenset[int]:
+    """Data-word capacities reachable for the given shape."""
+    if symbol_shape == "square":
+        return _SQUARE_DATA_WORDS
+    if symbol_shape == "rectangular":
+        return _RECT_DATA_WORDS
+    return _ALL_DATA_WORDS
+
 
 # Map the DataMatrix charset to the ECI number to prepend, or None for no ECI.
 # iso-8859-1 emits the redundant ECI 3 designator so heuristic decoders
@@ -72,20 +134,20 @@ class TextEncoder:
 
     codewords: list[int]
     size_index: int
-    mtx_size: int
-    regions: int
+    spec: _SymbolSpec
+    mapping_rows: int
+    mapping_cols: int
 
     def __init__(self) -> None:
         self.codewords = []
         self.size_index = 0
-        self.mtx_size = 0
-        self.regions = 0
 
     def encode(
         self,
         text: DataMatrixData | str,
         *,
         force_byte_mode: bool = False,
+        symbol_shape: SymbolShape = "square",
     ) -> list[int]:
         """Encode the given text and add padding and error codes
         also set up the correct matrix size for the resulting codewords"""
@@ -94,12 +156,12 @@ class TextEncoder:
 
         self.encode_text(text, force_byte_mode=force_byte_mode)
 
-        self.pad()
+        self.pad(symbol_shape)
 
         self.append_error_codes()
 
-        self.mtx_size = data_region_size[self.size_index]
-        self.regions = hv_regions[self.size_index]
+        self.mapping_rows = self.spec.region_rows * self.spec.v_regions
+        self.mapping_cols = self.spec.region_cols * self.spec.h_regions
 
         return self.codewords
 
@@ -156,7 +218,7 @@ class TextEncoder:
             else:
                 self.codewords.extend(_pack_byte_by_byte(segment.encode(charset)))
 
-    def pad(self) -> None:
+    def pad(self, symbol_shape: SymbolShape = "square") -> None:
         """Pad out the encoded text to the correct word length"""
 
         # If the trailing Unlatch would push us into the next symbol size,
@@ -165,25 +227,16 @@ class TextEncoder:
         if (
             self.codewords
             and self.codewords[-1] == UNLATCH
-            and len(self.codewords) - 1 in _DATA_WORD_LENGTH_SET
+            and len(self.codewords) - 1 in _candidate_data_words(symbol_shape)
         ):
             self.codewords.pop()
 
         unpadded_len = len(self.codewords)
 
-        if unpadded_len > data_word_length[-1]:
-            raise DataTooLongForImplementation(
-                f"input requires {unpadded_len} data codewords; "
-                f"largest supported ECC200 square symbol holds {data_word_length[-1]}"
-            )
-
-        # Work out how big the matrix needs to be
-        for self.size_index, length in enumerate(data_word_length):
-            if length >= unpadded_len:
-                break
+        self.spec = self._select_spec(unpadded_len, symbol_shape)
 
         # Number of characters with which the data will be padded
-        padsize = length - unpadded_len
+        padsize = self.spec.data_words - unpadded_len
 
         # First pad character is 129
         if padsize:
@@ -193,6 +246,38 @@ class TextEncoder:
         for i in range(1, padsize):
             self.append_codeword(_randomise_pad(unpadded_len + i + 1))
 
+    def _select_spec(self, unpadded_len: int, symbol_shape: SymbolShape) -> _SymbolSpec:
+        """Pick the symbol that holds ``unpadded_len`` data codewords for the shape."""
+
+        if symbol_shape == "rectangular":
+            for spec in _RECT_SPECS:
+                if spec.data_words >= unpadded_len:
+                    return spec
+            raise DataTooLongForImplementation(
+                f"input requires {unpadded_len} data codewords; "
+                f"largest ECC200 rectangular symbol holds {_RECT_SPECS[-1].data_words}"
+            )
+
+        if symbol_shape == "auto":
+            fitting = [s for s in _ALL_SPECS if s.data_words >= unpadded_len]
+            if not fitting:
+                raise DataTooLongForImplementation(
+                    f"input requires {unpadded_len} data codewords; "
+                    f"largest supported ECC200 symbol holds {_SQUARE_SPECS[-1].data_words}"
+                )
+            # Smallest rendered symbol; on an area tie prefer the square, which
+            # is more widely supported by scanners.
+            return min(fitting, key=lambda s: (_total_area(s), s.shape != "square"))
+
+        # square (default): keep size_index in step with the legacy tables.
+        for self.size_index, spec in enumerate(_SQUARE_SPECS):
+            if spec.data_words >= unpadded_len:
+                return spec
+        raise DataTooLongForImplementation(
+            f"input requires {unpadded_len} data codewords; "
+            f"largest supported ECC200 square symbol holds {_SQUARE_SPECS[-1].data_words}"
+        )
+
     def append_error_codes(self) -> None:
         """Compute Reed-Solomon error correction codewords and append to the buffer.
 
@@ -200,8 +285,8 @@ class TextEncoder:
         its own RS codeword group; the EC bytes are then re-interleaved on the wire.
         """
 
-        error_length = error_word_length[self.size_index]
-        n_blocks = rs_blocks[self.size_index]
+        error_length = self.spec.error_words
+        n_blocks = self.spec.rs_blocks
         ec_per_block = error_length // n_blocks
         blocks_data = [self.codewords[i::n_blocks] for i in range(n_blocks)]
         blocks_ec = [
