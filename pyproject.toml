@@ -74,11 +74,11 @@ docs = [
     "sphinx>=8.1",
     "furo>=2024.8.6",
     "sphinx-copybutton>=0.5",
-    "sphinx-argparse>=0.5",
     "sphinxext-opengraph>=0.13.0",
     "sphinx-sitemap>=2.9.0",
     "sphinx-intl>=2.3.2",
     "polib>=1.2.0",
+    "sphinx-argparse-cli>=1.19.0",
 ]
 
 [build-system]

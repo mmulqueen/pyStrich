@@ -39,10 +39,12 @@ The last example produces:
 Reference
 ---------
 
-.. argparse::
+.. sphinx_argparse_cli::
    :module: pystrich.cli
    :func: _build_parser
    :prog: pystrich
+   :title:
+   :no_default_values:
 
 Format auto-detection
 ---------------------

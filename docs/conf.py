@@ -1,6 +1,5 @@
 """Sphinx configuration for pyStrich documentation."""
 
-import re
 import shutil
 import sys
 from pathlib import Path
@@ -28,7 +27,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
     "sphinx_sitemap",
-    "sphinxarg.ext",
+    "sphinx_argparse_cli",
     "sphinxext.opengraph",
 ]
 
@@ -326,14 +325,22 @@ def _filter_version_notes(app, doctree):
 
 
 class _StampArgparseSource(SphinxTransform):
-    """Make the argparse reference block on cli.rst translatable.
+    """Route the argparse reference block on cli.rst through gettext, keeping
+    option names and metavars out of the translatable stream.
 
-    sphinx-argparse synthesises the per-subcommand help paragraphs without a
-    ``source``, and Sphinx's ``is_translatable`` skips any ``TextElement``
-    whose ``source`` is unset -- so the argument help never reaches the
-    gettext catalogue. Stamping a source here, before the i18n ``Locale``
-    transform (priority 20), routes those strings through the normal
-    ``locale/<lang>/LC_MESSAGES/cli.po`` pipeline like any other content.
+    sphinx_argparse_cli builds its nodes without a ``source``, and Sphinx's
+    ``is_translatable`` skips any ``TextElement`` whose ``source`` is unset, so
+    nothing reaches ``locale/<lang>/LC_MESSAGES/cli.po`` unless a source is
+    stamped here, before the i18n ``Locale`` transform (priority 20).
+
+    Prose paragraphs (descriptions, the parser summary, section titles) are
+    stamped whole. An option line, though, is ``--flag METAVAR - help``: only
+    the help is prose. Stamping the whole line would make its gettext message
+    the flattened plain text, and the translated build -- which re-parses that
+    message -- would drop the ``--flag`` / ``METAVAR`` inline literals and the
+    option's cross-reference anchor. So the help is moved into its own
+    translatable ``inline`` and the signature nodes are left untranslated,
+    keeping their markup identical in every language.
     """
 
     default_priority = 5
@@ -342,45 +349,38 @@ class _StampArgparseSource(SphinxTransform):
         docsource = self.document.get("source") or ""
         if not docsource.endswith("cli.rst"):
             return
-        for node in self.document.findall(nodes.TextElement):
-            if not node.source:
+        for node in list(self.document.findall(nodes.TextElement)):
+            if node.source:
+                continue
+            if self._is_option_line(node):
+                self._wrap_option_help(node, docsource)
+            else:
                 node.source = docsource
                 node.line = node.line or 1
 
+    @staticmethod
+    def _is_option_line(node):
+        return (
+            isinstance(node, nodes.paragraph)
+            and isinstance(node.parent, nodes.list_item)
+            and any(isinstance(child, nodes.reference) for child in node.children)
+        )
 
-_OPTION_TOKEN = re.compile(r"--[a-zA-Z][a-zA-Z0-9-]*")
-
-
-class _CodeArgparseOptionRefs(SphinxTransform):
-    """Mark up option names in argparse help prose as inline literals.
-
-    The smartquotes transform (priority 750) collapses the ``--`` in
-    plain-text help like "Pass input via --text" to an en dash. Wrapping
-    the token in a literal protects it and matches how the hand-written
-    prose on the page marks up options. Runs after the i18n ``Locale``
-    transform (priority 20) so translated help is covered too.
-    """
-
-    default_priority = 100
-
-    def apply(self):
-        docsource = self.document.get("source") or ""
-        if not docsource.endswith("cli.rst") or self.app.builder.name == "gettext":
-            return
-        for text in list(self.document.findall(nodes.Text)):
-            if "--" not in text or not isinstance(text.parent, nodes.paragraph):
-                continue
-            parts = _OPTION_TOKEN.split(text)
-            if len(parts) == 1:
-                continue
-            tokens = _OPTION_TOKEN.findall(text)
-            replacement = []
-            for i, part in enumerate(parts):
-                if part:
-                    replacement.append(nodes.Text(part))
-                if i < len(tokens):
-                    replacement.append(nodes.literal(tokens[i], tokens[i]))
-            text.parent.replace(text, replacement)
+    @staticmethod
+    def _wrap_option_help(paragraph, docsource):
+        for index, child in enumerate(paragraph.children):
+            if isinstance(child, nodes.Text) and child == " - ":
+                help_nodes = list(paragraph.children[index + 1 :])
+                if not help_nodes:
+                    return
+                help_inline = nodes.inline(translatable=True)
+                help_inline.source = docsource
+                help_inline.line = 1
+                help_inline.rawsource = "".join(n.astext() for n in help_nodes)
+                del paragraph[index + 1 :]
+                help_inline.extend(help_nodes)
+                paragraph += help_inline
+                return
 
 
 def _localise_title(app, config):
@@ -395,7 +395,6 @@ def _localise_title(app, config):
 
 def setup(app):
     app.add_transform(_StampArgparseSource)
-    app.add_transform(_CodeArgparseOptionRefs)
     app.connect("config-inited", _localise_title)
     app.connect("builder-inited", _generate_example_images)
     app.connect("build-finished", _copy_text_to_html)
