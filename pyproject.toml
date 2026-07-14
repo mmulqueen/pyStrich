@@ -69,6 +69,7 @@ dev = [
     # once Pillow leaves the core dependencies.
     "pillow>=10.3; python_version < '3.11'",
     "pillow>=12.2; python_version >= '3.11'",
+    "pre-commit>=4.6.0",
 ]
 docs = [
     "sphinx>=8.1",
