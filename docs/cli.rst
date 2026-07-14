@@ -70,16 +70,3 @@ that input from a shell-friendly string:
        -o gs1.png
 
 See :doc:`datamatrix` for the full encoding discussion.
-
-Limitations
------------
-
-The CLI doesn't expose every Python-API knob. Reach for the Python API for
-1D label fonts, custom borders, EAN-13's ``first_digit_y_offset``, or the
-deprecated DataMatrix ``compat`` encoding.
-
-API
----
-
-.. automodule:: pystrich.cli
-   :members: main
