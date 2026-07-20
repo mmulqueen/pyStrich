@@ -39,24 +39,10 @@ class PDF417Renderer(Matrix2DRenderer[int]):
         row_height: int = 1,
     ) -> None:
         self.matrix = matrix
-        self.height = len(matrix)
-        self.width = len(matrix[0]) if matrix else 0
         self.row_height = row_height
         self.quiet_zone = quiet_zone
         if quiet_zone > 0:
-            self._add_quiet_zone(quiet_zone)
-
-    def _add_quiet_zone(self, width: int) -> None:
-        """Wrap the matrix in a white border ``width`` modules thick on every side."""
-        blank_row = [0] * (self.width + 2 * width)
-        side = [0] * width
-        self.matrix = (
-            [list(blank_row) for _ in range(width)]
-            + [side + row + side for row in self.matrix]
-            + [list(blank_row) for _ in range(width)]
-        )
-        self.width += 2 * width
-        self.height += 2 * width
+            self._add_border(colour=0, width=quiet_zone)
 
     def get_terminal_art(self, *, ansi_bg: bool = True) -> str:
         """Render the symbol using horizontal half-block characters.

@@ -1,8 +1,17 @@
-"""Direct unit tests for pystrich.marks.iter_bar_marks."""
+"""Direct unit tests for pystrich.marks.iter_bar_marks and the get_rect_marks() surface."""
+
+from xml.etree import ElementTree
 
 import pytest
 
-from pystrich.marks import iter_bar_marks
+from pystrich.aztec import AztecEncoder
+from pystrich.code128 import Code128Encoder
+from pystrich.datamatrix import DataMatrixData, DataMatrixEncoder
+from pystrich.ean13 import EAN13Encoder
+from pystrich.itf import ITF14Encoder, ITFEncoder
+from pystrich.marks import SymbolMarks, iter_bar_marks
+from pystrich.pdf417 import PDF417Encoder
+from pystrich.qrcode import QRCodeEncoder
 
 
 @pytest.mark.parametrize(
@@ -90,3 +99,59 @@ def test_quiet_offsets_combine():
     assert list(iter_bar_marks([7, 7], 1, quiet_left=11, quiet_top=2)) == [
         (11, 2, 2, 7),
     ]
+
+
+@pytest.mark.parametrize(
+    "make_encoder",
+    [
+        pytest.param(
+            lambda: DataMatrixEncoder(DataMatrixData("HELLO", auto_encoding=True)),
+            id="datamatrix",
+        ),
+        pytest.param(lambda: QRCodeEncoder("HELLO"), id="qrcode"),
+        pytest.param(lambda: AztecEncoder("HELLO"), id="aztec"),
+        pytest.param(lambda: PDF417Encoder("HELLO"), id="pdf417"),
+        pytest.param(lambda: Code128Encoder("HELLO"), id="code128"),
+        pytest.param(lambda: EAN13Encoder("5050070007664"), id="ean13"),
+        pytest.param(lambda: ITF14Encoder("1540141453698"), id="itf14"),
+    ],
+)
+def test_get_rect_marks_fit_within_extent(make_encoder):
+    """Every symbology returns non-empty marks that fit inside its extent."""
+    symbol = make_encoder().get_rect_marks()
+    assert isinstance(symbol, SymbolMarks)
+    assert symbol.marks
+    assert symbol.width > 0
+    assert symbol.height > 0
+    for x, y, width, height in symbol.marks:
+        assert 0 <= x and x + width <= symbol.width
+        assert 0 <= y and y + height <= symbol.height
+
+
+def test_ean13_guard_bars_are_taller_than_data_bars():
+    symbol = EAN13Encoder("5050070007664").get_rect_marks()
+    assert len({height for _, _, _, height in symbol.marks}) >= 2
+
+
+def test_itf14_draws_a_bearer_frame_absent_from_plain_itf():
+    """The bearer's full-width rules only appear for ITF-14."""
+    itf14 = ITF14Encoder("1540141453698").get_rect_marks()
+    plain = ITFEncoder("1234567890").get_rect_marks()
+    assert any(width == itf14.width for _, _, width, _ in itf14.marks)
+    assert not any(width == plain.width for _, _, width, _ in plain.marks)
+
+
+@pytest.mark.parametrize("options", [{}, {"show_label": False}])
+def test_1d_extent_matches_svg_canvas(options):
+    """The marks span the same canvas SVG draws, with or without a label."""
+    encoder = Code128Encoder("HELLO", options=options)
+    symbol = encoder.get_rect_marks()
+    view_box = ElementTree.fromstring(encoder.get_svg(1)).get("viewBox")
+    assert view_box == f"0 0 {symbol.width} {symbol.height}"
+
+
+def test_1d_extent_shrinks_without_label():
+    labelled = Code128Encoder("HELLO").get_rect_marks()
+    bare = Code128Encoder("HELLO", options={"show_label": False}).get_rect_marks()
+    assert bare.height < labelled.height
+    assert bare.width == labelled.width

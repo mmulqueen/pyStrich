@@ -14,9 +14,10 @@ Conventions:
 from __future__ import annotations
 
 from collections.abc import Iterable
+from math import ceil
 
 from pystrich._courier_glyphs import ADVANCE, ASCENT, DESCENT, EM_SIZE, GLYPHS
-from pystrich.marks import TextLabel
+from pystrich.marks import BarLayout, TextLabel
 
 
 def glyph_id(char: str) -> str:
@@ -77,6 +78,18 @@ def label_geometry(label: TextLabel) -> tuple[float, float, float]:
 def label_descent_y(label: TextLabel) -> float:
     """Lowest y-pixel a glyph in ``label`` can reach (font descent included)."""
     return label.y + ((ASCENT + DESCENT) / EM_SIZE) * label.font_size
+
+
+def fit_labels(layout: BarLayout, *, margin: int = 0) -> BarLayout:
+    """Grow ``quiet_bottom`` until every label's font descent, plus ``margin``
+    pixels below it, fits the canvas."""
+    if not layout.labels:
+        return layout
+    height = layout.height
+    needed = ceil(max(label_descent_y(label) for label in layout.labels)) + margin
+    if needed <= height:
+        return layout
+    return layout._replace(quiet_bottom=layout.quiet_bottom + needed - height)
 
 
 def used_chars(labels: Iterable[TextLabel]) -> set[str]:

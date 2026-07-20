@@ -33,20 +33,7 @@ class AztecRenderer(Matrix2DRenderer[int]):
         *,
         quiet_zone: int = AZTEC_DEFAULT_QUIET_ZONE,
     ) -> None:
-        self.width = self.height = len(matrix)
         self.matrix = matrix
         self.quiet_zone = quiet_zone
         if quiet_zone > 0:
-            self.add_border(colour=0, width=quiet_zone)
-
-    def add_border(self, colour: int = 0, width: int = 2) -> None:
-        """Wrap the matrix in a border of the given width and colour."""
-        self.width = self.height = self.width + width * 2
-        self.matrix = (
-            [[colour] * self.width] * width
-            + [
-                [colour] * width + self.matrix[i] + [colour] * width
-                for i in range(self.width - width * 2)
-            ]
-            + [[colour] * self.width] * width
-        )
+            self._add_border(colour=0, width=quiet_zone)

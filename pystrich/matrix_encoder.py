@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Generic
 
 from pystrich._dataurl import png_to_data_url, svg_to_data_url
 from pystrich.dxf import DxfUnit
-from pystrich.marks import MarkShape
+from pystrich.marks import MarkShape, SymbolMarks
 from pystrich.matrix_renderer import CellT, Matrix2DRenderer
 
 if TYPE_CHECKING:
@@ -353,3 +353,16 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
             than ``"mm"`` was silently treated as unspecified.
         """
         return self.init_renderer().get_dxf(cellsize, inverse, units, mark_shape=mark_shape)
+
+    def get_rect_marks(
+        self, *, inverse: bool = False, mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS
+    ) -> SymbolMarks:
+        """Return the symbol's dark cells as rectangles in module units.
+
+        :param inverse: If ``True``, mark the light cells instead of the dark ones.
+        :param mark_shape: How matched cells are grouped and drawn.
+        :rtype: pystrich.marks.SymbolMarks
+
+        .. versionadded:: 0.18
+        """
+        return self.init_renderer().get_rect_marks(inverse=inverse, mark_shape=mark_shape)

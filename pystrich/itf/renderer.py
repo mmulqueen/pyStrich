@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from math import ceil
-
-from pystrich._vector_text import label_descent_y, make_text_label
+from pystrich._vector_text import make_text_label
 from pystrich.bar_renderer import Bar1DRenderer
 from pystrich.exceptions import PyStrichInvalidOption
 from pystrich.marks import BarLayout, TextLabel
@@ -90,8 +88,6 @@ class ITFRenderer(Bar1DRenderer):
                 self.digits, image_width / 2, text_top, font_size, anchor="middle"
             )
             labels = (label,)
-            # Grow the canvas so the label clears the font descent.
-            image_height = max(image_height, ceil(label_descent_y(label)) + bottom_border)
 
         return BarLayout(
             heights=heights,

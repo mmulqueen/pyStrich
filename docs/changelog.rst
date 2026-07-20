@@ -6,6 +6,13 @@ Changelog
 0.18 — unreleased
 -----------------
 
+- All encoders: new ``get_rect_marks()`` returning the symbol's dark cells or
+  bars as a :class:`~pystrich.marks.SymbolMarks` of rectangles, for drawing
+  barcodes directly into external vector renderers.
+- 1D formats: PNG, SVG, EPS and ``get_rect_marks()`` now size the canvas
+  identically, growing it whenever the label's font descent would not fit.
+  At default sizes this makes Code 39 and Code 128 PNGs a few pixels taller
+  so label descenders are no longer clipped.
 - Data Matrix: fix a small minority of ``symbol_shape="auto"`` payloads,
   which decoded with trailing junk because the final Unlatch was incorrectly
   dropped.

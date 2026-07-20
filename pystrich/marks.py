@@ -13,6 +13,26 @@ from typing import NamedTuple
 MatrixMark = tuple[int, int, int, int]
 
 
+class SymbolMarks(NamedTuple):
+    """A rendered symbol as dark rectangles in a unit grid.
+
+    ``marks`` are the dark regions as ``(x, y, width, height)`` rectangles,
+    with a top-left origin and y pointing down (matching the matrix, PIL and
+    SVG). ``width`` and ``height`` are the full extent of the grid the marks
+    live in -- the same canvas every other output format draws, so quiet
+    zones, finder pattern and (for 1D) the bearer bar and the space reserved
+    for the human-readable label are all included -- and a consumer can fit
+    ``[0, width] x [0, height]`` into any target box at any scale. The label
+    glyphs themselves are never marks. For 2D symbols one unit is one module;
+    for 1D symbols the x unit is one narrow bar and the y unit is one pixel
+    of the bar layout.
+    """
+
+    marks: tuple[MatrixMark, ...]
+    width: int
+    height: int
+
+
 class MarkShape(Enum):
     """How marked cells are grouped and drawn in vector output.
 
@@ -121,6 +141,16 @@ class BarLayout(NamedTuple):
     labels: Sequence[TextLabel] = ()
     bearer_width: int = 0
 
+    @property
+    def width(self) -> int:
+        """Total canvas width in pixels."""
+        return self.quiet_left + len(self.heights) * self.bar_width + self.quiet_right
+
+    @property
+    def height(self) -> int:
+        """Total canvas height in pixels."""
+        return self.quiet_top + max(self.heights, default=0) + self.quiet_bottom
+
 
 def iter_bar_marks(
     heights: Sequence[int],
@@ -178,13 +208,12 @@ def iter_bearer_marks(layout: BarLayout) -> Iterator[MatrixMark]:
     t = layout.bearer_width
     if t <= 0:
         return
-    width = layout.quiet_left + len(layout.heights) * layout.bar_width + layout.quiet_right
     bars_bottom = layout.quiet_top + max(layout.heights, default=0)
     frame_height = bars_bottom + t
-    yield (0, 0, width, t)  # top rule
-    yield (0, bars_bottom, width, t)  # bottom rule
+    yield (0, 0, layout.width, t)  # top rule
+    yield (0, bars_bottom, layout.width, t)  # bottom rule
     yield (0, 0, t, frame_height)  # left bar
-    yield (width - t, 0, t, frame_height)  # right bar
+    yield (layout.width - t, 0, t, frame_height)  # right bar
 
 
 def iter_barcode_marks(layout: BarLayout) -> Iterator[MatrixMark]:

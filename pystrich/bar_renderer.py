@@ -14,12 +14,14 @@ import os
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
 from io import BytesIO
+from math import ceil
 from typing import TYPE_CHECKING, Any
 
+from pystrich._vector_text import fit_labels
 from pystrich.colour import RGBA, resolve_pil_palette
 from pystrich.eps import bars_to_eps
 from pystrich.fonts import get_font
-from pystrich.marks import BarLayout, iter_barcode_marks
+from pystrich.marks import BarLayout, SymbolMarks, iter_barcode_marks
 from pystrich.svg import bars_to_svg
 
 if TYPE_CHECKING:
@@ -47,6 +49,11 @@ class Bar1DRenderer(ABC):
     def _bar_layout(self, bar_width: int) -> BarLayout:
         """Return the pixel-precise layout used by all output formats."""
 
+    def _layout(self, bar_width: int) -> BarLayout:
+        """The layout every output format renders: subclass layout, labels fitted."""
+        margin = self.options.get("bottom_border", 0)
+        return fit_labels(self._bar_layout(bar_width), margin=margin)
+
     def get_pilimage(
         self,
         bar_width: int,
@@ -59,11 +66,22 @@ class Bar1DRenderer(ABC):
 
         mode, dark_fill, light_fill = resolve_pil_palette(dark_hex, light_hex)
 
-        layout = self._bar_layout(bar_width)
-        self.image_width = (
-            layout.quiet_left + len(layout.heights) * layout.bar_width + layout.quiet_right
-        )
-        self.image_height = layout.quiet_top + max(layout.heights, default=0) + layout.quiet_bottom
+        layout = self._layout(bar_width)
+        self.image_width = layout.width
+        self.image_height = layout.height
+
+        ttf_font = self.options.get("ttf_font")
+        fonts: list[ImageFont.ImageFont | ImageFont.FreeTypeFont] = []
+        for label in layout.labels:
+            if ttf_font:
+                truetype = ImageFont.truetype(ttf_font, label.font_size)
+                # The layout reserves descent space for the bundled font's
+                # metrics; a substituted TTF may descend further.
+                ascent, descent = truetype.getmetrics()
+                self.image_height = max(self.image_height, ceil(label.y + ascent + descent))
+                fonts.append(truetype)
+            else:
+                fonts.append(get_font("courR", label.font_size))
 
         img = Image.new(mode, (self.image_width, self.image_height), light_fill)
         draw = ImageDraw.Draw(img)
@@ -74,13 +92,7 @@ class Bar1DRenderer(ABC):
                 fill=dark_fill,
             )
 
-        ttf_font = self.options.get("ttf_font")
-        for label in layout.labels:
-            font: ImageFont.ImageFont | ImageFont.FreeTypeFont
-            if ttf_font:
-                font = ImageFont.truetype(ttf_font, label.font_size)
-            else:
-                font = get_font("courR", label.font_size)
+        for label, font in zip(layout.labels, fonts, strict=True):
             x = label.x
             if label.anchor == "middle":
                 x -= font.getlength(label.text) / 2
@@ -121,7 +133,7 @@ class Bar1DRenderer(ABC):
         light_hex: str | RGBA | None = None,
     ) -> str:
         """Return the symbol as an SVG string."""
-        return bars_to_svg(self._bar_layout(bar_width), dark_hex=dark_hex, light_hex=light_hex)
+        return bars_to_svg(self._layout(bar_width), dark_hex=dark_hex, light_hex=light_hex)
 
     def write_svg_file(
         self,
@@ -143,7 +155,7 @@ class Bar1DRenderer(ABC):
         light_hex: str | RGBA | None = None,
     ) -> str:
         """Return the symbol as an EPS string."""
-        return bars_to_eps(self._bar_layout(bar_width), dark_hex=dark_hex, light_hex=light_hex)
+        return bars_to_eps(self._layout(bar_width), dark_hex=dark_hex, light_hex=light_hex)
 
     def write_eps_file(
         self,
@@ -156,3 +168,19 @@ class Bar1DRenderer(ABC):
         """Save the symbol as an EPS file."""
         with open(filename, "w", encoding="ascii") as f:
             f.write(self.get_eps(bar_width, dark_hex=dark_hex, light_hex=light_hex))
+
+    def get_rect_marks(self) -> SymbolMarks:
+        """Return the barcode's dark bars as a :class:`~pystrich.marks.SymbolMarks`.
+
+        The extent is the canvas the other output formats draw at
+        ``bar_width=1``. The label glyphs themselves are not marks; pass
+        ``show_label=False`` (where the format supports it) to drop the
+        label space too.
+
+        :rtype: pystrich.marks.SymbolMarks
+
+        .. versionadded:: 0.18
+        """
+        layout = self._layout(1)
+        marks = tuple(iter_barcode_marks(layout))
+        return SymbolMarks(marks, layout.width, layout.height)

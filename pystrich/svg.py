@@ -9,7 +9,6 @@ values; ``matrix_to_svg`` renders that. The 1D encoders (Code 39, Code
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from math import ceil
 
 from pystrich._courier_glyphs import ADVANCE, GLYPHS
 from pystrich._vector_text import (
@@ -17,7 +16,6 @@ from pystrich._vector_text import (
 )
 from pystrich._vector_text import (
     glyph_id,
-    label_descent_y,
     label_geometry,
     used_chars,
 )
@@ -167,15 +165,12 @@ def bars_to_svg(
 ) -> str:
     """Render a 1D bar layout (with optional human-readable labels) as SVG.
 
-    The ``viewBox`` and ``width``/``height`` are in pixels (= user units
-    at default DPI). When ``layout.labels`` includes glyphs whose font
-    descent extends below the natural canvas height, the canvas is
-    enlarged just enough to keep them inside the ``viewBox``.
+    The ``viewBox`` and ``width``/``height`` are ``layout.width`` by
+    ``layout.height`` in pixels (= user units at default DPI); the layout
+    is expected to already accommodate its labels' font descent.
     """
-    view_w = layout.quiet_left + len(layout.heights) * layout.bar_width + layout.quiet_right
-    view_h = layout.quiet_top + max(layout.heights, default=0) + layout.quiet_bottom
-    if layout.labels:
-        view_h = max(view_h, ceil(max(label_descent_y(lbl) for lbl in layout.labels)))
+    view_w = layout.width
+    view_h = layout.height
 
     body: list[str] = []
     if layout.labels:

@@ -3,9 +3,9 @@
 The 2D formats (QR Code, Data Matrix) both produce a 2D module matrix and
 render it identically once the matrix (with quiet zones and any
 format-specific borders or handles) is in place. This module captures
-that shared surface; format-specific subclasses populate :attr:`matrix`,
-:attr:`width` and :attr:`height` in their ``__init__`` and override
-:attr:`_SYMBOL` if their ASCII rendering needs different glyphs.
+that shared surface; format-specific subclasses populate :attr:`matrix`
+in their ``__init__`` and override :attr:`_SYMBOL` if their ASCII
+rendering needs different glyphs.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from typing import TYPE_CHECKING, ClassVar, Generic, TypeVar
 from pystrich.colour import RGBA, Fill, resolve_pil_palette
 from pystrich.dxf import DxfUnit, matrix_to_dxf
 from pystrich.eps import matrix_to_eps
-from pystrich.marks import MarkShape
+from pystrich.marks import MarkShape, SymbolMarks, iter_marks
 from pystrich.svg import matrix_to_svg
 
 if TYPE_CHECKING:
@@ -38,10 +38,28 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
     """Common rendering surface for 2D matrix barcode formats."""
 
     matrix: list[list[CellT]]
-    width: int
-    height: int
 
     _SYMBOL: ClassVar[dict[int | None, str]] = {0: " ", 1: "X"}
+
+    @property
+    def width(self) -> int:
+        """Symbol width in modules, derived from the matrix."""
+        return len(self.matrix[0]) if self.matrix else 0
+
+    @property
+    def height(self) -> int:
+        """Symbol height in modules, derived from the matrix."""
+        return len(self.matrix)
+
+    def _add_border(self, colour: CellT, width: int) -> None:
+        """Wrap the matrix in a uniform ring, ``width`` modules thick."""
+        side = [colour] * width
+        blank_row = [colour] * (self.width + 2 * width)
+        self.matrix = (
+            [list(blank_row) for _ in range(width)]
+            + [side + row + side for row in self.matrix]
+            + [list(blank_row) for _ in range(width)]
+        )
 
     def get_pilimage(
         self,
@@ -129,8 +147,7 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
             (False, False): " ",
         }
         rows = self.matrix
-        width = len(rows[0]) if rows else 0
-        empty_row = [0] * width
+        empty_row = [0] * self.width
 
         lines: list[str] = []
         for i in range(0, len(rows), 2):
@@ -237,3 +254,22 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         return matrix_to_dxf(
             self.matrix, cellsize, inverse=inverse, units=units, mark_shape=mark_shape
         )
+
+    def get_rect_marks(
+        self, *, inverse: bool = False, mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS
+    ) -> SymbolMarks:
+        """Return the symbol's dark cells as rectangles in module units.
+
+        The matrix already includes the quiet zone and any finder pattern, so
+        the returned :attr:`~pystrich.marks.SymbolMarks.width` and ``height``
+        span the full symbol. External renderers scale the marks to their own
+        coordinate system.
+
+        :param inverse: If ``True``, mark the light cells instead of the dark ones.
+        :param mark_shape: How matched cells are grouped and drawn.
+        :rtype: pystrich.marks.SymbolMarks
+
+        .. versionadded:: 0.18
+        """
+        marks = tuple(iter_marks(self.matrix, mark_values_when=not inverse, mark_shape=mark_shape))
+        return SymbolMarks(marks, self.width, self.height)

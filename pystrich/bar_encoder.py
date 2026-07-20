@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     from pystrich._pillow import PILImage
     from pystrich.bar_renderer import Bar1DRenderer
     from pystrich.colour import RGBA
+    from pystrich.marks import SymbolMarks
 
 
 class Bar1DEncoder(ABC):
@@ -260,3 +261,12 @@ class Bar1DEncoder(ABC):
         self.init_renderer().write_eps_file(
             filename, bar_width, dark_hex=dark_hex, light_hex=light_hex
         )
+
+    def get_rect_marks(self) -> SymbolMarks:
+        """Return the barcode's dark bars as rectangles in layout units.
+
+        :rtype: pystrich.marks.SymbolMarks
+
+        .. versionadded:: 0.18
+        """
+        return self.init_renderer().get_rect_marks()
