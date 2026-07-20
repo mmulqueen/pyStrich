@@ -3,7 +3,7 @@ Changelog
 
 .. _v0-18:
 
-0.18 — unreleased
+0.18 — 2026-07-20
 -----------------
 
 - All encoders: new ``get_rect_marks()`` returning the symbol's dark cells or
