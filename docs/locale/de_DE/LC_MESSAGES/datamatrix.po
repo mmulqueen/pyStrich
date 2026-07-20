@@ -712,7 +712,7 @@ msgid ""
 "``(h_regions, v_regions)`` — the number of regions the symbol is divided "
 "into horizontally and vertically."
 msgstr ""
-"``(h_regions, v_regions)`` — die Anzahl der Regionen, in die das Symbol "
+"``(h_regions, v_regions)`` -- die Anzahl der Regionen, in die das Symbol "
 "horizontal und vertikal unterteilt ist."
 
 #: of pystrich.datamatrix.DataMatrixEncoder:26
@@ -884,6 +884,11 @@ msgstr "Rendert das Symbol und gibt ein Pillow-Bild zurück."
 #: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:8
 msgid "The rendered symbol."
 msgstr "Das gerenderte Symbol."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_rect_marks:1
+msgid "Return the symbol's dark cells as rectangles in module units."
+msgstr ""
+"Gibt die dunklen Zellen des Symbols als Rechtecke in Moduleinheiten zurück."
 
 #: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg:1
 msgid "Render the symbol and return SVG markup."

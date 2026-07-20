@@ -469,11 +469,13 @@ msgstr "``\"iso-8859-1\"``"
 
 #: ../../pdf417.rst:216
 msgid ""
-"Latin-1 -- the PDF417 default character interpretation. No ECI prefix; "
-"conformant decoders pick it up automatically."
+"Latin-1 -- the PDF417 default character interpretation. Emits codeword 927 + "
+"3 (ECI 000003) once at the start of the symbol so decoders that guess the "
+"charset don't misread short high-byte payloads."
 msgstr ""
-"Latin-1 -- die Standard-Zeicheninterpretation von PDF417. Kein ECI-"
-"Bezeichner; konforme Decoder erkennen sie automatisch."
+"Latin-1 -- die Standard-Zeicheninterpretation von PDF417. Gibt einmal am "
+"Anfang des Symbols Codewort 927 + 3 (ECI 000003) aus, sodass Decoder, die "
+"den Zeichensatz erraten, kurze High-Byte-Nutzdaten nicht falsch lesen."
 
 #: ../../pdf417.rst:218
 msgid "``\"utf-8\"``"
@@ -708,6 +710,11 @@ msgstr "Rendert das Symbol und gibt ein Pillow-Bild zurück."
 #: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:8
 msgid "The rendered symbol."
 msgstr "Das gerenderte Symbol."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_rect_marks:1
+msgid "Return the symbol's dark cells as rectangles in module units."
+msgstr ""
+"Gibt die dunklen Zellen des Symbols als Rechtecke in Moduleinheiten zurück."
 
 #: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg:1
 msgid "Render the symbol and return SVG markup."

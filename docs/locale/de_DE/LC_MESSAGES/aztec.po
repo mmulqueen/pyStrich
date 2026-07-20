@@ -693,6 +693,11 @@ msgstr "Rendert das Symbol und gibt ein Pillow-Bild zurück."
 msgid "The rendered symbol."
 msgstr "Das gerenderte Symbol."
 
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_rect_marks:1
+msgid "Return the symbol's dark cells as rectangles in module units."
+msgstr ""
+"Gibt die dunklen Zellen des Symbols als Rechtecke in Moduleinheiten zurück."
+
 #: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg:1
 msgid "Render the symbol and return SVG markup."
 msgstr "Rendert das Symbol und gibt SVG-Markup zurück."

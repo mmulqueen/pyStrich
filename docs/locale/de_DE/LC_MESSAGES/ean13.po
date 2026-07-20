@@ -405,6 +405,12 @@ msgstr "Rendert den Barcode und gibt ein Pillow-Bild zurück."
 msgid "The rendered barcode."
 msgstr "Der gerenderte Barcode."
 
+#: of pystrich.bar_encoder.Bar1DEncoder.get_rect_marks:1
+msgid "Return the barcode's dark bars as rectangles in layout units."
+msgstr ""
+"Gibt die dunklen Striche des Barcodes als Rechtecke in Layout-Einheiten "
+"zurück."
+
 #: of pystrich.bar_encoder.Bar1DEncoder.get_svg:1
 msgid "Render the barcode and return SVG markup."
 msgstr "Rendert den Barcode und gibt SVG-Markup zurück."

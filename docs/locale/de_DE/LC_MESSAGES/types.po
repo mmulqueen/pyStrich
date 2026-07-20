@@ -94,6 +94,35 @@ msgstr ""
 "Matrix-Mark-Extraktion, gemeinsam genutzt von den Vektor-Renderern (SVG, "
 "EPS, DXF)."
 
+#: of pystrich.marks.SymbolMarks:1
+msgid "A rendered symbol as dark rectangles in a unit grid."
+msgstr "Ein gerendertes Symbol als dunkle Rechtecke in einem Einheitenraster."
+
+#: of pystrich.marks.SymbolMarks:3
+msgid ""
+"``marks`` are the dark regions as ``(x, y, width, height)`` rectangles, with "
+"a top-left origin and y pointing down (matching the matrix, PIL and SVG). "
+"``width`` and ``height`` are the full extent of the grid the marks live in "
+"-- the same canvas every other output format draws, so quiet zones, finder "
+"pattern and (for 1D) the bearer bar and the space reserved for the "
+"human-readable label are all included -- and a consumer can fit ``[0, width] "
+"x [0, height]`` into any target box at any scale. The label glyphs "
+"themselves are never marks. For 2D symbols one unit is one module; for 1D "
+"symbols the x unit is one narrow bar and the y unit is one pixel of the bar "
+"layout."
+msgstr ""
+"``marks`` sind die dunklen Bereiche als ``(x, y, width, height)``-Rechtecke, "
+"mit Ursprung oben links und nach unten zeigender y-Achse (passend zu Matrix, "
+"PIL und SVG). ``width`` und ``height`` sind die volle Ausdehnung des "
+"Rasters, in dem die Marks liegen -- dieselbe Zeichenfläche, die jedes andere "
+"Ausgabeformat zeichnet, sodass Ruhezonen, Suchmuster und (bei 1D) der "
+"Trägerbalken sowie der für die Klarschriftzeile reservierte Platz alle "
+"enthalten sind --, und ein Aufrufer kann ``[0, width] x [0, height]`` in "
+"beliebiger Skalierung in einen beliebigen Zielrahmen einpassen. Die Zeichen "
+"der Klarschriftzeile selbst sind niemals Marks. Bei 2D-Symbolen ist eine "
+"Einheit ein Modul; bei 1D-Symbolen ist die x-Einheit ein Schmalstrich und "
+"die y-Einheit ein Pixel des Strich-Layouts."
+
 #: of pystrich.marks.BarLayout.heights:1 pystrich.marks.MatrixMark.x:1
 #: pystrich.marks.SymbolMarks.marks:1 pystrich.marks.TextLabel.text:1
 msgid "Alias for field number 0"
@@ -240,6 +269,14 @@ msgstr "Alias für Feldnummer 6"
 #: of pystrich.marks.BarLayout.bearer_width:1
 msgid "Alias for field number 7"
 msgstr "Alias für Feldnummer 7"
+
+#: of pystrich.marks.BarLayout.width:1
+msgid "Total canvas width in pixels."
+msgstr "Gesamte Breite der Zeichenfläche in Pixeln."
+
+#: of pystrich.marks.BarLayout.height:1
+msgid "Total canvas height in pixels."
+msgstr "Gesamte Höhe der Zeichenfläche in Pixeln."
 
 #: of pystrich.marks.iter_bar_marks:1
 msgid "Yield a ``MatrixMark`` per maximal run of equal positive heights."
