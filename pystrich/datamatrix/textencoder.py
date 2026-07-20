@@ -85,24 +85,10 @@ _RECT_SPECS: tuple[_SymbolSpec, ...] = (
 
 _ALL_SPECS: tuple[_SymbolSpec, ...] = _SQUARE_SPECS + _RECT_SPECS
 
-# Data-word capacities per shape, for the trailing-Unlatch exact-fit check.
-_SQUARE_DATA_WORDS: frozenset[int] = frozenset(s.data_words for s in _SQUARE_SPECS)
-_RECT_DATA_WORDS: frozenset[int] = frozenset(s.data_words for s in _RECT_SPECS)
-_ALL_DATA_WORDS: frozenset[int] = _SQUARE_DATA_WORDS | _RECT_DATA_WORDS
-
 
 def _total_area(spec: _SymbolSpec) -> int:
     """Total module count of the rendered symbol (each region adds a 2-module finder)."""
     return (spec.region_rows + 2) * spec.v_regions * ((spec.region_cols + 2) * spec.h_regions)
-
-
-def _candidate_data_words(symbol_shape: SymbolShape) -> frozenset[int]:
-    """Data-word capacities reachable for the given shape."""
-    if symbol_shape == "square":
-        return _SQUARE_DATA_WORDS
-    if symbol_shape == "rectangular":
-        return _RECT_DATA_WORDS
-    return _ALL_DATA_WORDS
 
 
 # Map the DataMatrix charset to the ECI number to prepend, or None for no ECI.
@@ -223,13 +209,21 @@ class TextEncoder:
 
         # If the trailing Unlatch would push us into the next symbol size,
         # drop it: an Unlatch is only required before pad bytes, so an
-        # exact-fit symbol can omit it.
-        if (
-            self.codewords
-            and self.codewords[-1] == UNLATCH
-            and len(self.codewords) - 1 in _candidate_data_words(symbol_shape)
-        ):
-            self.codewords.pop()
+        # exact-fit symbol can omit it. The symbol actually selected must be
+        # the exact fit -- "auto" picks by rendered area, so a capacity match
+        # somewhere in the tables is not enough.
+        if self.codewords and self.codewords[-1] == UNLATCH:
+            try:
+                exact_fit = (
+                    self._select_spec(len(self.codewords) - 1, symbol_shape).data_words
+                    == len(self.codewords) - 1
+                )
+            except DataTooLongForImplementation:
+                # Too long for any symbol, so no exact fit; the selection
+                # below reports the true stream length.
+                exact_fit = False
+            if exact_fit:
+                self.codewords.pop()
 
         unpadded_len = len(self.codewords)
 

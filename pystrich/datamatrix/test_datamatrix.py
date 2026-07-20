@@ -13,9 +13,11 @@ from pystrich.datamatrix import (
     DataMatrixEncoder,
 )
 from pystrich.datamatrix.data import fnc1_workaround_compat
+from pystrich.datamatrix.modes import UNLATCH
 from pystrich.datamatrix.placement import DataMatrixPlacer
 from pystrich.datamatrix.renderer import DATAMATRIX_DEFAULT_QUIET_ZONE
 from pystrich.datamatrix.textencoder import (
+    _ALL_SPECS,
     DataTooLongForImplementation,
     TextEncoder,
     _randomise_pad,
@@ -139,6 +141,155 @@ def test_property_roundtrip(text, symbol_shape, tmp_path, decode_barcode):
         str(img)
     )
     assert decode_barcode(img) == text
+
+
+_CAPACITIES = sorted({s.data_words for s in _ALL_SPECS})
+
+# The dense sweep stops here to bound example size; the multi-block symbols
+# above it get their own sparser sweep.
+_BOUNDARY_MAX_CAPACITY = 144
+
+_BOUNDARY_CAPACITIES = [c for c in _CAPACITIES if c <= _BOUNDARY_MAX_CAPACITY]
+
+_RECT_CAPACITIES = sorted({s.data_words for s in _ALL_SPECS if s.shape == "rectangular"})
+
+# The 2- and 4-block capacities; larger symbols repeat the same interleaving
+# pattern at much higher render cost.
+_MULTIBLOCK_CAPACITIES = sorted(
+    {s.data_words for s in _ALL_SPECS if s.rs_blocks > 1 and s.data_words <= 456}
+)
+
+
+@st.composite
+def _boundary_payload(draw, capacities=_BOUNDARY_CAPACITIES):
+    """Single-class filler constructed to land the codeword stream on or
+    within two codewords of a symbol capacity, sweeping the padding and
+    size-selection edges that uniformly random payload lengths rarely reach."""
+    target = draw(st.sampled_from(capacities)) + draw(st.integers(-2, 2))
+    if draw(st.booleans()):
+        # Digit filler: two digits per ASCII codeword, stream ends unlatched.
+        return "0" * (2 * target - draw(st.integers(0, 1)))
+    # C40/Text/X12 filler: latch + two codewords per triple + Unlatch, so
+    # full triples cost an even stream length; a digit-pair prefix (one ASCII
+    # codeword the optimiser keeps out of the run) fixes the parity to hit
+    # the target exactly. Leftover chars exercise the partial-triple endings
+    # instead of the Unlatch.
+    char = draw(st.sampled_from("Aa>"))
+    prefix = "00" * (target % 2)
+    triples = max(1, (target - 2 - target % 2) // 2)
+    return prefix + char * (3 * triples + draw(st.integers(0, 2)))
+
+
+@pytest.mark.parametrize("symbol_shape", ["square", "auto"])
+@given(text=_boundary_payload())
+@settings(
+    max_examples=300,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[HealthCheck.function_scoped_fixture],
+)
+@pytest.mark.png
+def test_property_roundtrip_capacity_boundaries(text, symbol_shape, tmp_path, decode_barcode):
+    """Boundary-biased payloads roundtrip through encode + render + decode."""
+    img = tmp_path / "datamatrix-boundary.png"
+    DataMatrixEncoder(DataMatrixData(text, auto_encoding=True), symbol_shape=symbol_shape).save(
+        str(img)
+    )
+    assert decode_barcode(img) == text
+
+
+@given(text=_boundary_payload(capacities=_RECT_CAPACITIES))
+@settings(
+    max_examples=300,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[HealthCheck.function_scoped_fixture],
+)
+@pytest.mark.png
+def test_property_roundtrip_capacity_boundaries_rectangular(text, tmp_path, decode_barcode):
+    """Boundary-biased payloads roundtrip through forced-rectangular symbols;
+    draws past the largest rectangle must overflow cleanly instead."""
+    img = tmp_path / "datamatrix-rect-boundary.png"
+    try:
+        DataMatrixEncoder(
+            DataMatrixData(text, auto_encoding=True), symbol_shape="rectangular"
+        ).save(str(img))
+    except DataTooLongForImplementation:
+        enc = TextEncoder()
+        enc.encode_text(DataMatrixData(text, auto_encoding=True))
+        assert len(enc.codewords) > _RECT_CAPACITIES[-1]
+        return
+    assert decode_barcode(img) == text
+
+
+@given(text=_boundary_payload(capacities=_MULTIBLOCK_CAPACITIES))
+@settings(
+    max_examples=50,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[HealthCheck.function_scoped_fixture],
+)
+@pytest.mark.png
+def test_property_roundtrip_multiblock_symbols(text, tmp_path, decode_barcode):
+    """Symbols large enough for interleaved error-correction blocks roundtrip;
+    no smaller payload reaches that code."""
+    img = tmp_path / "datamatrix-multiblock.png"
+    DataMatrixEncoder(DataMatrixData(text, auto_encoding=True)).save(str(img))
+    assert decode_barcode(img) == text
+
+
+@given(text=_datamatrix_payload())
+@settings(
+    max_examples=100,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[
+        HealthCheck.function_scoped_fixture,
+        HealthCheck.data_too_large,
+        HealthCheck.filter_too_much,
+    ],
+)
+@pytest.mark.png
+def test_property_roundtrip_byte_by_byte(text, tmp_path, decode_barcode):
+    """The single-mode byte-by-byte encoder roundtrips the class-banded payloads."""
+    img = tmp_path / "datamatrix-byte-property.png"
+    DataMatrixEncoder(DataMatrixData(text, auto_encoding=True), force_byte_mode=True).save(str(img))
+    assert decode_barcode(img) == text
+
+
+@given(text=_boundary_payload())
+@settings(
+    max_examples=50,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[HealthCheck.function_scoped_fixture],
+)
+@pytest.mark.png
+def test_property_roundtrip_dmtxread(text, tmp_path, dmtxread):
+    """A second, independent decoder agrees at the capacity edges, with error
+    correction disabled so any wrong codeword surfaces."""
+    img = tmp_path / "datamatrix-dmtx-boundary.png"
+    DataMatrixEncoder(DataMatrixData(text, auto_encoding=True), symbol_shape="auto").save(str(img))
+    assert dmtxread(img) == text
+
+
+def test_auto_shape_keeps_unlatch_when_padding():
+    """The unlatch-free stream exactly fits a rectangle, but ``auto`` selects
+    a padded square -- the Unlatch must survive or the pads decode as C40."""
+    enc = TextEncoder()
+    enc.encode(DataMatrixData("00AAAAAAAAAAAA", auto_encoding=True), symbol_shape="auto")
+    data_words = enc.codewords[: enc.spec.data_words]
+    assert data_words[-2:] == [UNLATCH, 129]
+
+
+@given(text=_boundary_payload())
+@settings(max_examples=300, deadline=timedelta(seconds=2), print_blob=True)
+def test_boundary_payloads_land_near_capacity(text):
+    """Guards the strategy's cost model: if the optimiser drifts, the sweeps
+    would otherwise silently stop reaching the capacity edges."""
+    enc = TextEncoder()
+    enc.encode_text(DataMatrixData(text, auto_encoding=True))
+    assert min(abs(len(enc.codewords) - c) for c in _CAPACITIES) <= 4
 
 
 @given(

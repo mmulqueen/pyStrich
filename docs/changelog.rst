@@ -1,6 +1,15 @@
 Changelog
 =========
 
+.. _v0-18:
+
+0.18 — unreleased
+-----------------
+
+- Data Matrix: fix a small minority of ``symbol_shape="auto"`` payloads,
+  which decoded with trailing junk because the final Unlatch was incorrectly
+  dropped.
+
 .. _v0-17:
 
 0.17 — 2026-07-13
