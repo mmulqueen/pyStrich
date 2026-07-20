@@ -128,11 +128,15 @@ class TextEncoder:
 
         # [START_X, TO_Y]  => [START_Y,]
         # (This is only relevant at the start)
-        # Saves one character
-        if enc[1] in to_values:
+        # Saves one character. The switch codewords double as FNC4 (in A
+        # and B) and as a digit pair (in C) when they don't change the
+        # charset, so only a code for a *different* charset is a switch.
+        if len(enc) >= 2 and enc[1] in to_values and to_values[enc[1]] != enc[0]:
             enc[0:2] = [to_values[enc[1]]]
         # [START_X, FNC1, TO_Y]  => [START_Y, FNC1, ]
-        elif enc[1] == 102 and enc[2] in to_values:
+        elif (
+            len(enc) >= 3 and enc[1] == 102 and enc[2] in to_values and to_values[enc[2]] != enc[0]
+        ):
             enc[0:3] = [to_values[enc[2]], 102]
 
     def encode(self, text: Code128Data) -> list[int]:

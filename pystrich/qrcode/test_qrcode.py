@@ -16,6 +16,7 @@ from pystrich.qrcode.isodata import (
     _mask_penalty_n3,
     _mask_penalty_n4,
 )
+from pystrich.qrcode.modes import ALPHA, BYTE, CHAR_COUNT_BITS, NUM, bracket_for_version
 from pystrich.qrcode.textencoder import STR2ECL, TextEncoder
 
 
@@ -345,7 +346,7 @@ def _qr_payload(draw):
     return "".join(parts)
 
 
-@given(text=_qr_payload())
+@given(text=_qr_payload(), ecl=st.sampled_from([None, "L", "M", "Q", "H"]))
 @settings(
     max_examples=100,
     deadline=timedelta(seconds=2),
@@ -357,11 +358,98 @@ def _qr_payload(draw):
     ],
 )
 @pytest.mark.png
-def test_property_roundtrip(text, tmp_path, decode_barcode):
+def test_property_roundtrip(text, ecl, tmp_path, decode_barcode):
     """Class-banded payloads roundtrip through encode + render + decode."""
     img = tmp_path / "qrcode-property.png"
-    QRCodeEncoder(text).save(str(img), 3)
+    QRCodeEncoder(text, ecl).save(str(img), 3)
     assert decode_barcode(img) == text
+
+
+def _max_chars(mode, version, capacity):
+    """Most characters of one mode that fit ``capacity`` bits as a single segment."""
+    usable = capacity - 4 - CHAR_COUNT_BITS[mode][bracket_for_version(version)]
+    if mode == NUM:
+        groups, rem = divmod(usable, 10)
+        return 3 * groups + (2 if rem >= 7 else 1 if rem >= 4 else 0)
+    if mode == ALPHA:
+        groups, rem = divmod(usable, 11)
+        return 2 * groups + (1 if rem >= 6 else 0)
+    return usable // 8
+
+
+_QR_FILLERS = {NUM: "0", ALPHA: "A", BYTE: "a"}
+
+# Spans the one-to-multi-block transitions; larger versions are covered
+# deterministically by test_scanner_round_trip_every_version.
+_SWEEP_VERSIONS = tuple(range(1, 11))
+
+
+@st.composite
+def _qr_boundary_payload(draw, versions=_SWEEP_VERSIONS):
+    """Single-mode filler sized to land the bit stream within two characters
+    of a version's data capacity, sweeping the terminator, pad-byte and
+    version-selection edges that uniformly random payloads rarely reach.
+
+    Returns ``(text, ecl, version, fits)``; ``fits`` is whether the payload
+    still fits the drawn version.
+    """
+    ecl = draw(st.sampled_from("LMQH"))
+    version = draw(st.sampled_from(versions))
+    capacity = isodata.MAX_DATA_BITS[version - 1 + 40 * STR2ECL[ecl]]
+    mode = draw(st.sampled_from((NUM, ALPHA, BYTE)))
+    n0 = _max_chars(mode, version, capacity)
+    n = n0 + draw(st.integers(-2, 2))
+    return _QR_FILLERS[mode] * max(1, n), ecl, version, n <= n0
+
+
+@given(payload=_qr_boundary_payload())
+@settings(
+    max_examples=300,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[HealthCheck.function_scoped_fixture],
+)
+@pytest.mark.png
+def test_property_roundtrip_capacity_boundaries(payload, tmp_path, decode_barcode):
+    """Boundary-biased payloads roundtrip across versions 1-10 at every ECL."""
+    text, ecl, _, _ = payload
+    img = tmp_path / "qrcode-boundary.png"
+    QRCodeEncoder(text, ecl).save(str(img), 3)
+    assert decode_barcode(img) == text
+
+
+@given(payload=_qr_boundary_payload(versions=(40,)))
+@settings(
+    max_examples=20,
+    deadline=timedelta(seconds=5),
+    print_blob=True,
+    suppress_health_check=[HealthCheck.function_scoped_fixture],
+)
+@pytest.mark.png
+def test_property_roundtrip_top_edge(payload, tmp_path, decode_barcode):
+    """At version 40 a draw past capacity must overflow cleanly instead."""
+    text, ecl, _, fits = payload
+    img = tmp_path / "qrcode-top-edge.png"
+    try:
+        QRCodeEncoder(text, ecl).save(str(img), 3)
+    except PyStrichInvalidInput:
+        assert not fits
+        return
+    assert decode_barcode(img) == text
+
+
+@given(payload=_qr_boundary_payload())
+@settings(max_examples=300, deadline=timedelta(seconds=2), print_blob=True)
+def test_boundary_payloads_select_their_target_version(payload):
+    """Guards the strategy's bit arithmetic: if the encoder's cost model
+    drifts, the sweeps would otherwise silently stop reaching the edges."""
+    text, ecl, version, fits = payload
+    enc = TextEncoder()
+    enc.encode(QRCodeData(text, auto_encoding=True), ecl)
+    if fits:
+        assert enc.version == version
+    else:
+        assert enc.version > version
 
 
 @given(text=_qr_payload(), ecl=st.sampled_from(["L", "M", "Q", "H"]))

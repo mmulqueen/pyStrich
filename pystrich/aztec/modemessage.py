@@ -19,6 +19,11 @@ _KIND_PARAMS: dict[SymbolKind, tuple[int, int, int, int, int]] = {
 }
 
 
+def max_data_codewords(kind: SymbolKind) -> int:
+    """Largest data codeword count the mode message can express."""
+    return _KIND_PARAMS[kind][4]
+
+
 def build_mode_message(kind: SymbolKind, *, layers: int, data_codewords: int) -> list[int]:
     """Return the mode message as a list of MSB-first bits.
 

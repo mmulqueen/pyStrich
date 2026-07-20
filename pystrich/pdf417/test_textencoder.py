@@ -192,7 +192,9 @@ def test_encode_auto_sizes_when_columns_omitted():
         pytest.param(3, 1, id="tiny-falls-back-least-flat"),
         pytest.param(15, 3, id="small"),
         pytest.param(56, 7, id="medium"),
-        pytest.param(928, 30, id="max-capacity"),
+        # 30 columns would need 31 rows = 930 codewords, past the 928-codeword
+        # limit; 29 x 32 holds exactly 928.
+        pytest.param(928, 29, id="max-capacity"),
     ],
 )
 def test_auto_columns_minimises_area(total_codewords, expected_columns):

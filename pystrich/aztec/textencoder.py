@@ -19,7 +19,7 @@ from typing import Literal
 from pystrich.aztec.bitstuff import to_codewords
 from pystrich.aztec.data import AztecData
 from pystrich.aztec.dpencoder import encode_high_level
-from pystrich.aztec.modemessage import build_mode_message
+from pystrich.aztec.modemessage import build_mode_message, max_data_codewords
 from pystrich.aztec.placement import build_matrix
 from pystrich.aztec.symbol import (
     COMPACT_LAYERS,
@@ -147,14 +147,16 @@ class TextEncoder:
             if codewords is None:
                 codewords = codewords_by_width[width] = to_codewords(bits, width)
             min_ec = _min_ec_needed(total, ecc_pct)
-            if len(codewords) + min_ec <= total:
+            # The mode message caps the data codeword count it can describe.
+            max_data = min(total - min_ec, max_data_codewords(kind))
+            if len(codewords) <= max_data:
                 # Fill all spare capacity with extra EC codewords.
                 num_ec = total - len(codewords)
                 return kind, n_layers, codewords, num_ec
             last_err = PyStrichInvalidInput(
                 f"payload exceeds capacity of {kind} L{n_layers} "
-                f"(needs {len(codewords)} data + {min_ec} EC codewords, "
-                f"have {total})"
+                f"(needs {len(codewords)} data codewords, symbol holds "
+                f"{max(0, max_data)} at ecc={ecc_pct}%)"
             )
         if last_err is not None and layers_override is not None:
             raise last_err

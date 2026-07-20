@@ -39,11 +39,13 @@ from .tables import (
     ec_codeword_count,
 )
 
-# ISO-8859-1 is the PDF417 default, so ASCII and Latin-1 inputs need no
-# prefix. UTF-8 (ECI 26) is signalled by codeword 927 followed by 26.
+# ISO-8859-1 is the PDF417 default, so ASCII input needs no prefix.
+# iso-8859-1 emits the redundant ECI 3 designator so heuristic decoders
+# (zxing-cpp) don't misinterpret short high-byte payloads as another
+# charset. UTF-8 (ECI 26) is signalled the same way.
 _ECI_DESIGNATOR: dict[PDF417Encoding, int | None] = {
     "ascii": None,
-    "iso-8859-1": None,
+    "iso-8859-1": 3,
     "utf-8": 26,
 }
 
@@ -195,10 +197,10 @@ def _compact(text: PDF417Data | str) -> list[int]:
     Starts in Text Compaction / Alpha sub-mode. The encoder only switches
     when the next run is long enough to justify the latch overhead:
     Numeric for digit runs of :data:`NUMERIC_RUN_THRESHOLD` or more, Byte
-    for any character Text Compaction cannot represent. When the chosen
-    encoding is ``"utf-8"`` an ECI prefix is emitted once at the start
-    of the symbol so the decoder interprets non-ASCII bytes as UTF-8
-    rather than the Latin-1 default.
+    for any character Text Compaction cannot represent. Non-ASCII
+    encodings emit an ECI prefix once at the start of the symbol: 26 for
+    UTF-8, and the redundant 3 for iso-8859-1 so heuristic decoders don't
+    misinterpret short high-byte payloads as another charset.
     """
     data = _coerce(text)
     joined, charset = data.as_plain_text()
@@ -263,6 +265,11 @@ def _compact(text: PDF417Data | str) -> list[int]:
     return cws
 
 
+def _max_rows(columns: int) -> int:
+    """Row limit at ``columns``: 90 rows, within 928 codewords per symbol."""
+    return min(90, 928 // columns)
+
+
 def _pick_rows(source_count: int, ecl: int, columns: int) -> int:
     """Choose the smallest number of rows that fits the data at the given columns.
 
@@ -275,9 +282,10 @@ def _pick_rows(source_count: int, ecl: int, columns: int) -> int:
     k = ec_codeword_count(ecl)
     required = source_count + 1 + k
     rows = max(3, -(-required // columns))
-    if rows > 90:
+    if rows > _max_rows(columns):
         raise PyStrichInvalidInput(
-            f"PDF417 data does not fit at columns={columns}: needs {rows} rows (max 90)"
+            f"PDF417 data does not fit at columns={columns}: needs {rows} rows "
+            f"(max {_max_rows(columns)}; a symbol holds at most 928 codewords)"
         )
     return rows
 
@@ -297,7 +305,7 @@ def _auto_columns(total_codewords: int) -> int:
     feasible = []
     for columns in range(1, 31):
         rows = max(3, -(-total_codewords // columns))
-        if rows > 90:
+        if rows > _max_rows(columns):
             continue
         width = row_modules(columns)
         aspect = width / (DEFAULT_ROW_HEIGHT * rows)

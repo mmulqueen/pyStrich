@@ -214,8 +214,10 @@ Encoding          Behaviour
 ================  ===================================================================
 ``"ascii"``       Raises :class:`~pystrich.exceptions.PyStrichInvalidInput` on any
                   byte > 127.
-``"iso-8859-1"``  Latin-1 -- the PDF417 default character interpretation. No ECI
-                  prefix; conformant decoders pick it up automatically.
+``"iso-8859-1"``  Latin-1 -- the PDF417 default character interpretation. Emits
+                  codeword 927 + 3 (ECI 000003) once at the start of the symbol
+                  so decoders that guess the charset don't misread short
+                  high-byte payloads.
 ``"utf-8"``       Emits codeword 927 + 26 (ECI 000026) once at the start of the
                   symbol and byte-encodes the input. Conformant decoders pick up
                   the encoding automatically.
@@ -230,7 +232,7 @@ Encoding          Behaviour
 
 .. code-block:: python
 
-   # Plain str: Latin-1 picked automatically, no ECI prefix.
+   # Plain str: Latin-1 picked automatically, ECI 3 emitted.
    PDF417Encoder("Ich dachte, Sie wären kräftiger").save("latin1.png")
 
 .. image:: examples/pdf417-latin1.png

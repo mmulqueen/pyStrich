@@ -9,6 +9,10 @@ from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from pystrich.aztec import AZTEC_DEFAULT_QUIET_ZONE, AztecData, AztecEncoder
+from pystrich.aztec.dpencoder import encode_high_level
+from pystrich.aztec.modemessage import max_data_codewords
+from pystrich.aztec.symbol import codeword_bits, total_codewords
+from pystrich.aztec.textencoder import TextEncoder, _min_ec_needed
 from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
 
 
@@ -191,7 +195,7 @@ def _aztec_payload(draw):
     return "".join(parts)
 
 
-@given(text=_aztec_payload())
+@given(text=_aztec_payload(), ecc=st.sampled_from([5, 23, 50, 95]))
 @settings(
     max_examples=100,
     deadline=timedelta(seconds=2),
@@ -203,11 +207,91 @@ def _aztec_payload(draw):
     ],
 )
 @pytest.mark.png
-def test_property_roundtrip(text, tmp_path, decode_barcode):
+def test_property_roundtrip(text, ecc, tmp_path, decode_barcode):
     """Class-banded payloads roundtrip through encode + render + decode."""
     path = tmp_path / "aztec-property.png"
-    AztecEncoder(text).save(path, cellsize=8)
+    AztecEncoder(text, ecc=ecc).save(path, cellsize=8)
     assert decode_barcode(path) == text
+
+
+# Compact symbols, the smaller full-range symbols, and full L23 -- the first
+# 12-bit-codeword symbol, otherwise unreached by any test. Combos where the
+# ECC percentage leaves no room for data are dropped.
+_BOUNDARY_SYMBOLS = [("compact", n) for n in range(1, 5)] + [
+    ("full", n) for n in (*range(1, 13), 23)
+]
+_BOUNDARY_COMBOS = [
+    (kind, layers, ecc)
+    for kind, layers in _BOUNDARY_SYMBOLS
+    for ecc in (5, 23, 50, 95)
+    if total_codewords(kind, layers) - _min_ec_needed(total_codewords(kind, layers), ecc) >= 1
+]
+
+
+@st.composite
+def _boundary_payload(draw):
+    """Single-mode filler sized to land the bit stream within two characters
+    of a symbol's data capacity at the drawn ECC percentage, sweeping the
+    padding and layer-selection edges that uniformly random payloads rarely
+    reach.
+
+    Returns ``(text, ecc, kind, layers, fits)``; ``fits`` is whether the
+    payload still fits the drawn symbol.
+    """
+    kind, layers, ecc = draw(st.sampled_from(_BOUNDARY_COMBOS))
+    total = total_codewords(kind, layers)
+    capacity_cw = min(total - _min_ec_needed(total, ecc), max_data_codewords(kind))
+    capacity_bits = capacity_cw * codeword_bits(kind, layers)
+    if draw(st.booleans()):
+        # Digit mode: 5-bit latch from Upper, then 4 bits per digit.
+        n0 = (capacity_bits - 5) // 4
+        char = "0"
+    else:
+        # Upper mode: 5 bits per character, no latch.
+        n0 = capacity_bits // 5
+        char = "A"
+    n = max(1, n0 + draw(st.integers(-2, 2)))
+    return char * n, ecc, kind, layers, n <= n0
+
+
+@given(payload=_boundary_payload())
+@settings(
+    max_examples=300,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[HealthCheck.function_scoped_fixture],
+)
+@pytest.mark.png
+def test_property_roundtrip_capacity_boundaries(payload, tmp_path, decode_barcode):
+    """Boundary-biased payloads roundtrip under auto symbol selection."""
+    text, ecc, _, _, _ = payload
+    path = tmp_path / "aztec-boundary.png"
+    AztecEncoder(text, ecc=ecc).save(path, cellsize=4)
+    assert decode_barcode(path) == text
+
+
+@given(payload=_boundary_payload())
+@settings(max_examples=300, deadline=timedelta(seconds=2), print_blob=True)
+def test_boundary_payloads_fill_their_target(payload):
+    """Guards the strategy's bit arithmetic on pinned symbols: an in-capacity
+    payload must fit and a just-over payload must overflow cleanly. If the
+    encoder's cost model drifts, this fails instead of the sweeps silently
+    going blunt. Exercises size selection only, skipping the Reed-Solomon
+    and matrix-placement work the assertion never inspects."""
+    text, ecc, kind, layers, fits = payload
+    bits = encode_high_level(text.encode("ascii"), eci=None)
+    if fits:
+        chosen = TextEncoder()._choose_size(bits, ecc, kind, layers)
+        assert chosen[:2] == (kind, layers)
+    else:
+        with pytest.raises(PyStrichInvalidInput, match="capacity"):
+            TextEncoder()._choose_size(bits, ecc, kind, layers)
+
+
+def test_low_ecc_compact_payload_respects_mode_message_cap():
+    """Data that fits compact L4's codeword budget but not the 64 data
+    codewords its mode message can describe selects the next symbol."""
+    AztecEncoder("0" * 130, ecc=5)
 
 
 @pytest.mark.png

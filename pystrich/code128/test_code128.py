@@ -2,9 +2,12 @@
 
 import filecmp
 import warnings
+from datetime import timedelta
 from pathlib import Path
 
 import pytest
+from hypothesis import HealthCheck, given, settings
+from hypothesis import strategies as st
 
 from pystrich.code128 import FNC1, FNC2, Code128Data, Code128Encoder, Code128Marker
 from pystrich.exceptions import (
@@ -27,6 +30,16 @@ TEST_IMG_DIR = Path(__file__).parent / "test_img"
         pytest.param("HI34567A", [104, 40, 41, 99, 34, 56, 100, 23, 33], id="B-C-B-leftover"),
         # https://github.com/hudora/huBarcode/issues/issue/11
         pytest.param("12345", [105, 12, 34, 100, 21], id="C-leftover-digit"),
+        # A leading FNC4 (codeword 100, same value as the switch to B) must
+        # survive the start-code optimisation.
+        pytest.param(
+            Code128Data("é", auto_encoding=True),
+            [104, 100, 73],
+            id="leading-latin1-keeps-fnc4",
+        ),
+        # Streams shorter than the start-code optimisation patterns.
+        pytest.param(Code128Data("", encoding="ascii"), [104], id="empty"),
+        pytest.param(Code128Data(FNC1, encoding="ascii"), [104, 102], id="lone-fnc1"),
     ],
 )
 def test_charset_encoding(text, expected_codewords):
@@ -99,6 +112,48 @@ def test_scanner_round_trip(string, tmp_path, decode_barcode):
     img = tmp_path / "code128.png"
     Code128Encoder(string).save(str(img))
     assert decode_barcode(img) == string
+
+
+@st.composite
+def _code128_payload(draw):
+    parts = draw(
+        st.lists(
+            st.one_of(
+                # Short digit runs sweep the 4-digit charset-C switch
+                # threshold and the odd-run leftover-digit flush.
+                st.text(alphabet="0123456789", min_size=1, max_size=6),
+                st.text(alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ", min_size=1, max_size=8),
+                st.text(alphabet="abcdefghijklmnopqrstuvwxyz", min_size=1, max_size=8),
+                st.text(alphabet="!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ ", min_size=1, max_size=4),
+                # Charset A territory; zxing round-trips \t literally.
+                st.text(alphabet="\t", min_size=1, max_size=2),
+                # Latin-1 via FNC4 shifts; 0xA0+ skips the C1 control block.
+                st.text(
+                    st.characters(min_codepoint=0xA0, max_codepoint=0xFF),
+                    min_size=1,
+                    max_size=4,
+                ),
+            ),
+            min_size=1,
+            max_size=6,
+        )
+    )
+    return "".join(parts)
+
+
+@given(text=_code128_payload())
+@settings(
+    max_examples=100,
+    deadline=timedelta(seconds=2),
+    print_blob=True,
+    suppress_health_check=[HealthCheck.function_scoped_fixture],
+)
+@pytest.mark.png
+def test_property_roundtrip(text, tmp_path, decode_barcode):
+    """Class-banded payloads roundtrip through encode + render + decode."""
+    img = tmp_path / "code128-property.png"
+    Code128Encoder(Code128Data(text, auto_encoding=True)).save(str(img))
+    assert decode_barcode(img) == text
 
 
 @pytest.mark.parametrize("bar_width", [3, 5])

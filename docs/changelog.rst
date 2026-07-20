@@ -9,6 +9,18 @@ Changelog
 - Data Matrix: fix a small minority of ``symbol_shape="auto"`` payloads,
   which decoded with trailing junk because the final Unlatch was incorrectly
   dropped.
+- PDF417: fix payloads too large for any symbol (more than 928 codewords),
+  which crashed with an internal error instead of raising
+  :class:`~pystrich.exceptions.PyStrichInvalidInput`.
+- PDF417: fix short ``iso-8859-1`` payloads, which could decode as the wrong
+  charset because no ECI designator was emitted for the Latin-1 default. The
+  explicit ECI 3 costs two codewords, matching Data Matrix.
+- Aztec: fix low-ECC payloads near a compact symbol's capacity, which failed
+  with an internal error because symbol selection ignored the 64 data
+  codewords a compact mode message can describe.
+- Code 128: fix payloads beginning with a Latin-1 supplement character, which
+  decoded as the plain ASCII counterpart because the start-code optimisation
+  swallowed the leading FNC4 shift.
 
 .. _v0-17:
 
