@@ -15,11 +15,11 @@ msgstr ""
 msgid "Generate barcodes from the command line with the pyStrich CLI."
 msgstr "Barcodes über die Kommandozeile mit dem pyStrich-CLI erzeugen."
 
-#: ../../cli.rst:7
+#: ../../cli.rst
 msgid "Command-line interface"
 msgstr "Kommandozeilen-Schnittstelle"
 
-#: ../../cli.rst:9
+#: ../../cli.rst
 msgid ""
 "Installing pyStrich exposes a ``pystrich`` console script with a subcommand "
 "per format and PNG / SVG / EPS / ASCII / terminal / DXF output."
@@ -28,7 +28,7 @@ msgstr ""
 " mit einem Unterbefehl pro Format und Ausgabe als PNG / SVG / EPS / ASCII / "
 "Terminal / DXF."
 
-#: ../../cli.rst:14
+#: ../../cli.rst
 msgid ""
 "To try the CLI without installing pyStrich into an environment, run it "
 "through pipx_ or uvx_:"
@@ -36,15 +36,15 @@ msgstr ""
 "Um das CLI auszuprobieren, ohne pyStrich in eine Umgebung zu installieren, "
 "führen Sie es über pipx_ oder uvx_ aus:"
 
-#: ../../cli.rst:33
+#: ../../cli.rst
 msgid "The last example produces:"
 msgstr "Das letzte Beispiel erzeugt:"
 
-#: ../../cli.rst:40
+#: ../../cli.rst
 msgid "Reference"
 msgstr "Referenz"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid ""
 "Generate 1D/2D barcodes (Code 39, Code 128, EAN-13, Interleaved 2 of 5, "
 "ITF-14, Data Matrix, QR Code, PDF417, Aztec Code). Pass input via --text or "
@@ -54,154 +54,154 @@ msgstr ""
 "ITF-14, Data Matrix, QR-Code, PDF417, Aztec-Code). Übergeben Sie die Eingabe"
 " über --text oder stdin."
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich options"
 msgstr "Optionen für pystrich"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "show this help message and exit"
 msgstr "diese Hilfe anzeigen und beenden"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "show program's version number and exit"
 msgstr "Programmversion anzeigen und beenden"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich code39"
 msgstr "pystrich code39"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "Code 39 (1D)"
 msgstr "Code 39 (1D)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich code39 options"
 msgstr "Optionen für pystrich code39"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "text to encode (default: read from stdin)"
 msgstr "zu codierender Text (Vorgabe: aus stdin lesen)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "output path; '-' or omitted writes to stdout"
 msgstr "Ausgabepfad; '-' oder weggelassen schreibt nach stdout"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "output format; 'auto' resolves from -o filename or output context"
 msgstr ""
 "Ausgabeformat; 'auto' ergibt sich aus dem -o-Dateinamen oder dem "
 "Ausgabekontext"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "dark (foreground) colour as 3, 6 or 8 hex digits; png/svg/eps only"
 msgstr ""
 "dunkle Farbe (Vordergrund) als 3, 6 oder 8 Hexziffern; nur png/svg/eps"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "light (background) colour as 3, 6 or 8 hex digits; png/svg/eps only"
 msgstr "helle Farbe (Hintergrund) als 3, 6 oder 8 Hexziffern; nur png/svg/eps"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "width of the narrowest bar (default: 3)"
 msgstr "Breite des schmalsten Strichs (Vorgabe: 3)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "image height in pixels"
 msgstr "Bildhöhe in Pixeln"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "enable full-ASCII Code 39 encoding"
 msgstr "Full-ASCII-Codierung von Code 39 aktivieren"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "render the human-readable label below the bars"
 msgstr "die Klarschriftzeile unter den Strichen rendern"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich code128"
 msgstr "pystrich code128"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "Code 128 (1D)"
 msgstr "Code 128 (1D)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich code128 options"
 msgstr "Optionen für pystrich code128"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich ean13"
 msgstr "pystrich ean13"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "EAN-13 (1D, 12 or 13 digits)"
 msgstr "EAN-13 (1D, 12 oder 13 Ziffern)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich ean13 options"
 msgstr "Optionen für pystrich ean13"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "12 or 13 digits (default: read from stdin)"
 msgstr "12 oder 13 Ziffern (Vorgabe: aus stdin lesen)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich itf"
 msgstr "pystrich itf"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "Interleaved 2 of 5 (1D, an even number of digits)"
 msgstr "Interleaved 2 of 5 (1D, eine gerade Anzahl von Ziffern)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich itf options"
 msgstr "Optionen für pystrich itf"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "an even number of digits (default: read from stdin)"
 msgstr "eine gerade Anzahl von Ziffern (Vorgabe: aus stdin lesen)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid ""
 "thickness of a bearer bar's rules, in narrow-bar widths (default: none)"
 msgstr ""
 "Stärke der Linien eines Trägerbalkens, in Schmalstrichbreiten (Vorgabe: "
 "keine)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich itf14"
 msgstr "pystrich itf14"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "ITF-14 (1D, 13 or 14 digits, with bearer bar)"
 msgstr "ITF-14 (1D, 13 oder 14 Ziffern, mit Trägerbalken)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich itf14 options"
 msgstr "Optionen für pystrich itf14"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "13 or 14 digits (default: read from stdin)"
 msgstr "13 oder 14 Ziffern (Vorgabe: aus stdin lesen)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "thickness of the bearer bar's rules, in narrow-bar widths (default: 4)"
 msgstr ""
 "Stärke der Linien des Trägerbalkens, in Schmalstrichbreiten (Vorgabe: 4)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich datamatrix"
 msgstr "pystrich datamatrix"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "Data Matrix (2D)"
 msgstr "Data Matrix (2D)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich datamatrix options"
 msgstr "Optionen für pystrich datamatrix"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid ""
 "side length of one module; must be a whole number for png/svg/eps (default: "
 "5), decimals are supported for dxf (default: 1.0)"
@@ -209,108 +209,108 @@ msgstr ""
 "Kantenlänge eines Moduls; muss für png/svg/eps eine ganze Zahl sein "
 "(Vorgabe: 5), für dxf sind Dezimalzahlen möglich (Vorgabe: 1.0)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "invert (light cells filled instead of dark); applies to svg/eps/dxf"
 msgstr ""
 "invertieren (helle statt dunkler Zellen gefüllt); gilt für svg/eps/dxf"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "how matched cells are drawn in vector output"
 msgstr "wie gesetzte Zellen in der Vektorausgabe gezeichnet werden"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "DXF units (default: mm); 'unspecified' writes $INSUNITS=0"
 msgstr "DXF-Einheiten (Vorgabe: mm); 'unspecified' schreibt $INSUNITS=0"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "quiet-zone width in cells (default: 2)"
 msgstr "Breite der Ruhezone in Zellen (Vorgabe: 2)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "DataMatrix charset (default: auto picks the narrowest that fits)"
 msgstr "DataMatrix-Zeichensatz (Vorgabe: auto wählt den schmalsten passenden)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "replace each occurrence of CHAR in --text with an FNC1 codeword"
 msgstr "jedes Vorkommen von CHAR in --text durch ein FNC1-Codewort ersetzen"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "Data Matrix shape (default: square)"
 msgstr "Data-Matrix-Form (Vorgabe: square)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich qrcode"
 msgstr "pystrich qrcode"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "QR Code (2D)"
 msgstr "QR-Code (2D)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich qrcode options"
 msgstr "Optionen für pystrich qrcode"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "error-correction level (default: M)"
 msgstr "Fehlerkorrekturstufe (Vorgabe: M)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich pdf417"
 msgstr "pystrich pdf417"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "PDF417 (stacked 2D)"
 msgstr "PDF417 (gestapelt, 2D)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich pdf417 options"
 msgstr "Optionen für pystrich pdf417"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "error-correction level 0-8 (default: chosen from data length)"
 msgstr "Fehlerkorrekturstufe 0-8 (Vorgabe: aus der Datenlänge gewählt)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "data columns 1-30 (default: minimal-area layout)"
 msgstr "Datenspalten 1-30 (Vorgabe: flächenminimales Layout)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "module-rows per codeword row (default: 3)"
 msgstr "Matrixzeilen pro Codewort-Zeile (Vorgabe: 3)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "quiet-zone width in modules (default: 2)"
 msgstr "Breite der Ruhezone in Modulen (Vorgabe: 2)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich aztec"
 msgstr "pystrich aztec"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "Aztec Code (2D)"
 msgstr "Aztec-Code (2D)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "pystrich aztec options"
 msgstr "Optionen für pystrich aztec"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "error-correction percentage 5..95 (default: 23)"
 msgstr "Fehlerkorrektur-Prozentsatz 5..95 (Vorgabe: 23)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "symbol kind (default: auto picks the smallest that fits)"
 msgstr "Symboltyp (Vorgabe: auto wählt den kleinsten passenden)"
 
-#: ../../cli.rst:1
+#: ../../cli.rst
 msgid "data layer count; requires --symbol-kind compact or full"
 msgstr "Anzahl der Datenschichten; erfordert --symbol-kind compact oder full"
 
-#: ../../cli.rst:50
+#: ../../cli.rst
 msgid "Format auto-detection"
 msgstr "Automatische Formaterkennung"
 
-#: ../../cli.rst:52
+#: ../../cli.rst
 msgid ""
 "The output format is auto-detected from the ``-o`` filename (``.png``, "
 "``.svg``, ``.eps``, ``.dxf``); without ``-o`` it defaults to ``terminal`` "
@@ -324,11 +324,11 @@ msgstr ""
 "umgeleitete Ausgabe ohne explizites ``-t`` wird abgelehnt, um zu vermeiden, "
 "dass versehentlich Binärdaten an das nächste Werkzeug ausgegeben werden."
 
-#: ../../cli.rst:59
+#: ../../cli.rst
 msgid "GS1 Data Matrix from the shell"
 msgstr "GS1 Data Matrix aus der Shell"
 
-#: ../../cli.rst:61
+#: ../../cli.rst
 msgid ""
 "GS1 Data Matrix uses ASCII with ``FNC1`` markers separating application "
 "identifiers and their values. ``--substitute-with-fnc1`` lets you build that"
@@ -338,7 +338,7 @@ msgstr ""
 "Identifier und ihre Werte trennen. Mit ``--substitute-with-fnc1`` lässt sich"
 " diese Eingabe aus einer shell-freundlichen Zeichenkette aufbauen:"
 
-#: ../../cli.rst:72
+#: ../../cli.rst
 msgid "See :doc:`datamatrix` for the full encoding discussion."
 msgstr ""
 "Siehe :doc:`datamatrix` für die vollständige Erörterung der Codierung."

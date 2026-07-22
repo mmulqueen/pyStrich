@@ -19,17 +19,17 @@ msgstr ""
 "QR-Codes mit pyStrich in Python erzeugen. Codiert URLs, Kontaktdaten und "
 "beliebigen Text; Ausgabe als PNG, SVG, EPS, DXF und Terminal-Grafik."
 
-#: ../../qrcode.rst:7
+#: ../../qrcode.rst
 msgid "QR Code"
 msgstr "QR-Code"
 
-#: ../../qrcode.rst:9
+#: ../../qrcode.rst
 msgid "QR Code is a 2D symbology widely used for URLs and contact details."
 msgstr ""
 "QR-Code ist eine 2D-Symbologie, die häufig für URLs und Kontaktdaten "
 "verwendet wird."
 
-#: ../../qrcode.rst:13
+#: ../../qrcode.rst
 msgid ""
 "`QR code on Wikipedia <https://en.wikipedia.org/wiki/QR_code>`_ for "
 "background on the symbology itself."
@@ -37,7 +37,7 @@ msgstr ""
 "`QR-Code auf Wikipedia <https://de.wikipedia.org/wiki/QR-Code>`_ für "
 "Hintergründe zur Symbologie selbst."
 
-#: ../../qrcode.rst:16
+#: ../../qrcode.rst
 msgid ""
 "QR codes are defined in `ISO/IEC 18004 "
 "<https://www.iso.org/standard/83389.html>`_."
@@ -47,19 +47,19 @@ msgstr ""
 "Identifikation und Datenerfassungsverfahren -- Spezifikation der Barcode-"
 "Symbologie QR Code)."
 
-#: ../../qrcode.rst:21
+#: ../../qrcode.rst
 msgid "Example"
 msgstr "Beispiel"
 
-#: ../../qrcode.rst:38
+#: ../../qrcode.rst
 msgid "QR code encoding the pyStrich GitHub URL."
 msgstr "QR-Code, der die pyStrich-GitHub-URL codiert."
 
-#: ../../qrcode.rst:42
+#: ../../qrcode.rst
 msgid "Sizing and quiet zone"
 msgstr "Größe und Ruhezone"
 
-#: ../../qrcode.rst:44
+#: ../../qrcode.rst
 msgid ""
 "The ``cellsize`` argument to :meth:`~QRCodeEncoder.save` and "
 ":meth:`~QRCodeEncoder.get_imagedata` sets the pixel side length of one "
@@ -69,27 +69,27 @@ msgstr ""
 ":meth:`~QRCodeEncoder.get_imagedata` legt die Kantenlänge eines Moduls in "
 "Pixeln fest (Vorgabe ``5``)."
 
-#: ../../qrcode.rst:50
+#: ../../qrcode.rst
 msgid ""
 ":doc:`printing` for guidance on selecting ``cellsize`` for printed output."
 msgstr ""
 ":doc:`printing` für Hinweise zur Wahl von ``cellsize`` bei gedruckter "
 "Ausgabe."
 
-#: ../../qrcode.rst:58
+#: ../../qrcode.rst
 msgid "QR code encoding the pyStrich GitHub URL rendered with cellsize=10."
 msgstr ""
 "QR-Code, der die pyStrich-GitHub-URL codiert, gerendert mit cellsize=10."
 
-#: ../../qrcode.rst:62
+#: ../../qrcode.rst
 msgid "Output formats"
 msgstr "Ausgabeformate"
 
-#: ../../qrcode.rst:65
+#: ../../qrcode.rst
 msgid "SVG output"
 msgstr "SVG-Ausgabe"
 
-#: ../../qrcode.rst:67
+#: ../../qrcode.rst
 msgid ""
 "For embedding in web pages or any workflow that benefits from resolution-"
 "independent output, use :meth:`~QRCodeEncoder.save_svg` (or "
@@ -100,23 +100,23 @@ msgstr ""
 ":meth:`~QRCodeEncoder.save_svg` (oder :meth:`~QRCodeEncoder.get_svg`, um das"
 " SVG als Zeichenkette zu erhalten)."
 
-#: ../../qrcode.rst:86
+#: ../../qrcode.rst
 msgid "Default"
 msgstr "Vorgabe"
 
-#: ../../qrcode.rst:87
+#: ../../qrcode.rst
 msgid "``mark_shape=MarkShape.CIRCULAR_CELLS``"
 msgstr "``mark_shape=MarkShape.CIRCULAR_CELLS``"
 
-#: ../../qrcode.rst:88
+#: ../../qrcode.rst
 msgid "SVG QR code with the default rectangular cells."
 msgstr "SVG-QR-Code mit den standardmäßigen rechteckigen Zellen."
 
-#: ../../qrcode.rst:90
+#: ../../qrcode.rst
 msgid "SVG QR code with circular cells."
 msgstr "SVG-QR-Code mit runden Zellen."
 
-#: ../../qrcode.rst:93
+#: ../../qrcode.rst
 msgid ""
 "The SVG's ``viewBox`` is in module units, while ``width`` and ``height`` "
 "scale by ``cellsize``. The ``mark_shape`` keyword selects how matched cells "
@@ -128,7 +128,7 @@ msgstr ""
 "bestimmt, wie gesetzte Zellen gezeichnet werden -- horizontale Folgen von "
 "Rechtecken (die Vorgabe) oder ein gefüllter Kreis pro Zelle."
 
-#: ../../qrcode.rst:100
+#: ../../qrcode.rst
 msgid ""
 "Circular cells fall outside the standard module shape and decoder support "
 "varies. Test with your target scanner before deploying."
@@ -136,11 +136,11 @@ msgstr ""
 "Runde Zellen liegen außerhalb der standardmäßigen Modulform und die Decoder-"
 "Unterstützung variiert. Testen Sie es vor dem Einsatz mit Ihrem Zielscanner."
 
-#: ../../qrcode.rst:106
+#: ../../qrcode.rst
 msgid "PNG output"
 msgstr "PNG-Ausgabe"
 
-#: ../../qrcode.rst:108
+#: ../../qrcode.rst
 msgid ""
 "For raster output, use :meth:`~QRCodeEncoder.save` to write a PNG file or "
 ":meth:`~QRCodeEncoder.get_imagedata` to receive the raw PNG bytes."
@@ -149,11 +149,11 @@ msgstr ""
 "PNG-Datei zu schreiben, oder :meth:`~QRCodeEncoder.get_imagedata`, um die "
 "rohen PNG-Bytes zu erhalten."
 
-#: ../../qrcode.rst:116
+#: ../../qrcode.rst
 msgid "EPS output"
 msgstr "EPS-Ausgabe"
 
-#: ../../qrcode.rst:118
+#: ../../qrcode.rst
 msgid ""
 "For embedding in LaTeX (``\\includegraphics``) or other vector print "
 "workflows, use :meth:`~QRCodeEncoder.save_eps` (or "
@@ -163,7 +163,7 @@ msgstr ""
 "Vektor-Druck-Arbeitsabläufe :meth:`~QRCodeEncoder.save_eps` (oder "
 ":meth:`~QRCodeEncoder.get_eps`, um das EPS als Zeichenkette zu erhalten)."
 
-#: ../../qrcode.rst:126
+#: ../../qrcode.rst
 msgid ""
 "The ``cellsize`` argument is the side length of one module in PostScript "
 "points (1 point = 1/72 inch)."
@@ -171,11 +171,11 @@ msgstr ""
 "Das Argument ``cellsize`` ist die Kantenlänge eines Moduls in PostScript-"
 "Punkten (1 Punkt = 1/72 Zoll)."
 
-#: ../../qrcode.rst:132
+#: ../../qrcode.rst
 msgid "Terminal output"
 msgstr "Terminal-Ausgabe"
 
-#: ../../qrcode.rst:134
+#: ../../qrcode.rst
 msgid ""
 "For quick on-screen display, :meth:`~QRCodeEncoder.get_terminal_art` returns"
 " a scannable rendering using Unicode half-block characters. Each character "
@@ -188,7 +188,7 @@ msgstr ""
 " eine Spalte, sodass die Zellen in einer typischen Terminalschrift mit "
 "fester Breite ungefähr quadratisch erscheinen."
 
-#: ../../qrcode.rst:147
+#: ../../qrcode.rst
 msgid ""
 "By default the output is wrapped in ANSI escape codes that force a white "
 "background and black foreground, so the symbol scans regardless of the "
@@ -201,11 +201,11 @@ msgstr ""
 "Sie ``ansi_bg=False`` für eine einfache Ausgabe (nur auf einem hell "
 "gestalteten Terminal korrekt)."
 
-#: ../../qrcode.rst:155
+#: ../../qrcode.rst
 msgid "DXF (CAD) output"
 msgstr "DXF-Ausgabe (CAD)"
 
-#: ../../qrcode.rst:157
+#: ../../qrcode.rst
 msgid ""
 "For direct part marking applications, :meth:`~QRCodeEncoder.get_dxf` returns"
 " a DXF representation of the symbol that CAD and CAM tools can read "
@@ -217,7 +217,7 @@ msgstr ""
 " CAD- und CAM-Werkzeuge direkt lesen können. Die ``cellsize`` ist in Ihrer "
 "gewählten Einheit ``units`` (Vorgabe ``\"mm\"``) statt in Pixeln angegeben."
 
-#: ../../qrcode.rst:168
+#: ../../qrcode.rst
 msgid ""
 "The default ``inverse=True`` emits geometry for the light modules, including"
 " the quiet zone -- so the bounding box frames the symbol. Pass "
@@ -233,11 +233,11 @@ msgstr ""
 "an und die Ruhezone muss in der nachgelagerten Verarbeitung wieder "
 "hinzugefügt werden."
 
-#: ../../qrcode.rst:175
+#: ../../qrcode.rst
 msgid "Error correction level"
 msgstr "Fehlerkorrekturstufe"
 
-#: ../../qrcode.rst:177
+#: ../../qrcode.rst
 msgid ""
 "QR Codes embed redundant data so that a partly-damaged symbol can still be "
 "read. The error correction level (ECL) sets how much redundancy is added, "
@@ -247,39 +247,39 @@ msgstr ""
 "Symbol noch gelesen werden kann. Die Fehlerkorrekturstufe (ECL) legt fest, "
 "wie viel Redundanz hinzugefügt wird, und ist eine der folgenden:"
 
-#: ../../qrcode.rst:182
+#: ../../qrcode.rst
 msgid "``\"L\"``"
 msgstr "``\"L\"``"
 
-#: ../../qrcode.rst:182
+#: ../../qrcode.rst
 msgid "Low: ~7% of codewords recoverable. Smallest symbol."
 msgstr "Niedrig: ~7 % der Codewörter wiederherstellbar. Kleinstes Symbol."
 
-#: ../../qrcode.rst:183
+#: ../../qrcode.rst
 msgid "``\"M\"``"
 msgstr "``\"M\"``"
 
-#: ../../qrcode.rst:183
+#: ../../qrcode.rst
 msgid "Medium: ~15%. **Default** if ``ecl`` is not supplied."
 msgstr "Mittel: ~15 %. **Vorgabe**, wenn ``ecl`` nicht angegeben ist."
 
-#: ../../qrcode.rst:184
+#: ../../qrcode.rst
 msgid "``\"Q\"``"
 msgstr "``\"Q\"``"
 
-#: ../../qrcode.rst:184
+#: ../../qrcode.rst
 msgid "Quartile: ~25%."
 msgstr "Quartil: ~25 %."
 
-#: ../../qrcode.rst:185
+#: ../../qrcode.rst
 msgid "``\"H\"``"
 msgstr "``\"H\"``"
 
-#: ../../qrcode.rst:185
+#: ../../qrcode.rst
 msgid "High: ~30%. Largest symbol; tolerates the most damage."
 msgstr "Hoch: ~30 %. Größtes Symbol; toleriert die meiste Beschädigung."
 
-#: ../../qrcode.rst:188
+#: ../../qrcode.rst
 msgid ""
 "Higher levels produce a denser symbol for the same payload (or, "
 "equivalently, require a larger symbol to fit the same payload), so pick the "
@@ -295,11 +295,11 @@ msgstr ""
 "auf Oberflächen gedruckt werden, die zerkratzt, verschmiert oder eingerissen"
 " werden könnten."
 
-#: ../../qrcode.rst:199
+#: ../../qrcode.rst
 msgid "GS1 Digital Link"
 msgstr "GS1 Digital Link"
 
-#: ../../qrcode.rst:201
+#: ../../qrcode.rst
 msgid ""
 "`GS1 Digital Link <https://www.gs1uk.org/standards-services/get-market-"
 "ready/qr-codes-powered-by-gs1/design-guidelines>`_ encodes a GTIN (with "
@@ -311,7 +311,7 @@ msgstr ""
 "optionaler Charge, Verfall, Seriennummer, ...) als URL. Es ist nur eine URL "
 "-- übergeben Sie sie direkt an :class:`QRCodeEncoder`:"
 
-#: ../../qrcode.rst:209
+#: ../../qrcode.rst
 msgid ""
 "Raw Application-Identifier-syntax GS1 QR (FNC1 mode indicator) is not "
 "supported; for that, use :doc:`datamatrix`."
@@ -319,11 +319,11 @@ msgstr ""
 "Rohes GS1-QR in Application-Identifier-Syntax (FNC1-Modusindikator) wird "
 "nicht unterstützt; verwenden Sie dafür :doc:`datamatrix`."
 
-#: ../../qrcode.rst:215
+#: ../../qrcode.rst
 msgid "Non-ASCII text"
 msgstr "Nicht-ASCII-Text"
 
-#: ../../qrcode.rst:217
+#: ../../qrcode.rst
 msgid ""
 ":class:`QRCodeEncoder` accepts any Unicode string directly and picks the "
 "narrowest character set that fits. Wrap the input in :class:`QRCodeData` "
@@ -338,30 +338,30 @@ msgstr ""
 "ASCII-Zeichen einen Fehler auslöst, statt das Symbol stillschweigend zu "
 "vergrößern:"
 
-#: ../../qrcode.rst:224
+#: ../../qrcode.rst
 msgid "Encoding"
 msgstr "Codierung"
 
-#: ../../qrcode.rst:224
+#: ../../qrcode.rst
 msgid "Behaviour"
 msgstr "Verhalten"
 
-#: ../../qrcode.rst:226
+#: ../../qrcode.rst
 msgid "``\"ascii\"``"
 msgstr "``\"ascii\"``"
 
-#: ../../qrcode.rst:226
+#: ../../qrcode.rst
 msgid ""
 "Raises :class:`~pystrich.exceptions.PyStrichInvalidInput` on any byte > 127."
 msgstr ""
 "Löst :class:`~pystrich.exceptions.PyStrichInvalidInput` bei jedem Byte > 127"
 " aus."
 
-#: ../../qrcode.rst:228
+#: ../../qrcode.rst
 msgid "``\"iso-8859-1\"``"
 msgstr "``\"iso-8859-1\"``"
 
-#: ../../qrcode.rst:228
+#: ../../qrcode.rst
 msgid ""
 "Latin-1. Declares ECI 3 at the start of the symbol so decoders do not fall "
 "back to Shift-JIS heuristics on high bytes."
@@ -369,11 +369,11 @@ msgstr ""
 "Latin-1. Deklariert am Anfang des Symbols ECI 3, damit Decoder bei hohen "
 "Bytes nicht auf Shift-JIS-Heuristiken zurückfallen."
 
-#: ../../qrcode.rst:230
+#: ../../qrcode.rst
 msgid "``\"utf-8\"``"
 msgstr "``\"utf-8\"``"
 
-#: ../../qrcode.rst:230
+#: ../../qrcode.rst
 msgid ""
 "Declares ECI 26 and byte-encodes the input. Conformant decoders pick up the "
 "encoding automatically."
@@ -381,11 +381,11 @@ msgstr ""
 "Deklariert ECI 26 und codiert die Eingabe byteweise. Konforme Decoder "
 "erkennen die Codierung automatisch."
 
-#: ../../qrcode.rst:232
+#: ../../qrcode.rst
 msgid "``\"shift_jis\"``"
 msgstr "``\"shift_jis\"``"
 
-#: ../../qrcode.rst:232
+#: ../../qrcode.rst
 msgid ""
 "Declares ECI 20 and enables Kanji-mode compaction (13 bits per JIS X 0208 "
 "character vs. 24 bits as UTF-8 in byte mode). Opt-in; auto-selection never "
@@ -395,7 +395,7 @@ msgstr ""
 "JIS-X-0208-Zeichen gegenüber 24 Bit als UTF-8 im Byte-Modus). Nur explizit "
 "wählbar; die automatische Auswahl wählt ihn nie."
 
-#: ../../qrcode.rst:239
+#: ../../qrcode.rst
 msgid ""
 "The auto-selected encoding is always the narrowest one that fits, so passing"
 " a plain ``str`` already gives you the smallest symbol. Picking an encoding "
@@ -407,7 +407,7 @@ msgstr ""
 "Eine Codierung von Hand zu wählen ist vor allem für die Eingabevalidierung "
 "nützlich -- z. B. um an der Grenze alles außerhalb von ASCII abzulehnen."
 
-#: ../../qrcode.rst:254
+#: ../../qrcode.rst
 msgid ""
 "If you pin an encoding that does not fit the input, the raised error "
 "suggests the encoding that *would* have worked:"
@@ -415,17 +415,17 @@ msgstr ""
 "Wenn Sie eine Codierung festlegen, die nicht zur Eingabe passt, schlägt der "
 "ausgelöste Fehler die Codierung vor, die funktioniert *hätte*:"
 
-#: ../../qrcode.rst:266
+#: ../../qrcode.rst
 msgid "Japanese with Shift_JIS"
 msgstr "Japanisch mit Shift_JIS"
 
-#: ../../qrcode.rst:272
+#: ../../qrcode.rst
 msgid "QR code encoding the Japanese phrase 親切にしろ via Shift_JIS Kanji mode."
 msgstr ""
 "QR-Code, der die japanische Phrase 親切にしろ über den Shift_JIS-Kanji-Modus "
 "codiert."
 
-#: ../../qrcode.rst:275
+#: ../../qrcode.rst
 msgid ""
 "Pinning ``shift_jis`` enables Kanji-mode compaction -- 13 bits per JIS X "
 "0208 character vs. 24 as UTF-8 in byte mode. Auto-selection won't pick it."
@@ -434,11 +434,11 @@ msgstr ""
 "Bit pro JIS-X-0208-Zeichen gegenüber 24 als UTF-8 im Byte-Modus. Die "
 "automatische Auswahl wählt ihn nicht."
 
-#: ../../qrcode.rst:281
+#: ../../qrcode.rst
 msgid "Wi-Fi network"
 msgstr "WLAN-Netzwerk"
 
-#: ../../qrcode.rst:283
+#: ../../qrcode.rst
 msgid ""
 "Phones offer to join a network when they scan a QR code holding a ``WIFI:`` "
 "payload. :meth:`QRCodeData.wifi_network` builds one in the format defined by"
@@ -448,11 +448,11 @@ msgstr ""
 "``WIFI:``-Nutzdaten scannen. :meth:`QRCodeData.wifi_network` erstellt solche"
 " Nutzdaten im Format der Wi-Fi Alliance WPA3 Specification v3.5:"
 
-#: ../../qrcode.rst:294
+#: ../../qrcode.rst
 msgid "QR code for joining the DoubleDeuceGuest network"
 msgstr "QR-Code für den Beitritt zum Netzwerk DoubleDeuceGuest"
 
-#: ../../qrcode.rst:297
+#: ../../qrcode.rst
 msgid ""
 "Omit the password for an open network (the type field is left out), and pass"
 " ``hidden=True`` for a network that does not broadcast its SSID."
@@ -461,11 +461,11 @@ msgstr ""
 " und übergeben Sie ``hidden=True`` für ein Netzwerk, das seine SSID nicht "
 "aussendet."
 
-#: ../../qrcode.rst:301
+#: ../../qrcode.rst
 msgid "Anatomy"
 msgstr "Aufbau"
 
-#: ../../qrcode.rst:303
+#: ../../qrcode.rst
 msgid ""
 "A QR Code carries the payload in a sea of data modules, surrounded by "
 "several fixed function patterns that let scanners locate, align and decode "
@@ -480,7 +480,7 @@ msgstr ""
 "fügen weitere Ausrichtungsmuster hinzu, ab Version 7 zusätzlich einen "
 "Versionsinformationsblock."
 
-#: ../../qrcode.rst:310
+#: ../../qrcode.rst
 msgid ""
 "Annotated Version-5 QR Code showing the position detection patterns, "
 "separators, timing patterns, alignment pattern, data area and quiet zone."
@@ -488,7 +488,7 @@ msgstr ""
 "Beschrifteter QR-Code der Version 5, der die Suchmuster, Trennmuster, "
 "Taktmuster, das Ausrichtungsmuster, den Datenbereich und die Ruhezone zeigt."
 
-#: ../../qrcode.rst:313
+#: ../../qrcode.rst
 msgid ""
 "**Position detection patterns** -- the three large squares at the top-left, "
 "top-right and bottom-left corners. Scanners use them to detect the symbol "
@@ -499,7 +499,7 @@ msgstr ""
 "erkennen damit das Symbol aus jedem Winkel und leiten seine Ausrichtung aus "
 "der einen fehlenden Ecke ab."
 
-#: ../../qrcode.rst:317
+#: ../../qrcode.rst
 msgid ""
 "**Separators** -- a one-module strip of white isolating each finder from the"
 " data area, keeping the :term:`finder pattern` unambiguous."
@@ -508,7 +508,7 @@ msgstr ""
 "Breite, der jedes Suchmuster vom Datenbereich isoliert und das "
 ":term:`Suchmuster <finder pattern>` eindeutig hält."
 
-#: ../../qrcode.rst:319
+#: ../../qrcode.rst
 msgid ""
 "**Timing patterns** -- one row and one column of alternating dark and light "
 "cells, running between the top finders and between the left finders. They "
@@ -519,7 +519,7 @@ msgstr ""
 "und zwischen den linken Suchmustern verlaufen. Sie legen das Modulraster "
 "über das gesamte Symbol fest."
 
-#: ../../qrcode.rst:322
+#: ../../qrcode.rst
 msgid ""
 "**Alignment pattern** -- smaller squares dropped into the data area in "
 "Version 2 and above to correct for :term:`projective distortion` when the "
@@ -532,7 +532,7 @@ msgstr ""
 "fotografiert wird. Version 5 hat eines; die größten Versionen haben mehrere "
 "Dutzend."
 
-#: ../../qrcode.rst:326
+#: ../../qrcode.rst
 msgid ""
 "**Data and error correction** -- the masked :term:`codeword` stream (payload"
 " plus :term:`Reed-Solomon`). This is what scales with version."
@@ -541,7 +541,7 @@ msgstr ""
 "<codeword>`-Strom (Nutzdaten plus :term:`Reed-Solomon`). Das ist es, was mit"
 " der Version skaliert."
 
-#: ../../qrcode.rst:329
+#: ../../qrcode.rst
 msgid ""
 "**Quiet zone** -- four modules of white margin on every side, as mandated by"
 " the QR Code specification."
@@ -549,15 +549,15 @@ msgstr ""
 "**Ruhezone** (*quiet zone*) -- vier Module weißer Rand auf jeder Seite, wie "
 "von der QR-Code-Spezifikation vorgeschrieben."
 
-#: ../../qrcode.rst:333
+#: ../../qrcode.rst
 msgid "API"
 msgstr "API"
 
-#: of pystrich.qrcode.QRCodeEncoder:1
+#: of pystrich.qrcode.QRCodeEncoder
 msgid "Encode text as a QR Code 2D barcode."
 msgstr "Codiert Text als QR-Code-2D-Barcode."
 
-#: of pystrich.qrcode.QRCodeEncoder:3
+#: of pystrich.qrcode.QRCodeEncoder
 msgid ""
 "A plain ``str`` is encoded with the narrowest character set that fits: ASCII"
 " (no ECI), Latin-1 (ECI 3), or UTF-8 (ECI 26). Pass a :class:`QRCodeData` to"
@@ -567,7 +567,7 @@ msgstr ""
 " ASCII (kein ECI), Latin-1 (ECI 3) oder UTF-8 (ECI 26). Übergeben Sie ein "
 ":class:`QRCodeData`, um die Codierung explizit festzulegen."
 
-#: of pystrich.qrcode.QRCodeEncoder:7
+#: of pystrich.qrcode.QRCodeEncoder
 msgid "Typical use::"
 msgstr "Typische Verwendung::"
 
@@ -575,23 +575,23 @@ msgstr "Typische Verwendung::"
 msgid "Variables"
 msgstr "Variablen"
 
-#: of pystrich.qrcode.QRCodeEncoder:12
+#: of pystrich.qrcode.QRCodeEncoder
 msgid "2D list describing the symbol prior to rendering."
 msgstr "2D-Liste, die das Symbol vor dem Rendern beschreibt."
 
-#: of pystrich.qrcode.QRCodeEncoder:13
+#: of pystrich.qrcode.QRCodeEncoder
 msgid "Pixel width of the most recently rendered image."
 msgstr "Pixelbreite des zuletzt gerenderten Bildes."
 
-#: of pystrich.qrcode.QRCodeEncoder:14
+#: of pystrich.qrcode.QRCodeEncoder
 msgid "Pixel height of the most recently rendered image."
 msgstr "Pixelhöhe des zuletzt gerenderten Bildes."
 
-#: of pystrich.qrcode.QRCodeEncoder.init_renderer:1
+#: of pystrich.qrcode.QRCodeEncoder.init_renderer
 msgid "Construct a :class:`QRCodeRenderer` for the encoded matrix."
 msgstr "Konstruiert einen :class:`QRCodeRenderer` für die codierte Matrix."
 
-#: of pystrich.qrcode.QRCodeEncoder.init_renderer:3
+#: of pystrich.qrcode.QRCodeEncoder.init_renderer
 msgid ""
 "Updates :attr:`width` and :attr:`height` with the renderer's dimensions and "
 "returns the renderer."
@@ -599,7 +599,7 @@ msgstr ""
 "Aktualisiert :attr:`width` und :attr:`height` mit den Maßen des Renderers "
 "und gibt den Renderer zurück."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_ascii:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_ascii
 msgid "Return an ASCII-art rendering of the symbol."
 msgstr "Gibt eine ASCII-Art-Darstellung des Symbols zurück."
 
@@ -607,7 +607,7 @@ msgstr "Gibt eine ASCII-Art-Darstellung des Symbols zurück."
 msgid "Return type"
 msgstr "Rückgabetyp"
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf
 msgid "Return a DXF (CAD) representation of the symbol."
 msgstr "Gibt eine DXF-Darstellung (CAD) des Symbols zurück."
 
@@ -615,11 +615,11 @@ msgstr "Gibt eine DXF-Darstellung (CAD) des Symbols zurück."
 msgid "Parameters"
 msgstr "Parameter"
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:3
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf
 msgid "Side length of one module in ``units``."
 msgstr "Kantenlänge eines Moduls in ``units``."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:4
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf
 msgid ""
 "If ``True`` (the default), light modules are drawn as filled cells. If "
 "``False``, dark modules are drawn, matching the normal appearance of the "
@@ -629,7 +629,7 @@ msgstr ""
 "gezeichnet. Wenn ``False``, werden dunkle Module gezeichnet, was dem "
 "normalen Erscheinungsbild des Symbols entspricht."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:7
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf
 msgid ""
 "One of ``\"in\"``, ``\"ft\"``, ``\"mi\"``, ``\"mm\"``, ``\"cm\"`` or "
 "``\"m\"``, or ``None`` for Unspecified (``$INSUNITS=0``)."
@@ -637,17 +637,17 @@ msgstr ""
 "Eines von ``\"in\"``, ``\"ft\"``, ``\"mi\"``, ``\"mm\"``, ``\"cm\"`` oder "
 "``\"m\"`` oder ``None`` für nicht angegeben (``$INSUNITS=0``)."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:9
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_eps:5
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_marks:4
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:5
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:6
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:6
-#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:5
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_eps
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_rect_marks
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl
 msgid "How matched cells are grouped and drawn."
 msgstr "Wie gesetzte Zellen gruppiert und gezeichnet werden."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf:14
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_dxf
 msgid ""
 "``units`` now supports ``\"in\"``, ``\"ft\"``, ``\"mi\"``, ``\"cm\"``, "
 "``\"m\"`` and ``None`` (Unspecified); previously any value other than "
@@ -657,33 +657,33 @@ msgstr ""
 "``\"m\"`` und ``None`` (nicht angegeben); zuvor wurde jeder andere Wert als "
 "``\"mm\"`` stillschweigend als nicht angegeben behandelt."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps
 msgid "Render the symbol and return EPS markup."
 msgstr "Rendert das Symbol und gibt EPS-Markup zurück."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:3
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:4
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps
 msgid "Side length in PostScript points of one module."
 msgstr "Kantenlänge eines Moduls in PostScript-Punkten."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:4
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_marks:3
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:4
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:5
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:5
-#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:4
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_rect_marks
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl
 msgid "If ``True``, mark the light cells instead of the dark ones."
 msgstr "Wenn ``True``, die hellen statt der dunklen Zellen markieren."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:6
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:4
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:4
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:6
-#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:4
-#: pystrich.matrix_encoder.Matrix2DEncoder.save:5
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:7
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:7
-#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:6
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl
+#: pystrich.matrix_encoder.Matrix2DEncoder.save
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl
 msgid ""
 "Dark-module colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. "
 "Defaults to black."
@@ -691,8 +691,8 @@ msgstr ""
 "Farbe der dunklen Module als 3-, 6- oder 8-stelliger Hex-String oder "
 "``RGBA``. Standard ist Schwarz."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:8
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:9
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps
 msgid ""
 "Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``, opaque. "
 "Defaults to white."
@@ -700,36 +700,36 @@ msgstr ""
 "Hintergrundfarbe als 3-, 6- oder 8-stelliger Hex-String oder ``RGBA``, "
 "deckend. Standard ist Weiß."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps:14
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:11
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:13
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:14
-#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:12
-#: pystrich.matrix_encoder.Matrix2DEncoder.save:10
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps:14
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:14
-#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:14
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_eps
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl
+#: pystrich.matrix_encoder.Matrix2DEncoder.save
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_eps
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl
 msgid "Added ``dark_hex`` and ``light_hex``."
 msgstr "``dark_hex`` und ``light_hex`` hinzugefügt."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata
 msgid "Render the symbol and return PNG bytes."
 msgstr "Rendert das Symbol und gibt PNG-Bytes zurück."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:3
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:3
-#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:3
-#: pystrich.matrix_encoder.Matrix2DEncoder.save:4
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl
+#: pystrich.matrix_encoder.Matrix2DEncoder.save
 msgid "Side length in pixels of one module."
 msgstr "Kantenlänge eines Moduls in Pixeln."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:6
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:6
-#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg:8
-#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:6
-#: pystrich.matrix_encoder.Matrix2DEncoder.save:7
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:9
-#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:8
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage
+#: pystrich.matrix_encoder.Matrix2DEncoder.get_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl
+#: pystrich.matrix_encoder.Matrix2DEncoder.save
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl
 msgid ""
 "Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. Defaults"
 " to white."
@@ -741,38 +741,38 @@ msgstr ""
 msgid "Returns"
 msgstr "Rückgabe"
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata:8
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata
 msgid "PNG-encoded image data."
 msgstr "PNG-codierte Bilddaten."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage
 msgid "Render the symbol and return a Pillow image."
 msgstr "Rendert das Symbol und gibt ein Pillow-Bild zurück."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage:8
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage
 msgid "The rendered symbol."
 msgstr "Das gerenderte Symbol."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_rect_marks:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_rect_marks
 msgid "Return the symbol's dark cells as rectangles in module units."
 msgstr ""
 "Gibt die dunklen Zellen des Symbols als Rechtecke in Moduleinheiten zurück."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg
 msgid "Render the symbol and return SVG markup."
 msgstr "Rendert das Symbol und gibt SVG-Markup zurück."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg:3
-#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg:4
-#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:3
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.save_svg
+#: pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl
 msgid "Side length in user units of one module."
 msgstr "Kantenlänge eines Moduls in Benutzereinheiten."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art
 msgid "Render the symbol using Unicode half-block characters for terminals."
 msgstr "Rendert das Symbol mit Unicode-Halbblockzeichen für Terminals."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:3
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art
 msgid ""
 "Each character represents two matrix rows and one column, producing "
 "approximately square cells in a typical fixed-width font and yielding a "
@@ -783,7 +783,7 @@ msgstr ""
 "Breite und liefert ein Ergebnis, das auf dem Bildschirm vom Scanner lesbar "
 "ist."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art:7
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_terminal_art
 msgid ""
 "If ``True`` (the default), wrap each line in ANSI escape codes that force a "
 "white background and black foreground, making the symbol scannable "
@@ -796,46 +796,46 @@ msgstr ""
 "Setzen Sie ihn auf ``False`` für eine einfache Ausgabe (nur auf einem hell "
 "gestalteten Terminal korrekt)."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl
 msgid "Render the symbol and return a PNG ``data:`` URL string."
 msgstr "Rendert das Symbol und gibt einen PNG-``data:``-URL-String zurück."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.save:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save
 msgid "Save the symbol as a PNG. Pass a ``.png`` filename."
 msgstr ""
 "Speichert das Symbol als PNG. Übergeben Sie einen ``.png``-Dateinamen."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.save:3
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save
 msgid "PNG output path."
 msgstr "PNG-Ausgabepfad."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.save_eps:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_eps
 msgid "Save the symbol as an EPS file. Pass an ``.eps`` filename."
 msgstr ""
 "Speichert das Symbol als EPS-Datei. Übergeben Sie einen ``.eps``-Dateinamen."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.save_eps:3
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_eps
 msgid "EPS output path."
 msgstr "EPS-Ausgabepfad."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.save_svg:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_svg
 msgid "Save the symbol as an SVG file. Pass a ``.svg`` filename."
 msgstr ""
 "Speichert das Symbol als SVG-Datei. Übergeben Sie einen ``.svg``-Dateinamen."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.save_svg:3
+#: of pystrich.matrix_encoder.Matrix2DEncoder.save_svg
 msgid "SVG output path."
 msgstr "SVG-Ausgabepfad."
 
-#: of pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl:1
+#: of pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl
 msgid "Render the symbol and return an SVG ``data:`` URL string."
 msgstr "Rendert das Symbol und gibt einen SVG-``data:``-URL-String zurück."
 
-#: of pystrich.qrcode.data.QRCodeData:1
+#: of pystrich.qrcode.data.QRCodeData
 msgid "Encoder input with an explicit character-set choice."
 msgstr "Encoder-Eingabe mit expliziter Zeichensatz-Wahl."
 
-#: of pystrich.qrcode.data.QRCodeData:3
+#: of pystrich.qrcode.data.QRCodeData
 msgid ""
 ":class:`QRCodeEncoder` accepts a plain ``str`` and selects the encoding "
 "automatically. Use :class:`QRCodeData` only to pin the encoding -- for "
@@ -848,7 +848,7 @@ msgstr ""
 "ASCII-Eingaben abzulehnen, oder ``\"shift_jis\"``, um die Kanji-Modus-"
 "Kompression für japanische Nutzdaten freizuschalten."
 
-#: of pystrich.qrcode.data.QRCodeData:8
+#: of pystrich.qrcode.data.QRCodeData
 msgid ""
 "Pass either ``encoding=`` (one of ``\"ascii\"``, ``\"iso-8859-1\"``, "
 "``\"utf-8\"``, ``\"shift_jis\"``) or ``auto_encoding=True``. With "
@@ -861,53 +861,53 @@ msgstr ""
 " schmalste passende Codierung aus den ersten dreien; ``\"shift_jis\"`` ist "
 "nur explizit wählbar."
 
-#: of pystrich.qrcode.data.QRCodeData:13
+#: of pystrich.qrcode.data.QRCodeData
 msgid "Added ``\"shift_jis\"`` to unlock Kanji-mode compression."
 msgstr ""
 "``\"shift_jis\"`` hinzugefügt, um die Kanji-Modus-Kompression "
 "freizuschalten."
 
-#: of pystrich.qrcode.data.QRCodeData.wifi_network:1
+#: of pystrich.qrcode.data.QRCodeData.wifi_network
 msgid "Build a ``WIFI:`` payload a phone can scan to join a network."
 msgstr ""
 "Erstellt ``WIFI:``-Nutzdaten, die ein Telefon scannen kann, um einem "
 "Netzwerk beizutreten."
 
-#: of pystrich.qrcode.data.QRCodeData.wifi_network:3
+#: of pystrich.qrcode.data.QRCodeData.wifi_network
 msgid ""
 "Produces the WIFI URI defined by the Wi-Fi Alliance WPA3 Specification v3.5."
 msgstr ""
 "Erzeugt die WIFI-URI gemäß der Wi-Fi Alliance WPA3 Specification v3.5."
 
-#: of pystrich.qrcode.data.QRCodeData.wifi_network:6
+#: of pystrich.qrcode.data.QRCodeData.wifi_network
 msgid "Network name."
 msgstr "Netzwerkname."
 
-#: of pystrich.qrcode.data.QRCodeData.wifi_network:7
+#: of pystrich.qrcode.data.QRCodeData.wifi_network
 msgid "Network password; omit for an open network."
 msgstr "Netzwerkpasswort; für ein offenes Netzwerk weglassen."
 
-#: of pystrich.qrcode.data.QRCodeData.wifi_network:8
+#: of pystrich.qrcode.data.QRCodeData.wifi_network
 msgid "``True`` when the network does not broadcast its SSID."
 msgstr "``True``, wenn das Netzwerk seine SSID nicht aussendet."
 
-#: of pystrich.qrcode.data.QRCodeData.wifi_network:9
+#: of pystrich.qrcode.data.QRCodeData.wifi_network
 msgid "Transition Disable bitmap, rendered as hexadecimal."
 msgstr "Transition-Disable-Bitmap, als Hexadezimalzahl dargestellt."
 
-#: of pystrich.qrcode.data.QRCodeData.wifi_network:11
+#: of pystrich.qrcode.data.QRCodeData.wifi_network
 msgid "SAE password identifier."
 msgstr "SAE-Passwort-Identifikator."
 
-#: of pystrich.qrcode.data.QRCodeData.wifi_network:12
+#: of pystrich.qrcode.data.QRCodeData.wifi_network
 msgid "Base64-encoded SAE-PK public key, inserted verbatim."
 msgstr "Base64-codierter SAE-PK-Public-Key, wortwörtlich eingefügt."
 
-#: of pystrich.charset.EncodableData.as_plain_text:1
+#: of pystrich.charset.EncodableData.as_plain_text
 msgid "Return the concatenated text and the codec to encode it with."
 msgstr "Gibt den verketteten Text und den Codec zum Codieren zurück."
 
-#: of pystrich.charset.EncodableData.as_plain_text:3
+#: of pystrich.charset.EncodableData.as_plain_text
 msgid ""
 "Raises :class:`_HasMarkers` if any segment is a raw marker rather than a "
 "string. For subclasses without markers (``MarkerT == Never``) the check is a"

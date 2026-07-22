@@ -11,20 +11,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../types.rst:4
+#: ../../types.rst
 msgid "Shared types"
 msgstr "Gemeinsame Typen"
 
-#: of pystrich.types:1
+#: of pystrich.types
 msgid "Shared typing helpers for pyStrich encoders and renderers."
 msgstr "Gemeinsame Typisierungshilfen für pyStrich-Encoder und -Renderer."
 
-#: of pystrich.types.BarcodeRenderOptions:1
+#: of pystrich.types.BarcodeRenderOptions
 msgid "Optional render-time tweaks for label-bearing 1D barcodes."
 msgstr ""
 "Optionale Anpassungen zur Renderzeit für 1D-Barcodes mit Beschriftung."
 
-#: of pystrich.types.BarcodeRenderOptions:3
+#: of pystrich.types.BarcodeRenderOptions
 msgid ""
 "Currently used by :class:`pystrich.code128.Code128Encoder` and "
 ":class:`pystrich.code39.Code39Encoder`. All keys are optional; omitted keys "
@@ -34,7 +34,7 @@ msgstr ""
 ":class:`pystrich.code39.Code39Encoder`. Alle Schlüssel sind optional; "
 "ausgelassene Schlüssel greifen auf die Bibliotheksvorgaben zurück."
 
-#: of pystrich.types.BarcodeRenderOptions.show_label:1
+#: of pystrich.types.BarcodeRenderOptions.show_label
 msgid ""
 "Whether to render the human-readable label underneath the bars. Defaults to "
 "``True``; set to ``False`` to suppress it."
@@ -42,7 +42,7 @@ msgstr ""
 "Ob die Klarschriftzeile unter den Strichen gerendert wird. Vorgabe ``True``;"
 " setzen Sie ihn auf ``False``, um sie zu unterdrücken."
 
-#: of pystrich.types.BarcodeRenderOptions.ttf_font:1
+#: of pystrich.types.BarcodeRenderOptions.ttf_font
 msgid ""
 "Absolute path to a TrueType font file used for the label in PNG output. "
 "Defaults to a bundled bitmap font if unset. SVG and EPS output always render"
@@ -54,7 +54,7 @@ msgstr ""
 "Schrift verwendet. SVG- und EPS-Ausgabe rendern die Beschriftung immer mit "
 "den mitgelieferten Courier-Prime-Glyphenpfaden und ignorieren diese Option."
 
-#: of pystrich.types.BarcodeRenderOptions.ttf_fontsize:1
+#: of pystrich.types.BarcodeRenderOptions.ttf_fontsize
 msgid ""
 "Font size in points (PNG output only — SVG/EPS use the bundled Courier Prime"
 " glyph paths)."
@@ -62,7 +62,7 @@ msgstr ""
 "Schriftgröße in Punkt (nur PNG-Ausgabe -- SVG/EPS verwenden die "
 "mitgelieferten Courier-Prime-Glyphenpfade)."
 
-#: of pystrich.types.BarcodeRenderOptions.height:1
+#: of pystrich.types.BarcodeRenderOptions.height
 msgid ""
 "Total image height in pixels. Defaults to roughly a third of the image width"
 " for Code 128, and to ``120`` for Code 39."
@@ -70,17 +70,17 @@ msgstr ""
 "Gesamte Bildhöhe in Pixeln. Vorgabe ist etwa ein Drittel der Bildbreite für "
 "Code 128 und ``120`` für Code 39."
 
-#: of pystrich.types.BarcodeRenderOptions.label_border:1
+#: of pystrich.types.BarcodeRenderOptions.label_border
 msgid "Pixels of vertical space between the bars and the label."
 msgstr ""
 "Pixel an vertikalem Abstand zwischen den Strichen und der Beschriftung."
 
-#: of pystrich.types.BarcodeRenderOptions.bottom_border:1
+#: of pystrich.types.BarcodeRenderOptions.bottom_border
 msgid "Pixels of vertical space between the label and the bottom edge."
 msgstr ""
 "Pixel an vertikalem Abstand zwischen der Beschriftung und der Unterkante."
 
-#: of pystrich.types.BarcodeRenderOptions.quiet_width_multiplier:1
+#: of pystrich.types.BarcodeRenderOptions.quiet_width_multiplier
 msgid ""
 "Width of the quiet zone on each side, in narrow-bar widths. Defaults to "
 "``10``, the minimum required by both symbologies."
@@ -88,67 +88,65 @@ msgstr ""
 "Breite der Ruhezone auf jeder Seite, in Schmalstrichbreiten. Vorgabe ``10``,"
 " das von beiden Symbologien geforderte Minimum."
 
-#: of pystrich.marks:1
+#: of pystrich.marks
 msgid "Matrix mark extraction shared by vector renderers (SVG, EPS, DXF)."
 msgstr ""
 "Matrix-Mark-Extraktion, gemeinsam genutzt von den Vektor-Renderern (SVG, "
 "EPS, DXF)."
 
-#: of pystrich.marks.SymbolMarks:1
+#: of pystrich.marks.SymbolMarks
 msgid "A rendered symbol as dark rectangles in a unit grid."
 msgstr "Ein gerendertes Symbol als dunkle Rechtecke in einem Einheitenraster."
 
-#: of pystrich.marks.SymbolMarks:3
+#: of pystrich.marks.SymbolMarks
 msgid ""
-"``marks`` are the dark regions as ``(x, y, width, height)`` rectangles, with "
-"a top-left origin and y pointing down (matching the matrix, PIL and SVG). "
+"``marks`` are the dark regions as ``(x, y, width, height)`` rectangles, with"
+" a top-left origin and y pointing down (matching the matrix, PIL and SVG). "
 "``width`` and ``height`` are the full extent of the grid the marks live in "
 "-- the same canvas every other output format draws, so quiet zones, finder "
-"pattern and (for 1D) the bearer bar and the space reserved for the "
-"human-readable label are all included -- and a consumer can fit ``[0, width] "
-"x [0, height]`` into any target box at any scale. The label glyphs "
-"themselves are never marks. For 2D symbols one unit is one module; for 1D "
-"symbols the x unit is one narrow bar and the y unit is one pixel of the bar "
-"layout."
+"pattern and (for 1D) the bearer bar and the space reserved for the human-"
+"readable label are all included -- and a consumer can fit ``[0, width] x [0,"
+" height]`` into any target box at any scale. The label glyphs themselves are"
+" never marks. For 2D symbols one unit is one module; for 1D symbols the x "
+"unit is one narrow bar and the y unit is one pixel of the bar layout."
 msgstr ""
-"``marks`` sind die dunklen Bereiche als ``(x, y, width, height)``-Rechtecke, "
-"mit Ursprung oben links und nach unten zeigender y-Achse (passend zu Matrix, "
-"PIL und SVG). ``width`` und ``height`` sind die volle Ausdehnung des "
-"Rasters, in dem die Marks liegen -- dieselbe Zeichenfläche, die jedes andere "
-"Ausgabeformat zeichnet, sodass Ruhezonen, Suchmuster und (bei 1D) der "
-"Trägerbalken sowie der für die Klarschriftzeile reservierte Platz alle "
+"``marks`` sind die dunklen Bereiche als ``(x, y, width, height)``-Rechtecke,"
+" mit Ursprung oben links und nach unten zeigender y-Achse (passend zu "
+"Matrix, PIL und SVG). ``width`` und ``height`` sind die volle Ausdehnung des"
+" Rasters, in dem die Marks liegen -- dieselbe Zeichenfläche, die jedes "
+"andere Ausgabeformat zeichnet, sodass Ruhezonen, Suchmuster und (bei 1D) der"
+" Trägerbalken sowie der für die Klarschriftzeile reservierte Platz alle "
 "enthalten sind --, und ein Aufrufer kann ``[0, width] x [0, height]`` in "
 "beliebiger Skalierung in einen beliebigen Zielrahmen einpassen. Die Zeichen "
 "der Klarschriftzeile selbst sind niemals Marks. Bei 2D-Symbolen ist eine "
 "Einheit ein Modul; bei 1D-Symbolen ist die x-Einheit ein Schmalstrich und "
 "die y-Einheit ein Pixel des Strich-Layouts."
 
-#: of pystrich.marks.BarLayout.heights:1 pystrich.marks.MatrixMark.x:1
-#: pystrich.marks.SymbolMarks.marks:1 pystrich.marks.TextLabel.text:1
+#: of pystrich.marks.BarLayout.heights pystrich.marks.SymbolMarks.marks
+#: pystrich.marks.TextLabel.text
 msgid "Alias for field number 0"
 msgstr "Alias für Feldnummer 0"
 
-#: of pystrich.marks.BarLayout.bar_width:1 pystrich.marks.MatrixMark.y:1
-#: pystrich.marks.SymbolMarks.width:1 pystrich.marks.TextLabel.x:1
+#: of pystrich.marks.BarLayout.bar_width pystrich.marks.SymbolMarks.width
+#: pystrich.marks.TextLabel.x
 msgid "Alias for field number 1"
 msgstr "Alias für Feldnummer 1"
 
-#: of pystrich.marks.BarLayout.quiet_left:1 pystrich.marks.MatrixMark.width:1
-#: pystrich.marks.SymbolMarks.height:1 pystrich.marks.TextLabel.y:1
+#: of pystrich.marks.BarLayout.quiet_left pystrich.marks.SymbolMarks.height
+#: pystrich.marks.TextLabel.y
 msgid "Alias for field number 2"
 msgstr "Alias für Feldnummer 2"
 
-#: of pystrich.marks.BarLayout.quiet_right:1
-#: pystrich.marks.MatrixMark.height:1 pystrich.marks.TextLabel.font_size:1
+#: of pystrich.marks.BarLayout.quiet_right pystrich.marks.TextLabel.font_size
 msgid "Alias for field number 3"
 msgstr "Alias für Feldnummer 3"
 
-#: of pystrich.marks.MarkShape:1
+#: of pystrich.marks.MarkShape
 msgid "How marked cells are grouped and drawn in vector output."
 msgstr ""
 "Wie gesetzte Zellen in der Vektorausgabe gruppiert und gezeichnet werden."
 
-#: of pystrich.marks.MarkShape:3
+#: of pystrich.marks.MarkShape
 msgid ""
 "Each value selects a grouping (one ``MatrixMark`` per cell, or one per "
 "horizontal run) and -- where the renderer supports it -- the drawing "
@@ -158,18 +156,18 @@ msgstr ""
 "pro horizontaler Folge) und -- wo der Renderer es unterstützt -- das pro "
 "Mark verwendete Zeichen-Primitiv."
 
-#: of pystrich.marks.MarkShape.HORIZONTAL_RUNS:1
+#: of pystrich.marks.MarkShape.HORIZONTAL_RUNS
 msgid "Maximal horizontal runs of matched cells, drawn as filled rectangles."
 msgstr ""
 "Maximale horizontale Folgen gesetzter Zellen, als gefüllte Rechtecke "
 "gezeichnet."
 
-#: of pystrich.marks.MarkShape.SQUARE_CELLS:1
+#: of pystrich.marks.MarkShape.SQUARE_CELLS
 msgid "One 1x1 region per matched cell, drawn as a filled rectangle."
 msgstr ""
 "Ein 1x1-Bereich pro gesetzter Zelle, als gefülltes Rechteck gezeichnet."
 
-#: of pystrich.marks.MarkShape.CIRCULAR_CELLS:1
+#: of pystrich.marks.MarkShape.CIRCULAR_CELLS
 msgid ""
 "One 1x1 region per matched cell, drawn as a filled circle inscribed in the "
 "cell."
@@ -177,7 +175,7 @@ msgstr ""
 "Ein 1x1-Bereich pro gesetzter Zelle, als in die Zelle einbeschriebener "
 "gefüllter Kreis gezeichnet."
 
-#: of pystrich.marks.iter_horizontal_runs:1
+#: of pystrich.marks.iter_horizontal_runs
 msgid ""
 "Yield each maximal horizontal run of cells whose truthiness equals "
 "``mark_values_when``."
@@ -185,7 +183,7 @@ msgstr ""
 "Liefert jede maximale horizontale Folge von Zellen, deren Wahrheitswert "
 "``mark_values_when`` entspricht."
 
-#: of pystrich.marks.iter_horizontal_runs:3
+#: of pystrich.marks.iter_horizontal_runs
 msgid ""
 "``mark_values_when=True`` marks the dark (truthy) cells; ``False`` marks the"
 " light cells (``0`` or ``None``). Each yielded mark has ``height=1``."
@@ -194,7 +192,7 @@ msgstr ""
 "markiert die hellen Zellen (``0`` oder ``None``). Jeder gelieferte Mark hat "
 "``height=1``."
 
-#: of pystrich.marks.iter_cells:1
+#: of pystrich.marks.iter_cells
 msgid ""
 "Yield a 1x1 mark for every cell whose truthiness equals "
 "``mark_values_when``."
@@ -202,16 +200,16 @@ msgstr ""
 "Liefert einen 1x1-Mark für jede Zelle, deren Wahrheitswert "
 "``mark_values_when`` entspricht."
 
-#: of pystrich.marks.iter_marks:1
+#: of pystrich.marks.iter_marks
 msgid "Yield ``MatrixMark`` regions for the chosen ``mark_shape``."
 msgstr "Liefert ``MatrixMark``-Bereiche für das gewählte ``mark_shape``."
 
-#: of pystrich.marks.TextLabel:1
+#: of pystrich.marks.TextLabel
 msgid "A run of text to render below the bars in vector output."
 msgstr ""
 "Ein Textstück, das in der Vektorausgabe unter den Strichen gerendert wird."
 
-#: of pystrich.marks.TextLabel:3
+#: of pystrich.marks.TextLabel
 msgid ""
 "Coordinates are in pixels (= user units for SVG/EPS at default DPI), and "
 "``y`` is the *top* edge of the text — matching the convention used by "
@@ -225,15 +223,15 @@ msgstr ""
 "``anchor`` steuert, wie sich ``x`` auf das Textstück bezieht: ``\"start\"`` "
 "ist die linke Kante, ``\"middle\"`` die Mitte, ``\"end\"`` die rechte Kante."
 
-#: of pystrich.marks.BarLayout.quiet_top:1 pystrich.marks.TextLabel.anchor:1
+#: of pystrich.marks.BarLayout.quiet_top pystrich.marks.TextLabel.anchor
 msgid "Alias for field number 4"
 msgstr "Alias für Feldnummer 4"
 
-#: of pystrich.marks.BarLayout:1
+#: of pystrich.marks.BarLayout
 msgid "Pixel-precise layout of a 1D barcode for any output format."
 msgstr "Pixelgenaues Layout eines 1D-Barcodes für jedes Ausgabeformat."
 
-#: of pystrich.marks.BarLayout:3
+#: of pystrich.marks.BarLayout
 msgid ""
 "All values are in pixels (= user units for SVG/EPS at default DPI). "
 "``heights[i]`` is the bar's pixel height at column ``i`` (``0`` is a gap). "
@@ -250,40 +248,40 @@ msgstr ""
 "DPI). ``heights[i]`` ist die Pixelhöhe des Strichs in Spalte ``i`` (``0`` "
 "ist eine Lücke). Jede Spalte ist ``bar_width`` Pixel breit. Die vier "
 "Ruhezonen rahmen das Symbol; ``quiet_left`` und ``quiet_top`` verschieben "
-"die Striche, während ``quiet_right`` und ``quiet_bottom`` nur die Zeichenfläche "
-"vergrößern. ``labels`` trägt die Klarschrift, die unter den Strichen "
-"gezeichnet wird, von den PNG-, SVG- und EPS-Pfaden identisch gerendert. "
-"``bearer_width`` zeichnet, wenn positiv, einen Trägerbalken dieser "
-"Pixelstärke, der die Striche umrandet (wie von ITF-14 verwendet); er muss in"
-" die Ruhezonen eingerechnet werden, wobei die Beschriftung in der unteren "
-"Ruhezone außerhalb des Rahmens platziert wird."
+"die Striche, während ``quiet_right`` und ``quiet_bottom`` nur die "
+"Zeichenfläche vergrößern. ``labels`` trägt die Klarschrift, die unter den "
+"Strichen gezeichnet wird, von den PNG-, SVG- und EPS-Pfaden identisch "
+"gerendert. ``bearer_width`` zeichnet, wenn positiv, einen Trägerbalken "
+"dieser Pixelstärke, der die Striche umrandet (wie von ITF-14 verwendet); er "
+"muss in die Ruhezonen eingerechnet werden, wobei die Beschriftung in der "
+"unteren Ruhezone außerhalb des Rahmens platziert wird."
 
-#: of pystrich.marks.BarLayout.quiet_bottom:1
+#: of pystrich.marks.BarLayout.quiet_bottom
 msgid "Alias for field number 5"
 msgstr "Alias für Feldnummer 5"
 
-#: of pystrich.marks.BarLayout.labels:1
+#: of pystrich.marks.BarLayout.labels
 msgid "Alias for field number 6"
 msgstr "Alias für Feldnummer 6"
 
-#: of pystrich.marks.BarLayout.bearer_width:1
+#: of pystrich.marks.BarLayout.bearer_width
 msgid "Alias for field number 7"
 msgstr "Alias für Feldnummer 7"
 
-#: of pystrich.marks.BarLayout.width:1
+#: of pystrich.marks.BarLayout.width
 msgid "Total canvas width in pixels."
 msgstr "Gesamte Breite der Zeichenfläche in Pixeln."
 
-#: of pystrich.marks.BarLayout.height:1
+#: of pystrich.marks.BarLayout.height
 msgid "Total canvas height in pixels."
 msgstr "Gesamte Höhe der Zeichenfläche in Pixeln."
 
-#: of pystrich.marks.iter_bar_marks:1
+#: of pystrich.marks.iter_bar_marks
 msgid "Yield a ``MatrixMark`` per maximal run of equal positive heights."
 msgstr ""
 "Liefert einen ``MatrixMark`` pro maximaler Folge gleicher positiver Höhen."
 
-#: of pystrich.marks.iter_bar_marks:3
+#: of pystrich.marks.iter_bar_marks
 msgid ""
 "Coordinates and dimensions are in pixels. ``heights[i]`` is the bar's pixel "
 "height at column ``i`` (``0`` is a gap; positive values are bars sharing a "
@@ -296,7 +294,7 @@ msgstr ""
 "``bar_width`` Pixel breit. Benachbarte Spalten mit derselben positiven Höhe "
 "werden zu einem Mark zusammengefasst."
 
-#: of pystrich.marks.iter_bar_marks:9
+#: of pystrich.marks.iter_bar_marks
 msgid ""
 "Only ``quiet_left`` and ``quiet_top`` are accepted because they are the only"
 " offsets that affect mark coordinates; the right and bottom quiet zones are "
@@ -307,11 +305,11 @@ msgstr ""
 "und untere Ruhezone sind Sache des Renderers (Zeichenflächen-/viewBox-"
 "Dimensionierung)."
 
-#: of pystrich.marks.iter_bearer_marks:1
+#: of pystrich.marks.iter_bearer_marks
 msgid "Yield the four rectangles of a full-frame bearer bar."
 msgstr "Liefert die vier Rechtecke eines Vollrahmen-Trägerbalkens."
 
-#: of pystrich.marks.iter_bearer_marks:3
+#: of pystrich.marks.iter_bearer_marks
 msgid ""
 "Nothing is yielded when ``layout.bearer_width`` is zero. The frame borders "
 "the bars only -- the top and bottom rules abut the bars, and the label (in "
@@ -324,13 +322,13 @@ msgstr ""
 "Rahmens. ``quiet_top`` nimmt die obere Linie auf, daher muss die "
 "Trägerstärke in die Ruhezonen eingerechnet werden."
 
-#: of pystrich.marks.iter_barcode_marks:1
+#: of pystrich.marks.iter_barcode_marks
 msgid "Yield every dark mark of a 1D barcode: its bars, then its bearer bar."
 msgstr ""
 "Liefert jeden dunklen Mark eines 1D-Barcodes: seine Striche, dann seinen "
 "Trägerbalken."
 
-#: of pystrich.marks.iter_barcode_marks:3
+#: of pystrich.marks.iter_barcode_marks
 msgid ""
 "The single entry point the PNG, SVG and EPS paths render from, composing the"
 " raw :func:`iter_bar_marks` primitive with :func:`iter_bearer_marks`."
@@ -339,13 +337,13 @@ msgstr ""
 " kombiniert das rohe :func:`iter_bar_marks`-Primitiv mit "
 ":func:`iter_bearer_marks`."
 
-#: of pystrich.gs1:1
+#: of pystrich.gs1
 msgid "User-friendly composition of GS1 Application Identifier payloads."
 msgstr ""
 "Benutzerfreundliche Zusammenstellung von GS1-Application-Identifier-"
 "Nutzdaten."
 
-#: of pystrich.gs1:3
+#: of pystrich.gs1
 msgid ""
 "Pair :class:`GS1Fixed` and :class:`GS1Variable` instances with the matching "
 ":meth:`gs1` classmethod on :class:`pystrich.code128.Code128Data` or "
@@ -358,7 +356,7 @@ msgstr ""
 ":class:`pystrich.datamatrix.DataMatrixData`, um GS1-128- oder GS1-Data-"
 "Matrix-Nutzdaten auszugeben, ohne FNC1-Trenner von Hand zu verwalten."
 
-#: of pystrich.gs1:8
+#: of pystrich.gs1
 msgid ""
 "The library does not ship an Application Identifier registry: callers tell "
 "us whether each field is fixed- or variable-length by choosing the wrapper "
@@ -372,11 +370,11 @@ msgstr ""
 "die nicht das letzte Element der Nutzdaten sind, sowie einmal ganz am Anfang"
 " der Nachricht."
 
-#: of pystrich.gs1.GS1Fixed:1
+#: of pystrich.gs1.GS1Fixed
 msgid "A fixed-length GS1 Application Identifier field."
 msgstr "Ein GS1-Application-Identifier-Feld fester Länge."
 
-#: of pystrich.gs1.GS1Fixed:3
+#: of pystrich.gs1.GS1Fixed
 msgid ""
 "The reader knows the data length from the Application Identifier alone, so "
 "no FNC1 separator is needed after the field. Use for Application Identifiers"
@@ -392,19 +390,19 @@ msgstr ""
 msgid "Parameters"
 msgstr "Parameter"
 
-#: of pystrich.gs1.GS1Fixed:8 pystrich.gs1.GS1Variable:9
+#: of pystrich.gs1.GS1Fixed pystrich.gs1.GS1Variable
 msgid "The 2-4 digit Application Identifier."
 msgstr "Der 2- bis 4-stellige Application Identifier."
 
-#: of pystrich.gs1.GS1Fixed:9 pystrich.gs1.GS1Variable:10
+#: of pystrich.gs1.GS1Fixed pystrich.gs1.GS1Variable
 msgid "The data string. Must be non-empty printable ASCII."
 msgstr "Die Datenzeichenkette. Muss nichtleeres druckbares ASCII sein."
 
-#: of pystrich.gs1.GS1Variable:1
+#: of pystrich.gs1.GS1Variable
 msgid "A variable-length GS1 Application Identifier field."
 msgstr "Ein GS1-Application-Identifier-Feld variabler Länge."
 
-#: of pystrich.gs1.GS1Variable:3
+#: of pystrich.gs1.GS1Variable
 msgid ""
 "The reader cannot determine where the data ends from the Application "
 "Identifier alone, so an FNC1 separator follows unless this is the last field"

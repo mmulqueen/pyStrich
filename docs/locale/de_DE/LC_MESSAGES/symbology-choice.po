@@ -11,11 +11,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../symbology-choice.rst:2
+#: ../../symbology-choice.rst
 msgid "Choosing the right symbology"
 msgstr "Die richtige Symbologie wählen"
 
-#: ../../symbology-choice.rst:4
+#: ../../symbology-choice.rst
 msgid ""
 "This is meant to be an accessible introduction to the different kinds of "
 "barcodes that can be used and some rules of thumb for picking the right one."
@@ -32,11 +32,11 @@ msgstr ""
 " für Sie getroffen, wenn Sie ein Etikett oder Dokument erzeugen, das "
 "standardisiert wurde."
 
-#: ../../symbology-choice.rst:12
+#: ../../symbology-choice.rst
 msgid "Everyone gets QR codes"
 msgstr "QR-Codes versteht jeder"
 
-#: ../../symbology-choice.rst:14
+#: ../../symbology-choice.rst
 msgid ""
 "QR codes are the most famous 2D barcode, everyone has heard of a QR code and"
 " probably scanned many of them. They have a distinctive appearance, even "
@@ -54,7 +54,7 @@ msgstr ""
 "in den nächsten Jahren noch beliebter werden, da GS1-Digital-Link-QR-Codes "
 "beginnen, die klassischen 1D-EAN-Barcodes in den Geschäften abzulösen."
 
-#: ../../symbology-choice.rst:22
+#: ../../symbology-choice.rst
 msgid ""
 "The downside of QR codes is that they're relatively bulky as 2D barcodes go "
 "and while they're somewhat damage tolerant, it depends on where that damage "
@@ -64,19 +64,19 @@ msgstr ""
 "sind, und obwohl sie einigermaßen schadenstolerant sind, hängt es davon ab, "
 "wo der Schaden liegt."
 
-#: ../../symbology-choice.rst:28
+#: ../../symbology-choice.rst
 msgid "QR Code example."
 msgstr "QR-Code-Beispiel."
 
-#: ../../symbology-choice.rst:31
+#: ../../symbology-choice.rst
 msgid "QR Code"
 msgstr "QR-Code"
 
-#: ../../symbology-choice.rst:34
+#: ../../symbology-choice.rst
 msgid "But consider Data Matrix and Aztec"
 msgstr "Aber ziehen Sie Data Matrix und Aztec in Betracht"
 
-#: ../../symbology-choice.rst:36
+#: ../../symbology-choice.rst
 msgid ""
 "If you have more control over who/how you scan, Data Matrix and Aztec codes "
 "are well worth considering. They can be denser for typical payloads. Aztec "
@@ -109,11 +109,11 @@ msgstr ""
 "Gesundheitsumgebungen sind sie noch verbreiteter. Die meisten Data-Matrix-"
 "Symbole sind quadratisch, aber es gibt auch rechteckige -- seltener zu "
 "sehen, obwohl ich schon eine rechteckige GS1 Data Matrix auf den "
-"Kleidungsetiketten von H&M entdeckt habe. Aztec-Codes sehe ich weit "
-"seltener in freier Wildbahn; entdeckt habe ich sie auf Brauereifässern, "
-"Bahntickets, Bordkarten von Fluggesellschaften und der Tesco Clubcard."
+"Kleidungsetiketten von H&M entdeckt habe. Aztec-Codes sehe ich weit seltener"
+" in freier Wildbahn; entdeckt habe ich sie auf Brauereifässern, Bahntickets,"
+" Bordkarten von Fluggesellschaften und der Tesco Clubcard."
 
-#: ../../symbology-choice.rst:52
+#: ../../symbology-choice.rst
 msgid ""
 "The central locator on an Aztec code bears some similarity to the locators "
 "on QR codes, which may be a helpful affordance to users understanding how to"
@@ -134,27 +134,27 @@ msgstr ""
 "Symbol in Ihrer eigenen App gescannt, ist das kein Problem: Googles ML Kit "
 "und Apples VisionKit unterstützen all diese problemlos."
 
-#: ../../symbology-choice.rst:68
+#: ../../symbology-choice.rst
 msgid "Data Matrix"
 msgstr "Data Matrix"
 
-#: ../../symbology-choice.rst:69
+#: ../../symbology-choice.rst
 msgid "Aztec Code"
 msgstr "Aztec-Code"
 
-#: ../../symbology-choice.rst:70
+#: ../../symbology-choice.rst
 msgid "Data Matrix example."
 msgstr "Data-Matrix-Beispiel."
 
-#: ../../symbology-choice.rst:72
+#: ../../symbology-choice.rst
 msgid "Aztec Code example."
 msgstr "Aztec-Code-Beispiel."
 
-#: ../../symbology-choice.rst:76
+#: ../../symbology-choice.rst
 msgid "Anything else needs a good reason"
 msgstr "Alles andere braucht einen guten Grund"
 
-#: ../../symbology-choice.rst:78
+#: ../../symbology-choice.rst
 msgid ""
 "I haven't mentioned PDF417 yet, and that's because I think the only good "
 "reason to use them in 2026 is if you have to. They take up a lot of physical"
@@ -171,7 +171,7 @@ msgstr ""
 "2D-Barcodes und das Scannen vom Bildschirm durchgesetzt haben. Ich begegne "
 "ihnen dennoch gelegentlich -- Eurostar-Bordkarten fallen mir ein."
 
-#: ../../symbology-choice.rst:86
+#: ../../symbology-choice.rst
 msgid ""
 "There are other kinds of 2D barcodes -- but they're even more niche and if "
 "you needed to use them, you'd already know about them."
@@ -179,7 +179,7 @@ msgstr ""
 "Es gibt weitere Arten von 2D-Barcodes -- aber sie sind noch nischiger, und "
 "wenn Sie sie verwenden müssten, wüssten Sie bereits davon."
 
-#: ../../symbology-choice.rst:89
+#: ../../symbology-choice.rst
 msgid ""
 "Should you use a 1D barcode? Again, if you needed to, you'd already know. "
 "Chances are it would be an EAN-13 if it's a consumer product, or an ITF-14 "
@@ -192,31 +192,31 @@ msgstr ""
 "transportiert wird. Code 128 bleibt in industriellen Umgebungen beliebt. "
 "Aber wenn Sie die Wahl haben, nehmen Sie stattdessen 2D."
 
-#: ../../symbology-choice.rst:100
+#: ../../symbology-choice.rst
 msgid "PDF417"
 msgstr "PDF417"
 
-#: ../../symbology-choice.rst:101
+#: ../../symbology-choice.rst
 msgid "Code 128"
 msgstr "Code 128"
 
-#: ../../symbology-choice.rst:102
+#: ../../symbology-choice.rst
 msgid "EAN-13"
 msgstr "EAN-13"
 
-#: ../../symbology-choice.rst:103
+#: ../../symbology-choice.rst
 msgid "PDF417 example."
 msgstr "PDF417-Beispiel."
 
-#: ../../symbology-choice.rst:105
+#: ../../symbology-choice.rst
 msgid "Code 128 example."
 msgstr "Code-128-Beispiel."
 
-#: ../../symbology-choice.rst:107
+#: ../../symbology-choice.rst
 msgid "EAN-13 example."
 msgstr "EAN-13-Beispiel."
 
-#: ../../symbology-choice.rst:112
+#: ../../symbology-choice.rst
 msgid ""
 ":doc:`printing` once you've chosen -- how to size a symbol so it scans "
 "reliably."

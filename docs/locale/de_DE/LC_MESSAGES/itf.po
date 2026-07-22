@@ -19,17 +19,17 @@ msgstr ""
 "GS1-ITF-14- und einfache Interleaved-2-of-5-Barcodes mit pyStrich in Python "
 "erzeugen. Ausgabe als PNG, SVG und EPS."
 
-#: ../../itf.rst:10
+#: ../../itf.rst
 msgid "ITF-14"
 msgstr "ITF-14"
 
-#: ../../itf.rst:12
+#: ../../itf.rst
 msgid "ITF-14 and Interleaved 2 of 5 support were added in this release."
 msgstr ""
 "Die Unterstützung für ITF-14 und Interleaved 2 of 5 wurde in dieser Version "
 "hinzugefügt."
 
-#: ../../itf.rst:15
+#: ../../itf.rst
 msgid ""
 "ITF-14 is the GS1 barcode for a GTIN-14 -- the 14-digit identifier printed "
 "on shipping cartons and cases rather than on the retail item inside. It is "
@@ -47,7 +47,7 @@ msgstr ""
 "14 Ziffern (die letzte Ziffer wird als Prüfziffer behandelt und neu "
 "berechnet)."
 
-#: ../../itf.rst:24
+#: ../../itf.rst
 msgid ""
 "`Interleaved 2 of 5 on Wikipedia "
 "<https://en.wikipedia.org/wiki/Interleaved_2_of_5>`_ for background on the "
@@ -57,7 +57,7 @@ msgstr ""
 "<https://en.wikipedia.org/wiki/Interleaved_2_of_5>`_ für Hintergründe zur "
 "Symbologie."
 
-#: ../../itf.rst:28
+#: ../../itf.rst
 msgid ""
 "Interleaved 2 of 5 barcodes are defined in `ISO/IEC 16390 "
 "<https://www.iso.org/standard/43898.html>`_."
@@ -68,7 +68,7 @@ msgstr ""
 "Datenerfassung -- Spezifikationen für Strichcode-Symbologien -- Interleaved "
 "2 of 5)."
 
-#: ../../itf.rst:33
+#: ../../itf.rst
 msgid ""
 "Real-world GTIN-14 codes are derived from a GS1-allocated GTIN; you cannot "
 "simply invent one."
@@ -76,7 +76,7 @@ msgstr ""
 "Reale GTIN-14-Codes werden aus einer von GS1 zugeteilten GTIN abgeleitet; "
 "Sie können nicht einfach eine erfinden."
 
-#: ../../itf.rst:36
+#: ../../itf.rst
 msgid ""
 "Input must be exactly 13 or 14 digits, ASCII ``0``-``9``. Anything else "
 "raises :class:`~pystrich.exceptions.PyStrichInvalidInput`. The 14-digit "
@@ -88,7 +88,7 @@ msgstr ""
 "Die 14-stellige Klarschriftzeile unter den Strichen wird standardmäßig "
 "gerendert (siehe :ref:`itf-label`, um sie zu unterdrücken)."
 
-#: ../../itf.rst:40
+#: ../../itf.rst
 msgid ""
 "The check digit is always computed by pyStrich; pass either 13 digits (it is"
 " appended) or 14 digits (the supplied final digit is discarded and "
@@ -98,19 +98,19 @@ msgstr ""
 "Ziffern (sie wird angehängt) oder 14 Ziffern (die gelieferte letzte Ziffer "
 "wird verworfen und neu berechnet):"
 
-#: ../../itf.rst:52
+#: ../../itf.rst
 msgid "Example"
 msgstr "Beispiel"
 
-#: ../../itf.rst:61
+#: ../../itf.rst
 msgid "ITF-14 barcode encoding \"15050070007661\"."
 msgstr "ITF-14-Barcode, der \"15050070007661\" codiert."
 
-#: ../../itf.rst:65
+#: ../../itf.rst
 msgid "Bearer bar"
 msgstr "Trägerbalken"
 
-#: ../../itf.rst:67
+#: ../../itf.rst
 msgid ""
 "ITF-14 is drawn with a full-frame bearer bar -- the heavy border enclosing "
 "the symbol. It reduces the chance of a partial scan being misread as a "
@@ -125,11 +125,11 @@ msgstr ""
 "Schlüssel ``bearer_width`` von :class:`ITFRenderOptions` an (auf ``0`` "
 "setzen, um den Trägerbalken wegzulassen):"
 
-#: ../../itf.rst:80
+#: ../../itf.rst
 msgid "Label"
 msgstr "Beschriftung"
 
-#: ../../itf.rst:82
+#: ../../itf.rst
 msgid ""
 "The human-readable label is rendered by default. To lay out your own "
 "instead, suppress it with ``show_label``:"
@@ -137,11 +137,11 @@ msgstr ""
 "Die Klarschriftzeile wird standardmäßig gerendert. Um stattdessen ein "
 "eigenes Layout zu erstellen, unterdrücken Sie sie mit ``show_label``:"
 
-#: ../../itf.rst:90
+#: ../../itf.rst
 msgid "Interleaved 2 of 5"
 msgstr "Interleaved 2 of 5"
 
-#: ../../itf.rst:92
+#: ../../itf.rst
 msgid ""
 "For a plain Interleaved 2 of 5 symbol -- any even number of digits -- use "
 ":class:`~pystrich.itf.ITFEncoder` directly. It has no bearer bar by default,"
@@ -152,15 +152,15 @@ msgstr ""
 "hat standardmäßig keinen Trägerbalken, akzeptiert aber dieselbe "
 "``bearer_width``-Option."
 
-#: ../../itf.rst:102
+#: ../../itf.rst
 msgid "Interleaved 2 of 5 barcode encoding \"1234567890\"."
 msgstr "Interleaved-2-of-5-Barcode, der \"1234567890\" codiert."
 
-#: ../../itf.rst:106
+#: ../../itf.rst
 msgid "Output formats"
 msgstr "Ausgabeformate"
 
-#: ../../itf.rst:108
+#: ../../itf.rst
 msgid ""
 "Like the other 1D symbologies, ITF-14 renders to SVG "
 "(:meth:`~pystrich.itf.ITF14Encoder.save_svg`), PNG "
@@ -174,23 +174,23 @@ msgstr ""
 "(:meth:`~pystrich.itf.ITF14Encoder.save_eps`). Das Argument ``bar_width`` "
 "legt die Breite des schmalsten Strichs fest."
 
-#: ../../itf.rst:116
+#: ../../itf.rst
 msgid ""
 ":doc:`printing` for guidance on selecting ``bar_width`` for printed output."
 msgstr ""
 ":doc:`printing` für Hinweise zur Wahl von ``bar_width`` bei gedruckter "
 "Ausgabe."
 
-#: ../../itf.rst:119
+#: ../../itf.rst
 msgid "API"
 msgstr "API"
 
-#: of pystrich.itf.ITF14Encoder:1
+#: of pystrich.itf.ITF14Encoder
 msgid "Encode a 13- or 14-digit code as an ITF-14 (GTIN-14) barcode."
 msgstr ""
 "Codiert einen 13- oder 14-stelligen Code als ITF-14-Barcode (GTIN-14)."
 
-#: of pystrich.itf.ITF14Encoder:3
+#: of pystrich.itf.ITF14Encoder
 msgid ""
 "The check digit is computed for you. If a 14-digit code is supplied, its "
 "final digit is discarded and recomputed. The symbol is framed by a bearer "
@@ -201,7 +201,7 @@ msgstr ""
 "einem Trägerbalken umrahmt, sofern ``bearer_width`` nicht in ``options`` "
 "überschrieben wird."
 
-#: of pystrich.itf.ITF14Encoder:7 pystrich.itf.ITFEncoder:3
+#: of pystrich.itf.ITF14Encoder pystrich.itf.ITFEncoder
 msgid "Typical use::"
 msgstr "Typische Verwendung::"
 
@@ -209,15 +209,15 @@ msgstr "Typische Verwendung::"
 msgid "Variables"
 msgstr "Variablen"
 
-#: of pystrich.itf.ITF14Encoder:12
+#: of pystrich.itf.ITF14Encoder
 msgid "The computed mod-10 check digit."
 msgstr "Die berechnete Mod-10-Prüfziffer."
 
-#: of pystrich.itf.ITF14Encoder:13
+#: of pystrich.itf.ITF14Encoder
 msgid "The 14-digit code including check digit (== ``digits``)."
 msgstr "Der 14-stellige Code einschließlich Prüfziffer (== ``digits``)."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_eps:1
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
 msgid "Render the barcode and return EPS markup."
 msgstr "Rendert den Barcode und gibt EPS-Markup zurück."
 
@@ -225,20 +225,20 @@ msgstr "Rendert den Barcode und gibt EPS-Markup zurück."
 msgid "Parameters"
 msgstr "Parameter"
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_eps:3
-#: pystrich.bar_encoder.Bar1DEncoder.save_eps:4
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
 msgid "Width in PostScript points of the narrowest bar."
 msgstr "Breite des schmalsten Strichs in PostScript-Punkten."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_eps:4
-#: pystrich.bar_encoder.Bar1DEncoder.get_imagedata:4
-#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage:4
-#: pystrich.bar_encoder.Bar1DEncoder.get_svg:4
-#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl:4
-#: pystrich.bar_encoder.Bar1DEncoder.save:5
-#: pystrich.bar_encoder.Bar1DEncoder.save_eps:5
-#: pystrich.bar_encoder.Bar1DEncoder.save_svg:5
-#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl:4
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
 msgid ""
 "Bar and text colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. "
 "Defaults to black."
@@ -246,8 +246,8 @@ msgstr ""
 "Strich- und Textfarbe als 3-, 6- oder 8-stelliger Hex-String oder ``RGBA``. "
 "Standard ist Schwarz."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_eps:6
-#: pystrich.bar_encoder.Bar1DEncoder.save_eps:7
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
 msgid ""
 "Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``, opaque. "
 "Defaults to white."
@@ -259,24 +259,24 @@ msgstr ""
 msgid "Return type"
 msgstr "Rückgabetyp"
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata:1
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
 msgid "Render the barcode and return PNG bytes."
 msgstr "Rendert den Barcode und gibt PNG-Bytes zurück."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata:3
-#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage:3
-#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl:3
-#: pystrich.bar_encoder.Bar1DEncoder.save:4
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
 msgid "Width in pixels of the narrowest bar."
 msgstr "Breite des schmalsten Strichs in Pixeln."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata:6
-#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage:6
-#: pystrich.bar_encoder.Bar1DEncoder.get_svg:6
-#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl:6
-#: pystrich.bar_encoder.Bar1DEncoder.save:7
-#: pystrich.bar_encoder.Bar1DEncoder.save_svg:7
-#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl:6
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
 msgid ""
 "Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. Defaults"
 " to white."
@@ -288,75 +288,75 @@ msgstr ""
 msgid "Returns"
 msgstr "Rückgabe"
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata:8
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
 msgid "PNG-encoded image data."
 msgstr "PNG-codierte Bilddaten."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_pilimage:1
+#: of pystrich.bar_encoder.Bar1DEncoder.get_pilimage
 msgid "Render the barcode and return a Pillow image."
 msgstr "Rendert den Barcode und gibt ein Pillow-Bild zurück."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_pilimage:8
+#: of pystrich.bar_encoder.Bar1DEncoder.get_pilimage
 msgid "The rendered barcode."
 msgstr "Der gerenderte Barcode."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_rect_marks:1
+#: of pystrich.bar_encoder.Bar1DEncoder.get_rect_marks
 msgid "Return the barcode's dark bars as rectangles in layout units."
 msgstr ""
 "Gibt die dunklen Striche des Barcodes als Rechtecke in Layout-Einheiten "
 "zurück."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_svg:1
+#: of pystrich.bar_encoder.Bar1DEncoder.get_svg
 msgid "Render the barcode and return SVG markup."
 msgstr "Rendert den Barcode und gibt SVG-Markup zurück."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.get_svg:3
-#: pystrich.bar_encoder.Bar1DEncoder.save_svg:4
-#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl:3
+#: of pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
 msgid "Width in user units of the narrowest bar."
 msgstr "Breite des schmalsten Strichs in Benutzereinheiten."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.png_dataurl:1
+#: of pystrich.bar_encoder.Bar1DEncoder.png_dataurl
 msgid "Render the barcode and return a PNG ``data:`` URL string."
 msgstr "Rendert den Barcode und gibt einen PNG-``data:``-URL-String zurück."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.save:1
+#: of pystrich.bar_encoder.Bar1DEncoder.save
 msgid "Render the barcode to a PNG file."
 msgstr "Rendert den Barcode in eine PNG-Datei."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.save:3
+#: of pystrich.bar_encoder.Bar1DEncoder.save
 msgid "Path to write the PNG to."
 msgstr "Pfad, in den das PNG geschrieben wird."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.save_eps:1
+#: of pystrich.bar_encoder.Bar1DEncoder.save_eps
 msgid "Save the barcode as an EPS file. Pass an ``.eps`` filename."
 msgstr ""
 "Speichert den Barcode als EPS-Datei. Übergeben Sie einen "
 "``.eps``-Dateinamen."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.save_eps:3
+#: of pystrich.bar_encoder.Bar1DEncoder.save_eps
 msgid "EPS output path."
 msgstr "EPS-Ausgabepfad."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.save_svg:1
+#: of pystrich.bar_encoder.Bar1DEncoder.save_svg
 msgid "Save the barcode as an SVG file. Pass a ``.svg`` filename."
 msgstr ""
 "Speichert den Barcode als SVG-Datei. Übergeben Sie einen "
 "``.svg``-Dateinamen."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.save_svg:3
+#: of pystrich.bar_encoder.Bar1DEncoder.save_svg
 msgid "SVG output path."
 msgstr "SVG-Ausgabepfad."
 
-#: of pystrich.bar_encoder.Bar1DEncoder.svg_dataurl:1
+#: of pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
 msgid "Render the barcode and return an SVG ``data:`` URL string."
 msgstr "Rendert den Barcode und gibt einen SVG-``data:``-URL-String zurück."
 
-#: of pystrich.itf.ITF14Encoder.calculate_check_digit:1
+#: of pystrich.itf.ITF14Encoder.calculate_check_digit
 msgid "Compute the GTIN-14 mod-10 check digit for the 13 data digits."
 msgstr "Berechnet die GTIN-14-Mod-10-Prüfziffer für die 13 Datenziffern."
 
-#: of pystrich.itf.ITF14Encoder.calculate_check_digit:3
+#: of pystrich.itf.ITF14Encoder.calculate_check_digit
 msgid ""
 "Working right-to-left, the digits are weighted 3, 1, 3, 1, …; the check "
 "digit brings the weighted sum up to a multiple of 10."
@@ -364,50 +364,50 @@ msgstr ""
 "Von rechts nach links werden die Ziffern mit 3, 1, 3, 1, … gewichtet; die "
 "Prüfziffer bringt die gewichtete Summe auf ein Vielfaches von 10."
 
-#: of pystrich.itf.ITF14Encoder.init_renderer:1
+#: of pystrich.itf.ITF14Encoder.init_renderer
 msgid "Construct an :class:`ITFRenderer`, defaulting the bearer bar on."
 msgstr ""
 "Konstruiert einen :class:`ITFRenderer`, mit standardmäßig aktiviertem "
 "Trägerbalken."
 
-#: of pystrich.itf.ITFEncoder:1
+#: of pystrich.itf.ITFEncoder
 msgid ""
 "Encode an even-length string of digits as an Interleaved 2 of 5 barcode."
 msgstr ""
 "Codiert eine Zeichenkette aus Ziffern gerader Länge als "
 "Interleaved-2-of-5-Barcode."
 
-#: of pystrich.itf.ITFEncoder:8
+#: of pystrich.itf.ITFEncoder
 msgid "The digits being encoded."
 msgstr "Die zu codierenden Ziffern."
 
-#: of pystrich.itf.ITFEncoder:9
+#: of pystrich.itf.ITFEncoder
 msgid "The bar/space pattern as a string of ``\"1\"`` and ``\"0\"``."
 msgstr "Das Strich-/Lücken-Muster als Zeichenkette aus ``\"1\"`` und ``\"0\"``."
 
-#: of pystrich.itf.ITFEncoder:10
+#: of pystrich.itf.ITFEncoder
 msgid "Render-time options dict (empty if none were supplied)."
 msgstr "Options-Dict zur Renderzeit (leer, wenn keine angegeben wurden)."
 
-#: of pystrich.itf.ITFEncoder:11
+#: of pystrich.itf.ITFEncoder
 msgid "Pixel width of the most recently rendered image."
 msgstr "Pixelbreite des zuletzt gerenderten Bildes."
 
-#: of pystrich.itf.ITFEncoder:12
+#: of pystrich.itf.ITFEncoder
 msgid "Pixel height of the most recently rendered image."
 msgstr "Pixelhöhe des zuletzt gerenderten Bildes."
 
-#: of pystrich.itf.ITFEncoder.init_renderer:1
+#: of pystrich.itf.ITFEncoder.init_renderer
 msgid "Construct an :class:`ITFRenderer` for the encoded bars."
 msgstr "Konstruiert einen :class:`ITFRenderer` für die codierten Striche."
 
-#: of pystrich.itf.renderer.ITFRenderOptions:1
+#: of pystrich.itf.renderer.ITFRenderOptions
 msgid "Optional render-time tweaks for Interleaved 2 of 5 / ITF-14 barcodes."
 msgstr ""
 "Optionale Anpassungen zur Renderzeit für "
 "Interleaved-2-of-5-/ITF-14-Barcodes."
 
-#: of pystrich.itf.renderer.ITFRenderOptions:3
+#: of pystrich.itf.renderer.ITFRenderOptions
 msgid ""
 "Extends :class:`pystrich.types.BarcodeRenderOptions`. All keys are optional;"
 " omitted keys fall back to library defaults."
@@ -415,7 +415,7 @@ msgstr ""
 "Erweitert :class:`pystrich.types.BarcodeRenderOptions`. Alle Schlüssel sind "
 "optional; ausgelassene Schlüssel greifen auf die Bibliotheksvorgaben zurück."
 
-#: of pystrich.itf.ITFRenderOptions.bearer_width:1
+#: of pystrich.itf.ITFRenderOptions.bearer_width
 msgid ""
 "Thickness of the bearer bar's rules, in narrow-bar widths. ``0`` draws no "
 "bearer. Defaults to ``0`` for plain Interleaved 2 of 5 and to ``4`` for "

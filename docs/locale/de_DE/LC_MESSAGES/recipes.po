@@ -11,23 +11,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../../recipes.rst:2
+#: ../../recipes.rst
 msgid "Recipes"
 msgstr "Rezepte"
 
-#: ../../recipes.rst:4
+#: ../../recipes.rst
 msgid "Common patterns for using pyStrich in real applications."
 msgstr "Gängige Muster für die Verwendung von pyStrich in realen Anwendungen."
 
-#: ../../recipes.rst:6
+#: ../../recipes.rst
 msgid "For one-off generation from a shell, see :doc:`cli`."
 msgstr "Für einmalige Erzeugung aus einer Shell siehe :doc:`cli`."
 
-#: ../../recipes.rst:9
+#: ../../recipes.rst
 msgid "Serving barcodes from a web request"
 msgstr "Barcodes aus einer Web-Anfrage ausliefern"
 
-#: ../../recipes.rst:11
+#: ../../recipes.rst
 msgid ""
 "Every encoder has a :meth:`get_imagedata` method that returns the PNG as a "
 "``bytes`` object, suitable for streaming straight back to a client without "
@@ -37,11 +37,11 @@ msgstr ""
 "``bytes``-Objekt zurückgibt, geeignet zum direkten Zurückstreamen an einen "
 "Client, ohne das Dateisystem zu berühren."
 
-#: ../../recipes.rst:15
+#: ../../recipes.rst
 msgid "With Flask:"
 msgstr "Mit Flask:"
 
-#: ../../recipes.rst:29
+#: ../../recipes.rst
 msgid ""
 "The same pattern applies to FastAPI, Django, or any other framework -- the "
 "encoder produces raw PNG bytes that can be returned with the ``image/png`` "
@@ -51,11 +51,11 @@ msgstr ""
 "Encoder erzeugt rohe PNG-Bytes, die mit dem Content-Type ``image/png`` "
 "zurückgegeben werden können."
 
-#: ../../recipes.rst:34
+#: ../../recipes.rst
 msgid "Generating barcodes in bulk"
 msgstr "Barcodes in großer Menge erzeugen"
 
-#: ../../recipes.rst:36
+#: ../../recipes.rst
 msgid ""
 "Each encoder constructs a fresh symbol; there is no shared state to reset "
 "between calls. To generate many barcodes, loop over your inputs:"
@@ -64,11 +64,11 @@ msgstr ""
 "Zustand, der zwischen Aufrufen zurückgesetzt werden müsste. Um viele "
 "Barcodes zu erzeugen, iterieren Sie über Ihre Eingaben:"
 
-#: ../../recipes.rst:51
+#: ../../recipes.rst
 msgid "Loading the output into Pillow for further processing"
 msgstr "Die Ausgabe zur Weiterverarbeitung in Pillow laden"
 
-#: ../../recipes.rst:53
+#: ../../recipes.rst
 msgid ""
 "To composite a barcode onto a label template, call :meth:`get_pilimage` to "
 "obtain a :class:`PIL.Image.Image` directly:"
@@ -77,11 +77,11 @@ msgstr ""
 ":meth:`get_pilimage` auf, um direkt ein :class:`PIL.Image.Image` zu "
 "erhalten:"
 
-#: ../../recipes.rst:69
+#: ../../recipes.rst
 msgid "In-memory output"
 msgstr "Ausgabe im Speicher"
 
-#: ../../recipes.rst:71
+#: ../../recipes.rst
 msgid ""
 "Every encoder has both raster and vector in-memory methods. "
 ":meth:`get_imagedata` returns PNG bytes (the in-memory equivalent of "
@@ -93,11 +93,11 @@ msgstr ""
 "Äquivalent von :meth:`save`); :meth:`get_svg` gibt eine SVG-Zeichenkette "
 "zurück (das In-Memory-Äquivalent von :meth:`save_svg`)."
 
-#: ../../recipes.rst:86
+#: ../../recipes.rst
 msgid "Embedding barcodes as data URLs in templates"
 msgstr "Barcodes als Data-URLs in Templates einbetten"
 
-#: ../../recipes.rst:88
+#: ../../recipes.rst
 msgid ""
 "Every encoder has "
 ":meth:`~pystrich.matrix_encoder.Matrix2DEncoder.svg_dataurl` and "
@@ -113,19 +113,19 @@ msgstr ""
 "String zurückgeben. Registrieren Sie einen schlanken Wrapper bei Ihrer "
 "Template-Engine, um Barcodes direkt in das gerenderte HTML einzubetten."
 
-#: ../../recipes.rst:95
+#: ../../recipes.rst
 msgid "Flask / Jinja2"
 msgstr "Flask / Jinja2"
 
-#: ../../recipes.rst:115 ../../recipes.rst:144
+#: ../../recipes.rst
 msgid "Then in a template:"
 msgstr "Dann in einem Template:"
 
-#: ../../recipes.rst:123
+#: ../../recipes.rst
 msgid "Django"
 msgstr "Django"
 
-#: ../../recipes.rst:125
+#: ../../recipes.rst
 msgid ""
 "Define the filter inside a templatetags module at "
 "``<app>/templatetags/pystrich_filters.py`` (with an ``__init__.py`` in "
@@ -135,11 +135,11 @@ msgstr ""
 "``<app>/templatetags/pystrich_filters.py`` (mit einer ``__init__.py`` in "
 "``templatetags/``, damit Django ihn erkennt):"
 
-#: ../../recipes.rst:153
+#: ../../recipes.rst
 msgid "Encoding a contact card"
 msgstr "Eine Kontaktkarte codieren"
 
-#: ../../recipes.rst:155
+#: ../../recipes.rst
 msgid ""
 "A QR code holding a vCard lets a phone offer to save the contact. vCard is "
 "plain text -- build it directly, using ``CRLF`` line endings:"
@@ -148,11 +148,11 @@ msgstr ""
 "Kontakts anzubieten. vCard ist reiner Text -- bauen Sie ihn direkt auf, mit "
 "``CRLF``-Zeilenenden:"
 
-#: ../../recipes.rst:171
+#: ../../recipes.rst
 msgid "QR code holding a vCard contact for Red"
 msgstr "QR-Code mit einem vCard-Kontakt für Red"
 
-#: ../../recipes.rst:176
+#: ../../recipes.rst
 msgid ""
 "To avoid building the vCard by hand, generate it with `vobject <https://py-"
 "vobject.github.io/>`_."
@@ -160,11 +160,11 @@ msgstr ""
 "Um die vCard nicht von Hand zu bauen, erzeugen Sie sie mit `vobject "
 "<https://py-vobject.github.io/>`_."
 
-#: ../../recipes.rst:180
+#: ../../recipes.rst
 msgid "Encoding a location"
 msgstr "Einen Standort codieren"
 
-#: ../../recipes.rst:182
+#: ../../recipes.rst
 msgid ""
 "The ``geo:`` URI scheme (:rfc:`5870`) carries a latitude/longitude pair that"
 " scanners open in a maps app:"
@@ -172,6 +172,6 @@ msgstr ""
 "Das ``geo:``-URI-Schema (:rfc:`5870`) trägt ein Breiten-/Längengrad-Paar, "
 "das Scanner in einer Karten-App öffnen:"
 
-#: ../../recipes.rst:191
+#: ../../recipes.rst
 msgid "QR code holding geo coordinates"
 msgstr "QR-Code mit Geokoordinaten"
