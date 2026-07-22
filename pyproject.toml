@@ -37,7 +37,7 @@ dependencies = [
     # extra. It stays a hard dependency until a future release, when these two
     # lines are removed to make it opt-in.
     "pillow>=10.3; python_version < '3.11'",
-    "pillow>=12.2; python_version >= '3.11'",
+    "pillow>=12.3.0; python_version >= '3.11'",
     "typing-extensions>=4.15.0",
 ]
 
@@ -45,7 +45,7 @@ dependencies = [
 # PNG output requires Pillow; SVG, EPS, DXF and terminal output do not.
 png = [
     "pillow>=10.3; python_version < '3.11'",
-    "pillow>=12.2; python_version >= '3.11'",
+    "pillow>=12.3.0; python_version >= '3.11'",
 ]
 
 [project.urls]
@@ -68,7 +68,7 @@ dev = [
     # Tests need Pillow for the png-marked cases; kept here so they still run
     # once Pillow leaves the core dependencies.
     "pillow>=10.3; python_version < '3.11'",
-    "pillow>=12.2; python_version >= '3.11'",
+    "pillow>=12.3.0; python_version >= '3.11'",
     "pre-commit>=4.6.0",
 ]
 docs = [
