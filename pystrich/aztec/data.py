@@ -21,3 +21,6 @@ class AztecData(EncodableData):
     """
 
     __slots__ = ()
+
+    # The full 32-layer symbol at minimum ECC holds at most 4729 numeric digits.
+    _MAX_PAYLOAD_LENGTH = 4729

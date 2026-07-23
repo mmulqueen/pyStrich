@@ -8,8 +8,15 @@ from typing import ClassVar, Generic, Literal, TypeGuard, cast, get_args, get_or
 from typing_extensions import Never, TypeVar
 
 from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
+from pystrich.limits import check_input_length
 
 T = TypeVar("T")
+
+
+def _payload_length(segments: Iterable[str | object]) -> int:
+    """Character count of ``segments``; each non-str marker counts as one."""
+    return sum(len(s) if isinstance(s, str) else 1 for s in segments)
+
 
 Charset = Literal["ascii", "iso-8859-1", "utf-8"]
 
@@ -107,6 +114,10 @@ class EncodableData(Generic[EncT, MarkerT]):
     _SUPPORTED_ENCODINGS: ClassVar[tuple[str, ...]] = ()
     _MARKER_TYPES: ClassVar[tuple[type, ...]] = ()
 
+    # Longest payload the format can ever encode, in characters; ``None`` falls
+    # back to the global ceiling. Subclasses set their true single-symbol maximum.
+    _MAX_PAYLOAD_LENGTH: ClassVar[int | None] = None
+
     segments: tuple[str | MarkerT, ...]
     encoding: EncT
     auto_encoding: bool
@@ -137,6 +148,10 @@ class EncodableData(Generic[EncT, MarkerT]):
         encoding: EncT | None = None,
         auto_encoding: bool = False,
     ) -> None:
+        # Enforced here, before the O(total-chars) charset scan below, so the
+        # cap covers every ``*Data`` the way in -- direct construction, ``.gs1()``,
+        # concatenation -- not just the encoder entry points.
+        check_input_length(_payload_length(segments), self._MAX_PAYLOAD_LENGTH)
         if auto_encoding:
             max_cp = find_max_codepoint(segments, ignore_types=self._MARKER_TYPES)
             chosen = cast(EncT, pick_default_encoding(max_cp))
@@ -226,6 +241,10 @@ class EncodableData(Generic[EncT, MarkerT]):
             encoding=self.encoding,
             auto_encoding=self.auto_encoding,
         )
+
+    def __len__(self) -> int:
+        """Payload length: text characters plus one per marker token."""
+        return _payload_length(self.segments)
 
     def __eq__(self, other):
         if type(self) is not type(other):

@@ -21,6 +21,7 @@ from pystrich._vector_text import fit_labels
 from pystrich.colour import RGBA, resolve_pil_palette
 from pystrich.eps import bars_to_eps
 from pystrich.fonts import get_font
+from pystrich.limits import check_cell_size, check_image_pixels
 from pystrich.marks import BarLayout, SymbolMarks, iter_barcode_marks
 from pystrich.svg import bars_to_svg
 
@@ -62,11 +63,15 @@ class Bar1DRenderer(ABC):
         light_hex: str | RGBA | None = None,
     ) -> PILImage:
         """Render the symbol as a PIL image."""
+        check_cell_size(bar_width, name="bar width")
+
+        layout = self._layout(bar_width)
+        check_image_pixels(layout.width, layout.height, name="bar width")
+
         from pystrich._pillow import Image, ImageDraw, ImageFont
 
         mode, dark_fill, light_fill = resolve_pil_palette(dark_hex, light_hex)
 
-        layout = self._layout(bar_width)
         self.image_width = layout.width
         self.image_height = layout.height
 

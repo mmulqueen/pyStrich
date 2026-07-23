@@ -23,6 +23,24 @@ class PyStrichInvalidInput(PyStrichError):
     """
 
 
+class PyStrichInvalidCheckDigit(PyStrichInvalidInput):
+    """A supplied check digit is missing or does not match the computed one.
+
+    Raised by the check-digit formats (EAN-13, ITF-14) when
+    ``require_valid_check_digit`` is set.
+
+    .. versionadded:: 0.19
+    """
+
+
+class PyStrichInvalidPayloadLength(PyStrichInvalidInput):
+    """The payload is too long to encode: it exceeds the chosen format's
+    capacity or the pyStrich input-length ceiling.
+
+    .. versionadded:: 0.19
+    """
+
+
 class PyStrichInvalidOption(PyStrichError):
     """An encoder option (configuration argument) is invalid.
 

@@ -13,7 +13,7 @@ from __future__ import annotations
 import os
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from pystrich._dataurl import png_to_data_url, svg_to_data_url
 
@@ -30,6 +30,10 @@ class Bar1DEncoder(ABC):
     options: Mapping[str, Any]
     width: int
     height: int
+
+    # Longest input the format accepts, in characters; ``None`` falls back to the
+    # global ceiling. Fixed-length formats set their maximum.
+    _MAX_PAYLOAD_LENGTH: ClassVar[int | None] = None
 
     def __init__(self, options: Mapping[str, Any] | None = None) -> None:
         self.options = options or {}

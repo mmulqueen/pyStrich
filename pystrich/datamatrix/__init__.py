@@ -115,8 +115,8 @@ class DataMatrixEncoder(Matrix2DEncoder[int | None]):
         :param symbol_shape: ``"square"`` (the default) forces a square symbol;
             ``"rectangular"`` forces one of the six rectangular sizes;
             ``"auto"`` picks whichever fitting symbol has the smallest area.
-        :raises pystrich.exceptions.PyStrichInvalidInput: if ``text`` cannot
-            be encoded (e.g. exceeds the supported capacity).
+        :raises pystrich.exceptions.PyStrichInvalidPayloadLength: if ``text``
+            exceeds the capacity of the largest symbol.
         :raises pystrich.exceptions.PyStrichInvalidOption: if ``symbol_shape``
             is not one of the accepted values.
 

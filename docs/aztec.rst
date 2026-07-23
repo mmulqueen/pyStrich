@@ -184,7 +184,7 @@ count.
 Pinning ``layers`` requires an explicit ``symbol_kind``; the encoder
 raises :class:`~pystrich.exceptions.PyStrichInvalidOption` otherwise. If
 the payload does not fit at the requested size, it raises
-:class:`~pystrich.exceptions.PyStrichInvalidInput`.
+:class:`~pystrich.exceptions.PyStrichInvalidPayloadLength`.
 
 Error correction
 ----------------

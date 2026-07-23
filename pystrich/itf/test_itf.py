@@ -2,7 +2,12 @@
 
 import pytest
 
-from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
+from pystrich.exceptions import (
+    PyStrichInvalidCheckDigit,
+    PyStrichInvalidInput,
+    PyStrichInvalidOption,
+    PyStrichInvalidPayloadLength,
+)
 from pystrich.itf import ITF14Encoder, ITFEncoder
 from pystrich.itf.encoding import encode_digits
 
@@ -28,10 +33,15 @@ def test_14_digit_input_recomputes_check_digit():
     assert ITF14Encoder("15401414536980").full_code == "15401414536987"
 
 
-@pytest.mark.parametrize("code", ["154014145369", "154014145369812", "154014145369A"])
+@pytest.mark.parametrize("code", ["154014145369", "154014145369A"])
 def test_itf14_rejects_bad_input(code):
-    with pytest.raises(PyStrichInvalidInput, match="13 or 14 digits"):
+    with pytest.raises(PyStrichInvalidPayloadLength, match="13 or 14 digits"):
         ITF14Encoder(code)
+
+
+def test_itf14_rejects_over_length():
+    with pytest.raises(PyStrichInvalidPayloadLength):
+        ITF14Encoder("154014145369812")  # 15 digits, over the 14-character cap
 
 
 @pytest.mark.parametrize("digits", ["12345", "12345A", ""])
@@ -129,3 +139,17 @@ def test_general_itf_round_trip(tmp_path, decode_barcode):
     img = tmp_path / "itf.png"
     ITFEncoder("1234567890").save(str(img))
     assert decode_barcode(img) == "1234567890"
+
+
+def test_itf14_require_valid_check_digit_accepts_correct():
+    ITF14Encoder("15401414536987", require_valid_check_digit=True)
+
+
+def test_itf14_require_valid_check_digit_rejects_missing():
+    with pytest.raises(PyStrichInvalidCheckDigit):
+        ITF14Encoder("1540141453698", require_valid_check_digit=True)
+
+
+def test_itf14_require_valid_check_digit_rejects_wrong():
+    with pytest.raises(PyStrichInvalidCheckDigit):
+        ITF14Encoder("15401414536980", require_valid_check_digit=True)

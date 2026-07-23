@@ -19,7 +19,8 @@ from __future__ import annotations
 from functools import reduce
 
 from pystrich.bar_encoder import Bar1DEncoder
-from pystrich.exceptions import PyStrichInvalidInput
+from pystrich.exceptions import PyStrichInvalidCheckDigit, PyStrichInvalidPayloadLength
+from pystrich.limits import check_input_length
 
 from . import encoding
 from .renderer import EAN13Renderer, EAN13RenderOptions
@@ -48,6 +49,9 @@ class EAN13Encoder(Bar1DEncoder):
     :ivar height: Pixel height of the most recently rendered image.
     """
 
+    # A 12-digit code plus its optional check digit.
+    _MAX_PAYLOAD_LENGTH = 13
+
     options: EAN13RenderOptions
     code: str
     check_digit: int
@@ -59,6 +63,8 @@ class EAN13Encoder(Bar1DEncoder):
         self,
         code: str,
         options: EAN13RenderOptions | None = None,
+        *,
+        require_valid_check_digit: bool = False,
     ) -> None:
         """Validate ``code`` and compute its check digit.
 
@@ -68,19 +74,37 @@ class EAN13Encoder(Bar1DEncoder):
             its final digit is treated as a check digit and recomputed.
         :param options: Optional dict tweaking the rendered output. See
             :class:`pystrich.ean13.EAN13RenderOptions` for accepted keys.
-        :raises pystrich.exceptions.PyStrichInvalidInput: if ``code`` is not
-            exactly 12 (or 13) digits.
+        :param require_valid_check_digit: If ``True``, a check digit must be
+            supplied (a 13-digit ``code``) and must match the computed one.
+        :raises pystrich.exceptions.PyStrichInvalidPayloadLength: if ``code`` is
+            not exactly 12 (or 13) digits.
+        :raises pystrich.exceptions.PyStrichInvalidCheckDigit: if
+            ``require_valid_check_digit`` is set and the supplied check digit is
+            missing or wrong.
         """
+        check_input_length(len(code), self._MAX_PAYLOAD_LENGTH)
         super().__init__(options)
 
         # Normalise to 12 digits: a 13-digit input has its trailing check
         # digit dropped (we recompute it below).
+        supplied_check_digit = code[-1] if len(code) == 13 else None
         if len(code) == 13:
             code = code[:-1]
         if not (code.isdigit() and len(code) == 12):
-            raise PyStrichInvalidInput("code must be 12 or 13 digits long")
+            raise PyStrichInvalidPayloadLength("code must be 12 or 13 digits long")
         self.code = code
         self.check_digit = self.calculate_check_digit()
+        if require_valid_check_digit:
+            if supplied_check_digit is None:
+                raise PyStrichInvalidCheckDigit(
+                    "require_valid_check_digit is set but no check digit was supplied; "
+                    "pass all 13 digits including the check digit"
+                )
+            if supplied_check_digit != str(self.check_digit):
+                raise PyStrichInvalidCheckDigit(
+                    f"supplied check digit {supplied_check_digit} is incorrect; "
+                    f"expected {self.check_digit}"
+                )
         self.full_code = self.code + str(self.check_digit)
         self.left_bars = ""
         self.right_bars = ""

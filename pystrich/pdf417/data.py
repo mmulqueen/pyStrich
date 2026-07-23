@@ -21,3 +21,6 @@ class PDF417Data(EncodableData):
     """
 
     __slots__ = ()
+
+    # The largest symbol at minimum error correction holds at most 2710 numeric digits.
+    _MAX_PAYLOAD_LENGTH = 2710

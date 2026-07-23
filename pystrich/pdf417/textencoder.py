@@ -23,7 +23,7 @@ the linear codeword stream that a later stage lays out on the bar grid.
 
 from __future__ import annotations
 
-from pystrich.exceptions import PyStrichInvalidInput
+from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidPayloadLength
 from pystrich.reedsolomon import reed_solomon_encode_pdf417
 
 from .data import PDF417Data, PDF417Encoding
@@ -283,7 +283,7 @@ def _pick_rows(source_count: int, ecl: int, columns: int) -> int:
     required = source_count + 1 + k
     rows = max(3, -(-required // columns))
     if rows > _max_rows(columns):
-        raise PyStrichInvalidInput(
+        raise PyStrichInvalidPayloadLength(
             f"PDF417 data does not fit at columns={columns}: needs {rows} rows "
             f"(max {_max_rows(columns)}; a symbol holds at most 928 codewords)"
         )
@@ -359,8 +359,8 @@ def encode(text: PDF417Data | str, ecl: int, *, columns: int | None = None) -> l
     :param columns: Number of data columns (1..30). When omitted, the
         smallest scanner-friendly layout is chosen.
     :returns: The full codeword stream. Length equals ``columns * rows``.
-    :raises pystrich.exceptions.PyStrichInvalidInput: when the data does not
-        fit at the chosen ``columns``/``ecl``.
+    :raises pystrich.exceptions.PyStrichInvalidPayloadLength: when the data does
+        not fit at the chosen ``columns``/``ecl``.
     """
     source = _compact(text)
     rows, columns = pick_dimensions(len(source), ecl, columns)

@@ -167,7 +167,7 @@ size -- pin ``columns`` and let pyStrich choose the row count:
 
 Increasing ``columns`` makes the symbol wider and shorter; decreasing it
 narrower and taller. The encoder raises
-:class:`~pystrich.exceptions.PyStrichInvalidInput` if the data does not
+:class:`~pystrich.exceptions.PyStrichInvalidPayloadLength` if the data does not
 fit at the chosen column count.
 
 Error correction level

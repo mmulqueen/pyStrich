@@ -34,7 +34,7 @@ Pass either 13 digits (the check digit is computed and appended) or 14 digits
    simply invent one.
 
 Input must be exactly 13 or 14 digits, ASCII ``0``-``9``. Anything else raises
-:class:`~pystrich.exceptions.PyStrichInvalidInput`. The 14-digit human-readable
+:class:`~pystrich.exceptions.PyStrichInvalidPayloadLength`. The 14-digit human-readable
 label below the bars is rendered by default (see :ref:`itf-label` to suppress it).
 
 The check digit is always computed by pyStrich; pass either 13 digits (it is

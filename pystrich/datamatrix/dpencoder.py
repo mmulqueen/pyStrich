@@ -17,7 +17,7 @@ from collections.abc import Callable
 from itertools import groupby
 from operator import itemgetter
 
-from pystrich.exceptions import PyStrichInvalidInput
+from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidPayloadLength
 
 from .modes import (
     ALL_MODES,
@@ -256,7 +256,7 @@ class _HighLevelEncoder:
                     best_cost = total
                     best_state = (m, self.n, phase)
         if best_state is None:
-            raise PyStrichInvalidInput("could not encode payload")
+            raise PyStrichInvalidPayloadLength("could not encode payload")
 
         chain: list[tuple[int, int, int]] = []
         cur: tuple[int, int, int] | None = best_state

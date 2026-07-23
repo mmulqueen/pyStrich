@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, ClassVar, Generic, TypeVar
 from pystrich.colour import RGBA, Fill, resolve_pil_palette
 from pystrich.dxf import DxfUnit, matrix_to_dxf
 from pystrich.eps import matrix_to_eps
+from pystrich.limits import check_cell_size, check_image_pixels
 from pystrich.marks import MarkShape, SymbolMarks, iter_marks
 from pystrich.svg import matrix_to_svg
 
@@ -69,6 +70,9 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         light_hex: str | RGBA | None = None,
     ) -> PILImage:
         """Return the matrix as a PIL image."""
+        check_cell_size(cellsize, name="cell size")
+        check_image_pixels(self.width * cellsize, self.height * cellsize, cellsize=cellsize)
+
         from pystrich._pillow import Image
 
         mode, dark_fill, light_fill = resolve_pil_palette(dark_hex, light_hex)

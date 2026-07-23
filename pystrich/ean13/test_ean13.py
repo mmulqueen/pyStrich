@@ -6,6 +6,7 @@ from pathlib import Path
 import pytest
 
 from pystrich.ean13 import EAN13Encoder
+from pystrich.exceptions import PyStrichInvalidCheckDigit, PyStrichInvalidPayloadLength
 
 TEST_IMG_DIR = Path(__file__).parent / "test_img"
 
@@ -154,3 +155,33 @@ def test_eps_round_trip(string, decoded, bar_width, tmp_path, eps_to_png, decode
     EAN13Encoder(string).save_eps(str(eps), bar_width)
     eps_to_png(eps, png)
     assert decode_barcode(png) == decoded
+
+
+def test_require_valid_check_digit_accepts_correct():
+    valid = str(EAN13Encoder("012345678901").check_digit)
+    EAN13Encoder("012345678901" + valid, require_valid_check_digit=True)
+
+
+def test_require_valid_check_digit_rejects_missing():
+    with pytest.raises(PyStrichInvalidCheckDigit):
+        EAN13Encoder("012345678901", require_valid_check_digit=True)
+
+
+def test_require_valid_check_digit_rejects_wrong():
+    with pytest.raises(PyStrichInvalidCheckDigit):
+        EAN13Encoder("0123456789019", require_valid_check_digit=True)
+
+
+def test_default_recomputes_check_digit_silently():
+    assert EAN13Encoder("0123456789019").full_code == "0123456789012"
+
+
+def test_rejects_over_length():
+    with pytest.raises(PyStrichInvalidPayloadLength):
+        EAN13Encoder("0" * 14)
+
+
+@pytest.mark.parametrize("code", ["123", "12345678901A"])
+def test_rejects_wrong_length_or_non_digit(code):
+    with pytest.raises(PyStrichInvalidPayloadLength, match="12 or 13 digits"):
+        EAN13Encoder(code)

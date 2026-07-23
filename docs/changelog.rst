@@ -1,6 +1,22 @@
 Changelog
 =========
 
+.. _v0-19:
+
+0.19 — unreleased
+-----------------
+
+- All encoders: harden against untrusted input by constraining input and output
+  sizes — over-long payloads and over-large raster renders are now rejected
+  before any allocation rather than exhausting memory or CPU.
+- EAN-13 and ITF-14: new ``require_valid_check_digit`` option rejects a supplied
+  check digit that is missing or incorrect instead of silently recomputing it.
+- New exception subclasses
+  :class:`~pystrich.exceptions.PyStrichInvalidPayloadLength` and
+  :class:`~pystrich.exceptions.PyStrichInvalidCheckDigit` (both
+  :class:`~pystrich.exceptions.PyStrichInvalidInput`) give over-capacity input
+  and check-digit failures a distinct type.
+
 .. _v0-18:
 
 0.18 — 2026-07-20

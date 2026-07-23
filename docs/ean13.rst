@@ -30,7 +30,7 @@ recomputed).
    ``5050070007664``, is the GTIN of a real product (a DVD of *Road House*).
 
 Input must be exactly 12 or 13 digits, ASCII ``0``-``9``. Anything else
-raises :class:`~pystrich.exceptions.PyStrichInvalidInput`. The human-readable
+raises :class:`~pystrich.exceptions.PyStrichInvalidPayloadLength`. The human-readable
 label below the bars is mandated by the EAN-13 specification and always
 rendered; the only customisation hook is the cosmetic
 :class:`EAN13RenderOptions` dict (see :ref:`ean13-sizing` below).

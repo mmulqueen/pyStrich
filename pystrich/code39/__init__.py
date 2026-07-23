@@ -13,6 +13,7 @@ from __future__ import annotations
 import logging
 
 from pystrich.bar_encoder import Bar1DEncoder
+from pystrich.limits import check_input_length
 from pystrich.types import BarcodeRenderOptions
 
 from .renderer import Code39Renderer
@@ -72,6 +73,7 @@ class Code39Encoder(Bar1DEncoder):
             * ``bottom_border`` -- pixels of space between label and the
               bottom edge.
         """
+        check_input_length(len(text), self._MAX_PAYLOAD_LENGTH)
         super().__init__(options)
         self.text = text
         encoder = TextEncoder()

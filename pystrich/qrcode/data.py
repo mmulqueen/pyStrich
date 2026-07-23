@@ -29,6 +29,9 @@ class QRCodeData(EncodableData[QRCodeEncoding]):
 
     __slots__ = ()
 
+    # QR version 40 holds at most 7089 numeric digits (its densest mode).
+    _MAX_PAYLOAD_LENGTH = 7089
+
     @classmethod
     def wifi_network(
         cls,

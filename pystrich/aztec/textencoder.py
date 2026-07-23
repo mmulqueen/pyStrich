@@ -30,7 +30,7 @@ from pystrich.aztec.symbol import (
     total_codewords,
 )
 from pystrich.charset import Charset
-from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidOption
+from pystrich.exceptions import PyStrichInvalidOption, PyStrichInvalidPayloadLength
 from pystrich.reedsolomon import (
     BinaryExtensionGaloisField,
     GF64_0x43,
@@ -136,7 +136,7 @@ class TextEncoder:
     ) -> tuple[SymbolKind, int, list[int], int]:
         """Pick the smallest symbol that holds the bit-stuffed payload plus EC."""
         candidates = _candidate_sizes(kind_pref, layers_override)
-        last_err: PyStrichInvalidInput | None = None
+        last_err: PyStrichInvalidPayloadLength | None = None
         # ``to_codewords`` depends only on the codeword width, of which there are
         # four; candidates sharing a width chunk to the same codewords.
         codewords_by_width: dict[int, list[int]] = {}
@@ -153,11 +153,13 @@ class TextEncoder:
                 # Fill all spare capacity with extra EC codewords.
                 num_ec = total - len(codewords)
                 return kind, n_layers, codewords, num_ec
-            last_err = PyStrichInvalidInput(
+            last_err = PyStrichInvalidPayloadLength(
                 f"payload exceeds capacity of {kind} L{n_layers} "
                 f"(needs {len(codewords)} data codewords, symbol holds "
                 f"{max(0, max_data)} at ecc={ecc_pct}%)"
             )
         if last_err is not None and layers_override is not None:
             raise last_err
-        raise PyStrichInvalidInput(f"payload too large for any Aztec symbol at ecc={ecc_pct}%")
+        raise PyStrichInvalidPayloadLength(
+            f"payload too large for any Aztec symbol at ecc={ecc_pct}%"
+        )

@@ -141,6 +141,9 @@ class DataMatrixData(EncodableData[DataMatrixEncoding, DataMatrixCodeword]):
 
     __slots__ = ()
 
+    # The largest symbol (144x144) holds at most 3116 numeric digits.
+    _MAX_PAYLOAD_LENGTH = 3116
+
     encoding: DataMatrixEncoding
 
     def __init__(

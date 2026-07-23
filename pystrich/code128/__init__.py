@@ -20,6 +20,7 @@ from __future__ import annotations
 import logging
 
 from pystrich.bar_encoder import Bar1DEncoder
+from pystrich.limits import check_input_length
 from pystrich.types import BarcodeRenderOptions
 
 from .data import FNC1, FNC2, FNC3, Code128Data, Code128Marker, fnc_marker_bytes_compat
@@ -96,6 +97,7 @@ class Code128Encoder(Bar1DEncoder):
             * ``bottom_border`` -- pixels of space between label and the
               bottom edge.
         """
+        check_input_length(len(text), self._MAX_PAYLOAD_LENGTH)
         super().__init__(options)
         if isinstance(text, str):
             text = fnc_marker_bytes_compat(text)

@@ -33,7 +33,7 @@ from pystrich.aztec.modes import (
     U,
 )
 from pystrich.bitstream import BitStream
-from pystrich.exceptions import PyStrichInvalidInput
+from pystrich.exceptions import PyStrichInvalidInput, PyStrichInvalidPayloadLength
 
 _INF = 10**18
 _MAX_BYTE_RUN = 2047
@@ -258,7 +258,7 @@ class _HighLevelEncoder:
                 end_cost = c
                 end_mode = mode
         if end_cost == _INF:
-            raise PyStrichInvalidInput("could not encode payload")
+            raise PyStrichInvalidPayloadLength("could not encode payload")
 
         emissions: list[Emission] = []
         state: State | None = (end_mode, self.n)

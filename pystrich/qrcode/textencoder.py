@@ -5,7 +5,7 @@ from __future__ import annotations
 import itertools
 import logging
 
-from pystrich.exceptions import PyStrichInvalidInput
+from pystrich.exceptions import PyStrichInvalidPayloadLength
 from pystrich.reedsolomon import GF256_0x11D, reed_solomon_encode
 
 from . import isodata
@@ -102,7 +102,7 @@ class TextEncoder:
         else:
             if (bits_at_40 := bits_by_bracket.get(2)) is None:
                 bits_at_40 = encode_high_level(encoded, version_bracket=2, eci=eci)
-            raise PyStrichInvalidInput(
+            raise PyStrichInvalidPayloadLength(
                 f"payload needs {len(bits_at_40)} bits at version 40; "
                 f"no QR symbol at ECL {self.ecl} holds this"
             )

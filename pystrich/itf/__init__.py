@@ -11,7 +11,12 @@ mod-10 check digit) printed inside a bearer bar.
 from __future__ import annotations
 
 from pystrich.bar_encoder import Bar1DEncoder
-from pystrich.exceptions import PyStrichInvalidInput
+from pystrich.exceptions import (
+    PyStrichInvalidCheckDigit,
+    PyStrichInvalidInput,
+    PyStrichInvalidPayloadLength,
+)
+from pystrich.limits import check_input_length
 
 from . import encoding
 from .renderer import ITFRenderer, ITFRenderOptions
@@ -53,6 +58,7 @@ class ITFEncoder(Bar1DEncoder):
         :raises pystrich.exceptions.PyStrichInvalidInput: if ``digits`` is not
             an even-length run of digits.
         """
+        check_input_length(len(digits), self._MAX_PAYLOAD_LENGTH)
         super().__init__(options)
         if not digits.isdigit() or len(digits) % 2 != 0 or len(digits) == 0:
             raise PyStrichInvalidInput("digits must be a non-empty even-length run of digits")
@@ -80,6 +86,9 @@ class ITF14Encoder(ITFEncoder):
     :ivar full_code: The 14-digit code including check digit (== ``digits``).
     """
 
+    # A 13-digit GTIN-14 body plus its optional check digit.
+    _MAX_PAYLOAD_LENGTH = 14
+
     check_digit: int
     full_code: str
 
@@ -87,6 +96,8 @@ class ITF14Encoder(ITFEncoder):
         self,
         code: str,
         options: ITFRenderOptions | None = None,
+        *,
+        require_valid_check_digit: bool = False,
     ) -> None:
         """Validate ``code`` and compute its check digit.
 
@@ -95,16 +106,35 @@ class ITF14Encoder(ITFEncoder):
             treated as a check digit and recomputed.
         :param options: Optional dict tweaking the rendered output. See
             :class:`pystrich.itf.ITFRenderOptions` for accepted keys.
-        :raises pystrich.exceptions.PyStrichInvalidInput: if ``code`` is not
-            exactly 13 (or 14) digits.
+        :param require_valid_check_digit: If ``True``, a check digit must be
+            supplied (a 14-digit ``code``) and must match the computed one.
+        :raises pystrich.exceptions.PyStrichInvalidPayloadLength: if ``code`` is
+            not exactly 13 (or 14) digits.
+        :raises pystrich.exceptions.PyStrichInvalidCheckDigit: if
+            ``require_valid_check_digit`` is set and the supplied check digit is
+            missing or wrong.
         """
+        # ITF-14 hands ``full_code`` to super(), so guard the raw input here.
+        check_input_length(len(code), self._MAX_PAYLOAD_LENGTH)
         # Normalise to 13 data digits: a 14-digit input has its trailing check
         # digit dropped (we recompute it below).
+        supplied_check_digit = code[-1] if len(code) == 14 else None
         if len(code) == 14:
             code = code[:-1]
         if not (code.isdigit() and len(code) == 13):
-            raise PyStrichInvalidInput("code must be 13 or 14 digits long")
+            raise PyStrichInvalidPayloadLength("code must be 13 or 14 digits long")
         self.check_digit = self.calculate_check_digit(code)
+        if require_valid_check_digit:
+            if supplied_check_digit is None:
+                raise PyStrichInvalidCheckDigit(
+                    "require_valid_check_digit is set but no check digit was supplied; "
+                    "pass all 14 digits including the check digit"
+                )
+            if supplied_check_digit != str(self.check_digit):
+                raise PyStrichInvalidCheckDigit(
+                    f"supplied check digit {supplied_check_digit} is incorrect; "
+                    f"expected {self.check_digit}"
+                )
         self.full_code = code + str(self.check_digit)
         super().__init__(self.full_code, options)
 
