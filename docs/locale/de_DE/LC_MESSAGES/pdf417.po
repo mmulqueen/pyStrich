@@ -269,18 +269,6 @@ msgstr ""
 "Zeilenanzahl wählen:"
 
 #: ../../pdf417.rst
-msgid ""
-"Increasing ``columns`` makes the symbol wider and shorter; decreasing it "
-"narrower and taller. The encoder raises "
-":class:`~pystrich.exceptions.PyStrichInvalidInput` if the data does not fit "
-"at the chosen column count."
-msgstr ""
-"Ein Erhöhen von ``columns`` macht das Symbol breiter und niedriger; ein "
-"Verringern schmaler und höher. Der Encoder löst "
-":class:`~pystrich.exceptions.PyStrichInvalidInput` aus, wenn die Daten bei "
-"der gewählten Spaltenanzahl nicht passen."
-
-#: ../../pdf417.rst
 msgid "Error correction level"
 msgstr "Fehlerkorrekturstufe"
 
@@ -841,3 +829,15 @@ msgstr ""
 "Löst :class:`_HasMarkers` aus, wenn ein Segment ein Roh-Marker statt einer "
 "Zeichenkette ist. Für Unterklassen ohne Marker (``MarkerT == Never``) ist "
 "die Prüfung ein No-op."
+
+#: ../../pdf417.rst
+msgid ""
+"Increasing ``columns`` makes the symbol wider and shorter; decreasing it "
+"narrower and taller. The encoder raises "
+":class:`~pystrich.exceptions.PyStrichInvalidPayloadLength` if the data does "
+"not fit at the chosen column count."
+msgstr ""
+"Ein Erhöhen von ``columns`` macht das Symbol breiter und niedriger; ein "
+"Verringern schmaler und höher. Der Encoder löst "
+":class:`~pystrich.exceptions.PyStrichInvalidPayloadLength` aus, wenn die "
+"Daten bei der gewählten Spaltenanzahl nicht passen."

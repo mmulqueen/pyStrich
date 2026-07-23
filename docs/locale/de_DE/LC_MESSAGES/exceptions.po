@@ -96,3 +96,25 @@ msgid ""
 msgstr ""
 "DataMatrix-Eingabe enthält Nicht-ASCII-Zeichen; die Ausgabe lässt sich nicht"
 " korrekt decodieren."
+
+#: of pystrich.exceptions.PyStrichInvalidCheckDigit
+msgid "A supplied check digit is missing or does not match the computed one."
+msgstr ""
+"Eine übergebene Prüfziffer fehlt oder stimmt nicht mit der berechneten "
+"überein."
+
+#: of pystrich.exceptions.PyStrichInvalidCheckDigit
+msgid ""
+"Raised by the check-digit formats (EAN-13, ITF-14) when "
+"``require_valid_check_digit`` is set."
+msgstr ""
+"Wird von den Prüfziffer-Formaten (EAN-13, ITF-14) ausgelöst, wenn "
+"``require_valid_check_digit`` gesetzt ist."
+
+#: of pystrich.exceptions.PyStrichInvalidPayloadLength
+msgid ""
+"The payload is too long to encode: it exceeds the chosen format's capacity "
+"or the pyStrich input-length ceiling."
+msgstr ""
+"Die Nutzdaten sind zu lang zum Codieren: Sie überschreiten die Kapazität des"
+" gewählten Formats oder die Eingabelängen-Obergrenze von pyStrich."

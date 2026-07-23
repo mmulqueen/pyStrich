@@ -272,19 +272,6 @@ msgstr ""
 "bevorzugt."
 
 #: ../../aztec.rst
-msgid ""
-"Pinning ``layers`` requires an explicit ``symbol_kind``; the encoder raises "
-":class:`~pystrich.exceptions.PyStrichInvalidOption` otherwise. If the "
-"payload does not fit at the requested size, it raises "
-":class:`~pystrich.exceptions.PyStrichInvalidInput`."
-msgstr ""
-"Das Festlegen von ``layers`` erfordert ein explizites ``symbol_kind``; "
-"andernfalls löst der Encoder "
-":class:`~pystrich.exceptions.PyStrichInvalidOption` aus. Wenn die Nutzdaten "
-"in der angeforderten Größe nicht passen, löst er "
-":class:`~pystrich.exceptions.PyStrichInvalidInput` aus."
-
-#: ../../aztec.rst
 msgid "Error correction"
 msgstr "Fehlerkorrektur"
 
@@ -815,3 +802,16 @@ msgstr ""
 "Löst :class:`_HasMarkers` aus, wenn ein Segment ein Roh-Marker statt einer "
 "Zeichenkette ist. Für Unterklassen ohne Marker (``MarkerT == Never``) ist "
 "die Prüfung ein No-op."
+
+#: ../../aztec.rst
+msgid ""
+"Pinning ``layers`` requires an explicit ``symbol_kind``; the encoder raises "
+":class:`~pystrich.exceptions.PyStrichInvalidOption` otherwise. If the "
+"payload does not fit at the requested size, it raises "
+":class:`~pystrich.exceptions.PyStrichInvalidPayloadLength`."
+msgstr ""
+"Das Festlegen von ``layers`` erfordert ein explizites ``symbol_kind``; "
+"andernfalls löst der Encoder "
+":class:`~pystrich.exceptions.PyStrichInvalidOption` aus. Wenn die Nutzdaten "
+"in der angeforderten Größe nicht passen, löst er "
+":class:`~pystrich.exceptions.PyStrichInvalidPayloadLength` aus."

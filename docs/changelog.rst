@@ -3,7 +3,7 @@ Changelog
 
 .. _v0-19:
 
-0.19 — unreleased
+0.19 — 2026-07-23
 -----------------
 
 - All encoders: harden against untrusted input by constraining input and output
