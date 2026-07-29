@@ -1,0 +1,433 @@
+# French (fr-FR) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../../code39.rst:-1
+msgid ""
+"Generate Code 39 barcodes in Python with pyStrich. Standard alphanumeric set"
+" or full ASCII via paired symbols; PNG, SVG and EPS output."
+msgstr ""
+"Générez des codes-barres Code 39 en Python avec pyStrich. Jeu alphanumérique"
+" standard ou ASCII complet via des symboles appariés ; sortie PNG, SVG et "
+"EPS."
+
+#: ../../code39.rst
+msgid "Code 39"
+msgstr "Code 39"
+
+#: ../../code39.rst
+msgid ""
+"Code 39 is a 1D symbology widely used for industrial labelling. The default "
+"character set is uppercase letters, digits, space and ``-.$/+%``; pass "
+"``full_ascii=True`` to encode any 7-bit character as a pair of symbols."
+msgstr ""
+"Code 39 est une symbologie 1D largement utilisée pour l'étiquetage "
+"industriel. Le jeu de caractères par défaut comprend les lettres majuscules,"
+" les chiffres, l'espace et ``-.$/+%`` ; passez ``full_ascii=True`` pour "
+"encoder n'importe quel caractère 7 bits sous forme de paire de symboles."
+
+#: ../../code39.rst
+msgid ""
+"`Code 39 on Wikipedia <https://en.wikipedia.org/wiki/Code_39>`_ for "
+"background on the symbology itself."
+msgstr ""
+"`Code 39 sur Wikipédia <https://fr.wikipedia.org/wiki/Code_39>`_ pour des "
+"informations générales sur la symbologie elle-même."
+
+#: ../../code39.rst
+msgid ""
+"Code 39 barcodes are defined in `ISO/IEC 16388 "
+"<https://www.iso.org/standard/77799.html>`_."
+msgstr ""
+"Les codes-barres Code 39 sont définis dans la norme `ISO/IEC 16388 "
+"<https://www.iso.org/fr/standard/77799.html>`_ (Technologies de "
+"l'information -- Techniques automatiques d'identification et de capture des "
+"données -- Spécifications des symbologies des codes à barres -- Code 39)."
+
+#: ../../code39.rst
+msgid "Example"
+msgstr "Exemple"
+
+#: ../../code39.rst
+msgid "Code 39 barcode encoding \"64755\"."
+msgstr "Code-barres Code 39 encodant « 64755 »."
+
+#: ../../code39.rst
+msgid "Sizing, label, font and layout"
+msgstr "Dimensionnement, libellé, police et mise en page"
+
+#: ../../code39.rst
+msgid ""
+"The ``bar_width`` argument to :meth:`~Code39Encoder.save` and "
+":meth:`~Code39Encoder.get_imagedata` sets the pixel width of the narrowest "
+"bar (default ``3``)."
+msgstr ""
+"L'argument ``bar_width`` de :meth:`~Code39Encoder.save` et "
+":meth:`~Code39Encoder.get_imagedata` définit la largeur, en pixels, de la "
+"barre la plus étroite (``3`` par défaut)."
+
+#: ../../code39.rst
+msgid ""
+"The ``options`` dict passed to :class:`Code39Encoder` controls the human-"
+"readable label and the surrounding layout. All keys are optional."
+msgstr ""
+"Le dictionnaire ``options`` passé à :class:`Code39Encoder` contrôle le "
+"libellé en clair et la mise en page environnante. Toutes les clés sont "
+"facultatives."
+
+#: ../../code39.rst
+msgid "``show_label``"
+msgstr ""
+
+#: ../../code39.rst
+msgid ""
+"Whether to render the human-readable label underneath the bars. Defaults to "
+"``True``; set to ``False`` to suppress it."
+msgstr ""
+"Indique si le libellé en clair doit être rendu sous les barres. Vaut "
+"``True`` par défaut ; réglez sur ``False`` pour le supprimer."
+
+#: ../../code39.rst
+msgid "``ttf_font``"
+msgstr ""
+
+#: ../../code39.rst
+msgid ""
+"Absolute path to a TrueType font file used for the label. Defaults to a "
+"bundled bitmap font if unset."
+msgstr ""
+"Chemin absolu vers un fichier de police TrueType utilisé pour le libellé. À "
+"défaut, une police bitmap fournie est utilisée."
+
+#: ../../code39.rst
+msgid "``ttf_fontsize``"
+msgstr ""
+
+#: ../../code39.rst
+msgid "Font size in points."
+msgstr "Taille de police en points."
+
+#: ../../code39.rst
+msgid "``height``"
+msgstr ""
+
+#: ../../code39.rst
+msgid "Total image height in pixels. Defaults to ``120``."
+msgstr "Hauteur totale de l'image en pixels. Vaut ``120`` par défaut."
+
+#: ../../code39.rst
+msgid "``label_border``"
+msgstr ""
+
+#: ../../code39.rst
+msgid "Pixels of vertical space between the bars and the label."
+msgstr "Espace vertical, en pixels, entre les barres et le libellé."
+
+#: ../../code39.rst
+msgid "``bottom_border``"
+msgstr ""
+
+#: ../../code39.rst
+msgid "Pixels of vertical space between the label and the bottom edge."
+msgstr "Espace vertical, en pixels, entre le libellé et le bord inférieur."
+
+#: ../../code39.rst
+msgid ""
+":doc:`printing` for guidance on selecting ``bar_width`` for printed output."
+msgstr ""
+":doc:`printing` pour des conseils sur le choix de ``bar_width`` pour une "
+"sortie imprimée."
+
+#: ../../code39.rst
+msgid "Code 39 barcode encoding \"64755\" with a taller image and larger label."
+msgstr ""
+"Code-barres Code 39 encodant « 64755 » avec une image plus haute et un "
+"libellé plus grand."
+
+#: ../../code39.rst
+msgid "Output formats"
+msgstr "Formats de sortie"
+
+#: ../../code39.rst
+msgid "SVG output"
+msgstr "Sortie SVG"
+
+#: ../../code39.rst
+msgid ""
+"For embedding in web pages or any workflow that benefits from resolution-"
+"independent output, use :meth:`~Code39Encoder.save_svg` (or "
+":meth:`~Code39Encoder.get_svg` to receive the SVG as a string)."
+msgstr ""
+"Pour une intégration dans des pages web ou tout flux de travail tirant parti"
+" d'une sortie indépendante de la résolution, utilisez "
+":meth:`~Code39Encoder.save_svg` (ou :meth:`~Code39Encoder.get_svg` pour "
+"récupérer le SVG sous forme de chaîne)."
+
+#: ../../code39.rst
+msgid "SVG Code 39 barcode encoding \"64755\"."
+msgstr "Code-barres Code 39 SVG encodant « 64755 »."
+
+#: ../../code39.rst
+msgid ""
+"The SVG's ``viewBox`` is in module units (one narrow bar = one unit), while "
+"``width`` and ``height`` scale by ``bar_width``. The 10-module quiet zones "
+"mandated by the standard are applied automatically on each side."
+msgstr ""
+"Le ``viewBox`` du SVG est exprimé en unités de module (une barre étroite = "
+"une unité), tandis que ``width`` et ``height`` sont mis à l'échelle par "
+"``bar_width``. Les zones de silence de 10 modules imposées par la norme sont"
+" appliquées automatiquement de chaque côté."
+
+#: ../../code39.rst
+msgid "PNG output"
+msgstr "Sortie PNG"
+
+#: ../../code39.rst
+msgid ""
+"For raster output, use :meth:`~Code39Encoder.save` to write a PNG file or "
+":meth:`~Code39Encoder.get_imagedata` to receive the raw PNG bytes."
+msgstr ""
+"Pour une sortie matricielle, utilisez :meth:`~Code39Encoder.save` pour "
+"écrire un fichier PNG ou :meth:`~Code39Encoder.get_imagedata` pour récupérer"
+" les octets PNG bruts."
+
+#: ../../code39.rst
+msgid "EPS output"
+msgstr "Sortie EPS"
+
+#: ../../code39.rst
+msgid ""
+"For embedding in LaTeX (``\\includegraphics``) or other vector print "
+"workflows, use :meth:`~Code39Encoder.save_eps` (or "
+":meth:`~Code39Encoder.get_eps` to receive the EPS as a string)."
+msgstr ""
+"Pour une intégration dans LaTeX (``\\includegraphics``) ou d'autres flux "
+"d'impression vectorielle, utilisez :meth:`~Code39Encoder.save_eps` (ou "
+":meth:`~Code39Encoder.get_eps` pour récupérer l'EPS sous forme de chaîne)."
+
+#: ../../code39.rst
+msgid ""
+"The ``bar_width`` argument is the width of the narrowest bar in PostScript "
+"points (1 point = 1/72 inch). The 10-module quiet zones are applied "
+"automatically."
+msgstr ""
+"L'argument ``bar_width`` est la largeur de la barre la plus étroite en "
+"points PostScript (1 point = 1/72 de pouce). Les zones de silence de 10 "
+"modules sont appliquées automatiquement."
+
+#: ../../code39.rst
+msgid "API"
+msgstr "API"
+
+#: of pystrich.code39.Code39Encoder
+msgid "Encode a string as a Code 39 1D barcode."
+msgstr "Encode une chaîne sous forme de code-barres 1D Code 39."
+
+#: of pystrich.code39.Code39Encoder
+msgid ""
+"By default only the standard Code 39 character set is accepted (``0-9``, "
+"``A-Z``, space, and ``-.$/+%``). Pass ``full_ascii=True`` to use the Full "
+"ASCII extension, which encodes any 7-bit character via paired symbols."
+msgstr ""
+"Par défaut, seul le jeu de caractères Code 39 standard est accepté (``0-9``,"
+" ``A-Z``, l'espace et ``-.$/+%``). Passez ``full_ascii=True`` pour utiliser "
+"l'extension ASCII complète, qui encode n'importe quel caractère 7 bits via "
+"des symboles appariés."
+
+#: of pystrich.code39.Code39Encoder
+msgid "Typical use::"
+msgstr "Utilisation typique::"
+
+#: ../../code39.rst
+msgid "Variables"
+msgstr "Variables"
+
+#: of pystrich.code39.Code39Encoder
+msgid "The original input text."
+msgstr "Le texte d'entrée d'origine."
+
+#: of pystrich.code39.Code39Encoder
+msgid "List of code values produced by the text encoder."
+msgstr "Liste des valeurs de code produites par l'encodeur de texte."
+
+#: of pystrich.code39.Code39Encoder
+msgid "The bar/space pattern as a string of ``\"1\"`` and ``\"0\"``."
+msgstr ""
+"Le motif de barres et d'espaces sous forme de chaîne de ``\"1\"`` et de "
+"``\"0\"``."
+
+#: of pystrich.code39.Code39Encoder
+msgid "Render-time options dict (empty if none were supplied)."
+msgstr "Dictionnaire d'options de rendu (vide si aucune n'a été fournie)."
+
+#: of pystrich.code39.Code39Encoder
+msgid "Pixel width of the most recently rendered image."
+msgstr "Largeur en pixels de la dernière image rendue."
+
+#: of pystrich.code39.Code39Encoder
+msgid "Pixel height of the most recently rendered image."
+msgstr "Hauteur en pixels de la dernière image rendue."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+msgid "Render the barcode and return EPS markup."
+msgstr "Génère le code-barres et renvoie le balisage EPS."
+
+#: ../../code39.rst
+msgid "Parameters"
+msgstr "Paramètres"
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid "Width in PostScript points of the narrowest bar."
+msgstr "Largeur en points PostScript de la barre la plus étroite."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid ""
+"Bar and text colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. "
+"Defaults to black."
+msgstr ""
+"Couleur des barres et du texte, sous forme de chaîne hexadécimale de 3, 6 ou"
+" 8 chiffres ou d'un ``RGBA``. Noir par défaut."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``, opaque. "
+"Defaults to white."
+msgstr ""
+"Couleur de fond, sous forme de chaîne hexadécimale de 3, 6 ou 8 chiffres ou "
+"d'un ``RGBA``, opaque. Blanc par défaut."
+
+#: ../../code39.rst
+msgid "Return type"
+msgstr "Type renvoyé"
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid "Added ``dark_hex`` and ``light_hex``."
+msgstr "Ajout de ``dark_hex`` et ``light_hex``."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+msgid "Render the barcode and return PNG bytes."
+msgstr "Génère le code-barres et renvoie les octets PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+msgid "Width in pixels of the narrowest bar."
+msgstr "Largeur en pixels de la barre la plus étroite."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. Defaults"
+" to white."
+msgstr ""
+"Couleur de fond, sous forme de chaîne hexadécimale de 3, 6 ou 8 chiffres ou "
+"d'un ``RGBA``. Blanc par défaut."
+
+#: ../../code39.rst
+msgid "Returns"
+msgstr "Renvoie"
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+msgid "PNG-encoded image data."
+msgstr "Données d'image encodées en PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+msgid "Render the barcode and return a Pillow image."
+msgstr "Génère le code-barres et renvoie une image Pillow."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+msgid "The rendered barcode."
+msgstr "Le code-barres rendu."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_rect_marks
+msgid "Return the barcode's dark bars as rectangles in layout units."
+msgstr ""
+"Renvoie les barres sombres du code-barres sous forme de rectangles en unités"
+" de mise en page."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_svg
+msgid "Render the barcode and return SVG markup."
+msgstr "Génère le code-barres et renvoie le balisage SVG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid "Width in user units of the narrowest bar."
+msgstr "Largeur en unités utilisateur de la barre la plus étroite."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+msgid "Render the barcode and return a PNG ``data:`` URL string."
+msgstr "Génère le code-barres et renvoie une chaîne d'URL ``data:`` PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save
+msgid "Render the barcode to a PNG file."
+msgstr "Génère le code-barres dans un fichier PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save
+msgid "Path to write the PNG to."
+msgstr "Chemin où écrire le PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid "Save the barcode as an EPS file. Pass an ``.eps`` filename."
+msgstr ""
+"Enregistre le code-barres dans un fichier EPS. Passez un nom de fichier "
+"``.eps``."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid "EPS output path."
+msgstr "Chemin de sortie EPS."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_svg
+msgid "Save the barcode as an SVG file. Pass a ``.svg`` filename."
+msgstr ""
+"Enregistre le code-barres dans un fichier SVG. Passez un nom de fichier "
+"``.svg``."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_svg
+msgid "SVG output path."
+msgstr "Chemin de sortie SVG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid "Render the barcode and return an SVG ``data:`` URL string."
+msgstr "Génère le code-barres et renvoie une chaîne d'URL ``data:`` SVG."
+
+#: of pystrich.code39.Code39Encoder.init_renderer
+msgid "Construct a :class:`Code39Renderer` for the encoded bars."
+msgstr "Construit un :class:`Code39Renderer` pour les barres encodées."
+
+#: of pystrich.code39.Code39Encoder.init_renderer
+msgid ":class:`Code39Renderer`"
+msgstr ""

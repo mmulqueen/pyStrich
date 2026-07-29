@@ -383,14 +383,31 @@ class _StampArgparseSource(SphinxTransform):
                 return
 
 
+# html_title / ogp_image_alt are config values, not doctree content, so gettext
+# never extracts them; a translated build otherwise keeps the English title.
+# Keyed by language prefix; a language with no entry keeps the English strings.
+_LOCALISED_TITLES = {
+    "de": (
+        "pyStrich — der Python-Encoder für 1D/2D-Barcodes",
+        "pyStrich — Python-Encoder für 1D/2D-Barcodes",
+    ),
+    "fr": (
+        "pyStrich — l'encodeur de codes-barres 1D/2D pour Python",
+        "pyStrich — encodeur de codes-barres 1D/2D pour Python",
+    ),
+}
+
+
 def _localise_title(app, config):
-    # html_title / ogp_image_alt are config values, not doctree content, so
-    # gettext never extracts them; a German build otherwise keeps the English
-    # title. config-inited fires after the -D language override is applied, so
+    # config-inited fires after the -D language override is applied, so
     # config.language is the build language here (unlike the module-level one).
-    if config.language and config.language.startswith("de"):
-        config.html_title = "pyStrich — der Python-Encoder für 1D/2D-Barcodes"
-        config.ogp_image_alt = "pyStrich — Python-Encoder für 1D/2D-Barcodes"
+    if not config.language:
+        return
+    for prefix, (title, image_alt) in _LOCALISED_TITLES.items():
+        if config.language.startswith(prefix):
+            config.html_title = title
+            config.ogp_image_alt = image_alt
+            return
 
 
 def setup(app):

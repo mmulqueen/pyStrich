@@ -1,0 +1,62 @@
+# French (fr-FR) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../../_templates/page.html
+msgid "Next"
+msgstr "Suivant"
+
+#: ../../_templates/page.html
+msgid "Previous"
+msgstr "Précédent"
+
+#: ../../_templates/page.html
+msgid "Home"
+msgstr "Accueil"
+
+#: ../../_templates/page.html
+msgid "<a href=\"%(path)s\">Copyright</a> &#169; %(copyright)s"
+msgstr "<a href=\"%(path)s\">&#169;</a> %(copyright)s"
+
+#: ../../_templates/page.html
+msgid "Copyright &#169; %(copyright)s"
+msgstr "&#169; %(copyright)s"
+
+#: ../../_templates/page.html
+msgid ""
+"pyStrich is a project of <a class=\"muted-link\" "
+"href=\"https://www.method-b.uk/\">Method B Ltd</a>."
+msgstr ""
+"pyStrich est un projet de <a class=\"muted-link\" "
+"href=\"https://www.method-b.uk/\">Method B Ltd</a>."
+
+#: ../../_templates/page.html
+msgid "QR Code is a registered trademark of DENSO WAVE INCORPORATED."
+msgstr "QR Code est une marque déposée de DENSO WAVE INCORPORATED."
+
+#: ../../_templates/page.html
+msgid "Docs made with "
+msgstr "Créé avec "
+
+#: ../../_templates/page.html
+msgid "<a href=\"https://www.sphinx-doc.org/\">Sphinx</a> and "
+msgstr "<a href=\"https://www.sphinx-doc.org/\">Sphinx</a> et "
+
+#: ../../_templates/page.html
+msgid ""
+"\n"
+"    <a href=\"https://github.com/pradyunsg/furo\">Furo</a>\n"
+"    "
+msgstr ""
+"\n"
+"    <a href=\"https://github.com/pradyunsg/furo\">Furo</a>\n"
+"    "

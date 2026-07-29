@@ -1,0 +1,682 @@
+# French (fr-FR) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../../code128.rst:-1
+msgid ""
+"Generate Code 128 barcodes in Python with pyStrich. Automatic A/B/C code-set"
+" switching, mod-103 checksum, full ASCII; PNG, SVG and EPS output."
+msgstr ""
+"Générez des codes-barres Code 128 en Python avec pyStrich. Basculement "
+"automatique entre les jeux de codes A/B/C, somme de contrôle modulo 103, "
+"ASCII complet ; sortie PNG, SVG et EPS."
+
+#: ../../code128.rst
+msgid "Code 128"
+msgstr "Code 128"
+
+#: ../../code128.rst
+msgid ""
+"Code 128 is a high-density 1D symbology covering the full ASCII range. "
+"pyStrich automatically switches between code sets A, B and C to minimise "
+"symbol length, and computes the mod-103 checksum for you."
+msgstr ""
+"Code 128 est une symbologie 1D à haute densité couvrant toute la plage "
+"ASCII. pyStrich bascule automatiquement entre les jeux de codes A, B et C "
+"pour minimiser la longueur du symbole, et calcule la somme de contrôle "
+"modulo 103 pour vous."
+
+#: ../../code128.rst
+msgid ""
+"`Code 128 on Wikipedia <https://en.wikipedia.org/wiki/Code_128>`_ for "
+"background on the symbology itself."
+msgstr ""
+"`Code 128 sur Wikipédia <https://fr.wikipedia.org/wiki/Code_128>`_ pour des "
+"informations générales sur la symbologie elle-même."
+
+#: ../../code128.rst
+msgid ""
+"Code 128 barcodes are defined in `ISO/IEC 15417 "
+"<https://www.iso.org/standard/43896.html>`_."
+msgstr ""
+"Les codes-barres Code 128 sont définis dans la norme `ISO/IEC 15417 "
+"<https://www.iso.org/fr/standard/43896.html>`_ (Technologies de "
+"l'information -- Techniques automatiques d'identification et de capture des "
+"données -- Spécifications des symbologies des codes à barres -- Code 128)."
+
+#: ../../code128.rst
+msgid "Example"
+msgstr "Exemple"
+
+#: ../../code128.rst
+msgid "Code 128 barcode encoding \"WDBCA45D2HA327260\"."
+msgstr "Code-barres Code 128 encodant « WDBCA45D2HA327260 »."
+
+#: ../../code128.rst
+msgid "GS1-128"
+msgstr "GS1-128"
+
+#: ../../code128.rst
+msgid ""
+"`GS1-128 on Wikipedia <https://en.wikipedia.org/wiki/GS1-128>`_ for "
+"background on the GS1 variant."
+msgstr ""
+"`GS1-128 sur Wikipédia <https://en.wikipedia.org/wiki/GS1-128>`_ pour des "
+"informations générales sur la variante GS1."
+
+#: ../../code128.rst
+msgid ""
+"GS1-128 is Code 128 with an FNC1 in the first data position, signalling that"
+" the payload is a sequence of GS1 Application Identifiers. "
+":meth:`Code128Data.gs1` builds the payload from typed field wrappers and "
+"handles FNC1 placement automatically -- one at the start of the message and "
+"one after each variable-length Application Identifier that is not the final "
+"element. Wrap each Application Identifier / value pair in "
+":class:`~pystrich.gs1.GS1Fixed` for fixed-length Application Identifiers "
+"(``(01)``, ``(17)``, ``(11)`` ...) or :class:`~pystrich.gs1.GS1Variable` "
+"otherwise. The GS1 General Specifications recommend variable-length "
+"Application Identifiers come last:"
+msgstr ""
+"GS1-128 est un Code 128 comportant un FNC1 en première position de données, "
+"signalant que la charge utile est une suite d'identifiants d'application "
+"GS1. :meth:`Code128Data.gs1` construit la charge utile à partir d'enveloppes"
+" de champ typées et gère automatiquement le placement des FNC1 -- un au "
+"début du message et un après chaque identifiant d'application de longueur "
+"variable qui n'est pas le dernier élément. Encapsulez chaque paire "
+"identifiant d'application / valeur dans :class:`~pystrich.gs1.GS1Fixed` pour"
+" les identifiants d'application de longueur fixe (``(01)``, ``(17)``, "
+"``(11)`` etc.) ou :class:`~pystrich.gs1.GS1Variable` sinon. Les GS1 General "
+"Specifications recommandent de placer les identifiants d'application de "
+"longueur variable en dernier :"
+
+#: ../../code128.rst
+msgid ""
+"GS1-128 barcode encoding (01) GTIN 09501234543213, (17) expiry 261231, (10) "
+"batch BF07."
+msgstr ""
+"Code-barres GS1-128 encodant (01) GTIN 09501234543213, (17) péremption "
+"261231, (10) lot BF07."
+
+#: ../../code128.rst
+msgid ""
+"For full control over the codeword stream -- or to mix FNC2, FNC3 or Latin-1"
+" segments with the GS1 markers -- pass :data:`FNC1` and the plain "
+"Application Identifier / value strings to :class:`Code128Data` directly; "
+"this is the path :meth:`~Code128Data.gs1` wraps."
+msgstr ""
+"Pour un contrôle total du flux de mots de code -- ou pour mêler des segments"
+" FNC2, FNC3 ou Latin-1 aux marqueurs GS1 --, passez :data:`FNC1` et les "
+"chaînes brutes identifiant d'application / valeur directement à "
+":class:`Code128Data` ; c'est ce que fait :meth:`~Code128Data.gs1` en "
+"interne."
+
+#: ../../code128.rst
+msgid "Latin-1 text"
+msgstr "Texte Latin-1"
+
+#: ../../code128.rst
+msgid ""
+"For Latin-1 input, wrap the payload in :class:`Code128Data` with "
+"``encoding=\"iso-8859-1\"`` (or ``auto_encoding=True``). Bytes 128-255 emit "
+"an FNC4 single-shift on the wire; characters outside Latin-1 are rejected."
+msgstr ""
+"Pour une entrée Latin-1, encapsulez la charge utile dans "
+":class:`Code128Data` avec ``encoding=\"iso-8859-1\"`` (ou "
+"``auto_encoding=True``). Les octets 128-255 émettent un décalage simple "
+"(single-shift) FNC4 dans le flux de mots de code ; les caractères hors "
+"Latin-1 sont rejetés."
+
+#: ../../code128.rst
+msgid "Code 128 barcode encoding \"Rausschmeißer\" via FNC4 Latin-1 shifts."
+msgstr ""
+"Code-barres Code 128 encodant « Rausschmeißer » via des décalages FNC4 "
+"Latin-1."
+
+#: ../../code128.rst
+msgid "Sizing, label, font and layout"
+msgstr "Dimensionnement, libellé, police et mise en page"
+
+#: ../../code128.rst
+msgid ""
+"The ``bar_width`` argument to :meth:`~Code128Encoder.save` and "
+":meth:`~Code128Encoder.get_imagedata` sets the pixel width of the narrowest "
+"bar (default ``3``)."
+msgstr ""
+"L'argument ``bar_width`` de :meth:`~Code128Encoder.save` et "
+":meth:`~Code128Encoder.get_imagedata` définit la largeur, en pixels, de la "
+"barre la plus étroite (``3`` par défaut)."
+
+#: ../../code128.rst
+msgid ""
+"The ``options`` dict passed to :class:`Code128Encoder` controls the human-"
+"readable label and the surrounding layout. All keys are optional."
+msgstr ""
+"Le dictionnaire ``options`` passé à :class:`Code128Encoder` contrôle le "
+"libellé en clair et la mise en page environnante. Toutes les clés sont "
+"facultatives."
+
+#: ../../code128.rst
+msgid "``show_label``"
+msgstr ""
+
+#: ../../code128.rst
+msgid ""
+"Whether to render the human-readable label underneath the bars. Defaults to "
+"``True``; set to ``False`` to suppress it."
+msgstr ""
+"Indique si le libellé en clair doit être rendu sous les barres. Vaut "
+"``True`` par défaut ; réglez sur ``False`` pour le supprimer."
+
+#: ../../code128.rst
+msgid "``ttf_font``"
+msgstr ""
+
+#: ../../code128.rst
+msgid ""
+"Absolute path to a TrueType font file used for the label. Defaults to a "
+"bundled bitmap font if unset."
+msgstr ""
+"Chemin absolu vers un fichier de police TrueType utilisé pour le libellé. À "
+"défaut, une police bitmap fournie est utilisée."
+
+#: ../../code128.rst
+msgid "``ttf_fontsize``"
+msgstr ""
+
+#: ../../code128.rst
+msgid "Font size in points."
+msgstr "Taille de police en points."
+
+#: ../../code128.rst
+msgid "``height``"
+msgstr ""
+
+#: ../../code128.rst
+msgid ""
+"Total image height in pixels. Defaults to roughly a third of the image "
+"width."
+msgstr ""
+"Hauteur totale de l'image en pixels. Vaut par défaut environ un tiers de la "
+"largeur de l'image."
+
+#: ../../code128.rst
+msgid "``label_border``"
+msgstr ""
+
+#: ../../code128.rst
+msgid "Pixels of vertical space between the bars and the label."
+msgstr "Espace vertical, en pixels, entre les barres et le libellé."
+
+#: ../../code128.rst
+msgid "``bottom_border``"
+msgstr ""
+
+#: ../../code128.rst
+msgid "Pixels of vertical space between the label and the bottom edge."
+msgstr "Espace vertical, en pixels, entre le libellé et le bord inférieur."
+
+#: ../../code128.rst
+msgid ""
+":doc:`printing` for guidance on selecting ``bar_width`` for printed output."
+msgstr ""
+":doc:`printing` pour des conseils sur le choix de ``bar_width`` pour une "
+"sortie imprimée."
+
+#: ../../code128.rst
+msgid ""
+"Code 128 barcode encoding \"WDBCA45D2HA327260\" with a taller image and "
+"larger label."
+msgstr ""
+"Code-barres Code 128 encodant « WDBCA45D2HA327260 » avec une image plus "
+"haute et un libellé plus grand."
+
+#: ../../code128.rst
+msgid "Output formats"
+msgstr "Formats de sortie"
+
+#: ../../code128.rst
+msgid "SVG output"
+msgstr "Sortie SVG"
+
+#: ../../code128.rst
+msgid ""
+"For embedding in web pages or any workflow that benefits from resolution-"
+"independent output, use :meth:`~Code128Encoder.save_svg` (or "
+":meth:`~Code128Encoder.get_svg` to receive the SVG as a string)."
+msgstr ""
+"Pour une intégration dans des pages web ou tout flux de travail tirant parti"
+" d'une sortie indépendante de la résolution, utilisez "
+":meth:`~Code128Encoder.save_svg` (ou :meth:`~Code128Encoder.get_svg` pour "
+"récupérer le SVG sous forme de chaîne)."
+
+#: ../../code128.rst
+msgid "SVG Code 128 barcode encoding \"WDBCA45D2HA327260\"."
+msgstr "Code-barres Code 128 SVG encodant « WDBCA45D2HA327260 »."
+
+#: ../../code128.rst
+msgid ""
+"The SVG's ``viewBox`` is in module units (one narrow bar = one unit), while "
+"``width`` and ``height`` scale by ``bar_width``. The 10-module quiet zones "
+"mandated by the standard are applied automatically on each side."
+msgstr ""
+"Le ``viewBox`` du SVG est exprimé en unités de module (une barre étroite = "
+"une unité), tandis que ``width`` et ``height`` sont mis à l'échelle par "
+"``bar_width``. Les zones de silence de 10 modules imposées par la norme sont"
+" appliquées automatiquement de chaque côté."
+
+#: ../../code128.rst
+msgid "PNG output"
+msgstr "Sortie PNG"
+
+#: ../../code128.rst
+msgid ""
+"For raster output, use :meth:`~Code128Encoder.save` to write a PNG file or "
+":meth:`~Code128Encoder.get_imagedata` to receive the raw PNG bytes."
+msgstr ""
+"Pour une sortie matricielle, utilisez :meth:`~Code128Encoder.save` pour "
+"écrire un fichier PNG ou :meth:`~Code128Encoder.get_imagedata` pour "
+"récupérer les octets PNG bruts."
+
+#: ../../code128.rst
+msgid "EPS output"
+msgstr "Sortie EPS"
+
+#: ../../code128.rst
+msgid ""
+"For embedding in LaTeX (``\\includegraphics``) or other vector print "
+"workflows, use :meth:`~Code128Encoder.save_eps` (or "
+":meth:`~Code128Encoder.get_eps` to receive the EPS as a string)."
+msgstr ""
+"Pour une intégration dans LaTeX (``\\includegraphics``) ou d'autres flux "
+"d'impression vectorielle, utilisez :meth:`~Code128Encoder.save_eps` (ou "
+":meth:`~Code128Encoder.get_eps` pour récupérer l'EPS sous forme de chaîne)."
+
+#: ../../code128.rst
+msgid ""
+"The ``bar_width`` argument is the width of the narrowest bar in PostScript "
+"points (1 point = 1/72 inch). The 10-module quiet zones are applied "
+"automatically."
+msgstr ""
+"L'argument ``bar_width`` est la largeur de la barre la plus étroite en "
+"points PostScript (1 point = 1/72 de pouce). Les zones de silence de 10 "
+"modules sont appliquées automatiquement."
+
+#: ../../code128.rst
+msgid "API"
+msgstr "API"
+
+#: of pystrich.code128.Code128Encoder
+msgid "Encode a string as a Code 128 1D barcode."
+msgstr "Encode une chaîne sous forme de code-barres 1D Code 128."
+
+#: of pystrich.code128.Code128Encoder
+msgid ""
+"Code sets A, B and C are switched between automatically to minimise symbol "
+"length. The mod-103 checksum is computed and appended for you."
+msgstr ""
+"Les jeux de codes A, B et C basculent automatiquement pour minimiser la "
+"longueur du symbole. La somme de contrôle modulo 103 est calculée et ajoutée"
+" pour vous."
+
+#: of pystrich.code128.Code128Encoder
+msgid "Typical use::"
+msgstr "Utilisation typique::"
+
+#: ../../code128.rst
+msgid "Variables"
+msgstr "Variables"
+
+#: of pystrich.code128.Code128Encoder
+msgid "The original input text."
+msgstr "Le texte d'entrée d'origine."
+
+#: of pystrich.code128.Code128Encoder
+msgid ""
+"List of code values produced by the text encoder, including start codes and "
+"code-set switches."
+msgstr ""
+"Liste des valeurs de code produites par l'encodeur de texte, y compris les "
+"codes de départ et les basculements de jeu de codes."
+
+#: of pystrich.code128.Code128Encoder
+msgid "The mod-103 checksum value."
+msgstr "La valeur de la somme de contrôle modulo 103."
+
+#: of pystrich.code128.Code128Encoder
+msgid "The bar/space pattern as a string of ``\"1\"`` and ``\"0\"``."
+msgstr ""
+"Le motif de barres et d'espaces sous forme de chaîne de ``\"1\"`` et de "
+"``\"0\"``."
+
+#: of pystrich.code128.Code128Encoder
+msgid "Render-time options dict (empty if none were supplied)."
+msgstr "Dictionnaire d'options de rendu (vide si aucune n'a été fournie)."
+
+#: of pystrich.code128.Code128Encoder
+msgid ""
+"Pixel width of the most recently rendered image. ``0`` until a render method"
+" has been called."
+msgstr ""
+"Largeur en pixels de la dernière image rendue. ``0`` tant qu'aucune méthode "
+"de rendu n'a été appelée."
+
+#: of pystrich.code128.Code128Encoder
+msgid "Pixel height of the most recently rendered image."
+msgstr "Hauteur en pixels de la dernière image rendue."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+msgid "Render the barcode and return EPS markup."
+msgstr "Génère le code-barres et renvoie le balisage EPS."
+
+#: ../../code128.rst
+msgid "Parameters"
+msgstr "Paramètres"
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid "Width in PostScript points of the narrowest bar."
+msgstr "Largeur en points PostScript de la barre la plus étroite."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid ""
+"Bar and text colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. "
+"Defaults to black."
+msgstr ""
+"Couleur des barres et du texte, sous forme de chaîne hexadécimale de 3, 6 ou"
+" 8 chiffres ou d'un ``RGBA``. Noir par défaut."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``, opaque. "
+"Defaults to white."
+msgstr ""
+"Couleur de fond, sous forme de chaîne hexadécimale de 3, 6 ou 8 chiffres ou "
+"d'un ``RGBA``, opaque. Blanc par défaut."
+
+#: ../../code128.rst
+msgid "Return type"
+msgstr "Type renvoyé"
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid "Added ``dark_hex`` and ``light_hex``."
+msgstr "Ajout de ``dark_hex`` et ``light_hex``."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+msgid "Render the barcode and return PNG bytes."
+msgstr "Génère le code-barres et renvoie les octets PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+msgid "Width in pixels of the narrowest bar."
+msgstr "Largeur en pixels de la barre la plus étroite."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. Defaults"
+" to white."
+msgstr ""
+"Couleur de fond, sous forme de chaîne hexadécimale de 3, 6 ou 8 chiffres ou "
+"d'un ``RGBA``. Blanc par défaut."
+
+#: ../../code128.rst
+msgid "Returns"
+msgstr "Renvoie"
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+msgid "PNG-encoded image data."
+msgstr "Données d'image encodées en PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+msgid "Render the barcode and return a Pillow image."
+msgstr "Génère le code-barres et renvoie une image Pillow."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+msgid "The rendered barcode."
+msgstr "Le code-barres rendu."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_rect_marks
+msgid "Return the barcode's dark bars as rectangles in layout units."
+msgstr ""
+"Renvoie les barres sombres du code-barres sous forme de rectangles en unités"
+" de mise en page."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_svg
+msgid "Render the barcode and return SVG markup."
+msgstr "Génère le code-barres et renvoie le balisage SVG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid "Width in user units of the narrowest bar."
+msgstr "Largeur en unités utilisateur de la barre la plus étroite."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+msgid "Render the barcode and return a PNG ``data:`` URL string."
+msgstr "Génère le code-barres et renvoie une chaîne d'URL ``data:`` PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save
+msgid "Render the barcode to a PNG file."
+msgstr "Génère le code-barres dans un fichier PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save
+msgid "Path to write the PNG to."
+msgstr "Chemin où écrire le PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid "Save the barcode as an EPS file. Pass an ``.eps`` filename."
+msgstr ""
+"Enregistre le code-barres dans un fichier EPS. Passez un nom de fichier "
+"``.eps``."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid "EPS output path."
+msgstr "Chemin de sortie EPS."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_svg
+msgid "Save the barcode as an SVG file. Pass a ``.svg`` filename."
+msgstr ""
+"Enregistre le code-barres dans un fichier SVG. Passez un nom de fichier "
+"``.svg``."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_svg
+msgid "SVG output path."
+msgstr "Chemin de sortie SVG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid "Render the barcode and return an SVG ``data:`` URL string."
+msgstr "Génère le code-barres et renvoie une chaîne d'URL ``data:`` SVG."
+
+#: of pystrich.code128.Code128Encoder.calculate_check_sum
+msgid "Compute the Code 128 mod-103 checksum for :attr:`encoded_text`."
+msgstr ""
+"Calcule la somme de contrôle modulo 103 Code 128 pour :attr:`encoded_text`."
+
+#: of pystrich.code128.Code128Encoder.calculate_check_sum
+msgid ""
+"The start code contributes with weight 1; subsequent symbols are weighted by"
+" their 1-based position before the modulo is taken."
+msgstr ""
+"Le code de départ a un poids de 1 ; les symboles suivants sont pondérés par "
+"leur position (à partir de 1) avant l'application du modulo."
+
+#: of pystrich.code128.Code128Encoder.init_renderer
+msgid "Construct a :class:`Code128Renderer` for the encoded bars."
+msgstr "Construit un :class:`Code128Renderer` pour les barres encodées."
+
+#: of pystrich.code128.Code128Encoder.init_renderer
+msgid ":class:`Code128Renderer`"
+msgstr ""
+
+#: of pystrich.code128.data.Code128Data
+msgid "Composable encoder input mixing text chunks with FNC marker tokens."
+msgstr ""
+"Entrée d'encodeur composable mêlant des fragments de texte et des jetons "
+"marqueurs FNC."
+
+#: of pystrich.code128.data.Code128Data
+msgid ""
+"Build values by concatenating marker constants with plain strings on either "
+"side, then pass the result to :class:`Code128Encoder` in place of a "
+"``str``::"
+msgstr ""
+"Construisez les valeurs en concaténant des constantes marqueurs avec des "
+"chaînes simples de part et d'autre, puis passez le résultat à "
+":class:`Code128Encoder` à la place d'un ``str``::"
+
+#: of pystrich.code128.data.Code128Data
+msgid ""
+"Pass ``encoding=\"iso-8859-1\"`` (or ``auto_encoding=True``) to embed "
+"Latin-1 supplement characters; the encoder transparently emits the Code 128 "
+"FNC4 shifts. With ``encoding=\"ascii\"`` the legacy magic-byte codepoints "
+"(``\\xf1..\\xf4``) are rejected with a message pointing at the typed marker "
+"constants."
+msgstr ""
+"Passez ``encoding=\"iso-8859-1\"`` (ou ``auto_encoding=True``) pour intégrer"
+" des caractères du supplément Latin-1 ; l'encodeur émet de façon "
+"transparente les décalages FNC4 de Code 128. Avec ``encoding=\"ascii\"``, "
+"les anciens points de code ``\\xf1..\\xf4`` sont rejetés avec un message "
+"renvoyant vers les constantes marqueurs typées."
+
+#: of pystrich.code128.data.Code128Data.gs1
+msgid "Build a GS1-128 payload from typed Application Identifier fields."
+msgstr ""
+"Construit une charge utile GS1-128 à partir de champs d'identifiant "
+"d'application typés."
+
+#: of pystrich.code128.data.Code128Data.gs1
+msgid ""
+"Emits a leading :data:`FNC1` (which flags the symbol as GS1-128 to "
+"conformant scanners) followed by ``application_identifier + value`` for each"
+" field, inserting a further :data:`FNC1` separator after each "
+":class:`~pystrich.gs1.GS1Variable` that is not the final element. ASCII is "
+"hardcoded -- GS1 Application Identifier values are restricted to a 7-bit "
+"character set."
+msgstr ""
+"Émet un :data:`FNC1` en tête (qui signale le symbole comme GS1-128 aux "
+"lecteurs conformes) suivi de ``application_identifier + value`` pour chaque "
+"champ, en insérant un séparateur :data:`FNC1` supplémentaire après chaque "
+":class:`~pystrich.gs1.GS1Variable` qui n'est pas le dernier élément. L'ASCII"
+" est imposé -- les valeurs d'identifiant d'application GS1 sont restreintes "
+"à un jeu de caractères 7 bits."
+
+#: of pystrich.code128.data.Code128Data.gs1
+msgid ""
+"One or more :class:`~pystrich.gs1.GS1Fixed` / "
+":class:`~pystrich.gs1.GS1Variable` instances. Plain strings are not "
+"accepted; wrap each Application Identifier / value pair in the appropriate "
+"field class so we know whether to follow it with FNC1."
+msgstr ""
+"Une ou plusieurs instances de :class:`~pystrich.gs1.GS1Fixed` / "
+":class:`~pystrich.gs1.GS1Variable`. Les chaînes simples ne sont pas "
+"acceptées ; encapsulez chaque paire identifiant d'application / valeur dans "
+"la classe de champ appropriée afin que nous sachions s'il faut la faire "
+"suivre d'un FNC1."
+
+#: ../../code128.rst
+msgid "Raises"
+msgstr "Lève"
+
+#: of pystrich.code128.data.Code128Data.gs1
+msgid ""
+"if ``fields`` is empty or contains anything other than the field classes."
+msgstr ""
+"si ``fields`` est vide ou contient autre chose que les classes de champ."
+
+#: of pystrich.charset.EncodableData.as_plain_text
+msgid "Return the concatenated text and the codec to encode it with."
+msgstr "Renvoie le texte concaténé et le codec permettant de l'encoder."
+
+#: of pystrich.charset.EncodableData.as_plain_text
+msgid ""
+"Raises :class:`_HasMarkers` if any segment is a raw marker rather than a "
+"string. For subclasses without markers (``MarkerT == Never``) the check is a"
+" no-op."
+msgstr ""
+"Lève :class:`_HasMarkers` si un segment est un marqueur brut plutôt qu'une "
+"chaîne. Pour les sous-classes sans marqueurs (``MarkerT == Never``), la "
+"vérification est sans effet."
+
+#: of pystrich.code128.data.Code128Marker
+msgid "A typed FNC marker for inclusion in a :class:`Code128Data` value."
+msgstr ""
+"Un marqueur FNC typé destiné à être inclus dans une valeur "
+":class:`Code128Data`."
+
+#: of pystrich.code128.data.Code128Marker
+msgid ""
+"Use the module-level constants (:data:`FNC1`, :data:`FNC2`, :data:`FNC3`); "
+"concatenation with a plain ``str`` or another :class:`Code128Marker` (e.g. "
+"``FNC1 + \"10ABC\"``) builds a :class:`Code128Data`. FNC4 isn't exposed as a"
+" public marker — Latin-1 input is reached via ``encoding=\"iso-8859-1\"`` on"
+" :class:`Code128Data` instead."
+msgstr ""
+"Utilisez les constantes de niveau module (:data:`FNC1`, :data:`FNC2`, "
+":data:`FNC3`) ; la concaténation avec un ``str`` simple ou un autre "
+":class:`Code128Marker` (par exemple ``FNC1 + \"10ABC\"``) construit un "
+":class:`Code128Data`. FNC4 n'est pas exposé comme marqueur public — l'entrée"
+" Latin-1 s'obtient plutôt via ``encoding=\"iso-8859-1\"`` sur "
+":class:`Code128Data`."
+
+#: of pystrich.code128.data.Code128Marker.codeword_for_charset
+msgid ""
+"Return the codeword for this marker in ``charset``, or raise if the marker "
+"isn't representable there."
+msgstr ""
+"Renvoie le mot de code de ce marqueur dans ``charset``, ou lève une "
+"exception si le marqueur n'y est pas représentable."
+
+#: of pystrich.code128.data.Code128Marker.representable_in
+msgid "Whether this marker can be emitted from ``charset`` directly."
+msgstr "Indique si ce marqueur peut être émis directement depuis ``charset``."
+
+#: of pystrich.code128.data.Code128Marker.representable_charsets
+msgid "Charsets that can emit this marker, preference order B → A → C."
+msgstr ""
+"Jeux de caractères pouvant émettre ce marqueur, par ordre de préférence B → "
+"A → C."
+
+#: ../../code128.rst
+msgid ""
+"FNC marker constants (instances of :class:`Code128Marker`). Concatenate with"
+" strings via ``+`` to build a :class:`Code128Data`; ``FNC1`` in first "
+"position makes the symbol a GS1-128 (see :meth:`Code128Data.gs1` for the "
+"structured API)."
+msgstr ""
+"Constantes de marqueurs FNC (instances de :class:`Code128Marker`). "
+"Concaténez avec des chaînes via ``+`` pour construire un "
+":class:`Code128Data` ; ``FNC1`` en première position fait du symbole un "
+"GS1-128 (voir :meth:`Code128Data.gs1` pour l'API structurée)."

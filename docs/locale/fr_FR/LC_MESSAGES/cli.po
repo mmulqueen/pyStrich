@@ -1,0 +1,357 @@
+# French (fr-FR) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../../cli.rst:-1
+msgid "Generate barcodes from the command line with the pyStrich CLI."
+msgstr "Générez des codes-barres depuis la ligne de commande avec pyStrich."
+
+#: ../../cli.rst
+msgid "Command-line interface"
+msgstr "Interface en ligne de commande"
+
+#: ../../cli.rst
+msgid ""
+"Installing pyStrich exposes a ``pystrich`` console script with a subcommand "
+"per format and PNG / SVG / EPS / ASCII / terminal / DXF output."
+msgstr ""
+"L'installation de pyStrich expose un script de console ``pystrich`` avec une"
+" sous-commande par format et une sortie PNG / SVG / EPS / ASCII / terminal /"
+" DXF."
+
+#: ../../cli.rst
+msgid ""
+"To try the CLI without installing pyStrich into an environment, run it "
+"through pipx_ or uvx_:"
+msgstr ""
+"Pour essayer l'outil en ligne de commande sans installer pyStrich dans un "
+"environnement, exécutez-le via pipx_ ou uvx_ :"
+
+#: ../../cli.rst
+msgid "The last example produces:"
+msgstr "Le dernier exemple produit :"
+
+#: ../../cli.rst
+msgid "Reference"
+msgstr "Référence"
+
+#: ../../cli.rst
+msgid ""
+"Generate 1D/2D barcodes (Code 39, Code 128, EAN-13, Interleaved 2 of 5, "
+"ITF-14, Data Matrix, QR Code, PDF417, Aztec Code). Pass input via --text or "
+"stdin."
+msgstr ""
+"Génère des codes-barres 1D/2D (Code 39, Code 128, EAN-13, 2 parmi 5 "
+"entrelacé, ITF-14, Data Matrix, QR Code, PDF417, Aztec Code). Fournissez "
+"l'entrée via --text ou stdin."
+
+#: ../../cli.rst
+msgid "pystrich options"
+msgstr "options de pystrich"
+
+#: ../../cli.rst
+msgid "show this help message and exit"
+msgstr "affiche ce message d'aide et quitte"
+
+#: ../../cli.rst
+msgid "show program's version number and exit"
+msgstr "affiche le numéro de version du programme et quitte"
+
+#: ../../cli.rst
+msgid "pystrich code39"
+msgstr "pystrich code39"
+
+#: ../../cli.rst
+msgid "Code 39 (1D)"
+msgstr "Code 39 (1D)"
+
+#: ../../cli.rst
+msgid "pystrich code39 options"
+msgstr "options de pystrich code39"
+
+#: ../../cli.rst
+msgid "text to encode (default: read from stdin)"
+msgstr "texte à encoder (par défaut : lecture depuis stdin)"
+
+#: ../../cli.rst
+msgid "output path; '-' or omitted writes to stdout"
+msgstr "chemin de sortie ; '-' ou absent écrit sur stdout"
+
+#: ../../cli.rst
+msgid "output format; 'auto' resolves from -o filename or output context"
+msgstr ""
+"format de sortie ; 'auto' se déduit du nom de fichier -o ou du contexte de "
+"sortie"
+
+#: ../../cli.rst
+msgid "dark (foreground) colour as 3, 6 or 8 hex digits; png/svg/eps only"
+msgstr ""
+"couleur sombre (premier plan) sous forme de 3, 6 ou 8 chiffres "
+"hexadécimaux ; png/svg/eps uniquement"
+
+#: ../../cli.rst
+msgid "light (background) colour as 3, 6 or 8 hex digits; png/svg/eps only"
+msgstr ""
+"couleur claire (arrière-plan) sous forme de 3, 6 ou 8 chiffres "
+"hexadécimaux ; png/svg/eps uniquement"
+
+#: ../../cli.rst
+msgid "width of the narrowest bar (default: 3)"
+msgstr "largeur de la barre la plus étroite (par défaut : 3)"
+
+#: ../../cli.rst
+msgid "image height in pixels"
+msgstr "hauteur de l'image en pixels"
+
+#: ../../cli.rst
+msgid "enable full-ASCII Code 39 encoding"
+msgstr "active l'encodage Code 39 ASCII complet"
+
+#: ../../cli.rst
+msgid "render the human-readable label below the bars"
+msgstr "affiche le libellé en clair sous les barres"
+
+#: ../../cli.rst
+msgid "pystrich code128"
+msgstr "pystrich code128"
+
+#: ../../cli.rst
+msgid "Code 128 (1D)"
+msgstr "Code 128 (1D)"
+
+#: ../../cli.rst
+msgid "pystrich code128 options"
+msgstr "options de pystrich code128"
+
+#: ../../cli.rst
+msgid "pystrich ean13"
+msgstr "pystrich ean13"
+
+#: ../../cli.rst
+msgid "EAN-13 (1D, 12 or 13 digits)"
+msgstr "EAN-13 (1D, 12 ou 13 chiffres)"
+
+#: ../../cli.rst
+msgid "pystrich ean13 options"
+msgstr "options de pystrich ean13"
+
+#: ../../cli.rst
+msgid "12 or 13 digits (default: read from stdin)"
+msgstr "12 ou 13 chiffres (par défaut : lecture depuis stdin)"
+
+#: ../../cli.rst
+msgid "pystrich itf"
+msgstr "pystrich itf"
+
+#: ../../cli.rst
+msgid "Interleaved 2 of 5 (1D, an even number of digits)"
+msgstr "2 parmi 5 entrelacé (1D, un nombre pair de chiffres)"
+
+#: ../../cli.rst
+msgid "pystrich itf options"
+msgstr "options de pystrich itf"
+
+#: ../../cli.rst
+msgid "an even number of digits (default: read from stdin)"
+msgstr "un nombre pair de chiffres (par défaut : lecture depuis stdin)"
+
+#: ../../cli.rst
+msgid ""
+"thickness of a bearer bar's rules, in narrow-bar widths (default: none)"
+msgstr ""
+"épaisseur des traits d'une barre de support, en largeurs de barre étroite "
+"(par défaut : aucune)"
+
+#: ../../cli.rst
+msgid "pystrich itf14"
+msgstr "pystrich itf14"
+
+#: ../../cli.rst
+msgid "ITF-14 (1D, 13 or 14 digits, with bearer bar)"
+msgstr "ITF-14 (1D, 13 ou 14 chiffres, avec barre de support)"
+
+#: ../../cli.rst
+msgid "pystrich itf14 options"
+msgstr "options de pystrich itf14"
+
+#: ../../cli.rst
+msgid "13 or 14 digits (default: read from stdin)"
+msgstr "13 ou 14 chiffres (par défaut : lecture depuis stdin)"
+
+#: ../../cli.rst
+msgid "thickness of the bearer bar's rules, in narrow-bar widths (default: 4)"
+msgstr ""
+"épaisseur des traits de la barre de support, en largeurs de barre étroite "
+"(par défaut : 4)"
+
+#: ../../cli.rst
+msgid "pystrich datamatrix"
+msgstr "pystrich datamatrix"
+
+#: ../../cli.rst
+msgid "Data Matrix (2D)"
+msgstr "Data Matrix (2D)"
+
+#: ../../cli.rst
+msgid "pystrich datamatrix options"
+msgstr "options de pystrich datamatrix"
+
+#: ../../cli.rst
+msgid ""
+"side length of one module; must be a whole number for png/svg/eps (default: "
+"5), decimals are supported for dxf (default: 1.0)"
+msgstr ""
+"longueur de côté d'un module ; doit être un nombre entier pour png/svg/eps "
+"(par défaut : 5), les décimales sont prises en charge pour dxf (par défaut :"
+" 1.0)"
+
+#: ../../cli.rst
+msgid "invert (light cells filled instead of dark); applies to svg/eps/dxf"
+msgstr ""
+"inverser (cellules claires remplies au lieu des sombres) ; s'applique à "
+"svg/eps/dxf"
+
+#: ../../cli.rst
+msgid "how matched cells are drawn in vector output"
+msgstr ""
+"comment les cellules marquées sont dessinées dans la sortie vectorielle"
+
+#: ../../cli.rst
+msgid "DXF units (default: mm); 'unspecified' writes $INSUNITS=0"
+msgstr "unités DXF (par défaut : mm) ; 'unspecified' écrit $INSUNITS=0"
+
+#: ../../cli.rst
+msgid "quiet-zone width in cells (default: 2)"
+msgstr "largeur de la zone de silence en cellules (par défaut : 2)"
+
+#: ../../cli.rst
+msgid "DataMatrix charset (default: auto picks the narrowest that fits)"
+msgstr ""
+"jeu de caractères DataMatrix (par défaut : auto choisit le plus restreint "
+"qui convient)"
+
+#: ../../cli.rst
+msgid "replace each occurrence of CHAR in --text with an FNC1 codeword"
+msgstr ""
+"remplace chaque occurrence de CHAR dans --text par un mot de code FNC1"
+
+#: ../../cli.rst
+msgid "Data Matrix shape (default: square)"
+msgstr "forme du Data Matrix (par défaut : square)"
+
+#: ../../cli.rst
+msgid "pystrich qrcode"
+msgstr "pystrich qrcode"
+
+#: ../../cli.rst
+msgid "QR Code (2D)"
+msgstr "QR Code (2D)"
+
+#: ../../cli.rst
+msgid "pystrich qrcode options"
+msgstr "options de pystrich qrcode"
+
+#: ../../cli.rst
+msgid "error-correction level (default: M)"
+msgstr "niveau de correction d'erreurs (par défaut : M)"
+
+#: ../../cli.rst
+msgid "pystrich pdf417"
+msgstr "pystrich pdf417"
+
+#: ../../cli.rst
+msgid "PDF417 (stacked 2D)"
+msgstr "PDF417 (2D empilé)"
+
+#: ../../cli.rst
+msgid "pystrich pdf417 options"
+msgstr "options de pystrich pdf417"
+
+#: ../../cli.rst
+msgid "error-correction level 0-8 (default: chosen from data length)"
+msgstr ""
+"niveau de correction d'erreurs 0-8 (par défaut : choisi selon la longueur "
+"des données)"
+
+#: ../../cli.rst
+msgid "data columns 1-30 (default: minimal-area layout)"
+msgstr "colonnes de données 1-30 (par défaut : disposition d'aire minimale)"
+
+#: ../../cli.rst
+msgid "module-rows per codeword row (default: 3)"
+msgstr "rangées de modules par rangée de mots de code (par défaut : 3)"
+
+#: ../../cli.rst
+msgid "quiet-zone width in modules (default: 2)"
+msgstr "largeur de la zone de silence en modules (par défaut : 2)"
+
+#: ../../cli.rst
+msgid "pystrich aztec"
+msgstr "pystrich aztec"
+
+#: ../../cli.rst
+msgid "Aztec Code (2D)"
+msgstr "Aztec Code (2D)"
+
+#: ../../cli.rst
+msgid "pystrich aztec options"
+msgstr "options de pystrich aztec"
+
+#: ../../cli.rst
+msgid "error-correction percentage 5..95 (default: 23)"
+msgstr "pourcentage de correction d'erreurs 5..95 (par défaut : 23)"
+
+#: ../../cli.rst
+msgid "symbol kind (default: auto picks the smallest that fits)"
+msgstr ""
+"type de symbole (par défaut : auto choisit le plus petit qui convient)"
+
+#: ../../cli.rst
+msgid "data layer count; requires --symbol-kind compact or full"
+msgstr ""
+"nombre de couches de données ; nécessite --symbol-kind compact ou full"
+
+#: ../../cli.rst
+msgid "Format auto-detection"
+msgstr "Détection automatique du format"
+
+#: ../../cli.rst
+msgid ""
+"The output format is auto-detected from the ``-o`` filename (``.png``, "
+"``.svg``, ``.eps``, ``.dxf``); without ``-o`` it defaults to ``terminal`` "
+"for 2D formats when stdout is a TTY. Piped or redirected output without an "
+"explicit ``-t`` is rejected, to avoid dumping binary into the next tool by "
+"accident."
+msgstr ""
+"Le format de sortie est détecté automatiquement à partir du nom de fichier "
+"``-o`` (``.png``, ``.svg``, ``.eps``, ``.dxf``) ; sans ``-o``, il vaut "
+"``terminal`` par défaut pour les formats 2D lorsque stdout est un TTY. Une "
+"sortie redirigée ou passée par un tube sans ``-t`` explicite est rejetée, "
+"pour éviter de déverser par accident du binaire dans l'outil suivant."
+
+#: ../../cli.rst
+msgid "GS1 Data Matrix from the shell"
+msgstr "GS1 Data Matrix depuis le shell"
+
+#: ../../cli.rst
+msgid ""
+"GS1 Data Matrix uses ASCII with ``FNC1`` markers separating application "
+"identifiers and their values. ``--substitute-with-fnc1`` lets you build that"
+" input from a shell-friendly string:"
+msgstr ""
+"GS1 Data Matrix utilise l'ASCII avec des marqueurs ``FNC1`` séparant les "
+"identifiants d'application et leurs valeurs. ``--substitute-with-fnc1`` vous"
+" permet de construire cette entrée à partir d'une chaîne adaptée au shell :"
+
+#: ../../cli.rst
+msgid "See :doc:`datamatrix` for the full encoding discussion."
+msgstr "Voir :doc:`datamatrix` pour la discussion complète sur l'encodage."

@@ -22,6 +22,8 @@ RUN uv run --frozen --no-sync sphinx-build -W --keep-going -b text -d docs/_buil
 RUN uv run --frozen --no-sync sphinx-build -W --keep-going -b html -d docs/_build/.doctrees docs docs/_build/html
 RUN uv run --frozen --no-sync sphinx-build -W --keep-going -b text -D language=de_DE -d docs/_build/.doctrees-de_DE docs docs/_build/text/de
 RUN uv run --frozen --no-sync sphinx-build -W --keep-going -b html -D language=de_DE -D html_baseurl=https://www.method-b.uk/pyStrich/docs/de/ -d docs/_build/.doctrees-de_DE docs docs/_build/html/de
+RUN uv run --frozen --no-sync sphinx-build -W --keep-going -b text -D language=fr_FR -d docs/_build/.doctrees-fr_FR docs docs/_build/text/fr
+RUN uv run --frozen --no-sync sphinx-build -W --keep-going -b html -D language=fr_FR -D html_baseurl=https://www.method-b.uk/pyStrich/docs/fr/ -d docs/_build/.doctrees-fr_FR docs docs/_build/html/fr
 
 FROM scratch AS export
 COPY --from=build /src/docs/_build/html /html

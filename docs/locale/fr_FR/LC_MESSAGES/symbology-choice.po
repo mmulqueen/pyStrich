@@ -1,0 +1,226 @@
+# French (fr-FR) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../../symbology-choice.rst
+msgid "Choosing the right symbology"
+msgstr "Choisir la bonne symbologie"
+
+#: ../../symbology-choice.rst
+msgid ""
+"This is meant to be an accessible introduction to the different kinds of "
+"barcodes that can be used and some rules of thumb for picking the right one."
+" This article probably isn't for you if you're planning a mass rollout, but "
+"I hope it'll be a useful starting point. Similarly, if you're generating a "
+"label or document that's been standardised, the decision may already have "
+"been made for you."
+msgstr ""
+"Ceci se veut une introduction accessible aux différents types de codes-"
+"barres que l'on peut utiliser, avec quelques règles empiriques pour choisir "
+"le bon. Cet article n'est probablement pas pour vous si vous préparez un "
+"déploiement à grande échelle, mais j'espère qu'il constituera un point de "
+"départ utile. De même, si vous générez une étiquette ou un document "
+"normalisé, le choix a peut-être déjà été fait pour vous."
+
+#: ../../symbology-choice.rst
+msgid "Everyone gets QR codes"
+msgstr "Le QR code, tout le monde connaît"
+
+#: ../../symbology-choice.rst
+msgid ""
+"QR codes are the most famous 2D barcode, everyone has heard of a QR code and"
+" probably scanned many of them. They have a distinctive appearance, even "
+"when stylised. They're supported by every modern smartphone without "
+"installing anything. If you want members of the public to scan it, QR codes "
+"should be your default choice. QR codes are likely to become even more "
+"popular over the next couple of years as GS1 Digital Link QR codes start to "
+"take over from classic 1D EAN barcodes in the shops."
+msgstr ""
+"Les QR codes sont le code-barres 2D le plus connu ; tout le monde en a "
+"entendu parler et en a probablement scanné beaucoup. Ils ont une apparence "
+"caractéristique, même stylisés. Ils sont pris en charge par tous les "
+"smartphones modernes sans rien installer. Si vous voulez que le grand public"
+" le scanne, les QR codes devraient être votre choix par défaut. Les QR codes"
+" ont de bonnes chances de devenir encore plus populaires dans les prochaines"
+" années, à mesure que les QR codes GS1 Digital Link commencent à remplacer "
+"les classiques codes-barres EAN 1D dans les magasins."
+
+#: ../../symbology-choice.rst
+msgid ""
+"The downside of QR codes is that they're relatively bulky as 2D barcodes go "
+"and while they're somewhat damage tolerant, it depends on where that damage "
+"is."
+msgstr ""
+"L'inconvénient des QR codes est qu'ils sont relativement encombrants pour "
+"des codes-barres 2D et, bien qu'ils tolèrent assez bien les dommages, cela "
+"dépend de l'endroit où se situe le dommage."
+
+#: ../../symbology-choice.rst
+msgid "QR Code example."
+msgstr "Exemple de QR Code."
+
+#: ../../symbology-choice.rst
+msgid "QR Code"
+msgstr "QR Code"
+
+#: ../../symbology-choice.rst
+msgid "But consider Data Matrix and Aztec"
+msgstr "Mais pensez à Data Matrix et Aztec"
+
+#: ../../symbology-choice.rst
+msgid ""
+"If you have more control over who/how you scan, Data Matrix and Aztec codes "
+"are well worth considering. They can be denser for typical payloads. Aztec "
+"codes are especially suited to environments where they might get damaged "
+"because the locator is in the middle, which is less exposed to edge wear "
+"than the corner locators on a QR code or the border locator on a Data Matrix"
+" symbol. Data Matrix is well established for part marking and its simple "
+"structure lends itself to many different physical marking methods like "
+"engraving, dot peening and laser. While not as well-known to the general "
+"public, Data Matrix barcodes are everywhere -- just looking around my home I"
+" see them on the packaging for medicines, Amazon deliveries, letters from "
+"banks -- and it's even more popular in industrial and healthcare settings. "
+"Most Data Matrix symbols are square, but rectangular ones exist too -- a "
+"rarer sight, though I've spotted a rectangular GS1 Data Matrix on H&M "
+"clothing tags. I see Aztec codes far less in the wild, I've spotted them on "
+"brewery kegs, rail tickets, airline boarding passes and the Tesco Clubcard."
+msgstr ""
+"Si vous maîtrisez davantage qui scanne et comment, les codes Data Matrix et "
+"Aztec méritent vraiment d'être envisagés. Ils peuvent être plus denses pour "
+"des charges utiles typiques. Les codes Aztec conviennent particulièrement "
+"aux environnements où ils risquent d'être endommagés, car le motif de "
+"recherche est au centre, moins exposé à l'usure des bords que les motifs "
+"d'angle d'un QR code ou le motif de bordure d'un symbole Data Matrix. Data "
+"Matrix est bien établi pour le marquage de pièces, et sa structure simple se"
+" prête à de nombreux procédés de marquage physique comme la gravure, la "
+"micro-percussion et le laser. Bien que moins connus du grand public, les "
+"codes-barres Data Matrix sont partout -- rien qu'en regardant autour de moi "
+"chez moi, j'en vois sur les emballages de médicaments, les livraisons "
+"Amazon, les courriers de banques -- et ils sont encore plus répandus dans "
+"les milieux industriels et de la santé. La plupart des symboles Data Matrix "
+"sont carrés, mais il en existe aussi des rectangulaires -- plus rares, même "
+"si j'ai repéré un GS1 Data Matrix rectangulaire sur des étiquettes de "
+"vêtements H&M. Je vois bien moins de codes Aztec dans la nature ; j'en ai "
+"repéré sur des fûts de brasserie, des billets de train, des cartes "
+"d'embarquement d'avion et la carte Tesco Clubcard."
+
+#: ../../symbology-choice.rst
+msgid ""
+"The central locator on an Aztec code bears some similarity to the locators "
+"on QR codes, which may be a helpful affordance to users understanding how to"
+" scan it. This may not always be an advantage, because it may cause "
+"frustration if someone tries to scan an Aztec code with their phone's built-"
+"in camera app and it doesn't work. The iOS/Android camera app supports QR "
+"codes and my Samsung Android phone at least supports Data Matrix too. If the"
+" symbol is being scanned in your own app, this isn't a problem, Google's ML "
+"Kit and Apple's VisionKit easily support any of these."
+msgstr ""
+"Le motif de recherche central d'un code Aztec présente une certaine "
+"ressemblance avec ceux des QR codes, ce qui peut aider intuitivement les "
+"utilisateurs à comprendre comment le scanner. Ce n'est pas toujours un "
+"avantage, car cela peut être source de frustration si quelqu'un essaie de "
+"scanner un code Aztec avec l'appareil photo intégré de son téléphone et que "
+"ça ne marche pas. L'appareil photo d'iOS/Android prend en charge les QR "
+"codes, et mon téléphone Samsung Android prend au moins en charge Data Matrix"
+" aussi. Si le symbole est scanné dans votre propre application, ce n'est pas"
+" un problème : ML Kit de Google et VisionKit d'Apple les prennent tous "
+"facilement en charge."
+
+#: ../../symbology-choice.rst
+msgid "Data Matrix"
+msgstr "Data Matrix"
+
+#: ../../symbology-choice.rst
+msgid "Aztec Code"
+msgstr "Aztec Code"
+
+#: ../../symbology-choice.rst
+msgid "Data Matrix example."
+msgstr "Exemple de Data Matrix."
+
+#: ../../symbology-choice.rst
+msgid "Aztec Code example."
+msgstr "Exemple d'Aztec Code."
+
+#: ../../symbology-choice.rst
+msgid "Anything else needs a good reason"
+msgstr "Tout le reste demande une bonne raison"
+
+#: ../../symbology-choice.rst
+msgid ""
+"I haven't mentioned PDF417 yet, and that's because I think the only good "
+"reason to use them in 2026 is if you have to. They take up a lot of physical"
+" space and in my experience, scanners struggle with larger PDF417 symbols "
+"too. They made sense in a world of linear scanners, which have largely died "
+"out as other 2D barcodes and on-screen scanning has been popularised. I do "
+"still come across them -- Eurostar boarding passes spring to mind."
+msgstr ""
+"Je n'ai pas encore mentionné PDF417, et c'est parce que je pense que la "
+"seule bonne raison de l'utiliser en 2026, c'est d'y être obligé. Il prend "
+"beaucoup de place et, d'après mon expérience, les lecteurs peinent aussi "
+"avec les grands symboles PDF417. Il avait du sens dans un monde de lecteurs "
+"linéaires -- un monde qui a largement disparu à mesure que d'autres codes-"
+"barres 2D et la lecture à l'écran se sont popularisés. J'en croise malgré "
+"tout encore -- les cartes d'embarquement Eurostar me viennent à l'esprit."
+
+#: ../../symbology-choice.rst
+msgid ""
+"There are other kinds of 2D barcodes -- but they're even more niche and if "
+"you needed to use them, you'd already know about them."
+msgstr ""
+"Il existe d'autres types de codes-barres 2D -- mais ils sont encore plus de "
+"niche, et si vous aviez besoin de les utiliser, vous le sauriez déjà."
+
+#: ../../symbology-choice.rst
+msgid ""
+"Should you use a 1D barcode? Again, if you needed to, you'd already know. "
+"Chances are it would be an EAN-13 if it's a consumer product, or an ITF-14 "
+"on the shipping carton it travels in. Code 128 remains popular in industrial"
+" settings. But if you have a choice, go 2D instead."
+msgstr ""
+"Faut-il utiliser un code-barres 1D ? Là encore, si vous en aviez besoin, "
+"vous le sauriez déjà. Ce serait probablement un EAN-13 pour un produit de "
+"grande consommation, ou un ITF-14 sur le carton d'expédition qui le "
+"transporte. Code 128 reste populaire dans les milieux industriels. Mais si "
+"vous avez le choix, optez plutôt pour de la 2D."
+
+#: ../../symbology-choice.rst
+msgid "PDF417"
+msgstr "PDF417"
+
+#: ../../symbology-choice.rst
+msgid "Code 128"
+msgstr "Code 128"
+
+#: ../../symbology-choice.rst
+msgid "EAN-13"
+msgstr "EAN-13"
+
+#: ../../symbology-choice.rst
+msgid "PDF417 example."
+msgstr "Exemple de PDF417."
+
+#: ../../symbology-choice.rst
+msgid "Code 128 example."
+msgstr "Exemple de Code 128."
+
+#: ../../symbology-choice.rst
+msgid "EAN-13 example."
+msgstr "Exemple d'EAN-13."
+
+#: ../../symbology-choice.rst
+msgid ""
+":doc:`printing` once you've chosen -- how to size a symbol so it scans "
+"reliably."
+msgstr ""
+":doc:`printing` une fois votre choix fait -- comment dimensionner un symbole"
+" pour qu'il se lise de façon fiable."

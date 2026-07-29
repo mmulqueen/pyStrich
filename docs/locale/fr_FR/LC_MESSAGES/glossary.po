@@ -1,0 +1,356 @@
+# French (fr-FR) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../../glossary.rst
+msgid "Glossary"
+msgstr "Glossaire"
+
+#: ../../glossary.rst
+msgid ""
+"Definitions for the barcode terms used throughout the pyStrich "
+"documentation."
+msgstr ""
+"Définitions des termes de codes-barres utilisés dans toute la documentation "
+"de pyStrich."
+
+#: ../../glossary.rst
+msgid "1D barcode"
+msgstr "code-barres 1D"
+
+#: ../../glossary.rst
+msgid ""
+"A linear symbology that encodes data as parallel bars and spaces of varying "
+"widths, read along a single axis. EAN-13, Code 128 and Code 39 are 1D "
+"barcodes."
+msgstr ""
+"Une symbologie linéaire qui encode les données sous forme de barres et "
+"d'espaces parallèles de largeurs variables, lus le long d'un seul axe. "
+"EAN-13, Code 128 et Code 39 sont des codes-barres 1D."
+
+#: ../../glossary.rst
+msgid "2D barcode"
+msgstr "code-barres 2D"
+
+#: ../../glossary.rst
+msgid ""
+"A matrix or stacked symbology that encodes data in two dimensions, giving "
+"much higher data density than a 1D barcode. QR Code, Data Matrix, Aztec Code"
+" and PDF417 are 2D barcodes."
+msgstr ""
+"Une symbologie matricielle ou empilée qui encode les données en deux "
+"dimensions, offrant une densité de données bien supérieure à celle d'un "
+"code-barres 1D. QR Code, Data Matrix, Aztec Code et PDF417 sont des codes-"
+"barres 2D."
+
+#: ../../glossary.rst
+msgid "codeword"
+msgstr "mot de code"
+
+#: ../../glossary.rst
+msgid ""
+"A fixed-size unit of encoded data produced after the payload has been mapped"
+" from text or bytes into the format's internal representation. Codewords are"
+" what Reed-Solomon error correction operates on, and the total codeword "
+"count fixes the symbol's data capacity."
+msgstr ""
+"Une unité de données encodées, de taille fixe, produite après que la charge "
+"utile a été convertie depuis du texte ou des octets vers la représentation "
+"interne du format. Les mots de code sont ce sur quoi opère la correction "
+"d'erreurs Reed-Solomon, et le nombre total de mots de code fixe la capacité "
+"de données du symbole."
+
+#: ../../glossary.rst
+msgid "direct part marking"
+msgstr "marquage direct des pièces"
+
+#: ../../glossary.rst
+msgid ""
+"Engraving, dot-peening, chemical etching or laser marking a barcode directly"
+" onto a physical part, in place of a printed label. Used where labels would "
+"not be suitable."
+msgstr ""
+"Gravure, micro-percussion, attaque chimique ou marquage laser d'un code-"
+"barres directement sur une pièce physique, à la place d'une étiquette "
+"imprimée. Utilisé lorsque des étiquettes ne conviendraient pas."
+
+#: ../../glossary.rst
+msgid "DPI"
+msgstr "DPI"
+
+#: ../../glossary.rst
+msgid ""
+"Dots per inch. The resolution at which a printer lays down ink or a scanner "
+"samples an image. DPI sets the lower bound on how small a module can be "
+"reproduced reliably."
+msgstr ""
+"Points par pouce (dots per inch). La résolution à laquelle une imprimante "
+"dépose l'encre ou un lecteur échantillonne une image. Le DPI fixe la limite "
+"inférieure de la taille à laquelle un module peut être reproduit de façon "
+"fiable."
+
+#: ../../glossary.rst
+msgid "DXF"
+msgstr "DXF"
+
+#: ../../glossary.rst
+msgid ""
+"Drawing Exchange Format. A CAD-oriented vector file format originally from "
+"AutoCAD, useful for handing barcode geometry to engraving or laser-cutting "
+"workflows."
+msgstr ""
+"Drawing Exchange Format. Un format de fichier vectoriel orienté CAO, issu à "
+"l'origine d'AutoCAD, utile pour transmettre la géométrie d'un code-barres à "
+"des flux de gravure ou de découpe laser."
+
+#: ../../glossary.rst
+msgid "ECI"
+msgstr "ECI"
+
+#: ../../glossary.rst
+msgid ""
+"Extended Channel Interpretation. A standardised escape mechanism (defined by"
+" AIM) that lets a 2D symbol declare which character encoding -- UTF-8, "
+"ISO-8859-1 and so on -- the following data uses, so decoders return text in "
+"the right charset."
+msgstr ""
+"Extended Channel Interpretation. Un mécanisme d'échappement normalisé "
+"(défini par l'AIM) qui permet à un symbole 2D de déclarer quel encodage de "
+"caractères -- UTF-8, ISO-8859-1, etc. -- utilisent les données qui suivent, "
+"afin que les décodeurs renvoient le texte dans le bon jeu de caractères."
+
+#: ../../glossary.rst
+msgid "EPS"
+msgstr "EPS"
+
+#: ../../glossary.rst
+msgid ""
+"Encapsulated PostScript. A vector format for embedding a PostScript drawing "
+"inside another document, long-used in print production and still accepted by"
+" most prepress and imposition tools."
+msgstr ""
+"Encapsulated PostScript. Un format vectoriel permettant d'intégrer un dessin"
+" PostScript dans un autre document, utilisé de longue date en production "
+"imprimée et encore accepté par la plupart des outils de prépresse et "
+"d'imposition."
+
+#: ../../glossary.rst
+msgid "error correction level"
+msgstr "niveau de correction d'erreurs"
+
+#: ../../glossary.rst
+msgid ""
+"The amount of redundancy a symbol carries, expressed differently per format:"
+" QR Code uses L / M / Q / H, PDF417 uses levels 0-8, Aztec Code uses a "
+"percentage. Higher levels recover from more damage at the cost of holding "
+"less payload."
+msgstr ""
+"La quantité de redondance que porte un symbole, exprimée différemment selon "
+"le format : QR Code utilise L / M / Q / H, PDF417 utilise des niveaux de 0 à"
+" 8, Aztec Code utilise un pourcentage. Les niveaux plus élevés permettent de"
+" résister à davantage de dommages, au prix d'une charge utile moindre."
+
+#: ../../glossary.rst
+msgid "finder pattern"
+msgstr "motif de recherche"
+
+#: ../../glossary.rst
+msgid ""
+"A distinctive marker at fixed positions inside a 2D symbol so scanners can "
+"locate the code and determine its orientation. Each symbology uses its own "
+"design: QR Code's three corner squares, Data Matrix's solid-L, Aztec Code's "
+"central bullseye."
+msgstr ""
+"Un repère distinctif placé à des positions fixes dans un symbole 2D pour que"
+" les lecteurs puissent localiser le code et déterminer son orientation. "
+"Chaque symbologie utilise sa propre conception : les trois carrés d'angle du"
+" QR Code, le L plein du Data Matrix, la cible centrale de l'Aztec Code."
+
+#: ../../glossary.rst
+msgid "FNC1"
+msgstr "FNC1"
+
+#: ../../glossary.rst
+msgid ""
+"Function Code 1. A non-data control character that 2D symbols use to signal "
+"that the payload follows the GS1 Application Identifier format. It is always"
+" emitted at the start of the data and may also separate variable-length "
+"identifiers within the payload."
+msgstr ""
+"Function Code 1. Un caractère de contrôle, sans valeur de donnée, que les "
+"symboles 2D utilisent pour signaler que la charge utile suit le format des "
+"identifiants d'application GS1. Il est toujours émis au début des données et"
+" peut aussi séparer des identifiants de longueur variable au sein de la "
+"charge utile."
+
+#: ../../glossary.rst
+msgid "GS1"
+msgstr "GS1"
+
+#: ../../glossary.rst
+msgid ""
+"A global standards body that maintains identifiers such as the GTIN and the "
+"Application Identifier format used to encode structured product data in "
+"barcodes. \"GS1 mode\" in a 2D symbol uses FNC1 to mark the payload as "
+"following these rules."
+msgstr ""
+"Un organisme de normalisation mondial qui maintient des identifiants tels "
+"que le GTIN et le format des identifiants d'application, utilisés pour "
+"encoder des données produit structurées dans les codes-barres. Le « mode "
+"GS1 » d'un symbole 2D utilise FNC1 pour signaler que la charge utile suit "
+"ces règles."
+
+#: ../../glossary.rst
+msgid "GTIN"
+msgstr "GTIN"
+
+#: ../../glossary.rst
+msgid ""
+"Global Trade Item Number. The GS1 identifier used to uniquely identify a "
+"retail product, structured as a 14-digit number with a check digit. EAN-13 "
+"barcodes carry GTINs directly; 2D symbols can carry them inside GS1 "
+"Application Identifier payloads."
+msgstr ""
+"Global Trade Item Number. L'identifiant GS1 utilisé pour identifier de façon"
+" unique un produit de détail, structuré comme un nombre à 14 chiffres avec "
+"un chiffre de contrôle. Les codes-barres EAN-13 portent directement des "
+"GTIN ; les symboles 2D peuvent les porter au sein de charges utiles "
+"d'identifiants d'application GS1."
+
+#: ../../glossary.rst
+msgid "module"
+msgstr "module"
+
+#: ../../glossary.rst
+msgid ""
+"The smallest individual element of a barcode: one dark or light unit. In 2D "
+"symbologies it is a square cell; in 1D symbologies it is the narrowest bar "
+"or space. Symbol sizes and quiet zones are both measured in modules."
+msgstr ""
+"Le plus petit élément individuel d'un code-barres : une unité sombre ou "
+"claire. Dans les symbologies 2D, c'est une cellule carrée ; dans les "
+"symbologies 1D, c'est la barre ou l'espace le plus étroit. Les tailles de "
+"symbole et les zones de silence se mesurent toutes deux en modules."
+
+#: ../../glossary.rst
+msgid "occlusion"
+msgstr "occultation"
+
+#: ../../glossary.rst
+msgid ""
+"Partial covering of a symbol by another object -- a finger, a sticker, a "
+"smudge, a tear. Error-correction codewords let a decoder recover the payload"
+" as long as the occluded area stays within tolerance."
+msgstr ""
+"Recouvrement partiel d'un symbole par un autre objet -- un doigt, un "
+"autocollant, une bavure, une déchirure. Les mots de code de correction "
+"d'erreurs permettent à un décodeur de récupérer la charge utile tant que la "
+"zone occultée reste dans la tolérance."
+
+#: ../../glossary.rst
+msgid "projective distortion"
+msgstr "distorsion projective"
+
+#: ../../glossary.rst
+msgid ""
+"The geometric warping that appears when a flat symbol is photographed from "
+"an angle: parallel edges no longer stay parallel and modules vary in size "
+"across the image. Decoders correct for it using known reference points such "
+"as alignment patterns."
+msgstr ""
+"La déformation géométrique qui apparaît lorsqu'un symbole plan est "
+"photographié de biais : les bords parallèles ne le restent plus et la taille"
+" des modules varie d'un bout à l'autre de l'image. Les décodeurs la "
+"corrigent à l'aide de points de référence connus, tels que les motifs "
+"d'alignement."
+
+#: ../../glossary.rst
+msgid "quiet zone"
+msgstr "zone de silence"
+
+#: ../../glossary.rst
+msgid ""
+"The blank margin around a barcode that lets a scanner separate the symbol "
+"from surrounding artwork. Most specifications mandate a minimum quiet zone "
+"in modules; without it, decoders may fail to lock on or may misread the "
+"outer edges."
+msgstr ""
+"La marge vierge autour d'un code-barres qui permet à un lecteur de "
+"distinguer le symbole des éléments graphiques environnants. La plupart des "
+"spécifications imposent une zone de silence minimale en modules ; sans elle,"
+" les décodeurs peuvent ne pas se verrouiller ou mal lire les bords "
+"extérieurs."
+
+#: ../../glossary.rst
+msgid "Reed-Solomon"
+msgstr "Reed-Solomon"
+
+#: ../../glossary.rst
+msgid ""
+"A widely-used error-correction algorithm that adds redundant codewords to a "
+"message so the original data can be recovered even if some codewords are "
+"damaged or unreadable. Used by Data Matrix, QR Code, Aztec Code, PDF417 and "
+"many other formats."
+msgstr ""
+"Un algorithme de correction d'erreurs très répandu qui ajoute des mots de "
+"code redondants à un message afin que les données d'origine puissent être "
+"récupérées même si certains mots de code sont endommagés ou illisibles. "
+"Utilisé par Data Matrix, QR Code, Aztec Code, PDF417 et de nombreux autres "
+"formats."
+
+#: ../../glossary.rst
+msgid "symbology"
+msgstr "symbologie"
+
+#: ../../glossary.rst
+msgid ""
+"A specification defining how data is encoded as a barcode: the character "
+"sets it accepts, how codewords are laid out, the error correction it "
+"applies, and how a scanner should read it. Data Matrix and QR Code are "
+"symbologies."
+msgstr ""
+"Une spécification définissant comment les données sont encodées sous forme "
+"de code-barres : les jeux de caractères qu'elle accepte, la disposition des "
+"mots de code, la correction d'erreurs qu'elle applique et la façon dont un "
+"lecteur doit la lire. Data Matrix et QR Code sont des symbologies."
+
+#: ../../glossary.rst
+msgid "timing pattern"
+msgstr "motif de synchronisation"
+
+#: ../../glossary.rst
+msgid ""
+"A row or column of alternating dark and light cells inside a 2D symbol that "
+"lets a scanner count modules across the symbol and recover from grid skew. "
+"Data Matrix has one along the top and right of each region; QR Code has one "
+"row and one column between the corner finders."
+msgstr ""
+"Une ligne ou une colonne de cellules alternativement sombres et claires à "
+"l'intérieur d'un symbole 2D, qui permet à un lecteur de compter les modules "
+"sur toute la largeur du symbole et de corriger un décalage de grille. Data "
+"Matrix en possède un le long du haut et de la droite de chaque région ; QR "
+"Code en a une ligne et une colonne entre les motifs de recherche d'angle."
+
+#: ../../glossary.rst
+msgid "X-dimension"
+msgstr "dimension X"
+
+#: ../../glossary.rst
+msgid ""
+"The width of the narrowest bar or module in a printed symbol, traditionally "
+"measured in mils or millimetres. The X-dimension sets how small the symbol "
+"can be printed and how far away a scanner can read it from."
+msgstr ""
+"La largeur de la barre ou du module le plus étroit dans un symbole imprimé, "
+"traditionnellement mesurée en mils ou en millimètres. La dimension X "
+"détermine la taille minimale à laquelle le symbole peut être imprimé et la "
+"distance à laquelle un lecteur peut le lire."

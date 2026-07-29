@@ -1,0 +1,533 @@
+# French (fr-FR) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../../ean13.rst:-1
+msgid ""
+"Generate EAN-13 / GTIN-13 retail barcodes in Python with pyStrich. Pass 12 "
+"or 13 digits; the check digit is computed for you. PNG, SVG and EPS output."
+msgstr ""
+"Générez des codes-barres de détail EAN-13 / GTIN-13 en Python avec pyStrich."
+" Passez 12 ou 13 chiffres ; le chiffre de contrôle est calculé pour vous. "
+"Sortie PNG, SVG et EPS."
+
+#: ../../ean13.rst
+msgid "EAN-13"
+msgstr "EAN-13"
+
+#: ../../ean13.rst
+msgid ""
+"EAN-13 is the retail product barcode for a GTIN-13 -- the 13-digit global "
+"identifier issued by GS1 and printed on virtually every consumer product. "
+"Pass either 12 digits (the check digit will be computed and appended) or 13 "
+"digits (the final digit is treated as a check digit and recomputed)."
+msgstr ""
+"L'EAN-13 est le code-barres de vente au détail correspondant à un GTIN-13 --"
+" l'identifiant mondial à 13 chiffres attribué par GS1 et imprimé sur "
+"pratiquement tous les produits de grande consommation. Passez soit 12 "
+"chiffres (le chiffre de contrôle sera calculé et ajouté), soit 13 chiffres "
+"(le dernier chiffre est traité comme un chiffre de contrôle et recalculé)."
+
+#: ../../ean13.rst
+msgid ""
+"`International Article Number on Wikipedia "
+"<https://en.wikipedia.org/wiki/International_Article_Number>`_ for "
+"background on the symbology itself."
+msgstr ""
+"`Code-barres EAN sur Wikipédia <https://fr.wikipedia.org/wiki/Code-"
+"barres_EAN>`_ pour des informations générales sur la symbologie elle-même."
+
+#: ../../ean13.rst
+msgid ""
+"EAN-13 is defined in `ISO/IEC 15420 "
+"<https://www.iso.org/standard/84892.html>`_."
+msgstr ""
+"L'EAN-13 est défini dans la norme `ISO/IEC 15420 "
+"<https://www.iso.org/fr/standard/84892.html>`_ (Technologies de "
+"l'information -- Techniques automatiques d'identification et de capture de "
+"données -- Spécification de la symbologie des codes à barres EAN/UPC)."
+
+#: ../../ean13.rst
+msgid ""
+"Real-world EAN-13 codes must be allocated by GS1 to your organisation; you "
+"cannot simply invent one. Inventing a code will produce a scannable barcode,"
+" but it will collide with -- or be rejected by -- retailer product "
+"databases. The number used in this page's examples, ``5050070007664``, is "
+"the GTIN of a real product (a DVD of *Road House*)."
+msgstr ""
+"Les codes EAN-13 réels doivent être attribués par GS1 à votre organisation ;"
+" vous ne pouvez pas en inventer un. Inventer un code produira un code-barres"
+" lisible par un lecteur, mais il entrera en conflit avec les bases de "
+"données produits des distributeurs -- ou en sera rejeté. Le numéro utilisé "
+"dans les exemples de cette page, ``5050070007664``, est le GTIN d'un produit"
+" réel (un DVD de *Road House*)."
+
+#: ../../ean13.rst
+msgid ""
+"Input must be exactly 12 or 13 digits, ASCII ``0``-``9``. Anything else "
+"raises :class:`~pystrich.exceptions.PyStrichInvalidPayloadLength`. The "
+"human-readable label below the bars is mandated by the EAN-13 specification "
+"and always rendered; the only customisation hook is the cosmetic "
+":class:`EAN13RenderOptions` dict (see :ref:`ean13-sizing` below)."
+msgstr ""
+"L'entrée doit comporter exactement 12 ou 13 chiffres, ASCII ``0``-``9``. "
+"Toute autre valeur lève "
+":class:`~pystrich.exceptions.PyStrichInvalidPayloadLength`. Le libellé en "
+"clair sous les barres est imposé par la spécification EAN-13 et toujours "
+"rendu ; le seul point de personnalisation est le dictionnaire de réglages "
+"cosmétiques :class:`EAN13RenderOptions` (voir :ref:`ean13-sizing` ci-"
+"dessous)."
+
+#: ../../ean13.rst
+msgid ""
+"The check digit is always computed by pyStrich; pass either 12 digits (it is"
+" appended) or 13 digits (the supplied final digit is discarded and "
+"recomputed):"
+msgstr ""
+"Le chiffre de contrôle est toujours calculé par pyStrich ; passez soit 12 "
+"chiffres (il est ajouté), soit 13 chiffres (le dernier chiffre fourni est "
+"ignoré et recalculé) :"
+
+#: ../../ean13.rst
+msgid "Example"
+msgstr "Exemple"
+
+#: ../../ean13.rst
+msgid "EAN-13 barcode encoding \"5050070007664\"."
+msgstr "Code-barres EAN-13 encodant « 5050070007664 »."
+
+#: ../../ean13.rst
+msgid "Sizing, label, font and layout"
+msgstr "Dimensionnement, libellé, police et mise en page"
+
+#: ../../ean13.rst
+msgid ""
+"The ``bar_width`` argument to :meth:`~EAN13Encoder.save` and "
+":meth:`~EAN13Encoder.get_imagedata` sets the pixel width of the narrowest "
+"bar (default ``3``)."
+msgstr ""
+"L'argument ``bar_width`` de :meth:`~EAN13Encoder.save` et "
+":meth:`~EAN13Encoder.get_imagedata` définit la largeur, en pixels, de la "
+"barre la plus étroite (``3`` par défaut)."
+
+#: ../../ean13.rst
+msgid ""
+"The GS1 specification mandates an asymmetric quiet zone (white space) of 11 "
+"modules on the left and 7 modules on the right of the symbol; pyStrich "
+"renders this automatically and it is not configurable. If you composite the "
+"saved PNG into another image, do not crop into the white margin or retail "
+"scanners may fail to read the symbol."
+msgstr ""
+"La spécification GS1 impose une zone de silence asymétrique (espace blanc) "
+"de 11 modules à gauche et de 7 modules à droite du symbole ; pyStrich la "
+"rend automatiquement et elle n'est pas configurable. Si vous intégrez le PNG"
+" enregistré dans une autre image, ne rognez pas dans la marge blanche, faute"
+" de quoi les lecteurs de caisse risquent de ne pas lire le symbole."
+
+#: ../../ean13.rst
+msgid ""
+"The quiet zone was previously 9 modules on each side, which is below spec on"
+" the left."
+msgstr ""
+"La zone de silence était auparavant de 9 modules de chaque côté, ce qui est "
+"en deçà de la spécification à gauche."
+
+#: ../../ean13.rst
+msgid ""
+"By default pyStrich draws the leading number-system digit slightly higher "
+"than the two main digit groups. To draw all three groups on a level baseline"
+" instead, pass an ``options`` dict with ``first_digit_y_offset`` set to "
+"``0``:"
+msgstr ""
+"Par défaut, pyStrich dessine le premier chiffre, celui du système de "
+"numérotation, légèrement plus haut que les deux principaux groupes de "
+"chiffres. Pour dessiner plutôt les trois groupes sur une même ligne de base,"
+" passez un dictionnaire ``options`` avec ``first_digit_y_offset`` réglé sur "
+"``0`` :"
+
+#: ../../ean13.rst
+msgid ""
+"The value is the gap between the first digit and the others, expressed as a "
+"fraction of image height. ``0.1`` (the default) preserves the classic look; "
+"``0`` aligns all three groups."
+msgstr ""
+"La valeur est l'écart entre le premier chiffre et les autres, exprimé en "
+"fraction de la hauteur de l'image. ``0.1`` (par défaut) conserve l'aspect "
+"classique ; ``0`` aligne les trois groupes."
+
+#: ../../ean13.rst
+msgid "The ``options`` dict and ``first_digit_y_offset`` key."
+msgstr "Le dictionnaire ``options`` et la clé ``first_digit_y_offset``."
+
+#: ../../ean13.rst
+msgid ""
+":doc:`printing` for guidance on selecting ``bar_width`` for printed output."
+msgstr ""
+":doc:`printing` pour des conseils sur le choix de ``bar_width`` pour une "
+"sortie imprimée."
+
+#: ../../ean13.rst
+msgid "EAN-13 barcode encoding \"5050070007664\" with a level label baseline."
+msgstr ""
+"Code-barres EAN-13 encodant « 5050070007664 » avec le libellé aligné sur une"
+" même ligne de base."
+
+#: ../../ean13.rst
+msgid "Output formats"
+msgstr "Formats de sortie"
+
+#: ../../ean13.rst
+msgid "SVG output"
+msgstr "Sortie SVG"
+
+#: ../../ean13.rst
+msgid ""
+"For embedding in web pages or any workflow that benefits from resolution-"
+"independent output, use :meth:`~EAN13Encoder.save_svg` (or "
+":meth:`~EAN13Encoder.get_svg` to receive the SVG as a string)."
+msgstr ""
+"Pour une intégration dans des pages web ou tout flux de travail tirant parti"
+" d'une sortie indépendante de la résolution, utilisez "
+":meth:`~EAN13Encoder.save_svg` (ou :meth:`~EAN13Encoder.get_svg` pour "
+"récupérer le SVG sous forme de chaîne)."
+
+#: ../../ean13.rst
+msgid "SVG EAN-13 barcode encoding \"5050070007664\"."
+msgstr "Code-barres EAN-13 SVG encodant « 5050070007664 »."
+
+#: ../../ean13.rst
+msgid ""
+"The SVG's ``viewBox`` is in module units, while ``width`` and ``height`` "
+"scale by ``bar_width``. The 11-module left and 7-module right quiet zones "
+"required by GS1 are applied automatically. Guard bars extend 5 modules below"
+" the data-bar baseline, also per the GS1 General Specifications."
+msgstr ""
+"Le ``viewBox`` du SVG est exprimé en unités de module, tandis que ``width`` "
+"et ``height`` sont mis à l'échelle par ``bar_width``. Les zones de silence "
+"de 11 modules à gauche et de 7 modules à droite exigées par GS1 sont "
+"appliquées automatiquement. Les barres de garde s'étendent de 5 modules sous"
+" la ligne de base des barres de données, là encore conformément aux GS1 "
+"General Specifications."
+
+#: ../../ean13.rst
+msgid "PNG output"
+msgstr "Sortie PNG"
+
+#: ../../ean13.rst
+msgid ""
+"For raster output, use :meth:`~EAN13Encoder.save` to write a PNG file or "
+":meth:`~EAN13Encoder.get_imagedata` to receive the raw PNG bytes."
+msgstr ""
+"Pour une sortie matricielle, utilisez :meth:`~EAN13Encoder.save` pour écrire"
+" un fichier PNG ou :meth:`~EAN13Encoder.get_imagedata` pour récupérer les "
+"octets PNG bruts."
+
+#: ../../ean13.rst
+msgid "EPS output"
+msgstr "Sortie EPS"
+
+#: ../../ean13.rst
+msgid ""
+"For embedding in LaTeX (``\\includegraphics``) or other vector print "
+"workflows, use :meth:`~EAN13Encoder.save_eps` (or "
+":meth:`~EAN13Encoder.get_eps` to receive the EPS as a string)."
+msgstr ""
+"Pour une intégration dans LaTeX (``\\includegraphics``) ou d'autres flux "
+"d'impression vectorielle, utilisez :meth:`~EAN13Encoder.save_eps` (ou "
+":meth:`~EAN13Encoder.get_eps` pour récupérer l'EPS sous forme de chaîne)."
+
+#: ../../ean13.rst
+msgid ""
+"The ``bar_width`` argument is the width of the narrowest bar in PostScript "
+"points (1 point = 1/72 inch). The GS1 quiet zones (11 modules left, 7 "
+"modules right) and the 5-module guard-bar offset are applied automatically."
+msgstr ""
+"L'argument ``bar_width`` est la largeur de la barre la plus étroite en "
+"points PostScript (1 point = 1/72 de pouce). Les zones de silence GS1 (11 "
+"modules à gauche, 7 modules à droite) et le décalage de 5 modules des barres"
+" de garde sont appliqués automatiquement."
+
+#: ../../ean13.rst
+msgid "API"
+msgstr "API"
+
+#: of pystrich.ean13.EAN13Encoder
+msgid "Encode a 12- or 13-digit code as an EAN-13 1D barcode."
+msgstr ""
+"Encode un code de 12 ou 13 chiffres sous forme de code-barres 1D EAN-13."
+
+#: of pystrich.ean13.EAN13Encoder
+msgid ""
+"The check digit is computed for you. If a 13-digit code is supplied, its "
+"final digit is discarded and recomputed."
+msgstr ""
+"Le chiffre de contrôle est calculé pour vous. Si un code de 13 chiffres est "
+"fourni, son dernier chiffre est ignoré et recalculé."
+
+#: of pystrich.ean13.EAN13Encoder
+msgid "Typical use::"
+msgstr "Utilisation typique::"
+
+#: ../../ean13.rst
+msgid "Variables"
+msgstr "Variables"
+
+#: of pystrich.ean13.EAN13Encoder
+msgid "The 12-digit input (number system + manufacturer + product)."
+msgstr ""
+"L'entrée de 12 chiffres (système de numérotation + fabricant + produit)."
+
+#: of pystrich.ean13.EAN13Encoder
+msgid "The computed mod-10 check digit."
+msgstr "Le chiffre de contrôle modulo 10 calculé."
+
+#: of pystrich.ean13.EAN13Encoder
+msgid "The 13-digit code including check digit."
+msgstr "Le code de 13 chiffres, chiffre de contrôle compris."
+
+#: of pystrich.ean13.EAN13Encoder
+msgid "Bar pattern for the left half of the symbol."
+msgstr "Motif de barres de la moitié gauche du symbole."
+
+#: of pystrich.ean13.EAN13Encoder
+msgid "Bar pattern for the right half."
+msgstr "Motif de barres de la moitié droite."
+
+#: of pystrich.ean13.EAN13Encoder
+msgid "Render-time options dict (empty if none were supplied)."
+msgstr "Dictionnaire d'options de rendu (vide si aucune n'a été fournie)."
+
+#: of pystrich.ean13.EAN13Encoder
+msgid "Pixel width of the most recently rendered image."
+msgstr "Largeur en pixels de la dernière image rendue."
+
+#: of pystrich.ean13.EAN13Encoder
+msgid "Pixel height of the most recently rendered image."
+msgstr "Hauteur en pixels de la dernière image rendue."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+msgid "Render the barcode and return EPS markup."
+msgstr "Génère le code-barres et renvoie le balisage EPS."
+
+#: ../../ean13.rst
+msgid "Parameters"
+msgstr "Paramètres"
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid "Width in PostScript points of the narrowest bar."
+msgstr "Largeur en points PostScript de la barre la plus étroite."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid ""
+"Bar and text colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. "
+"Defaults to black."
+msgstr ""
+"Couleur des barres et du texte, sous forme de chaîne hexadécimale de 3, 6 ou"
+" 8 chiffres ou d'un ``RGBA``. Noir par défaut."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``, opaque. "
+"Defaults to white."
+msgstr ""
+"Couleur de fond, sous forme de chaîne hexadécimale de 3, 6 ou 8 chiffres ou "
+"d'un ``RGBA``, opaque. Blanc par défaut."
+
+#: ../../ean13.rst
+msgid "Return type"
+msgstr "Type renvoyé"
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_eps
+#: pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+#: pystrich.bar_encoder.Bar1DEncoder.save_eps
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid "Added ``dark_hex`` and ``light_hex``."
+msgstr "Ajout de ``dark_hex`` et ``light_hex``."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+msgid "Render the barcode and return PNG bytes."
+msgstr "Génère le code-barres et renvoie les octets PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+msgid "Width in pixels of the narrowest bar."
+msgstr "Largeur en pixels de la barre la plus étroite."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+#: pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+#: pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+#: pystrich.bar_encoder.Bar1DEncoder.save
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid ""
+"Background colour as a 3-, 6- or 8-digit hex string or an ``RGBA``. Defaults"
+" to white."
+msgstr ""
+"Couleur de fond, sous forme de chaîne hexadécimale de 3, 6 ou 8 chiffres ou "
+"d'un ``RGBA``. Blanc par défaut."
+
+#: ../../ean13.rst
+msgid "Returns"
+msgstr "Renvoie"
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_imagedata
+msgid "PNG-encoded image data."
+msgstr "Données d'image encodées en PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+msgid "Render the barcode and return a Pillow image."
+msgstr "Génère le code-barres et renvoie une image Pillow."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_pilimage
+msgid "The rendered barcode."
+msgstr "Le code-barres rendu."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_rect_marks
+msgid "Return the barcode's dark bars as rectangles in layout units."
+msgstr ""
+"Renvoie les barres sombres du code-barres sous forme de rectangles en unités"
+" de mise en page."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_svg
+msgid "Render the barcode and return SVG markup."
+msgstr "Génère le code-barres et renvoie le balisage SVG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.get_svg
+#: pystrich.bar_encoder.Bar1DEncoder.save_svg
+#: pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid "Width in user units of the narrowest bar."
+msgstr "Largeur en unités utilisateur de la barre la plus étroite."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.png_dataurl
+msgid "Render the barcode and return a PNG ``data:`` URL string."
+msgstr "Génère le code-barres et renvoie une chaîne d'URL ``data:`` PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save
+msgid "Render the barcode to a PNG file."
+msgstr "Génère le code-barres dans un fichier PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save
+msgid "Path to write the PNG to."
+msgstr "Chemin où écrire le PNG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid "Save the barcode as an EPS file. Pass an ``.eps`` filename."
+msgstr ""
+"Enregistre le code-barres dans un fichier EPS. Passez un nom de fichier "
+"``.eps``."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_eps
+msgid "EPS output path."
+msgstr "Chemin de sortie EPS."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_svg
+msgid "Save the barcode as an SVG file. Pass a ``.svg`` filename."
+msgstr ""
+"Enregistre le code-barres dans un fichier SVG. Passez un nom de fichier "
+"``.svg``."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.save_svg
+msgid "SVG output path."
+msgstr "Chemin de sortie SVG."
+
+#: of pystrich.bar_encoder.Bar1DEncoder.svg_dataurl
+msgid "Render the barcode and return an SVG ``data:`` URL string."
+msgstr "Génère le code-barres et renvoie une chaîne d'URL ``data:`` SVG."
+
+#: of pystrich.ean13.EAN13Encoder.encode
+msgid "Encode the barcode number and return the left and right data strings"
+msgstr ""
+"Encode le numéro du code-barres et renvoie les chaînes de données gauche et "
+"droite"
+
+#: of pystrich.ean13.EAN13Encoder.get_parity
+msgid "Return the parity mappings applicable to this code"
+msgstr "Renvoie les correspondances de parité applicables à ce code"
+
+#: of pystrich.ean13.EAN13Encoder.calculate_check_digit
+msgid "Compute the EAN-13 mod-10 check digit for :attr:`code`."
+msgstr "Calcule le chiffre de contrôle modulo 10 EAN-13 pour :attr:`code`."
+
+#: of pystrich.ean13.EAN13Encoder.calculate_check_digit
+msgid ""
+"Working right-to-left across the 12-digit input, odd-positioned digits are "
+"weighted by 3 and even-positioned digits by 1; the check digit is the value "
+"that brings the weighted sum to a multiple of 10."
+msgstr ""
+"En parcourant l'entrée de 12 chiffres de droite à gauche, les chiffres en "
+"position impaire sont pondérés par 3 et ceux en position paire par 1 ; le "
+"chiffre de contrôle est la valeur qui porte la somme pondérée à un multiple "
+"de 10."
+
+#: of pystrich.ean13.EAN13Encoder.init_renderer
+msgid "Construct an :class:`EAN13Renderer` for the encoded code."
+msgstr "Construit un :class:`EAN13Renderer` pour le code encodé."
+
+#: of pystrich.ean13.EAN13Encoder.init_renderer
+msgid ":class:`EAN13Renderer`"
+msgstr ""
+
+#: of pystrich.ean13.renderer.EAN13RenderOptions
+msgid "Optional render-time tweaks for EAN-13 barcodes."
+msgstr "Réglages de rendu facultatifs pour les codes-barres EAN-13."
+
+#: of pystrich.ean13.renderer.EAN13RenderOptions
+msgid ""
+"The label layout in EAN-13 is fixed by the standard, so this is a small set "
+"of cosmetic toggles. All keys are optional; omitted keys fall back to "
+"library defaults."
+msgstr ""
+"La disposition du libellé en EAN-13 est fixée par la norme ; il ne s'agit "
+"donc que d'un petit ensemble de réglages cosmétiques. Toutes les clés sont "
+"facultatives ; les clés omises se rabattent sur les valeurs par défaut de la"
+" bibliothèque."
+
+#: of pystrich.ean13.EAN13RenderOptions.height
+msgid ""
+"Total image height in pixels (= user units for SVG/EPS at default DPI). "
+"Defaults to half the symbol's pixel width."
+msgstr ""
+"Hauteur totale de l'image en pixels (= unités utilisateur pour SVG/EPS à la "
+"résolution par défaut). Vaut par défaut la moitié de la largeur en pixels du"
+" symbole."
+
+#: of pystrich.ean13.EAN13RenderOptions.first_digit_y_offset
+msgid ""
+"How far above the other text the first digit sits, as a fraction of image "
+"height. Defaults to ``0.1`` (the long-standing pyStrich look, where the "
+"leading number-system digit sits slightly higher than the two main digit "
+"groups). Set to ``0`` for a level baseline across all three groups."
+msgstr ""
+"De combien le premier chiffre est placé au-dessus du reste du texte, en "
+"fraction de la hauteur de l'image. Vaut ``0.1`` par défaut (l'aspect "
+"pyStrich de longue date, où le premier chiffre, celui du système de "
+"numérotation, est placé légèrement plus haut que les deux principaux groupes"
+" de chiffres). Réglez sur ``0`` pour une ligne de base commune aux trois "
+"groupes."

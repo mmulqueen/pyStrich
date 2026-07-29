@@ -2,21 +2,19 @@
 
 {%- block extrahead %}
 {{ super() }}
-{#- Reciprocal rel=alternate hreflang links pairing the English (root) and
-    German (/de/) translations so search engines serve the right language and
-    do not treat them as duplicate content. Emitted on both builds; each page
-    lists every version including itself, with English as x-default. Skipped on
-    nested pages (e.g. _modules/) and pages without a canonical URL. -#}
+{#- Reciprocal rel=alternate hreflang links across every translation so search
+    engines serve the right language and do not treat them as duplicate content.
+    Emitted on all builds; each page lists every version including itself, with
+    English (the root) as x-default. Skipped on nested pages (e.g. _modules/)
+    and pages without a canonical URL. -#}
 {%- if pageurl and "/" not in pagename %}
-{%- if "/docs/de/" in pageurl %}
-{%- set en_url = pageurl | replace("/docs/de/", "/docs/") %}
-{%- set de_url = pageurl %}
-{%- else %}
-{%- set en_url = pageurl %}
-{%- set de_url = pageurl | replace("/docs/", "/docs/de/") %}
-{%- endif %}
-<link rel="alternate" hreflang="en-GB" href="{{ en_url }}" />
-<link rel="alternate" hreflang="de-DE" href="{{ de_url }}" />
+{#- (hreflang code, path slug under /docs/). English is at the root (no slug). -#}
+{%- set alternates = [("en-GB", ""), ("de-DE", "de/"), ("fr-FR", "fr/")] %}
+{#- Reduce the page URL to its English (root) form regardless of build language. -#}
+{%- set en_url = pageurl | replace("/docs/de/", "/docs/") | replace("/docs/fr/", "/docs/") %}
+{%- for hreflang, slug in alternates %}
+<link rel="alternate" hreflang="{{ hreflang }}" href="{{ en_url | replace('/docs/', '/docs/' + slug) }}" />
+{%- endfor %}
 <link rel="alternate" hreflang="x-default" href="{{ en_url }}" />
 {%- endif %}
 {%- endblock %}
@@ -80,16 +78,22 @@
     <a href="https://github.com/pradyunsg/furo">Furo</a>
     {% endtrans %}
     {%- if "/" not in pagename %}
-    {#- Two-language switcher. English is at the docs root, German under de/;
-        pages are flat, so a sibling-relative link is depth-correct. The current
-        language shows as plain text, the other as a link. Skipped on nested
-        pages (e.g. _modules/) where the relative path would not resolve. -#}
+    {#- Language switcher. English is at the docs root, each translation under
+        its own slug (de/, fr/); pages are flat, so a sibling-relative link is
+        depth-correct. The current language shows as plain text, the others as
+        links. Skipped on nested pages (e.g. _modules/) where the relative path
+        would not resolve. -#}
+    {%- set switcher_langs = [("en", "", "English"), ("de", "de/", "Deutsch"), ("fr", "fr/", "Français")] %}
+    {%- set up = "../" if (language.startswith("de") or language.startswith("fr")) else "" %}
     <div class="language-switcher">
-      {%- if language.startswith("de") -%}
-      <a class="muted-link" href="../{{ pagename }}.html">English</a> &middot; Deutsch
-      {%- else -%}
-      English &middot; <a class="muted-link" href="de/{{ pagename }}.html">Deutsch</a>
-      {%- endif -%}
+      {%- for prefix, slug, label in switcher_langs -%}
+        {%- if not loop.first %} &middot; {% endif -%}
+        {%- if language.startswith(prefix) -%}
+          {{ label }}
+        {%- else -%}
+          <a class="muted-link" href="{{ up }}{{ slug }}{{ pagename }}.html">{{ label }}</a>
+        {%- endif -%}
+      {%- endfor -%}
     </div>
     {%- endif %}
   </div>

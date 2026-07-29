@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Surface new/changed source strings into the German catalogues.
+"""Surface new/changed source strings into the translated catalogues.
 
-Extracts the gettext POT from the docs, merges it into each translated
-``docs/locale/de_DE/LC_MESSAGES/*.po`` via polib, and normalises the result
+Extracts the gettext POT from the docs, merges it into every locale's
+``docs/locale/<lang>/LC_MESSAGES/*.po`` via polib, and normalises the result
 back to the committed format so an unchanged source produces no diff. New or
 changed msgids appear as untranslated (or fuzzy) entries ready for a translator;
-the script prints those it surfaced.
+the script prints those it surfaced. Pass ``--language <lang>`` to update a
+single locale.
 
 Run with the docs toolchain, e.g. ``uv run --group docs python
 scripts/update-translations.py``.
@@ -23,8 +24,7 @@ import polib
 REPO = Path(__file__).resolve().parent.parent
 DOCS = REPO / "docs"
 POT_DIR = DOCS / "_build" / "gettext"
-LOCALE = DOCS / "locale" / "de_DE" / "LC_MESSAGES"
-LANGUAGE = "de_DE"
+LOCALES_ROOT = DOCS / "locale"
 
 # Pages deliberately left in English -- never surface them.
 SKIP = {"changelog", "contributors"}
@@ -86,19 +86,18 @@ def surfaced(po: polib.POFile) -> list[str]:
     return [e.msgid for e in po if not e.obsolete and (not e.translated() or "fuzzy" in e.flags)]
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--skip-build",
-        action="store_true",
-        help="reuse an existing docs/_build/gettext instead of re-extracting",
-    )
-    args = parser.parse_args()
+def discover_locales() -> list[Path]:
+    """The ``LC_MESSAGES`` dir of every locale under ``docs/locale``."""
+    return sorted(lc for p in LOCALES_ROOT.iterdir() if (lc := p / "LC_MESSAGES").is_dir())
 
-    if not args.skip_build:
-        extract_pot()
 
-    catalogues = sorted(p for p in LOCALE.glob("*.po") if p.stem not in SKIP)
+def update_locale(locale_dir: Path) -> dict[str, list[str]]:
+    """Merge the extracted POT into one locale's catalogues and normalise them.
+
+    Returns the msgids still needing a translator, keyed by page.
+    """
+    language = locale_dir.parent.name
+    catalogues = sorted(p for p in locale_dir.glob("*.po") if p.stem not in SKIP)
     seen = {p.stem for p in catalogues} | SKIP
     pending: dict[str, list[str]] = {}
 
@@ -119,14 +118,40 @@ def main() -> None:
     for pot_path in sorted(POT_DIR.glob("*.pot")):
         if pot_path.stem not in seen:
             sys.stderr.write(
-                f"note: {pot_path.stem} has source strings but no {LANGUAGE} "
+                f"note: {pot_path.stem} has source strings but no {language} "
                 f"catalogue -- not surfaced\n"
             )
+    return pending
 
-    for page, msgids in pending.items():
-        print(f"{page}: {len(msgids)} to translate")
-        for msgid in msgids:
-            print(f"  {msgid[:100]!r}")
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--skip-build",
+        action="store_true",
+        help="reuse an existing docs/_build/gettext instead of re-extracting",
+    )
+    parser.add_argument(
+        "--language",
+        help="update only this locale (e.g. de_DE); default is every locale under docs/locale",
+    )
+    args = parser.parse_args()
+
+    if not args.skip_build:
+        extract_pot()
+
+    locales = discover_locales()
+    if args.language:
+        locales = [lc for lc in locales if lc.parent.name == args.language]
+        if not locales:
+            raise SystemExit(f"no catalogue dir for language {args.language!r}")
+
+    for locale_dir in locales:
+        pending = update_locale(locale_dir)
+        for page, msgids in pending.items():
+            print(f"{locale_dir.parent.name}/{page}: {len(msgids)} to translate")
+            for msgid in msgids:
+                print(f"  {msgid[:100]!r}")
 
 
 if __name__ == "__main__":

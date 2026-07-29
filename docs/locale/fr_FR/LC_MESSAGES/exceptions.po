@@ -1,0 +1,119 @@
+# French (fr-FR) translation of the pyStrich documentation.
+# Copyright (C) pyStrich contributors
+# This file is distributed under the same license as the pyStrich package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pyStrich\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: ../../exceptions.rst
+msgid "Exceptions"
+msgstr "Exceptions"
+
+#: of pystrich.exceptions
+msgid "Public exception hierarchy for pyStrich."
+msgstr "Hiérarchie publique des exceptions de pyStrich."
+
+#: of pystrich.exceptions
+msgid ""
+"Unified exception hierarchy. All pyStrich-raised errors now inherit from "
+":class:`PyStrichError`; all pyStrich-emitted warnings inherit from "
+":class:`PyStrichWarning`."
+msgstr ""
+"Hiérarchie d'exceptions unifiée. Toutes les erreurs levées par pyStrich "
+"héritent désormais de :class:`PyStrichError` ; tous les avertissements émis "
+"par pyStrich héritent de :class:`PyStrichWarning`."
+
+#: of pystrich.exceptions.PyStrichError
+msgid "Base class for all pyStrich-specific errors."
+msgstr "Classe de base de toutes les erreurs propres à pyStrich."
+
+#: of pystrich.exceptions.PyStrichInvalidInput
+msgid "The text being encoded is not valid for the chosen barcode format."
+msgstr ""
+"Le texte à encoder n'est pas valide pour le format de code-barres choisi."
+
+#: of pystrich.exceptions.PyStrichInvalidInput
+msgid "Typically raised in response to end-user-supplied input."
+msgstr ""
+"Généralement levée en réponse à une entrée fournie par l'utilisateur final."
+
+#: of pystrich.exceptions.PyStrichInvalidCheckDigit
+msgid "A supplied check digit is missing or does not match the computed one."
+msgstr ""
+"Un chiffre de contrôle fourni est manquant ou ne correspond pas à celui qui "
+"a été calculé."
+
+#: of pystrich.exceptions.PyStrichInvalidCheckDigit
+msgid ""
+"Raised by the check-digit formats (EAN-13, ITF-14) when "
+"``require_valid_check_digit`` is set."
+msgstr ""
+"Levée par les formats à chiffre de contrôle (EAN-13, ITF-14) lorsque "
+"``require_valid_check_digit`` est activé."
+
+#: of pystrich.exceptions.PyStrichInvalidPayloadLength
+msgid ""
+"The payload is too long to encode: it exceeds the chosen format's capacity "
+"or the pyStrich input-length ceiling."
+msgstr ""
+"La charge utile est trop longue pour être encodée : elle dépasse la capacité"
+" du format choisi ou le plafond de longueur d'entrée de pyStrich."
+
+#: of pystrich.exceptions.PyStrichInvalidOption
+msgid "An encoder option (configuration argument) is invalid."
+msgstr "Une option d'encodeur (argument de configuration) est invalide."
+
+#: of pystrich.exceptions.PyStrichInvalidOption
+msgid ""
+"Typically a programmer error: options are usually hardcoded by the caller "
+"rather than passed through from end-user input."
+msgstr ""
+"Généralement une erreur de programmation : les options sont habituellement "
+"codées en dur par l'appelant plutôt que transmises depuis une entrée de "
+"l'utilisateur final."
+
+#: of pystrich.exceptions.PyStrichPillowNotInstalled
+msgid "PNG output was requested but Pillow is not installed."
+msgstr "Une sortie PNG a été demandée, mais Pillow n'est pas installé."
+
+#: of pystrich.exceptions.PyStrichPillowNotInstalled
+msgid "Pillow is an optional dependency, required only for PNG output."
+msgstr ""
+"Pillow est une dépendance facultative, requise uniquement pour la sortie "
+"PNG."
+
+#: of pystrich.exceptions.PyStrichWarning
+msgid "Base class for pyStrich-specific warnings."
+msgstr "Classe de base des avertissements propres à pyStrich."
+
+#: of pystrich.exceptions.Fnc1WorkaroundCompatWarning
+msgid ""
+"The legacy chr(231) FNC1 trick triggered the compat shim; use the FNC1 "
+"constant instead."
+msgstr ""
+"L'ancienne astuce chr(231) pour FNC1 a déclenché le correctif de "
+"compatibilité ; utilisez plutôt la constante FNC1."
+
+#: of pystrich.exceptions.Code128MarkerBytesCompatWarning
+msgid ""
+"The legacy ``\\xf1..\\xf4`` FNC shortcut bytes in bare-str input triggered "
+"the compat shim; use :class:`~pystrich.code128.Code128Data` with the typed "
+"marker constants instead."
+msgstr ""
+"Les anciens octets-raccourcis FNC ``\\xf1..\\xf4`` dans une entrée str brute"
+" ont déclenché le correctif de compatibilité ; utilisez plutôt "
+":class:`~pystrich.code128.Code128Data` avec les constantes marqueurs typées."
+
+#: of pystrich.exceptions.DataMatrixNonAsciiWarning
+msgid ""
+"DataMatrix input contains non-ASCII characters; output will not decode "
+"correctly."
+msgstr ""
+"L'entrée DataMatrix contient des caractères non ASCII ; la sortie ne se "
+"décodera pas correctement."
