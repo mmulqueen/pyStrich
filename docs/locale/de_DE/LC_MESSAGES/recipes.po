@@ -175,3 +175,13 @@ msgstr ""
 #: ../../recipes.rst
 msgid "QR code holding geo coordinates"
 msgstr "QR-Code mit Geokoordinaten"
+
+#: ../../recipes.rst
+msgid ""
+"You can find `more examples showing how pyStrich "
+"<https://github.com/mmulqueen/pyStrich/tree/main/examples>`_ can be used in "
+"our repo."
+msgstr ""
+"`Weitere Beispiele für die Verwendung von pyStrich "
+"<https://github.com/mmulqueen/pyStrich/tree/main/examples>`_ finden Sie in "
+"unserem Repository."

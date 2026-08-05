@@ -3,6 +3,10 @@ Recipes
 
 Common patterns for using pyStrich in real applications.
 
+You can find `more examples showing how pyStrich
+<https://github.com/mmulqueen/pyStrich/tree/main/examples>`_ can be used in our
+repo.
+
 For one-off generation from a shell, see :doc:`cli`.
 
 Serving barcodes from a web request
