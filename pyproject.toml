@@ -134,6 +134,8 @@ select = [
 # The Pillow gateway and the docs-only damage simulator may import PIL directly.
 "pystrich/_pillow.py" = ["TID251"]
 "pystrich/_simulate_damage.py" = ["TID251"]
+# Example scripts are end-user code: they may import Pillow directly.
+"examples/**" = ["TID251"]
 
 [tool.mypy]
 files = ["pystrich"]
