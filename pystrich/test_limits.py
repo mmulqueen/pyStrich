@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+from typing import Any
 
 import pytest
 
@@ -47,6 +48,105 @@ def test_matrix_cellsize_non_positive():
 def test_bar_width_non_positive():
     with pytest.raises(PyStrichInvalidOption):
         Code128Encoder("hi").get_pilimage(0)
+
+
+@pytest.mark.parametrize("encoder", [Code128Encoder, QRCodeEncoder])
+@pytest.mark.parametrize("output", ["get_pilimage", "get_svg", "get_eps"])
+def test_float_cell_size_rejected_every_output(encoder, output):
+    with pytest.raises(TypeError):
+        getattr(encoder("hi"), output)(5.0)
+
+
+def test_bar_render_option_rejects_float():
+    with pytest.raises(TypeError):
+        Code128Encoder("hi", options={"height": 100.0}).get_svg()  # type: ignore[arg-type]
+
+
+def test_bar_render_option_rejects_out_of_range():
+    with pytest.raises(PyStrichInvalidOption):
+        Code128Encoder("hi", options={"label_border": -1}).get_svg()
+
+
+def test_bar_render_option_zero_height_uses_default():
+    # height=0 is the "use default" sentinel (options.get("height") or default),
+    # so the canvas keeps its default height rather than collapsing or raising.
+    default_height = Code128Encoder("hi").get_rect_marks().height
+    zero_height = Code128Encoder("hi", options={"height": 0}).get_rect_marks().height
+    assert zero_height == default_height
+
+
+@pytest.mark.parametrize(
+    "make",
+    [
+        lambda: QRCodeEncoder("hi").get_pilimage(True),
+        lambda: QRCodeEncoder("hi").get_dxf(True),
+        lambda: PDF417Encoder("hi", columns=True),
+        lambda: Code128Encoder("hi", options={"height": True}).get_svg(),
+    ],
+)
+def test_bool_rejected_as_wrong_type(make):
+    with pytest.raises(TypeError):
+        make()
+
+
+@pytest.mark.parametrize("cellsize", [0, 1e-12, 2.5, 1_000_000])
+def test_dxf_accepts_non_negative_finite_cell_size(cellsize, audit_dxf):
+    audit_dxf(QRCodeEncoder("hi").get_dxf(cellsize))
+
+
+def test_dxf_rejects_non_numeric_cell_size():
+    with pytest.raises(TypeError):
+        QRCodeEncoder("hi").get_dxf("2.5")  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("cellsize", [float("inf"), float("-inf"), float("nan"), -1])
+def test_dxf_rejects_non_finite_or_negative_cell_size(cellsize):
+    with pytest.raises(PyStrichInvalidOption):
+        QRCodeEncoder("hi").get_dxf(cellsize)
+
+
+# Every int-typed encoder-constructor option, paired with a float that must be
+# rejected up front rather than crashing deep in encoding or layout.
+_ENCODER_FLOAT_OPTIONS: list[tuple[Any, dict[str, Any]]] = [
+    (AztecEncoder, {"ecc": 23.0}),
+    (AztecEncoder, {"layers": 2.0}),
+    (AztecEncoder, {"quiet_zone": 2.0}),
+    (PDF417Encoder, {"ecl": 2.0}),
+    (PDF417Encoder, {"columns": 2.0}),
+    (PDF417Encoder, {"row_height": 3.0}),
+    (PDF417Encoder, {"quiet_zone": 2.0}),
+    (DataMatrixEncoder, {"quiet_zone": 2.0}),
+]
+
+
+@pytest.mark.parametrize("encoder, kwargs", _ENCODER_FLOAT_OPTIONS)
+def test_encoder_int_option_rejects_float(encoder, kwargs):
+    with pytest.raises(TypeError):
+        encoder("hi", **kwargs)
+
+
+# Values outside each option's valid range (below the minimum or above the
+# maximum), which must be rejected within the PyStrichError hierarchy.
+_ENCODER_RANGE_OPTIONS: list[tuple[Any, dict[str, Any]]] = [
+    (AztecEncoder, {"ecc": 4}),
+    (AztecEncoder, {"ecc": 96}),
+    (AztecEncoder, {"layers": 0}),
+    (AztecEncoder, {"layers": 33}),
+    (AztecEncoder, {"quiet_zone": -1}),
+    (PDF417Encoder, {"ecl": -1}),
+    (PDF417Encoder, {"ecl": 9}),
+    (PDF417Encoder, {"columns": 0}),
+    (PDF417Encoder, {"columns": 31}),
+    (PDF417Encoder, {"row_height": 0}),
+    (PDF417Encoder, {"quiet_zone": -1}),
+    (DataMatrixEncoder, {"quiet_zone": -1}),
+]
+
+
+@pytest.mark.parametrize("encoder, kwargs", _ENCODER_RANGE_OPTIONS)
+def test_encoder_int_option_rejects_out_of_range(encoder, kwargs):
+    with pytest.raises(PyStrichInvalidOption):
+        encoder("hi", **kwargs)
 
 
 def test_matrix_pixel_cap_message_names_largest_cell_size():

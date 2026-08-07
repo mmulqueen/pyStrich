@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.20 — unreleased
+-----------------
+
+- All formats: numeric arguments (cell size, render options, encoder settings)
+  are validated for type and range up front
+
 .. _v0-19:
 
 0.19 — 2026-07-23

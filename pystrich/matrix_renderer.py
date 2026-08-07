@@ -174,6 +174,7 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         light_hex: str | RGBA | None = None,
     ) -> str:
         """Return the matrix as an SVG string."""
+        check_cell_size(cellsize, name="cell size")
         return matrix_to_svg(
             self.matrix,
             cellsize,
@@ -215,6 +216,7 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         light_hex: str | RGBA | None = None,
     ) -> str:
         """Return the matrix as an EPS string."""
+        check_cell_size(cellsize, name="cell size")
         return matrix_to_eps(
             self.matrix,
             cellsize,
@@ -255,6 +257,7 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         mark_shape: MarkShape,
     ) -> str:
         """Return the matrix as a DXF string."""
+        check_cell_size(cellsize, name="cell size", allow_float=True)
         return matrix_to_dxf(
             self.matrix, cellsize, inverse=inverse, units=units, mark_shape=mark_shape
         )

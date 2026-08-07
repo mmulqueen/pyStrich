@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from typing import Literal
 
+from pystrich.limits import require_valid_int
 from pystrich.matrix_encoder import Matrix2DEncoder
 
 from .data import AztecData
@@ -69,6 +70,10 @@ class AztecEncoder(Matrix2DEncoder[int]):
         :param quiet_zone: Width of the surrounding white border in modules.
             Defaults to :data:`AZTEC_DEFAULT_QUIET_ZONE`.
         """
+        require_valid_int(ecc, name="ecc", min_value=5, max_value=95)
+        require_valid_int(quiet_zone, name="quiet_zone", min_value=0)
+        if layers is not None:
+            require_valid_int(layers, name="layers", min_value=1, max_value=32)
         if not isinstance(text, AztecData):
             text = AztecData(text, auto_encoding=True)
         encoder = TextEncoder()

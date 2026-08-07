@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from typing import Literal
 
+from pystrich.limits import require_valid_int
 from pystrich.matrix_encoder import Matrix2DEncoder
 
 from .data import PDF417Data, PDF417Encoding
@@ -86,6 +87,12 @@ class PDF417Encoder(Matrix2DEncoder[int]):
         quiet_zone: int = PDF417_DEFAULT_QUIET_ZONE,
         row_height: int = DEFAULT_ROW_HEIGHT,
     ) -> None:
+        require_valid_int(quiet_zone, name="quiet_zone", min_value=0)
+        require_valid_int(row_height, name="row_height", min_value=1)
+        if ecl is not None:
+            require_valid_int(ecl, name="ecl", min_value=0, max_value=8)
+        if columns is not None:
+            require_valid_int(columns, name="columns", min_value=1, max_value=30)
         source = _compact(text)
         ecl_value: int = _auto_ecl(len(source) + 1) if ecl is None else ecl
         rows, columns = pick_dimensions(len(source), ecl_value, columns)

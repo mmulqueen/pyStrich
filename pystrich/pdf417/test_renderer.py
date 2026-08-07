@@ -177,8 +177,8 @@ def test_get_terminal_art_width_is_half_module_count_per_line():
 
 
 def test_encoder_columns_out_of_range_raises():
-    """Columns above 30 fail at dimension picking."""
-    from pystrich.exceptions import PyStrichInvalidInput
+    """Columns above 30 are rejected at construction."""
+    from pystrich.exceptions import PyStrichInvalidOption
 
-    with pytest.raises(PyStrichInvalidInput):
+    with pytest.raises(PyStrichInvalidOption):
         PDF417Encoder("PDF417", columns=31)

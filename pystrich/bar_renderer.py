@@ -21,12 +21,23 @@ from pystrich._vector_text import fit_labels
 from pystrich.colour import RGBA, resolve_pil_palette
 from pystrich.eps import bars_to_eps
 from pystrich.fonts import get_font
-from pystrich.limits import check_cell_size, check_image_pixels
+from pystrich.limits import check_cell_size, check_image_pixels, require_valid_int
 from pystrich.marks import BarLayout, SymbolMarks, iter_barcode_marks
 from pystrich.svg import bars_to_svg
 
 if TYPE_CHECKING:
     from pystrich._pillow import PILImage
+
+# Render-option keys typed as non-negative int across the 1D formats. They are
+# checked when the options reach the renderer. Zero is a valid sentinel for several.
+_INT_OPTIONS = (
+    "ttf_fontsize",
+    "height",
+    "label_border",
+    "bottom_border",
+    "quiet_width_multiplier",
+    "bearer_width",
+)
 
 
 class Bar1DRenderer(ABC):
@@ -43,6 +54,9 @@ class Bar1DRenderer(ABC):
 
     def __init__(self, options: Mapping[str, Any] | None = None) -> None:
         self.options = options or {}
+        for key in _INT_OPTIONS:
+            if key in self.options:
+                require_valid_int(self.options[key], name=key, min_value=0)
         self.image_width = 0
         self.image_height = 0
 
@@ -138,6 +152,7 @@ class Bar1DRenderer(ABC):
         light_hex: str | RGBA | None = None,
     ) -> str:
         """Return the symbol as an SVG string."""
+        check_cell_size(bar_width, name="bar width")
         return bars_to_svg(self._layout(bar_width), dark_hex=dark_hex, light_hex=light_hex)
 
     def write_svg_file(
@@ -160,6 +175,7 @@ class Bar1DRenderer(ABC):
         light_hex: str | RGBA | None = None,
     ) -> str:
         """Return the symbol as an EPS string."""
+        check_cell_size(bar_width, name="bar width")
         return bars_to_eps(self._layout(bar_width), dark_hex=dark_hex, light_hex=light_hex)
 
     def write_eps_file(

@@ -1,3 +1,4 @@
+import io
 import os
 import subprocess
 import sys
@@ -138,6 +139,21 @@ def eps_to_png():
         )
 
     return _convert
+
+
+@pytest.fixture
+def audit_dxf():
+    try:
+        import ezdxf
+    except ImportError:
+        pytest.skip("ezdxf not installed")
+
+    def _audit(dxf: str) -> None:
+        doc = ezdxf.read(io.StringIO(dxf))
+        auditor = doc.audit()
+        assert not auditor.errors, [str(e) for e in auditor.errors]
+
+    return _audit
 
 
 @pytest.fixture

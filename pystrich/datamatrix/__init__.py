@@ -38,6 +38,7 @@ from __future__ import annotations
 from typing import get_args
 
 from pystrich.exceptions import PyStrichInvalidOption
+from pystrich.limits import require_valid_int
 from pystrich.matrix_encoder import Matrix2DEncoder
 
 from .data import FNC1, DataMatrixCodeword, DataMatrixData
@@ -135,6 +136,7 @@ class DataMatrixEncoder(Matrix2DEncoder[int | None]):
            previously a single ``int`` that only described square symbols.
         """
 
+        require_valid_int(quiet_zone, name="quiet_zone", min_value=0)
         if symbol_shape not in get_args(SymbolShape):
             raise PyStrichInvalidOption(
                 f"symbol_shape must be one of {get_args(SymbolShape)}, got {symbol_shape!r}"

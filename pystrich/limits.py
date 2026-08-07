@@ -29,10 +29,54 @@ MAX_IMAGE_PIXELS: int = 89_478_485
 MAX_INPUT_LENGTH: int = 8192
 
 
-def check_cell_size(value: int, *, name: str) -> None:
-    """Reject a non-positive cell size before it reaches a renderer."""
-    if value <= 0:
-        raise PyStrichInvalidOption(f"{name} must be positive, got {value}")
+def _check_range(value: float, *, name: str, min_value: int, max_value: int | None) -> None:
+    """Reject a value outside ``[min_value, max_value]`` (open above if ``None``)."""
+    if value < min_value or (max_value is not None and value > max_value):
+        bound = (
+            f"at least {min_value}" if max_value is None else f"between {min_value} and {max_value}"
+        )
+        raise PyStrichInvalidOption(f"{name} must be {bound}, got {value}")
+
+
+def require_valid_int(
+    value: object, *, name: str, min_value: int, max_value: int | None = None
+) -> None:
+    """Reject a value that is not an ``int`` within ``[min_value, max_value]``.
+
+    A wrong type raises ``TypeError``; an out-of-range value raises
+    :class:`~pystrich.exceptions.PyStrichInvalidOption`.
+    """
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise TypeError(f"{name} must be an int, got {type(value).__name__}")
+    _check_range(value, name=name, min_value=min_value, max_value=max_value)
+
+
+def require_valid_number(
+    value: object, *, name: str, min_value: int, max_value: int | None = None
+) -> None:
+    """Reject a value that is not a finite ``int``/``float`` within ``[min_value, max_value]``.
+
+    A wrong type raises ``TypeError``; a non-finite or out-of-range value raises
+    :class:`~pystrich.exceptions.PyStrichInvalidOption`.
+    """
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise TypeError(f"{name} must be a number, got {type(value).__name__}")
+    if not math.isfinite(value):
+        raise PyStrichInvalidOption(f"{name} must be finite, got {value}")
+    _check_range(value, name=name, min_value=min_value, max_value=max_value)
+
+
+def check_cell_size(value: float, *, name: str, allow_float: bool = False) -> None:
+    """Reject an invalid cell size before it reaches a renderer: a positive ``int``
+    for raster and vector output, or a non-negative finite number for the DXF path.
+
+    The DXF path scales in real-world units and only multiplies by the cell size,
+    so a zero (like any vanishingly small value it already accepts) yields a
+    degenerate but valid file rather than a crash."""
+    if allow_float:
+        require_valid_number(value, name=name, min_value=0)
+    else:
+        require_valid_int(value, name=name, min_value=1)
 
 
 def check_image_pixels(
