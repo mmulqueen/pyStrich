@@ -17,7 +17,7 @@ from pystrich.exceptions import PyStrichInvalidOption
 from pystrich.pdf417 import PDF417Encoder
 from pystrich.qrcode import QRCodeEncoder
 from pystrich.svg import _svg_fill, matrix_to_svg
-from pystrich.test_svg import get_rects_in_group_with_fill
+from tests.test_svg import get_rects_in_group_with_fill
 
 # The conservative navy-on-light-grey pair the docs use throughout.
 _NAVY = "#1b3a5c"

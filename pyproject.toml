@@ -89,15 +89,13 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["pystrich"]
 exclude = [
-    "**/test_*.py",
-    "**/conftest.py",
-    "**/test_img",
     "pystrich/_simulate_damage.py",
 ]
 
 [tool.hatch.build.targets.sdist]
 include = [
     "pystrich",
+    "tests",
     "README.md",
     "LICENSE",
 ]
@@ -138,7 +136,7 @@ select = [
 "examples/**" = ["TID251"]
 
 [tool.mypy]
-files = ["pystrich"]
+files = ["pystrich", "tests"]
 python_version = "3.10"
 check_untyped_defs = true
 warn_unused_ignores = true
@@ -155,6 +153,7 @@ module = "PIL.*"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 addopts = "--strict-markers"
 markers = [
     "png: needs Pillow for PNG output; runs with the real Pillow instead of the missing-Pillow stub",
