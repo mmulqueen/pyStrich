@@ -1,5 +1,6 @@
 """Sphinx configuration for pyStrich documentation."""
 
+import inspect
 import shutil
 import sys
 from pathlib import Path
@@ -24,7 +25,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
-    "sphinx.ext.viewcode",
+    "sphinx.ext.linkcode",
     "sphinx_copybutton",
     "sphinx_sitemap",
     "sphinx_argparse_cli",
@@ -66,12 +67,6 @@ html_favicon = "static/favicon.svg"
 html_static_path = ["static"]
 html_css_files = ["custom.css"]
 
-# NamedTuple field descriptors and methods report __module__ as 'collections'
-# (they come from collections.namedtuple's exec'd factory), which would
-# otherwise drag a viewcode source page for the stdlib collections module
-# into our output.
-viewcode_follow_imported_members = False
-
 # sphinx-sitemap: omit the default {lang}{version} URL prefix and skip
 # auto-generated pages that aren't useful in search results.
 sitemap_url_scheme = "{link}"
@@ -79,8 +74,38 @@ sitemap_excludes = [
     "search.html",
     "genindex.html",
     "py-modindex.html",
-    "_modules/*",
 ]
+
+# sphinx.ext.linkcode: [source] links point at the tag for this version.
+_GITHUB_BLOB = f"https://github.com/mmulqueen/pyStrich/blob/{release}"
+_REPO_ROOT = Path(__file__).parent.parent
+
+
+def linkcode_resolve(domain, info):
+    """Map a documented Python object to its source on GitHub."""
+    if domain != "py" or not info["module"]:
+        return None
+    module = sys.modules.get(info["module"])
+    if module is None:
+        return None
+    obj = module
+    for part in info["fullname"].split("."):
+        try:
+            obj = getattr(obj, part)
+        except AttributeError:
+            return None
+    obj = inspect.unwrap(obj)
+    try:
+        source_file = inspect.getsourcefile(obj)
+        lines, start = inspect.getsourcelines(obj)
+    except (OSError, TypeError):
+        return None
+    try:
+        rel_path = Path(source_file).resolve().relative_to(_REPO_ROOT)
+    except ValueError:
+        return None
+    return f"{_GITHUB_BLOB}/{rel_path.as_posix()}#L{start}-L{start + len(lines) - 1}"
+
 
 # sphinxext-opengraph: per-page :description: drives <meta name="description">;
 # per-page :og:description: drives the social-preview description. Auto-extraction
