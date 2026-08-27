@@ -68,6 +68,7 @@
     </div>
     {%- endif %}
     <div>{% trans %}pyStrich is a project of <a class="muted-link" href="https://www.method-b.uk/">Method B Ltd</a>.{% endtrans %}</div>
+    <div class="version">{% trans release=release|e %}Version {{ release }}{% endtrans %}</div>
     <div>{% trans %}QR Code is a registered trademark of DENSO WAVE INCORPORATED.{% endtrans %}</div>
     {% trans %}Docs made with {% endtrans -%}
     {%- if show_sphinx -%}

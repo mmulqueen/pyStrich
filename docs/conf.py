@@ -61,7 +61,7 @@ templates_path = ["_templates"]
 
 html_baseurl = "https://www.method-b.uk/pyStrich/docs/"
 html_theme = "furo"
-html_title = "pyStrich — the Python 1D/2D barcode encoder"
+html_title = f"pyStrich {release} – the Python 1D/2D barcode encoder"  # noqa: RUF001
 html_logo = "static/logo.svg"
 html_favicon = "static/favicon.svg"
 html_static_path = ["static"]
