@@ -6,6 +6,8 @@ Changelog
 
 - All formats: numeric arguments (cell size, render options, encoder settings)
   are validated for type and range up front
+- GS1-128: ``Code128Data.gs1`` rejects payloads over the GS1 maximum of 48 data
+  characters
 
 .. _v0-19:
 

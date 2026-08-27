@@ -14,6 +14,7 @@ from pystrich.exceptions import (
     Code128MarkerBytesCompatWarning,
     PyStrichInvalidInput,
     PyStrichInvalidOption,
+    PyStrichInvalidPayloadLength,
 )
 from pystrich.gs1 import GS1Fixed, GS1Variable
 
@@ -434,6 +435,25 @@ def test_code128data_gs1_round_trip(tmp_path, decode_barcode):
 )
 def test_code128data_gs1_rejects_bad_arguments(fields, reason):
     with pytest.raises(PyStrichInvalidOption, match=reason):
+        Code128Data.gs1(*fields)
+
+
+def test_code128data_gs1_accepts_48_data_characters():
+    Code128Data.gs1(GS1Variable("10", "x" * 46))
+
+
+@pytest.mark.parametrize(
+    "fields",
+    [
+        pytest.param((GS1Variable("10", "x" * 47),), id="single-field-49"),
+        pytest.param(
+            (GS1Variable("10", "x" * 23), GS1Variable("21", "x" * 21)),
+            id="separator-tips-over-48",
+        ),
+    ],
+)
+def test_code128data_gs1_rejects_over_48_data_characters(fields):
+    with pytest.raises(PyStrichInvalidPayloadLength, match="49 data characters"):
         Code128Data.gs1(*fields)
 
 

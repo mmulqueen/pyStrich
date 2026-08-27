@@ -16,11 +16,16 @@ from pystrich.exceptions import (
     Code128MarkerBytesCompatWarning,
     PyStrichInvalidInput,
     PyStrichInvalidOption,
+    PyStrichInvalidPayloadLength,
 )
 from pystrich.gs1 import GS1Fixed, GS1Variable
 
 Code128EncodingArg = Literal["ascii", "iso-8859-1"]
 Code128Encoding = Literal["ascii", "iso-8859-1"]
+
+# GS1-128 caps a symbol at 48 data characters: Application Identifier and value
+# characters plus FNC1 separators, but not the leading FNC1 or start/check/stop.
+GS1_128_MAX_DATA_CHARACTERS = 48
 
 
 # Symbolic marker name → (codeword in charset A, charset B, charset C);
@@ -179,8 +184,13 @@ class Code128Data(EncodableData[Code128Encoding, Code128Marker]):
             with FNC1.
         :raises pystrich.exceptions.PyStrichInvalidOption: if ``fields`` is
             empty or contains anything other than the field classes.
+        :raises pystrich.exceptions.PyStrichInvalidPayloadLength: if the
+            assembled payload exceeds the GS1-128 maximum of 48 data
+            characters.
 
         .. versionadded:: 0.15
+        .. versionchanged:: 0.20
+            Reject payloads over the GS1-128 48 data-character maximum.
         """
         if not fields:
             raise PyStrichInvalidOption(
@@ -194,10 +204,18 @@ class Code128Data(EncodableData[Code128Encoding, Code128Marker]):
                 )
         segments: list[str | Code128Marker] = [FNC1]
         last = len(fields) - 1
+        data_characters = 0
         for i, field in enumerate(fields):
             segments.append(field.application_identifier + field.value)
+            data_characters += len(field.application_identifier) + len(field.value)
             if isinstance(field, GS1Variable) and i != last:
                 segments.append(FNC1)
+                data_characters += 1
+        if data_characters > GS1_128_MAX_DATA_CHARACTERS:
+            raise PyStrichInvalidPayloadLength(
+                f"GS1-128 payload is {data_characters} data characters, "
+                f"exceeding the maximum of {GS1_128_MAX_DATA_CHARACTERS}"
+            )
         return cls(*segments, encoding="ascii")
 
 
