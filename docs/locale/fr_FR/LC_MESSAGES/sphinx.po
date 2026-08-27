@@ -60,3 +60,7 @@ msgstr ""
 "\n"
 "    <a href=\"https://github.com/pradyunsg/furo\">Furo</a>\n"
 "    "
+
+#: ../../_templates/page.html
+msgid "Version %(release)s"
+msgstr "Version %(release)s"

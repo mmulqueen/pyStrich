@@ -671,3 +671,15 @@ msgstr ""
 " mit ``+`` an Zeichenketten an, um ein :class:`Code128Data` aufzubauen; "
 "``FNC1`` an erster Position macht das Symbol zu einem GS1-128 (siehe "
 ":meth:`Code128Data.gs1` für die strukturierte API)."
+
+#: of pystrich.code128.data.Code128Data.gs1
+msgid ""
+"if the assembled payload exceeds the GS1-128 maximum of 48 data characters."
+msgstr ""
+"wenn die zusammengesetzten Nutzdaten das GS1-128-Maximum von 48 Datenzeichen"
+" überschreiten."
+
+#: of pystrich.code128.data.Code128Data.gs1
+msgid "Reject payloads over the GS1-128 48 data-character maximum."
+msgstr ""
+"Nutzdaten über dem GS1-128-Maximum von 48 Datenzeichen werden abgelehnt."
