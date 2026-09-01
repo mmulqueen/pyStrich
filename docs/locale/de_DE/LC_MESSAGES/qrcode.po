@@ -24,12 +24,6 @@ msgid "QR Code"
 msgstr "QR-Code"
 
 #: ../../qrcode.rst
-msgid "QR Code is a 2D symbology widely used for URLs and contact details."
-msgstr ""
-"QR-Code ist eine 2D-Symbologie, die häufig für URLs und Kontaktdaten "
-"verwendet wird."
-
-#: ../../qrcode.rst
 msgid ""
 "`QR code on Wikipedia <https://en.wikipedia.org/wiki/QR_code>`_ for "
 "background on the symbology itself."
@@ -916,3 +910,32 @@ msgstr ""
 "Löst :class:`_HasMarkers` aus, wenn ein Segment ein Roh-Marker statt einer "
 "Zeichenkette ist. Für Unterklassen ohne Marker (``MarkerT == Never``) ist "
 "die Prüfung ein No-op."
+
+#: ../../qrcode.rst
+msgid ""
+"pyStrich is a Python library for generating QR codes, along with other 1D "
+"and 2D symbologies."
+msgstr ""
+"pyStrich ist eine Python-Bibliothek zum Erzeugen von QR-Codes sowie weiteren"
+" 1D- und 2D-Barcodes."
+
+#: ../../qrcode.rst
+msgid "QR codes are widely used for URLs and contact details."
+msgstr "QR-Codes werden häufig für URLs und Kontaktdaten verwendet."
+
+#: ../../qrcode.rst
+msgid ""
+"If you haven't already installed pyStrich, you should do so -- see "
+":ref:`installation` for more detail:"
+msgstr ""
+"Falls Sie pyStrich noch nicht installiert haben, sollten Sie das nachholen "
+"-- Näheres unter :ref:`installation`:"
+
+#: ../../qrcode.rst
+msgid "Here's how to generate a QR code and save it as an SVG:"
+msgstr "So erzeugen Sie einen QR-Code und speichern ihn als SVG:"
+
+#~ msgid "QR Code is a 2D symbology widely used for URLs and contact details."
+#~ msgstr ""
+#~ "QR-Code ist eine 2D-Symbologie, die häufig für URLs und Kontaktdaten "
+#~ "verwendet wird."

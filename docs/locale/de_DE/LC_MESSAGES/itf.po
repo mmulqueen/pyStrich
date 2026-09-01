@@ -424,3 +424,23 @@ msgstr ""
 "Alles andere löst :class:`~pystrich.exceptions.PyStrichInvalidPayloadLength`"
 " aus. Die 14-stellige Klarschriftzeile unter den Strichen wird standardmäßig"
 " gerendert (siehe :ref:`itf-label`, um sie zu unterdrücken)."
+
+#: ../../itf.rst
+msgid ""
+"pyStrich is a Python library for generating ITF-14 barcodes, along with "
+"other 1D and 2D symbologies."
+msgstr ""
+"pyStrich ist eine Python-Bibliothek zum Erzeugen von ITF-14-Barcodes sowie "
+"weiteren 1D- und 2D-Barcodes."
+
+#: ../../itf.rst
+msgid ""
+"If you haven't already installed pyStrich, you should do so -- see "
+":ref:`installation` for more detail:"
+msgstr ""
+"Falls Sie pyStrich noch nicht installiert haben, sollten Sie das nachholen "
+"-- Näheres unter :ref:`installation`:"
+
+#: ../../itf.rst
+msgid "Here's how to generate an ITF-14 barcode and save it as an SVG:"
+msgstr "So erzeugen Sie einen ITF-14-Barcode und speichern ihn als SVG:"

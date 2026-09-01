@@ -26,17 +26,6 @@ msgstr "Code 39"
 
 #: ../../code39.rst
 msgid ""
-"Code 39 is a 1D symbology widely used for industrial labelling. The default "
-"character set is uppercase letters, digits, space and ``-.$/+%``; pass "
-"``full_ascii=True`` to encode any 7-bit character as a pair of symbols."
-msgstr ""
-"Code 39 est une symbologie 1D largement utilisée pour l'étiquetage "
-"industriel. Le jeu de caractères par défaut comprend les lettres majuscules,"
-" les chiffres, l'espace et ``-.$/+%`` ; passez ``full_ascii=True`` pour "
-"encoder n'importe quel caractère 7 bits sous forme de paire de symboles."
-
-#: ../../code39.rst
-msgid ""
 "`Code 39 on Wikipedia <https://en.wikipedia.org/wiki/Code_39>`_ for "
 "background on the symbology itself."
 msgstr ""
@@ -431,3 +420,46 @@ msgstr "Construit un :class:`Code39Renderer` pour les barres encodées."
 #: of pystrich.code39.Code39Encoder.init_renderer
 msgid ":class:`Code39Renderer`"
 msgstr ""
+
+#: ../../code39.rst
+msgid ""
+"pyStrich is a Python library for generating Code 39 barcodes, along with "
+"other 1D and 2D symbologies."
+msgstr ""
+"pyStrich est une bibliothèque Python permettant de générer des codes-barres "
+"Code 39, ainsi que d'autres codes-barres 1D et 2D."
+
+#: ../../code39.rst
+msgid ""
+"Code 39 barcodes are widely used for industrial labelling. The default "
+"character set is uppercase letters, digits, space and ``-.$/+%``; pass "
+"``full_ascii=True`` to encode any 7-bit character as a pair of symbols."
+msgstr ""
+"Les codes-barres Code 39 sont largement utilisés pour l'étiquetage "
+"industriel. Le jeu de caractères par défaut comprend les lettres majuscules,"
+" les chiffres, l'espace et ``-.$/+%`` ; passez ``full_ascii=True`` pour "
+"encoder n'importe quel caractère 7 bits sous forme de paire de symboles."
+
+#: ../../code39.rst
+msgid ""
+"If you haven't already installed pyStrich, you should do so -- see "
+":ref:`installation` for more detail:"
+msgstr ""
+"Si vous n'avez pas encore installé pyStrich, vous devriez le faire -- voir "
+":ref:`installation` pour plus de détails :"
+
+#: ../../code39.rst
+msgid "Here's how to generate a Code 39 barcode and save it as an SVG:"
+msgstr ""
+"Voici comment générer un code-barres Code 39 et l'enregistrer au format "
+"SVG :"
+
+#~ msgid ""
+#~ "Code 39 is a 1D symbology widely used for industrial labelling. The default "
+#~ "character set is uppercase letters, digits, space and ``-.$/+%``; pass "
+#~ "``full_ascii=True`` to encode any 7-bit character as a pair of symbols."
+#~ msgstr ""
+#~ "Code 39 est une symbologie 1D largement utilisée pour l'étiquetage "
+#~ "industriel. Le jeu de caractères par défaut comprend les lettres majuscules,"
+#~ " les chiffres, l'espace et ``-.$/+%`` ; passez ``full_ascii=True`` pour "
+#~ "encoder n'importe quel caractère 7 bits sous forme de paire de symboles."

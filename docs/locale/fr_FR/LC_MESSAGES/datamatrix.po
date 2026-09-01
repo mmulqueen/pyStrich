@@ -26,15 +26,6 @@ msgstr "Data Matrix"
 
 #: ../../datamatrix.rst
 msgid ""
-"Data Matrix (ECC 200) is a 2D symbology suitable for short payloads, capable"
-" of encoding up to 1558 ASCII characters in the largest 144x144 symbol."
-msgstr ""
-"Data Matrix (ECC 200) est une symbologie 2D adaptée aux courtes charges "
-"utiles (*payload*), capable d'encoder jusqu'à 1558 caractères ASCII dans le "
-"plus grand symbole, de 144x144."
-
-#: ../../datamatrix.rst
-msgid ""
 "`Data Matrix on Wikipedia <https://en.wikipedia.org/wiki/Data_Matrix>`_ for "
 "background on the symbology itself."
 msgstr ""
@@ -54,23 +45,6 @@ msgstr ""
 #: ../../datamatrix.rst
 msgid "Example"
 msgstr "Exemple"
-
-#: ../../datamatrix.rst
-msgid ""
-"Wrap the input in :class:`DataMatrixData`. The simplest path is "
-"``auto_encoding=True``, which picks the narrowest encoding that fits the "
-"input automatically. For control over the encoded byte sequence -- to "
-"enforce ``\"ascii\"`` for a 7-bit payload (URLs, identifiers, GS1 "
-"Application Identifier strings) or to require Latin-1 / UTF-8 -- pass an "
-"explicit ``encoding`` instead; see :ref:`datamatrix-non-ascii` below."
-msgstr ""
-"Encapsulez l'entrée dans :class:`DataMatrixData`. Le plus simple est "
-"``auto_encoding=True``, qui choisit automatiquement l'encodage le plus "
-"restreint compatible avec l'entrée. Pour maîtriser la séquence d'octets "
-"encodée -- imposer ``\"ascii\"`` pour une charge utile 7 bits (URL, "
-"identifiants, chaînes d'identifiant d'application GS1) ou exiger du Latin-1 "
-"/ UTF-8 --, passez plutôt un ``encoding`` explicite ; voir :ref:`datamatrix-"
-"non-ascii` ci-dessous."
 
 #: ../../datamatrix.rst
 msgid "Data Matrix encoding the pyStrich GitHub URL."
@@ -1136,3 +1110,57 @@ msgstr ""
 "Le marqueur GS1 FNC1 (mot de code Data Matrix 232). Une instance de "
 ":class:`DataMatrixCodeword` ; concaténez avec des chaînes via ``+`` pour "
 "construire une charge utile GS1."
+
+#: ../../datamatrix.rst
+msgid ""
+"pyStrich is a Python library for generating Data Matrix barcodes, along with"
+" other 1D and 2D symbologies."
+msgstr ""
+"pyStrich est une bibliothèque Python permettant de générer des codes-barres "
+"Data Matrix, ainsi que d'autres codes-barres 1D et 2D."
+
+#: ../../datamatrix.rst
+msgid ""
+"Data Matrix (ECC 200) is a 2D barcode suitable for short payloads, capable "
+"of encoding up to 1558 ASCII characters in the largest 144x144 symbol."
+msgstr ""
+"Data Matrix (ECC 200) est un code-barres 2D adapté aux courtes charges "
+"utiles (*payload*), capable d'encoder jusqu'à 1558 caractères ASCII dans le "
+"plus grand symbole, de 144x144."
+
+#: ../../datamatrix.rst
+msgid ""
+"If you haven't already installed pyStrich, you should do so -- see "
+":ref:`installation` for more detail:"
+msgstr ""
+"Si vous n'avez pas encore installé pyStrich, vous devriez le faire -- voir "
+":ref:`installation` pour plus de détails :"
+
+#: ../../datamatrix.rst
+msgid ""
+"Wrap the input in :class:`DataMatrixData`. The simplest path is "
+"``auto_encoding=True``, which picks the narrowest encoding that fits the "
+"input automatically. For control over the encoded byte sequence -- to "
+"enforce ``\"ascii\"`` for a 7-bit payload (URLs, identifiers, GS1 "
+"Application Identifier strings) or to require Latin-1 / UTF-8 -- pass an "
+"explicit ``encoding`` instead; see :ref:`datamatrix-non-ascii` below."
+msgstr ""
+"Encapsulez l'entrée dans :class:`DataMatrixData`. Le plus simple est "
+"``auto_encoding=True``, qui choisit automatiquement l'encodage le plus "
+"restreint compatible avec l'entrée. Pour maîtriser la séquence d'octets "
+"encodée -- imposer ``\"ascii\"`` pour une charge utile 7 bits (URL, "
+"identifiants, chaînes d'identifiant d'application GS1) ou exiger du Latin-1 "
+"/ UTF-8 --, passez plutôt un ``encoding`` explicite ; voir :ref:`datamatrix-"
+"non-ascii` ci-dessous."
+
+#: ../../datamatrix.rst
+msgid "Here's how to generate a Data Matrix and save it as an SVG."
+msgstr "Voici comment générer un Data Matrix et l'enregistrer au format SVG."
+
+#~ msgid ""
+#~ "Data Matrix (ECC 200) is a 2D symbology suitable for short payloads, capable"
+#~ " of encoding up to 1558 ASCII characters in the largest 144x144 symbol."
+#~ msgstr ""
+#~ "Data Matrix (ECC 200) est une symbologie 2D adaptée aux courtes charges "
+#~ "utiles (*payload*), capable d'encoder jusqu'à 1558 caractères ASCII dans le "
+#~ "plus grand symbole, de 144x144."

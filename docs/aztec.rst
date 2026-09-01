@@ -4,10 +4,15 @@
 .. meta::
    :description: Generate Aztec Code 2D barcodes in Python with pyStrich. Strong rotation tolerance, sizes from compact to full-range. PNG, SVG, EPS, DXF.
 
+.. title:: Generating an Aztec Code with Python
+
 Aztec Code
 ==========
 
-Aztec Code is a 2D symbology used on transport tickets, boarding passes
+pyStrich is a Python library for generating Aztec Code barcodes, along with
+other 1D and 2D symbologies.
+
+Aztec Code is a 2D barcode used on transport tickets, boarding passes
 and medical records. It needs no quiet zone, and its strong central
 bullseye finder decodes reliably from any rotation. Symbols range from
 15x15 modules (compact) up to 151x151 (full-range).
@@ -25,6 +30,15 @@ bullseye finder decodes reliably from any rotation. Symbols range from
 
 Example
 -------
+
+If you haven't already installed pyStrich, you should do so -- see
+:ref:`installation` for more detail:
+
+.. code-block:: console
+
+   $ pip install pyStrich
+
+Here's how to generate an Aztec Code and save it as an SVG:
 
 .. code-block:: python
 

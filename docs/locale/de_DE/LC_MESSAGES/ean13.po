@@ -524,3 +524,23 @@ msgstr ""
 "EAN-13-Spezifikation vorgeschrieben und wird immer gerendert; die einzige "
 "Anpassungsmöglichkeit ist das kosmetische :class:`EAN13RenderOptions`-Dict "
 "(siehe :ref:`ean13-sizing` unten)."
+
+#: ../../ean13.rst
+msgid ""
+"pyStrich is a Python library for generating EAN-13 barcodes, along with "
+"other 1D and 2D symbologies."
+msgstr ""
+"pyStrich ist eine Python-Bibliothek zum Erzeugen von EAN-13-Barcodes sowie "
+"weiteren 1D- und 2D-Barcodes."
+
+#: ../../ean13.rst
+msgid ""
+"If you haven't already installed pyStrich, you should do so -- see "
+":ref:`installation` for more detail:"
+msgstr ""
+"Falls Sie pyStrich noch nicht installiert haben, sollten Sie das nachholen "
+"-- Näheres unter :ref:`installation`:"
+
+#: ../../ean13.rst
+msgid "Here's how to generate an EAN-13 barcode and save it as an SVG:"
+msgstr "So erzeugen Sie einen EAN-13-Barcode und speichern ihn als SVG:"

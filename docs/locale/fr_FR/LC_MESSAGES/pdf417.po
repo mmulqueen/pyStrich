@@ -25,17 +25,6 @@ msgid "PDF417"
 msgstr "PDF417"
 
 #: ../../pdf417.rst
-msgid ""
-"PDF417 is a stacked 2D symbology used on driver's licences, boarding passes,"
-" shipping labels and other documents that need a high-capacity barcode (up "
-"to 925 data codewords)."
-msgstr ""
-"PDF417 est une symbologie 2D empilée utilisée sur les permis de conduire, "
-"les cartes d'embarquement, les étiquettes d'expédition et d'autres documents"
-" nécessitant un code-barres à haute capacité (jusqu'à 925 mots de code de "
-"données)."
-
-#: ../../pdf417.rst
 msgid "PDF417 support was added in this release."
 msgstr "La prise en charge de PDF417 a été ajoutée dans cette version."
 
@@ -846,3 +835,44 @@ msgstr ""
 "Lève :class:`_HasMarkers` si un segment est un marqueur brut plutôt qu'une "
 "chaîne. Pour les sous-classes sans marqueurs (``MarkerT == Never``), la "
 "vérification est sans effet."
+
+#: ../../pdf417.rst
+msgid ""
+"pyStrich is a Python library for generating PDF417 barcodes, along with "
+"other 1D and 2D symbologies."
+msgstr ""
+"pyStrich est une bibliothèque Python permettant de générer des codes-barres "
+"PDF417, ainsi que d'autres codes-barres 1D et 2D."
+
+#: ../../pdf417.rst
+msgid ""
+"PDF417 is a stacked 2D barcode used on driver's licences, boarding passes, "
+"shipping labels and other documents that need high capacity (up to 925 data "
+"codewords)."
+msgstr ""
+"PDF417 est un code-barres 2D empilé utilisé sur les permis de conduire, les "
+"cartes d'embarquement, les étiquettes d'expédition et d'autres documents "
+"nécessitant une haute capacité (jusqu'à 925 mots de code de données)."
+
+#: ../../pdf417.rst
+msgid ""
+"If you haven't already installed pyStrich, you should do so -- see "
+":ref:`installation` for more detail:"
+msgstr ""
+"Si vous n'avez pas encore installé pyStrich, vous devriez le faire -- voir "
+":ref:`installation` pour plus de détails :"
+
+#: ../../pdf417.rst
+msgid "Here's how to generate a PDF417 barcode and save it as an SVG:"
+msgstr ""
+"Voici comment générer un code-barres PDF417 et l'enregistrer au format SVG :"
+
+#~ msgid ""
+#~ "PDF417 is a stacked 2D symbology used on driver's licences, boarding passes,"
+#~ " shipping labels and other documents that need a high-capacity barcode (up "
+#~ "to 925 data codewords)."
+#~ msgstr ""
+#~ "PDF417 est une symbologie 2D empilée utilisée sur les permis de conduire, "
+#~ "les cartes d'embarquement, les étiquettes d'expédition et d'autres documents"
+#~ " nécessitant un code-barres à haute capacité (jusqu'à 925 mots de code de "
+#~ "données)."

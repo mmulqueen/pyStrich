@@ -3,10 +3,15 @@
 .. meta::
    :description: Generate Code 39 barcodes in Python with pyStrich. Standard alphanumeric set or full ASCII via paired symbols; PNG, SVG and EPS output.
 
+.. title:: Generating a Code 39 barcode with Python
+
 Code 39
 =======
 
-Code 39 is a 1D symbology widely used for industrial labelling. The default
+pyStrich is a Python library for generating Code 39 barcodes, along with
+other 1D and 2D symbologies.
+
+Code 39 barcodes are widely used for industrial labelling. The default
 character set is uppercase letters, digits, space and ``-.$/+%``; pass
 ``full_ascii=True`` to encode any 7-bit character as a pair of symbols.
 
@@ -24,6 +29,15 @@ character set is uppercase letters, digits, space and ``-.$/+%``; pass
 
 Example
 -------
+
+If you haven't already installed pyStrich, you should do so -- see
+:ref:`installation` for more detail:
+
+.. code-block:: console
+
+   $ pip install pyStrich
+
+Here's how to generate a Code 39 barcode and save it as an SVG:
 
 .. code-block:: python
 

@@ -1,3 +1,5 @@
+.. title:: Choosing the right barcode symbology
+
 Choosing the right symbology
 ============================
 

@@ -3,10 +3,15 @@
 .. meta::
    :description: Generate Code 128 barcodes in Python with pyStrich. Automatic A/B/C code-set switching, mod-103 checksum, full ASCII; PNG, SVG and EPS output.
 
+.. title:: Generating a Code 128 barcode with Python
+
 Code 128
 ========
 
-Code 128 is a high-density 1D symbology covering the full ASCII range.
+pyStrich is a Python library for generating Code 128 barcodes, along with
+other 1D and 2D symbologies.
+
+Code 128 is a high-density 1D barcode covering the full ASCII range.
 pyStrich automatically switches between code sets A, B and C to minimise
 symbol length, and computes the mod-103 checksum for you.
 
@@ -20,6 +25,15 @@ symbol length, and computes the mod-103 checksum for you.
 
 Example
 -------
+
+If you haven't already installed pyStrich, you should do so -- see
+:ref:`installation` for more detail:
+
+.. code-block:: console
+
+   $ pip install pyStrich
+
+Here's how to generate a Code 128 barcode and save it as an SVG:
 
 .. code-block:: python
 

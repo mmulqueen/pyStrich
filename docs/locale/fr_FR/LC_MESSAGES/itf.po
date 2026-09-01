@@ -431,3 +431,24 @@ msgstr ""
 "Épaisseur des traits de la barre de support, en largeurs de barre étroite. "
 "``0`` ne dessine aucune barre de support. Vaut ``0`` par défaut pour le 2 "
 "parmi 5 entrelacé simple et ``4`` pour ITF-14."
+
+#: ../../itf.rst
+msgid ""
+"pyStrich is a Python library for generating ITF-14 barcodes, along with "
+"other 1D and 2D symbologies."
+msgstr ""
+"pyStrich est une bibliothèque Python permettant de générer des codes-barres "
+"ITF-14, ainsi que d'autres codes-barres 1D et 2D."
+
+#: ../../itf.rst
+msgid ""
+"If you haven't already installed pyStrich, you should do so -- see "
+":ref:`installation` for more detail:"
+msgstr ""
+"Si vous n'avez pas encore installé pyStrich, vous devriez le faire -- voir "
+":ref:`installation` pour plus de détails :"
+
+#: ../../itf.rst
+msgid "Here's how to generate an ITF-14 barcode and save it as an SVG:"
+msgstr ""
+"Voici comment générer un code-barres ITF-14 et l'enregistrer au format SVG :"

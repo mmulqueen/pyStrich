@@ -26,17 +26,6 @@ msgstr "Code 128"
 
 #: ../../code128.rst
 msgid ""
-"Code 128 is a high-density 1D symbology covering the full ASCII range. "
-"pyStrich automatically switches between code sets A, B and C to minimise "
-"symbol length, and computes the mod-103 checksum for you."
-msgstr ""
-"Code 128 est une symbologie 1D à haute densité couvrant toute la plage "
-"ASCII. pyStrich bascule automatiquement entre les jeux de codes A, B et C "
-"pour minimiser la longueur du symbole, et calcule la somme de contrôle "
-"modulo 103 pour vous."
-
-#: ../../code128.rst
-msgid ""
 "`Code 128 on Wikipedia <https://en.wikipedia.org/wiki/Code_128>`_ for "
 "background on the symbology itself."
 msgstr ""
@@ -693,3 +682,46 @@ msgid "Reject payloads over the GS1-128 48 data-character maximum."
 msgstr ""
 "Rejette les charges utiles dépassant le maximum GS1-128 de 48 caractères de "
 "données."
+
+#: ../../code128.rst
+msgid ""
+"pyStrich is a Python library for generating Code 128 barcodes, along with "
+"other 1D and 2D symbologies."
+msgstr ""
+"pyStrich est une bibliothèque Python permettant de générer des codes-barres "
+"Code 128, ainsi que d'autres codes-barres 1D et 2D."
+
+#: ../../code128.rst
+msgid ""
+"Code 128 is a high-density 1D barcode covering the full ASCII range. "
+"pyStrich automatically switches between code sets A, B and C to minimise "
+"symbol length, and computes the mod-103 checksum for you."
+msgstr ""
+"Code 128 est un code-barres 1D à haute densité couvrant toute la plage "
+"ASCII. pyStrich bascule automatiquement entre les jeux de codes A, B et C "
+"pour minimiser la longueur du symbole, et calcule la somme de contrôle "
+"modulo 103 pour vous."
+
+#: ../../code128.rst
+msgid ""
+"If you haven't already installed pyStrich, you should do so -- see "
+":ref:`installation` for more detail:"
+msgstr ""
+"Si vous n'avez pas encore installé pyStrich, vous devriez le faire -- voir "
+":ref:`installation` pour plus de détails :"
+
+#: ../../code128.rst
+msgid "Here's how to generate a Code 128 barcode and save it as an SVG:"
+msgstr ""
+"Voici comment générer un code-barres Code 128 et l'enregistrer au format "
+"SVG :"
+
+#~ msgid ""
+#~ "Code 128 is a high-density 1D symbology covering the full ASCII range. "
+#~ "pyStrich automatically switches between code sets A, B and C to minimise "
+#~ "symbol length, and computes the mod-103 checksum for you."
+#~ msgstr ""
+#~ "Code 128 est une symbologie 1D à haute densité couvrant toute la plage "
+#~ "ASCII. pyStrich bascule automatiquement entre les jeux de codes A, B et C "
+#~ "pour minimiser la longueur du symbole, et calcule la somme de contrôle "
+#~ "modulo 103 pour vous."

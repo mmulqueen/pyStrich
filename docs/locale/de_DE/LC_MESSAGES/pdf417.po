@@ -24,16 +24,6 @@ msgid "PDF417"
 msgstr "PDF417"
 
 #: ../../pdf417.rst
-msgid ""
-"PDF417 is a stacked 2D symbology used on driver's licences, boarding passes,"
-" shipping labels and other documents that need a high-capacity barcode (up "
-"to 925 data codewords)."
-msgstr ""
-"PDF417 ist eine gestapelte 2D-Symbologie, die auf Führerscheinen, "
-"Bordkarten, Versandetiketten und anderen Dokumenten verwendet wird, die "
-"einen Barcode hoher Kapazität benötigen (bis zu 925 Daten-Codewörter)."
-
-#: ../../pdf417.rst
 msgid "PDF417 support was added in this release."
 msgstr "Die Unterstützung für PDF417 wurde in dieser Version hinzugefügt."
 
@@ -841,3 +831,42 @@ msgstr ""
 "Verringern schmaler und höher. Der Encoder löst "
 ":class:`~pystrich.exceptions.PyStrichInvalidPayloadLength` aus, wenn die "
 "Daten bei der gewählten Spaltenanzahl nicht passen."
+
+#: ../../pdf417.rst
+msgid ""
+"pyStrich is a Python library for generating PDF417 barcodes, along with "
+"other 1D and 2D symbologies."
+msgstr ""
+"pyStrich ist eine Python-Bibliothek zum Erzeugen von PDF417-Barcodes sowie "
+"weiteren 1D- und 2D-Barcodes."
+
+#: ../../pdf417.rst
+msgid ""
+"PDF417 is a stacked 2D barcode used on driver's licences, boarding passes, "
+"shipping labels and other documents that need high capacity (up to 925 data "
+"codewords)."
+msgstr ""
+"PDF417 ist ein gestapelter 2D-Barcode, der auf Führerscheinen, Bordkarten, "
+"Versandetiketten und anderen Dokumenten verwendet wird, die hohe Kapazität "
+"benötigen (bis zu 925 Daten-Codewörter)."
+
+#: ../../pdf417.rst
+msgid ""
+"If you haven't already installed pyStrich, you should do so -- see "
+":ref:`installation` for more detail:"
+msgstr ""
+"Falls Sie pyStrich noch nicht installiert haben, sollten Sie das nachholen "
+"-- Näheres unter :ref:`installation`:"
+
+#: ../../pdf417.rst
+msgid "Here's how to generate a PDF417 barcode and save it as an SVG:"
+msgstr "So erzeugen Sie einen PDF417-Barcode und speichern ihn als SVG:"
+
+#~ msgid ""
+#~ "PDF417 is a stacked 2D symbology used on driver's licences, boarding passes,"
+#~ " shipping labels and other documents that need a high-capacity barcode (up "
+#~ "to 925 data codewords)."
+#~ msgstr ""
+#~ "PDF417 ist eine gestapelte 2D-Symbologie, die auf Führerscheinen, "
+#~ "Bordkarten, Versandetiketten und anderen Dokumenten verwendet wird, die "
+#~ "einen Barcode hoher Kapazität benötigen (bis zu 925 Daten-Codewörter)."

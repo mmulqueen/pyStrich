@@ -3,10 +3,15 @@
 .. meta::
    :description: Generate QR codes in Python with pyStrich. Encodes URLs, contact details and arbitrary text; PNG, SVG, EPS, DXF and terminal art output.
 
+.. title:: Generating a QR code with Python
+
 QR Code
 =======
 
-QR Code is a 2D symbology widely used for URLs and contact details.
+pyStrich is a Python library for generating QR codes, along with other 1D
+and 2D symbologies.
+
+QR codes are widely used for URLs and contact details.
 
 .. seealso::
 
@@ -18,6 +23,15 @@ QR Code is a 2D symbology widely used for URLs and contact details.
 
 Example
 -------
+
+If you haven't already installed pyStrich, you should do so -- see
+:ref:`installation` for more detail:
+
+.. code-block:: console
+
+   $ pip install pyStrich
+
+Here's how to generate a QR code and save it as an SVG:
 
 .. code-block:: python
 

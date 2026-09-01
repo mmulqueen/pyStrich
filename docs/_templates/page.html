@@ -1,5 +1,13 @@
 {%- extends "!page.html" %}
 
+{%- block htmltitle -%}
+{%- if pagename == master_doc -%}
+<title>{{ docstitle|striptags|e }}</title>
+{%- else -%}
+<title>{{ title|striptags|e }} - pyStrich {{ release|e }}</title>
+{%- endif -%}
+{%- endblock -%}
+
 {%- block extrahead %}
 {{ super() }}
 {#- Reciprocal rel=alternate hreflang links across every translation so search

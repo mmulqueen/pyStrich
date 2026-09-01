@@ -19,6 +19,8 @@ pyStrich is encoder-only -- it does not read barcodes.
 * Source: https://github.com/mmulqueen/pyStrich
 * PyPI: https://pypi.org/project/pyStrich/
 
+.. _installation:
+
 Installation
 ------------
 

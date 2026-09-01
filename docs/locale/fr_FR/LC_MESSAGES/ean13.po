@@ -531,3 +531,24 @@ msgstr ""
 "numérotation, est placé légèrement plus haut que les deux principaux groupes"
 " de chiffres). Réglez sur ``0`` pour une ligne de base commune aux trois "
 "groupes."
+
+#: ../../ean13.rst
+msgid ""
+"pyStrich is a Python library for generating EAN-13 barcodes, along with "
+"other 1D and 2D symbologies."
+msgstr ""
+"pyStrich est une bibliothèque Python permettant de générer des codes-barres "
+"EAN-13, ainsi que d'autres codes-barres 1D et 2D."
+
+#: ../../ean13.rst
+msgid ""
+"If you haven't already installed pyStrich, you should do so -- see "
+":ref:`installation` for more detail:"
+msgstr ""
+"Si vous n'avez pas encore installé pyStrich, vous devriez le faire -- voir "
+":ref:`installation` pour plus de détails :"
+
+#: ../../ean13.rst
+msgid "Here's how to generate an EAN-13 barcode and save it as an SVG:"
+msgstr ""
+"Voici comment générer un code-barres EAN-13 et l'enregistrer au format SVG :"

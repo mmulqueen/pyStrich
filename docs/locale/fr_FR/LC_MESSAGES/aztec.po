@@ -25,19 +25,6 @@ msgid "Aztec Code"
 msgstr "Aztec Code"
 
 #: ../../aztec.rst
-msgid ""
-"Aztec Code is a 2D symbology used on transport tickets, boarding passes and "
-"medical records. It needs no quiet zone, and its strong central bullseye "
-"finder decodes reliably from any rotation. Symbols range from 15x15 modules "
-"(compact) up to 151x151 (full-range)."
-msgstr ""
-"Aztec Code est une symbologie 2D utilisée sur les titres de transport, les "
-"cartes d'embarquement et les dossiers médicaux. Il ne nécessite pas de zone "
-"de silence, et son puissant motif de recherche central en cible (*bullseye*)"
-" se décode de façon fiable quelle que soit la rotation. Les symboles vont de"
-" 15x15 modules (compact) à 151x151 (full-range)."
-
-#: ../../aztec.rst
 msgid "Aztec Code support was added in this release."
 msgstr "La prise en charge d'Aztec Code a été ajoutée dans cette version."
 
@@ -817,3 +804,48 @@ msgstr ""
 "Lève :class:`_HasMarkers` si un segment est un marqueur brut plutôt qu'une "
 "chaîne. Pour les sous-classes sans marqueurs (``MarkerT == Never``), la "
 "vérification est sans effet."
+
+#: ../../aztec.rst
+msgid ""
+"pyStrich is a Python library for generating Aztec Code barcodes, along with "
+"other 1D and 2D symbologies."
+msgstr ""
+"pyStrich est une bibliothèque Python permettant de générer des codes-barres "
+"Aztec Code, ainsi que d'autres codes-barres 1D et 2D."
+
+#: ../../aztec.rst
+msgid ""
+"Aztec Code is a 2D barcode used on transport tickets, boarding passes and "
+"medical records. It needs no quiet zone, and its strong central bullseye "
+"finder decodes reliably from any rotation. Symbols range from 15x15 modules "
+"(compact) up to 151x151 (full-range)."
+msgstr ""
+"Aztec Code est un code-barres 2D utilisé sur les titres de transport, les "
+"cartes d'embarquement et les dossiers médicaux. Il ne nécessite pas de zone "
+"de silence, et son puissant motif de recherche central en cible (*bullseye*)"
+" se décode de façon fiable quelle que soit la rotation. Les symboles vont de"
+" 15x15 modules (compact) à 151x151 (full-range)."
+
+#: ../../aztec.rst
+msgid ""
+"If you haven't already installed pyStrich, you should do so -- see "
+":ref:`installation` for more detail:"
+msgstr ""
+"Si vous n'avez pas encore installé pyStrich, vous devriez le faire -- voir "
+":ref:`installation` pour plus de détails :"
+
+#: ../../aztec.rst
+msgid "Here's how to generate an Aztec Code and save it as an SVG:"
+msgstr "Voici comment générer un Aztec Code et l'enregistrer au format SVG :"
+
+#~ msgid ""
+#~ "Aztec Code is a 2D symbology used on transport tickets, boarding passes and "
+#~ "medical records. It needs no quiet zone, and its strong central bullseye "
+#~ "finder decodes reliably from any rotation. Symbols range from 15x15 modules "
+#~ "(compact) up to 151x151 (full-range)."
+#~ msgstr ""
+#~ "Aztec Code est une symbologie 2D utilisée sur les titres de transport, les "
+#~ "cartes d'embarquement et les dossiers médicaux. Il ne nécessite pas de zone "
+#~ "de silence, et son puissant motif de recherche central en cible (*bullseye*)"
+#~ " se décode de façon fiable quelle que soit la rotation. Les symboles vont de"
+#~ " 15x15 modules (compact) à 151x151 (full-range)."

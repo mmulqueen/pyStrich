@@ -4,10 +4,13 @@
 .. meta::
    :description: Generate GS1 ITF-14 and basic Interleaved 2 of 5 barcodes in Python with pyStrich. PNG, SVG and EPS output.
 
-.. title:: ITF
+.. title:: Generating an ITF-14 barcode with Python
 
 ITF-14
 ======
+
+pyStrich is a Python library for generating ITF-14 barcodes, along with
+other 1D and 2D symbologies.
 
 .. versionadded:: 0.16
    ITF-14 and Interleaved 2 of 5 support were added in this release.
@@ -50,6 +53,15 @@ appended) or 14 digits (the supplied final digit is discarded and recomputed):
 
 Example
 -------
+
+If you haven't already installed pyStrich, you should do so -- see
+:ref:`installation` for more detail:
+
+.. code-block:: console
+
+   $ pip install pyStrich
+
+Here's how to generate an ITF-14 barcode and save it as an SVG:
 
 .. code-block:: python
 

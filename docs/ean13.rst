@@ -3,8 +3,13 @@
 .. meta::
    :description: Generate EAN-13 / GTIN-13 retail barcodes in Python with pyStrich. Pass 12 or 13 digits; the check digit is computed for you. PNG, SVG and EPS output.
 
+.. title:: Generating an EAN-13 barcode with Python
+
 EAN-13
 ======
+
+pyStrich is a Python library for generating EAN-13 barcodes, along with
+other 1D and 2D symbologies.
 
 EAN-13 is the retail product barcode for a GTIN-13 -- the 13-digit global
 identifier issued by GS1 and printed on virtually every consumer product.
@@ -49,6 +54,15 @@ recomputed):
 
 Example
 -------
+
+If you haven't already installed pyStrich, you should do so -- see
+:ref:`installation` for more detail:
+
+.. code-block:: console
+
+   $ pip install pyStrich
+
+Here's how to generate an EAN-13 barcode and save it as an SVG:
 
 .. code-block:: python
 
