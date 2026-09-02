@@ -4,10 +4,8 @@
 .. meta::
    :description: Generate Aztec Code 2D barcodes in Python with pyStrich. Strong rotation tolerance, sizes from compact to full-range. PNG, SVG, EPS, DXF.
 
-.. title:: Generating an Aztec Code with Python
-
-Aztec Code
-==========
+Generating an Aztec Code with Python
+====================================
 
 pyStrich is a Python library for generating Aztec Code barcodes, along with
 other 1D and 2D symbologies.

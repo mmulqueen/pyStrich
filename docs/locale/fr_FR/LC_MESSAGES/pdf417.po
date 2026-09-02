@@ -21,10 +21,6 @@ msgstr ""
 " et les étiquettes d'expédition ; sortie PNG, SVG et EPS."
 
 #: ../../pdf417.rst
-msgid "PDF417"
-msgstr "PDF417"
-
-#: ../../pdf417.rst
 msgid "PDF417 support was added in this release."
 msgstr "La prise en charge de PDF417 a été ajoutée dans cette version."
 
@@ -867,12 +863,6 @@ msgid "Here's how to generate a PDF417 barcode and save it as an SVG:"
 msgstr ""
 "Voici comment générer un code-barres PDF417 et l'enregistrer au format SVG :"
 
-#~ msgid ""
-#~ "PDF417 is a stacked 2D symbology used on driver's licences, boarding passes,"
-#~ " shipping labels and other documents that need a high-capacity barcode (up "
-#~ "to 925 data codewords)."
-#~ msgstr ""
-#~ "PDF417 est une symbologie 2D empilée utilisée sur les permis de conduire, "
-#~ "les cartes d'embarquement, les étiquettes d'expédition et d'autres documents"
-#~ " nécessitant un code-barres à haute capacité (jusqu'à 925 mots de code de "
-#~ "données)."
+#: ../../pdf417.rst
+msgid "Generating a PDF417 barcode with Python"
+msgstr "Générer un code-barres PDF417 avec Python"

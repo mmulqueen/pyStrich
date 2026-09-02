@@ -12,10 +12,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: ../../symbology-choice.rst
-msgid "Choosing the right symbology"
-msgstr "Choisir la bonne symbologie"
-
-#: ../../symbology-choice.rst
 msgid ""
 "This is meant to be an accessible introduction to the different kinds of "
 "barcodes that can be used and some rules of thumb for picking the right one."
@@ -224,3 +220,7 @@ msgid ""
 msgstr ""
 ":doc:`printing` une fois votre choix fait -- comment dimensionner un symbole"
 " pour qu'il se lise de façon fiable."
+
+#: ../../symbology-choice.rst
+msgid "Choosing the right barcode symbology"
+msgstr "Choisir la bonne symbologie de code-barres"

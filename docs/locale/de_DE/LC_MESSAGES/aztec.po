@@ -20,10 +20,6 @@ msgstr ""
 "Rotationstoleranz, Größen von kompakt bis Full-Range. PNG, SVG, EPS, DXF."
 
 #: ../../aztec.rst
-msgid "Aztec Code"
-msgstr "Aztec-Code"
-
-#: ../../aztec.rst
 msgid "Aztec Code support was added in this release."
 msgstr "Die Unterstützung für Aztec-Code wurde in dieser Version hinzugefügt."
 
@@ -836,13 +832,6 @@ msgstr ""
 msgid "Here's how to generate an Aztec Code and save it as an SVG:"
 msgstr "So erzeugen Sie einen Aztec-Code und speichern ihn als SVG:"
 
-#~ msgid ""
-#~ "Aztec Code is a 2D symbology used on transport tickets, boarding passes and "
-#~ "medical records. It needs no quiet zone, and its strong central bullseye "
-#~ "finder decodes reliably from any rotation. Symbols range from 15x15 modules "
-#~ "(compact) up to 151x151 (full-range)."
-#~ msgstr ""
-#~ "Aztec-Code ist eine 2D-Symbologie, die auf Fahrscheinen, Bordkarten und in "
-#~ "Patientenakten verwendet wird. Er benötigt keine Ruhezone, und sein starkes "
-#~ "zentrales Bullseye-Suchmuster wird in jeder Drehlage zuverlässig decodiert. "
-#~ "Symbole reichen von 15x15 Modulen (kompakt) bis 151x151 (Full-Range)."
+#: ../../aztec.rst
+msgid "Generating an Aztec Code with Python"
+msgstr "Aztec-Code mit Python erzeugen"

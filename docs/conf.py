@@ -413,8 +413,8 @@ class _StampArgparseSource(SphinxTransform):
 # Keyed by language prefix; a language with no entry keeps the English strings.
 _LOCALISED_TITLES = {
     "de": (
-        "pyStrich — der Python-Encoder für 1D/2D-Barcodes",
-        "pyStrich — Python-Encoder für 1D/2D-Barcodes",
+        "pyStrich – der Python-Encoder für 1D/2D-Barcodes",  # noqa: RUF001
+        "pyStrich – Python-Encoder für 1D/2D-Barcodes",  # noqa: RUF001
     ),
     "fr": (
         "pyStrich — l'encodeur de codes-barres 1D/2D pour Python",

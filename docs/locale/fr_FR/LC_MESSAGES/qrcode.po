@@ -21,10 +21,6 @@ msgstr ""
 "terminal."
 
 #: ../../qrcode.rst
-msgid "QR Code"
-msgstr "QR Code"
-
-#: ../../qrcode.rst
 msgid ""
 "`QR code on Wikipedia <https://en.wikipedia.org/wiki/QR_code>`_ for "
 "background on the symbology itself."
@@ -938,7 +934,6 @@ msgstr ""
 msgid "Here's how to generate a QR code and save it as an SVG:"
 msgstr "Voici comment générer un code QR et l'enregistrer au format SVG :"
 
-#~ msgid "QR Code is a 2D symbology widely used for URLs and contact details."
-#~ msgstr ""
-#~ "Le code QR est une symbologie 2D largement utilisée pour les URL et les "
-#~ "coordonnées."
+#: ../../qrcode.rst
+msgid "Generating a QR code with Python"
+msgstr "Générer un code QR avec Python"

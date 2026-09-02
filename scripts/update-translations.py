@@ -108,6 +108,10 @@ def update_locale(locale_dir: Path) -> dict[str, list[str]]:
             continue
         po = polib.pofile(str(po_path))
         po.merge(polib.pofile(str(pot_path)))
+        # Drop gettext's obsolete (#~) tombstones - we have git for history.
+        active = [entry for entry in po if not entry.obsolete]
+        del po[:]
+        po.extend(active)
         for entry in po:
             entry.occurrences = _canonical_occurrences(entry.occurrences)
         strip_header(po)

@@ -3,10 +3,8 @@
 .. meta::
    :description: Generate Data Matrix (ECC 200) barcodes in Python with pyStrich. Encodes up to 1558 ASCII characters; PNG, SVG, EPS, DXF and terminal art output.
 
-.. title:: Generating a Data Matrix with Python
-
-Data Matrix
-===========
+Generating a Data Matrix with Python
+====================================
 
 pyStrich is a Python library for generating Data Matrix barcodes, along with
 other 1D and 2D symbologies.

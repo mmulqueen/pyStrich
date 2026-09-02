@@ -4,10 +4,8 @@
 .. meta::
    :description: Generate PDF417 stacked 2D barcodes in Python with pyStrich. High-capacity codes for IDs, boarding passes and shipping labels; PNG, SVG and EPS.
 
-.. title:: Generating a PDF417 barcode with Python
-
-PDF417
-======
+Generating a PDF417 barcode with Python
+=======================================
 
 pyStrich is a Python library for generating PDF417 barcodes, along with
 other 1D and 2D symbologies.

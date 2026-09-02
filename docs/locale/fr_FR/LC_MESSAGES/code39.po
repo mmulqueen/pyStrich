@@ -21,10 +21,6 @@ msgstr ""
 "EPS."
 
 #: ../../code39.rst
-msgid "Code 39"
-msgstr "Code 39"
-
-#: ../../code39.rst
 msgid ""
 "`Code 39 on Wikipedia <https://en.wikipedia.org/wiki/Code_39>`_ for "
 "background on the symbology itself."
@@ -454,12 +450,6 @@ msgstr ""
 "Voici comment générer un code-barres Code 39 et l'enregistrer au format "
 "SVG :"
 
-#~ msgid ""
-#~ "Code 39 is a 1D symbology widely used for industrial labelling. The default "
-#~ "character set is uppercase letters, digits, space and ``-.$/+%``; pass "
-#~ "``full_ascii=True`` to encode any 7-bit character as a pair of symbols."
-#~ msgstr ""
-#~ "Code 39 est une symbologie 1D largement utilisée pour l'étiquetage "
-#~ "industriel. Le jeu de caractères par défaut comprend les lettres majuscules,"
-#~ " les chiffres, l'espace et ``-.$/+%`` ; passez ``full_ascii=True`` pour "
-#~ "encoder n'importe quel caractère 7 bits sous forme de paire de symboles."
+#: ../../code39.rst
+msgid "Generating a Code 39 barcode with Python"
+msgstr "Générer un code-barres Code 39 avec Python"

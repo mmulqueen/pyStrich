@@ -21,10 +21,6 @@ msgstr ""
 "SVG und EPS."
 
 #: ../../ean13.rst
-msgid "EAN-13"
-msgstr "EAN-13"
-
-#: ../../ean13.rst
 msgid ""
 "EAN-13 is the retail product barcode for a GTIN-13 -- the 13-digit global "
 "identifier issued by GS1 and printed on virtually every consumer product. "
@@ -544,3 +540,7 @@ msgstr ""
 #: ../../ean13.rst
 msgid "Here's how to generate an EAN-13 barcode and save it as an SVG:"
 msgstr "So erzeugen Sie einen EAN-13-Barcode und speichern ihn als SVG:"
+
+#: ../../ean13.rst
+msgid "Generating an EAN-13 barcode with Python"
+msgstr "EAN-13-Barcode mit Python erzeugen"

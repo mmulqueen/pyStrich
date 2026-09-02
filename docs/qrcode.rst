@@ -3,10 +3,8 @@
 .. meta::
    :description: Generate QR codes in Python with pyStrich. Encodes URLs, contact details and arbitrary text; PNG, SVG, EPS, DXF and terminal art output.
 
-.. title:: Generating a QR code with Python
-
-QR Code
-=======
+Generating a QR code with Python
+================================
 
 pyStrich is a Python library for generating QR codes, along with other 1D
 and 2D symbologies.

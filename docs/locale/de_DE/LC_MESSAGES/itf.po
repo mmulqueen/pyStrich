@@ -20,10 +20,6 @@ msgstr ""
 "erzeugen. Ausgabe als PNG, SVG und EPS."
 
 #: ../../itf.rst
-msgid "ITF-14"
-msgstr "ITF-14"
-
-#: ../../itf.rst
 msgid "ITF-14 and Interleaved 2 of 5 support were added in this release."
 msgstr ""
 "Die Unterstützung für ITF-14 und Interleaved 2 of 5 wurde in dieser Version "
@@ -444,3 +440,7 @@ msgstr ""
 #: ../../itf.rst
 msgid "Here's how to generate an ITF-14 barcode and save it as an SVG:"
 msgstr "So erzeugen Sie einen ITF-14-Barcode und speichern ihn als SVG:"
+
+#: ../../itf.rst
+msgid "Generating an ITF-14 barcode with Python"
+msgstr "ITF-14-Barcode mit Python erzeugen"

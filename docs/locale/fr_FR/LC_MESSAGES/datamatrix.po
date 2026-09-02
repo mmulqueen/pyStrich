@@ -21,10 +21,6 @@ msgstr ""
 "terminal."
 
 #: ../../datamatrix.rst
-msgid "Data Matrix"
-msgstr "Data Matrix"
-
-#: ../../datamatrix.rst
 msgid ""
 "`Data Matrix on Wikipedia <https://en.wikipedia.org/wiki/Data_Matrix>`_ for "
 "background on the symbology itself."
@@ -1157,10 +1153,6 @@ msgstr ""
 msgid "Here's how to generate a Data Matrix and save it as an SVG."
 msgstr "Voici comment générer un Data Matrix et l'enregistrer au format SVG."
 
-#~ msgid ""
-#~ "Data Matrix (ECC 200) is a 2D symbology suitable for short payloads, capable"
-#~ " of encoding up to 1558 ASCII characters in the largest 144x144 symbol."
-#~ msgstr ""
-#~ "Data Matrix (ECC 200) est une symbologie 2D adaptée aux courtes charges "
-#~ "utiles (*payload*), capable d'encoder jusqu'à 1558 caractères ASCII dans le "
-#~ "plus grand symbole, de 144x144."
+#: ../../datamatrix.rst
+msgid "Generating a Data Matrix with Python"
+msgstr "Générer un Data Matrix avec Python"

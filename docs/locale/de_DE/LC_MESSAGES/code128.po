@@ -21,10 +21,6 @@ msgstr ""
 "PNG, SVG und EPS."
 
 #: ../../code128.rst
-msgid "Code 128"
-msgstr "Code 128"
-
-#: ../../code128.rst
 msgid ""
 "`Code 128 on Wikipedia <https://en.wikipedia.org/wiki/Code_128>`_ for "
 "background on the symbology itself."
@@ -704,12 +700,6 @@ msgstr ""
 msgid "Here's how to generate a Code 128 barcode and save it as an SVG:"
 msgstr "So erzeugen Sie einen Code-128-Barcode und speichern ihn als SVG:"
 
-#~ msgid ""
-#~ "Code 128 is a high-density 1D symbology covering the full ASCII range. "
-#~ "pyStrich automatically switches between code sets A, B and C to minimise "
-#~ "symbol length, and computes the mod-103 checksum for you."
-#~ msgstr ""
-#~ "Code 128 ist eine hochdichte 1D-Symbologie, die den gesamten ASCII-Bereich "
-#~ "abdeckt. pyStrich schaltet automatisch zwischen den Code-Sets A, B und C um,"
-#~ " um die Symbollänge zu minimieren, und berechnet die Mod-103-Prüfsumme für "
-#~ "Sie."
+#: ../../code128.rst
+msgid "Generating a Code 128 barcode with Python"
+msgstr "Code-128-Barcode mit Python erzeugen"

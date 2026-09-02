@@ -1,7 +1,5 @@
-.. title:: Choosing the right barcode symbology
-
-Choosing the right symbology
-============================
+Choosing the right barcode symbology
+====================================
 
 This is meant to be an accessible introduction to the different kinds of
 barcodes that can be used and some rules of thumb for picking the right

@@ -117,14 +117,14 @@ Unsure which to pick? See :doc:`symbology-choice`.
 .. toctree::
    :maxdepth: 1
 
-   datamatrix
-   code128
-   code39
-   ean13
-   itf
-   qrcode
-   pdf417
-   aztec
+   Data Matrix <datamatrix>
+   Code 128 <code128>
+   Code 39 <code39>
+   EAN-13 <ean13>
+   ITF-14 <itf>
+   QR Code <qrcode>
+   PDF417 <pdf417>
+   Aztec Code <aztec>
 
 Guides
 ------
@@ -132,7 +132,7 @@ Guides
 .. toctree::
    :maxdepth: 1
 
-   symbology-choice
+   Choosing the right symbology <symbology-choice>
    cli
    recipes
    printing

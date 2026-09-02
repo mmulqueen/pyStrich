@@ -169,3 +169,39 @@ msgstr ""
 #: ../../index.rst
 msgid "Licence"
 msgstr "Licence"
+
+#: ../../index.rst
+msgid "Data Matrix"
+msgstr "Data Matrix"
+
+#: ../../index.rst
+msgid "Code 128"
+msgstr "Code 128"
+
+#: ../../index.rst
+msgid "Code 39"
+msgstr "Code 39"
+
+#: ../../index.rst
+msgid "EAN-13"
+msgstr "EAN-13"
+
+#: ../../index.rst
+msgid "ITF-14"
+msgstr "ITF-14"
+
+#: ../../index.rst
+msgid "QR Code"
+msgstr "QR Code"
+
+#: ../../index.rst
+msgid "PDF417"
+msgstr "PDF417"
+
+#: ../../index.rst
+msgid "Aztec Code"
+msgstr "Aztec Code"
+
+#: ../../index.rst
+msgid "Choosing the right symbology"
+msgstr "Choisir la bonne symbologie"

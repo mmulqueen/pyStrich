@@ -20,10 +20,6 @@ msgstr ""
 " avec pyStrich. Sortie PNG, SVG et EPS."
 
 #: ../../itf.rst
-msgid "ITF-14"
-msgstr "ITF-14"
-
-#: ../../itf.rst
 msgid "ITF-14 and Interleaved 2 of 5 support were added in this release."
 msgstr ""
 "La prise en charge d'ITF-14 et du 2 parmi 5 entrelacé a été ajoutée dans "
@@ -452,3 +448,7 @@ msgstr ""
 msgid "Here's how to generate an ITF-14 barcode and save it as an SVG:"
 msgstr ""
 "Voici comment générer un code-barres ITF-14 et l'enregistrer au format SVG :"
+
+#: ../../itf.rst
+msgid "Generating an ITF-14 barcode with Python"
+msgstr "Générer un code-barres ITF-14 avec Python"
