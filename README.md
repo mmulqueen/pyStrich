@@ -5,14 +5,14 @@ pyStrich
 pyStrich is a fast pure-Python module to generate 1D and 2D barcodes in PNG, SVG and other image formats. Currently it
 supports:
 
- * Code 39 (`code39`)
- * Code 128 and GS1-128 (`code128`)
- * EAN-13 (`ean13`)
- * Interleaved 2 of 5 and ITF-14 (`itf`)
- * Data Matrix and GS1 Data Matrix (`datamatrix`)
- * QR Code (`qrcode`)
- * PDF417 (`pdf417`)
- * Aztec Code (`aztec`)
+ * [Code 39](https://www.method-b.uk/pyStrich/docs/code39.html) (`code39`)
+ * [Code 128 and GS1-128](https://www.method-b.uk/pyStrich/docs/code128.html) (`code128`)
+ * [EAN-13](https://www.method-b.uk/pyStrich/docs/ean13.html) (`ean13`)
+ * [Interleaved 2 of 5 and ITF-14](https://www.method-b.uk/pyStrich/docs/itf.html) (`itf`)
+ * [Data Matrix and GS1 Data Matrix](https://www.method-b.uk/pyStrich/docs/datamatrix.html) (`datamatrix`)
+ * [QR Code](https://www.method-b.uk/pyStrich/docs/qrcode.html) (`qrcode`)
+ * [PDF417](https://www.method-b.uk/pyStrich/docs/pdf417.html) (`pdf417`)
+ * [Aztec Code](https://www.method-b.uk/pyStrich/docs/aztec.html) (`aztec`)
 
 PNG output requires Pillow, installable via the `pyStrich[png]` extra; SVG, EPS, DXF and terminal output do not. pyStrich supports encoding only, not decoding.
 
