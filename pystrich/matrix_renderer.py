@@ -15,7 +15,7 @@ from abc import ABC
 from io import BytesIO
 from typing import TYPE_CHECKING, ClassVar, Generic, TypeVar
 
-from pystrich.colour import RGBA, Fill, resolve_pil_palette
+from pystrich.colour import RGBA, pil_mode, resolve_colours
 from pystrich.dxf import DxfUnit, matrix_to_dxf
 from pystrich.eps import matrix_to_eps
 from pystrich.limits import check_cell_size, check_image_pixels
@@ -31,8 +31,26 @@ if TYPE_CHECKING:
 CellT = TypeVar("CellT", int, "int | None")
 
 
-def _pixel_bytes(value: Fill) -> bytes:
-    return bytes((value,) if isinstance(value, int) else value)
+def _grey_image(modules: bytes, size: tuple[int, int], dark: int, light: int) -> PILImage:
+    """Return 0/1 ``modules`` as an ``"L"`` image, one pixel per module."""
+    from pystrich._pillow import Image
+
+    return Image.frombytes("L", size, modules.translate(bytes((light, dark)) + bytes(254)))
+
+
+def _palette_image(
+    modules: bytes, size: tuple[int, int], dark: RGBA, light: RGBA, *, alpha: bool
+) -> PILImage:
+    """Return 0/1 ``modules`` as a ``"P"`` image on a light/dark palette, one pixel per module."""
+    from pystrich._pillow import Image
+
+    def entry(colour: RGBA) -> tuple[int, ...]:
+        rgb = (colour.r, colour.g, colour.b)
+        return (*rgb, colour.a) if alpha else rgb
+
+    image = Image.frombytes("P", size, modules)
+    image.putpalette(bytes(entry(light) + entry(dark)), "RGBA" if alpha else "RGB")
+    return image
 
 
 class Matrix2DRenderer(ABC, Generic[CellT]):
@@ -73,19 +91,27 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         check_cell_size(cellsize, name="cell size")
         check_image_pixels(self.width * cellsize, self.height * cellsize, cellsize=cellsize)
 
+        dark, light = resolve_colours(dark_hex, light_hex)
+        return self._scaled_image(cellsize, dark, light)
+
+    def _scaled_image(self, cellsize: int, dark: RGBA, light: RGBA) -> PILImage:
+        """Render the matrix at ``cellsize`` pixels per module.
+
+        One pixel per module, upscaled by nearest-neighbour: Pillow does the
+        per-pixel work, so the Python-side cost scales with modules, not pixels.
+        """
         from pystrich._pillow import Image
 
-        mode, dark_fill, light_fill = resolve_pil_palette(dark_hex, light_hex)
-        buff = self._buffer(cellsize, dark_fill, light_fill)
-        return Image.frombuffer(
-            mode,
-            (self.width * cellsize, self.height * cellsize),
-            buff,
-            "raw",
-            mode,
-            0,
-            -1,
-        )
+        modules = b"".join(bytes(row) for row in self.matrix)  # type: ignore[arg-type]
+        size = (self.width, self.height)
+        scaled = (self.width * cellsize, self.height * cellsize)
+        mode = pil_mode(dark, light)
+        if mode == "L":
+            image = _grey_image(modules, size, dark.r, light.r)
+        else:
+            # Converting before upscaling touches modules rather than pixels.
+            image = _palette_image(modules, size, dark, light, alpha=mode == "RGBA").convert(mode)
+        return image.resize(scaled, Image.Resampling.NEAREST)
 
     def write_file(
         self,
@@ -109,19 +135,6 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         buffer = BytesIO()
         self.get_pilimage(cellsize, dark_hex=dark_hex, light_hex=light_hex).save(buffer, "PNG")
         return buffer.getvalue()
-
-    def _buffer(self, cellsize: int, dark_fill: Fill, light_fill: Fill) -> bytes:
-        """Convert the matrix into the buffer format used by PIL."""
-        pixel: dict[int | None, bytes] = {
-            0: _pixel_bytes(light_fill),
-            1: _pixel_bytes(dark_fill),
-        }
-        # PIL writes image buffers from the bottom up, so feed in rows in
-        # reverse.
-        return b"".join(
-            b"".join([pixel[cell] * cellsize for cell in row]) * cellsize
-            for row in self.matrix[::-1]
-        )
 
     def get_ascii(self) -> str:
         """Return an ASCII-art rendering of the matrix."""

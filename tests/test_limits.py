@@ -24,11 +24,11 @@ from pystrich.pdf417 import PDF417Encoder
 from pystrich.qrcode import QRCodeEncoder
 
 
-def test_matrix_guard_precedes_buffer_allocation(monkeypatch):
+def test_matrix_guard_precedes_image_allocation(monkeypatch):
     def _boom(*args, **kwargs):
-        raise AssertionError("buffer allocated despite oversized request")
+        raise AssertionError("image allocated despite oversized request")
 
-    monkeypatch.setattr(Matrix2DRenderer, "_buffer", _boom)
+    monkeypatch.setattr(Matrix2DRenderer, "_scaled_image", _boom)
     with pytest.raises(PyStrichInvalidOption):
         QRCodeEncoder("hi").get_pilimage(10**6)
 
