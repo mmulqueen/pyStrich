@@ -178,7 +178,7 @@ def test_png_default_bytes_unchanged():
     image = pytest.importorskip("PIL.Image")
     qr = QRCodeEncoder("hello")
     assert qr.get_imagedata() == qr.get_imagedata(dark_hex=None, light_hex=None)
-    assert image.open(io.BytesIO(qr.get_imagedata())).mode == "L"
+    assert image.open(io.BytesIO(qr.get_imagedata())).mode == "1"
 
 
 @pytest.mark.png

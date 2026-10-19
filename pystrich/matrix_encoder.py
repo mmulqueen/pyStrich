@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Generic
 from pystrich._dataurl import png_to_data_url, svg_to_data_url
 from pystrich.dxf import DxfUnit
 from pystrich.marks import MarkShape, SymbolMarks
-from pystrich.matrix_renderer import CellT, Matrix2DRenderer
+from pystrich.matrix_renderer import CellT, ImageDepth, Matrix2DRenderer
 
 if TYPE_CHECKING:
     from pystrich._pillow import PILImage
@@ -46,6 +46,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        depth: ImageDepth = "bilevel",
     ) -> None:
         """Save the symbol as a PNG. Pass a ``.png`` filename.
 
@@ -55,11 +56,19 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
             ``RGBA``. Defaults to black.
         :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
             ``RGBA``. Defaults to white.
+        :param depth: ``"bilevel"`` (the default) writes a bit-depth-1 PNG;
+            ``"full"`` writes a greyscale or colour PNG at full depth. See
+            :meth:`get_pilimage`.
 
         .. versionchanged:: 0.16
             Added ``dark_hex`` and ``light_hex``.
+
+        .. versionchanged:: 0.21
+            Added ``depth``; PNGs are now written at a bit depth of 1 by default.
         """
-        self.init_renderer().write_file(cellsize, filename, dark_hex=dark_hex, light_hex=light_hex)
+        self.init_renderer().write_file(
+            cellsize, filename, dark_hex=dark_hex, light_hex=light_hex, depth=depth
+        )
 
     def get_imagedata(
         self,
@@ -67,6 +76,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        depth: ImageDepth = "bilevel",
     ) -> bytes:
         """Render the symbol and return PNG bytes.
 
@@ -75,13 +85,21 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
             ``RGBA``. Defaults to black.
         :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
             ``RGBA``. Defaults to white.
+        :param depth: ``"bilevel"`` (the default) writes a bit-depth-1 PNG;
+            ``"full"`` writes a greyscale or colour PNG at full depth. See
+            :meth:`get_pilimage`.
         :returns: PNG-encoded image data.
         :rtype: bytes
 
         .. versionchanged:: 0.16
             Added ``dark_hex`` and ``light_hex``.
+
+        .. versionchanged:: 0.21
+            Added ``depth``; PNGs are now written at a bit depth of 1 by default.
         """
-        return self.init_renderer().get_imagedata(cellsize, dark_hex=dark_hex, light_hex=light_hex)
+        return self.init_renderer().get_imagedata(
+            cellsize, dark_hex=dark_hex, light_hex=light_hex, depth=depth
+        )
 
     def png_dataurl(
         self,
@@ -89,6 +107,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        depth: ImageDepth = "bilevel",
     ) -> str:
         """Render the symbol and return a PNG ``data:`` URL string.
 
@@ -97,14 +116,22 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
             ``RGBA``. Defaults to black.
         :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
             ``RGBA``. Defaults to white.
+        :param depth: ``"bilevel"`` (the default) writes a bit-depth-1 PNG;
+            ``"full"`` writes a greyscale or colour PNG at full depth. See
+            :meth:`get_pilimage`.
         :rtype: str
 
         .. versionadded:: 0.15
 
         .. versionchanged:: 0.16
             Added ``dark_hex`` and ``light_hex``.
+
+        .. versionchanged:: 0.21
+            Added ``depth``; PNGs are now written at a bit depth of 1 by default.
         """
-        return png_to_data_url(self.get_imagedata(cellsize, dark_hex=dark_hex, light_hex=light_hex))
+        return png_to_data_url(
+            self.get_imagedata(cellsize, dark_hex=dark_hex, light_hex=light_hex, depth=depth)
+        )
 
     def get_pilimage(
         self,
@@ -112,6 +139,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        depth: ImageDepth = "full",
     ) -> PILImage:
         """Render the symbol and return a Pillow image.
 
@@ -120,6 +148,11 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
             ``RGBA``. Defaults to black.
         :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
             ``RGBA``. Defaults to white.
+        :param depth: ``"full"`` (the default) returns an ``"L"``, ``"RGB"`` or
+            ``"RGBA"`` image, whichever is narrowest for the colours; ``"bilevel"``
+            returns one bit per pixel -- mode ``"1"`` for black and white, otherwise
+            a two-colour ``"P"`` palette. Colours and alpha are preserved at either
+            depth.
         :returns: The rendered symbol.
         :rtype: PIL.Image.Image
 
@@ -127,8 +160,13 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
 
         .. versionchanged:: 0.16
             Added ``dark_hex`` and ``light_hex``.
+
+        .. versionchanged:: 0.21
+            Added ``depth``.
         """
-        return self.init_renderer().get_pilimage(cellsize, dark_hex=dark_hex, light_hex=light_hex)
+        return self.init_renderer().get_pilimage(
+            cellsize, dark_hex=dark_hex, light_hex=light_hex, depth=depth
+        )
 
     def get_svg(
         self,

@@ -13,11 +13,12 @@ from __future__ import annotations
 import os
 from abc import ABC
 from io import BytesIO
-from typing import TYPE_CHECKING, ClassVar, Generic, TypeVar
+from typing import TYPE_CHECKING, ClassVar, Generic, Literal, TypeVar, get_args
 
 from pystrich.colour import RGBA, pil_mode, resolve_colours
 from pystrich.dxf import DxfUnit, matrix_to_dxf
 from pystrich.eps import matrix_to_eps
+from pystrich.exceptions import PyStrichInvalidOption
 from pystrich.limits import check_cell_size, check_image_pixels
 from pystrich.marks import MarkShape, SymbolMarks, iter_marks
 from pystrich.svg import matrix_to_svg
@@ -29,6 +30,8 @@ if TYPE_CHECKING:
 # Cell type. Most 2D formats use 0/1; Data Matrix additionally uses None
 # during placement to mean "unset".
 CellT = TypeVar("CellT", int, "int | None")
+
+ImageDepth = Literal["full", "bilevel"]
 
 
 def _grey_image(modules: bytes, size: tuple[int, int], dark: int, light: int) -> PILImage:
@@ -86,19 +89,30 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        depth: ImageDepth = "full",
     ) -> PILImage:
         """Return the matrix as a PIL image."""
+        if depth not in get_args(ImageDepth):
+            raise PyStrichInvalidOption(
+                f"depth must be one of {get_args(ImageDepth)}, got {depth!r}"
+            )
         check_cell_size(cellsize, name="cell size")
         check_image_pixels(self.width * cellsize, self.height * cellsize, cellsize=cellsize)
 
         dark, light = resolve_colours(dark_hex, light_hex)
-        return self._scaled_image(cellsize, dark, light)
+        return self._scaled_image(cellsize, dark, light, depth=depth)
 
-    def _scaled_image(self, cellsize: int, dark: RGBA, light: RGBA) -> PILImage:
+    def _scaled_image(
+        self, cellsize: int, dark: RGBA, light: RGBA, *, depth: ImageDepth
+    ) -> PILImage:
         """Render the matrix at ``cellsize`` pixels per module.
 
         One pixel per module, upscaled by nearest-neighbour: Pillow does the
         per-pixel work, so the Python-side cost scales with modules, not pixels.
+
+        With ``depth="bilevel"`` the image has one bit per pixel: ``"1"`` for
+        black and white, otherwise a two-entry ``"P"`` palette. Pillow writes
+        either as a bit-depth-1 PNG.
         """
         from pystrich._pillow import Image
 
@@ -106,11 +120,18 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         size = (self.width, self.height)
         scaled = (self.width * cellsize, self.height * cellsize)
         mode = pil_mode(dark, light)
-        if mode == "L":
+        alpha = mode == "RGBA"
+        if depth == "bilevel" and mode == "L" and {dark.r, light.r} <= {0, 255}:
+            image = _grey_image(modules, size, dark.r, light.r).convert(
+                "1", dither=Image.Dither.NONE
+            )
+        elif depth == "bilevel":
+            image = _palette_image(modules, size, dark, light, alpha=alpha)
+        elif mode == "L":
             image = _grey_image(modules, size, dark.r, light.r)
         else:
             # Converting before upscaling touches modules rather than pixels.
-            image = _palette_image(modules, size, dark, light, alpha=mode == "RGBA").convert(mode)
+            image = _palette_image(modules, size, dark, light, alpha=alpha).convert(mode)
         return image.resize(scaled, Image.Resampling.NEAREST)
 
     def write_file(
@@ -120,9 +141,11 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        depth: ImageDepth = "bilevel",
     ) -> None:
-        """Write the matrix out to an image file."""
-        self.get_pilimage(cellsize, dark_hex=dark_hex, light_hex=light_hex).save(filename)
+        """Write the matrix out as a PNG file, as :meth:`get_imagedata` produces it."""
+        image = self.get_pilimage(cellsize, dark_hex=dark_hex, light_hex=light_hex, depth=depth)
+        image.save(filename, "PNG")
 
     def get_imagedata(
         self,
@@ -130,10 +153,12 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        depth: ImageDepth = "bilevel",
     ) -> bytes:
         """Write the matrix out as PNG to a bytestream."""
         buffer = BytesIO()
-        self.get_pilimage(cellsize, dark_hex=dark_hex, light_hex=light_hex).save(buffer, "PNG")
+        image = self.get_pilimage(cellsize, dark_hex=dark_hex, light_hex=light_hex, depth=depth)
+        image.save(buffer, "PNG")
         return buffer.getvalue()
 
     def get_ascii(self) -> str:
