@@ -214,7 +214,7 @@ class EncodableData(Generic[EncT, MarkerT]):
     def __add__(self, other):
         new_segments: tuple[str | MarkerT, ...]
         if isinstance(other, (str, *self._MARKER_TYPES)):
-            new_segments = (*self.segments, other)  # type: ignore[assignment]
+            new_segments = (*self.segments, other)  # type: ignore[arg-type]
             other_auto = False
         elif isinstance(other, type(self)):
             if not (self.auto_encoding or other.auto_encoding) and other.encoding != self.encoding:
