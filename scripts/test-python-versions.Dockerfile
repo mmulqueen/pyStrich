@@ -1,6 +1,6 @@
 ARG PYTHON_VERSION=3.13
 # uv binary, pulled from the upstream image so we don't curl-install at build time.
-FROM ghcr.io/astral-sh/uv:0.9 AS uv
+FROM ghcr.io/astral-sh/uv:0.13 AS uv
 
 FROM ubuntu:24.04
 

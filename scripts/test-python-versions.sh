@@ -7,7 +7,7 @@
 # The first failing step aborts the whole script.
 set -uo pipefail
 
-VERSIONS=(3.14 3.13 3.12 3.11 3.10)
+VERSIONS=(3.15 3.14 3.13 3.12 3.11 3.10)
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/.." && pwd)"
 DOCKERFILE="$HERE/test-python-versions.Dockerfile"
