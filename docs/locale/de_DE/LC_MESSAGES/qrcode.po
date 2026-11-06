@@ -934,3 +934,39 @@ msgstr "So erzeugen Sie einen QR-Code und speichern ihn als SVG:"
 #: ../../qrcode.rst
 msgid "Generating a QR code with Python"
 msgstr "QR-Code mit Python erzeugen"
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl
+#: pystrich.matrix_encoder.Matrix2DEncoder.save
+msgid ""
+"``\"bilevel\"`` (the default) writes a bit-depth-1 PNG; ``\"full\"`` writes "
+"a greyscale or colour PNG at full depth. See :meth:`get_pilimage`."
+msgstr ""
+"``\"bilevel\"`` (die Vorgabe) schreibt ein PNG mit einer Bittiefe von 1; "
+"``\"full\"`` schreibt ein Graustufen- oder Farb-PNG mit voller Bittiefe. "
+"Siehe :meth:`get_pilimage`."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_imagedata
+#: pystrich.matrix_encoder.Matrix2DEncoder.png_dataurl
+#: pystrich.matrix_encoder.Matrix2DEncoder.save
+msgid "Added ``depth``; PNGs are now written at a bit depth of 1 by default."
+msgstr ""
+"``depth`` hinzugefügt; PNGs werden jetzt standardmäßig mit einer Bittiefe "
+"von 1 geschrieben."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage
+msgid ""
+"``\"full\"`` (the default) returns an ``\"L\"``, ``\"RGB\"`` or ``\"RGBA\"``"
+" image, whichever is narrowest for the colours; ``\"bilevel\"`` returns one "
+"bit per pixel -- mode ``\"1\"`` for black and white, otherwise a two-colour "
+"``\"P\"`` palette. Colours and alpha are preserved at either depth."
+msgstr ""
+"``\"full\"`` (die Vorgabe) gibt ein ``\"L\"``-, ``\"RGB\"``- oder "
+"``\"RGBA\"``-Bild zurück, je nachdem, welcher der schmalste für die Farben "
+"passende Modus ist; ``\"bilevel\"`` gibt ein Bit pro Pixel zurück -- Modus "
+"``\"1\"`` für Schwarzweiß, andernfalls eine zweifarbige ``\"P\"``-Palette. "
+"Farben und Alphakanal bleiben bei beiden Bittiefen erhalten."
+
+#: of pystrich.matrix_encoder.Matrix2DEncoder.get_pilimage
+msgid "Added ``depth``."
+msgstr "``depth`` hinzugefügt."

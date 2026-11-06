@@ -1,6 +1,25 @@
 Changelog
 =========
 
+.. _v0-21:
+
+0.21 — 2026-11-06
+-----------------
+
+- 2D symbologies: PNG rendering is substantially faster, especially at large
+  cell sizes, because upscaling is now done by Pillow rather than in Python.
+- 2D symbologies: PNGs are now written at a bit depth of 1 by default, which
+  gives noticeably smaller files. Black-and-white output is a 1-bit PNG; any
+  other colours, including transparency, use a two-colour palette. Pass
+  ``depth="full"`` to ``save``, ``get_imagedata`` or ``png_dataurl`` to get
+  the previous greyscale/colour output.
+- 2D symbologies: ``get_pilimage`` has a new ``depth`` option. Its default,
+  ``"full"``, returns the same image as before.
+- 2D symbologies: ``save`` now always writes PNG, whatever the filename
+  extension - this has always been the documented behaviour, but other
+  formats may have worked.
+- pyStrich is now tested on Python 3.10 to 3.15 (was Python 3.10 to 3.14).
+
 .. _v0-20:
 
 0.20 — 2026-08-27
