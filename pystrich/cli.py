@@ -606,8 +606,13 @@ def _write_payload(output: str | None, payload: bytes) -> None:
     if output is None or output == "-":
         sys.stdout.buffer.write(payload)
         return
-    with open(output, "wb") as fp:
-        fp.write(payload)
+    try:
+        with open(output, "wb") as fp:
+            fp.write(payload)
+    except OSError as exc:
+        raise PyStrichInvalidOption(
+            f"cannot write output {output!r}: {exc.strerror or exc}"
+        ) from exc
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -619,13 +624,13 @@ def main(argv: list[str] | None = None) -> int:
         args.output_type = _resolve_output_type(args, fmt)
         args.text = _resolve_text(args.text)
         payload = fmt.render(args)
+        _write_payload(args.output, payload)
     except PyStrichInvalidInput as exc:
         print(f"pystrich: invalid input: {exc}", file=sys.stderr)
         return 2
     except PyStrichInvalidOption as exc:
         print(f"pystrich: invalid option: {exc}", file=sys.stderr)
         return 2
-    _write_payload(args.output, payload)
     return 0
 
 

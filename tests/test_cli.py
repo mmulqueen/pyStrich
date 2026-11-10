@@ -278,3 +278,11 @@ def test_version_prints(capsys):
         cli.main(["--version"])
     assert exc_info.value.code == 0
     assert "pystrich" in capsys.readouterr().out
+
+
+@pytest.mark.png
+def test_output_missing_parent_dir_exits_2(capsys, tmp_path):
+    out = tmp_path / "no-such-dir" / "x.png"
+    rc = cli.main(["qrcode", "--text", "x", "-t", "png", "-o", str(out)])
+    assert rc == 2
+    assert "cannot write" in capsys.readouterr().err
