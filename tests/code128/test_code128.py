@@ -1,6 +1,5 @@
 """Unit test for code128 barcode encoder"""
 
-import filecmp
 import warnings
 from datetime import timedelta
 from pathlib import Path
@@ -88,11 +87,11 @@ def test_bar_encoding():
     ],
 )
 @pytest.mark.png
-def test_against_generated(string, reference, tmp_path):
-    """Output bytes match the checked-in reference image."""
+def test_against_generated(string, reference, tmp_path, assert_same_image):
+    """Output pixels match the checked-in reference image."""
     generated = tmp_path / "barcode.png"
     Code128Encoder(string).save(str(generated))
-    assert filecmp.cmp(str(generated), str(TEST_IMG_DIR / reference), shallow=False)
+    assert_same_image(generated, TEST_IMG_DIR / reference)
 
 
 @pytest.mark.parametrize(

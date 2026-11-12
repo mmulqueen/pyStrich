@@ -65,6 +65,29 @@ def decode_barcode():
 
 
 @pytest.fixture
+def assert_same_image():
+    """Assert two image files decode to the same pixels.
+
+    Compares mode, size and pixel data rather than file bytes, because the
+    compressed PNG stream depends on which zlib Pillow was built with (e.g.
+    zlib-ng produces different, equally valid output). Checking the mode
+    still catches changes to the PNG bit depth or colour type.
+    """
+    PIL_Image = pytest.importorskip("PIL.Image")
+
+    def _compare(generated: "str | os.PathLike[str]", reference: "str | os.PathLike[str]") -> None:
+        with (
+            PIL_Image.open(os.fspath(generated)) as got,
+            PIL_Image.open(os.fspath(reference)) as want,
+        ):
+            assert (got.mode, got.size) == (want.mode, want.size)
+            assert got.getpalette() == want.getpalette()
+            assert got.tobytes() == want.tobytes()
+
+    return _compare
+
+
+@pytest.fixture
 def dmtxread():
     path = which("dmtxread")
     if not path:
