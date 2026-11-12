@@ -1,6 +1,17 @@
 Changelog
 =========
 
+.. _v0-22:
+
+0.22 — unreleased
+-----------------
+
+- All formats: ``get_svg``, ``svg_dataurl`` and ``save_svg`` accept an
+  ``id_prefix`` that is prepended to every ``id`` in the SVG, so several
+  inline SVGs can share an HTML page without id clashes. Only 1D barcodes with
+  a human-readable label currently contain ids, so 2D symbols are unaffected.
+  The default output is unchanged.
+
 .. _v0-21:
 
 0.21 — 2026-11-06

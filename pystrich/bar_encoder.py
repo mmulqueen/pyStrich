@@ -151,6 +151,7 @@ class Bar1DEncoder(ABC):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        id_prefix: str = "",
     ) -> str:
         """Render the barcode and return SVG markup.
 
@@ -159,14 +160,21 @@ class Bar1DEncoder(ABC):
             ``RGBA``. Defaults to black.
         :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
             ``RGBA``. Defaults to white.
+        :param id_prefix: Prepended to every ``id`` in the SVG, so several inline SVGs
+            can share an HTML page.
         :rtype: str
 
         .. versionadded:: 0.12
 
         .. versionchanged:: 0.16
             Added ``dark_hex`` and ``light_hex``.
+
+        .. versionchanged:: 0.22
+            Added ``id_prefix``.
         """
-        return self.init_renderer().get_svg(bar_width, dark_hex=dark_hex, light_hex=light_hex)
+        return self.init_renderer().get_svg(
+            bar_width, dark_hex=dark_hex, light_hex=light_hex, id_prefix=id_prefix
+        )
 
     def svg_dataurl(
         self,
@@ -174,6 +182,7 @@ class Bar1DEncoder(ABC):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        id_prefix: str = "",
     ) -> str:
         """Render the barcode and return an SVG ``data:`` URL string.
 
@@ -182,14 +191,21 @@ class Bar1DEncoder(ABC):
             ``RGBA``. Defaults to black.
         :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
             ``RGBA``. Defaults to white.
+        :param id_prefix: Prepended to every ``id`` in the SVG, so several inline SVGs
+            can share an HTML page.
         :rtype: str
 
         .. versionadded:: 0.15
 
         .. versionchanged:: 0.16
             Added ``dark_hex`` and ``light_hex``.
+
+        .. versionchanged:: 0.22
+            Added ``id_prefix``.
         """
-        return svg_to_data_url(self.get_svg(bar_width, dark_hex=dark_hex, light_hex=light_hex))
+        return svg_to_data_url(
+            self.get_svg(bar_width, dark_hex=dark_hex, light_hex=light_hex, id_prefix=id_prefix)
+        )
 
     def save_svg(
         self,
@@ -198,6 +214,7 @@ class Bar1DEncoder(ABC):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        id_prefix: str = "",
     ) -> None:
         """Save the barcode as an SVG file. Pass a ``.svg`` filename.
 
@@ -207,14 +224,19 @@ class Bar1DEncoder(ABC):
             ``RGBA``. Defaults to black.
         :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
             ``RGBA``. Defaults to white.
+        :param id_prefix: Prepended to every ``id`` in the SVG, so several inline SVGs
+            can share an HTML page.
 
         .. versionadded:: 0.12
 
         .. versionchanged:: 0.16
             Added ``dark_hex`` and ``light_hex``.
+
+        .. versionchanged:: 0.22
+            Added ``id_prefix``.
         """
         self.init_renderer().write_svg_file(
-            filename, bar_width, dark_hex=dark_hex, light_hex=light_hex
+            filename, bar_width, dark_hex=dark_hex, light_hex=light_hex, id_prefix=id_prefix
         )
 
     def get_eps(

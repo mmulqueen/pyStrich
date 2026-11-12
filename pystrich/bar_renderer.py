@@ -150,10 +150,13 @@ class Bar1DRenderer(ABC):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        id_prefix: str = "",
     ) -> str:
         """Return the symbol as an SVG string."""
         check_cell_size(bar_width, name="bar width")
-        return bars_to_svg(self._layout(bar_width), dark_hex=dark_hex, light_hex=light_hex)
+        return bars_to_svg(
+            self._layout(bar_width), dark_hex=dark_hex, light_hex=light_hex, id_prefix=id_prefix
+        )
 
     def write_svg_file(
         self,
@@ -162,10 +165,13 @@ class Bar1DRenderer(ABC):
         *,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        id_prefix: str = "",
     ) -> None:
         """Save the symbol as an SVG file."""
         with open(filename, "w", encoding="utf-8") as f:
-            f.write(self.get_svg(bar_width, dark_hex=dark_hex, light_hex=light_hex))
+            f.write(
+                self.get_svg(bar_width, dark_hex=dark_hex, light_hex=light_hex, id_prefix=id_prefix)
+            )
 
     def get_eps(
         self,

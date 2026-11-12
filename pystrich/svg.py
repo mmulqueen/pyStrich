@@ -8,6 +8,7 @@ values; ``matrix_to_svg`` renders that. The 1D encoders (Code 39, Code
 
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable, Sequence
 
 from pystrich._courier_glyphs import ADVANCE, GLYPHS
@@ -28,6 +29,17 @@ from pystrich.marks import (
     iter_barcode_marks,
     iter_marks,
 )
+
+_ID_PREFIX_RE = re.compile(r"(?:[A-Za-z_][A-Za-z0-9_-]*)?")
+
+
+def check_id_prefix(id_prefix: str) -> None:
+    """Reject an ``id_prefix`` that would not give a valid, unescaped SVG id."""
+    if not _ID_PREFIX_RE.fullmatch(id_prefix):
+        raise ValueError(
+            "id_prefix must start with an ASCII letter or underscore and contain only "
+            f"ASCII letters, digits, underscores and hyphens, got {id_prefix!r}"
+        )
 
 
 def _shortest_hex(r: int, g: int, b: int) -> str:
@@ -51,19 +63,20 @@ def _svg_fill(rgba: RGBA) -> str:
     return f'{fill} fill-opacity="{_fmt(rgba.a / 255)}"'
 
 
-def _label_defs(chars: Iterable[str]) -> list[str]:
+def _label_defs(chars: Iterable[str], id_prefix: str) -> list[str]:
     """Render a ``<defs>`` block defining one ``<symbol>`` per used glyph."""
     parts: list[str] = ["<defs>"]
     for char in sorted(chars):
         glyph = GLYPHS[char]
+        symbol_id = id_prefix + glyph_id(char)
         parts.append(
-            f'<symbol id="{glyph_id(char)}" overflow="visible"><path d="{glyph.svg_d}"/></symbol>'
+            f'<symbol id="{symbol_id}" overflow="visible"><path d="{glyph.svg_d}"/></symbol>'
         )
     parts.append("</defs>")
     return parts
 
 
-def _label_groups(labels: Sequence[TextLabel]) -> list[str]:
+def _label_groups(labels: Sequence[TextLabel], id_prefix: str) -> list[str]:
     """Render each label as a transformed ``<g>`` of ``<use>`` references.
 
     The wrapping group flips y (font is y-up, SVG is y-down) and scales
@@ -74,7 +87,8 @@ def _label_groups(labels: Sequence[TextLabel]) -> list[str]:
     for label in labels:
         scale, x_start, baseline_y = label_geometry(label)
         uses = "".join(
-            f'<use href="#{glyph_id(c)}" x="{i * ADVANCE}"/>' for i, c in enumerate(label.text)
+            f'<use href="#{id_prefix}{glyph_id(c)}" x="{i * ADVANCE}"/>'
+            for i, c in enumerate(label.text)
         )
         parts.append(
             f'<g transform="translate({_fmt(x_start)} {_fmt(baseline_y)}) '
@@ -126,14 +140,17 @@ def matrix_to_svg(
     mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
     dark_hex: str | RGBA | None = None,
     light_hex: str | RGBA | None = None,
+    id_prefix: str = "",
 ) -> str:
     """Render a 2D module matrix as an SVG string.
 
     By default truthy cells become dark squares and ``0``/``None`` are
     background; pass ``inverse=True`` to mark the light cells instead.
     The ``viewBox`` is in module units; ``width`` and ``height`` scale
-    by ``cellsize``.
+    by ``cellsize``. The output currently has no ids, so ``id_prefix`` is
+    only validated.
     """
+    check_id_prefix(id_prefix)
     height = len(matrix)
     width = len(matrix[0]) if height else 0
     # crispEdges gives axis-aligned rectangles pixel-snapped edges; for circles
@@ -161,23 +178,29 @@ def matrix_to_svg(
 
 
 def bars_to_svg(
-    layout: BarLayout, *, dark_hex: str | RGBA | None = None, light_hex: str | RGBA | None = None
+    layout: BarLayout,
+    *,
+    dark_hex: str | RGBA | None = None,
+    light_hex: str | RGBA | None = None,
+    id_prefix: str = "",
 ) -> str:
     """Render a 1D bar layout (with optional human-readable labels) as SVG.
 
     The ``viewBox`` and ``width``/``height`` are ``layout.width`` by
     ``layout.height`` in pixels (= user units at default DPI); the layout
     is expected to already accommodate its labels' font descent.
+    ``id_prefix`` is prepended to every glyph ``id`` and ``href``.
     """
+    check_id_prefix(id_prefix)
     view_w = layout.width
     view_h = layout.height
 
     body: list[str] = []
     if layout.labels:
-        body.extend(_label_defs(used_chars(layout.labels)))
+        body.extend(_label_defs(used_chars(layout.labels), id_prefix))
     body.extend(marks_to_svg_rects(iter_barcode_marks(layout)))
     if layout.labels:
-        body.extend(_label_groups(layout.labels))
+        body.extend(_label_groups(layout.labels, id_prefix))
 
     dark, light = resolve_colours(dark_hex, light_hex)
     return _wrap_svg(

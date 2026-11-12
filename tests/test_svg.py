@@ -1,4 +1,4 @@
-"""Direct unit tests for pystrich.svg.matrix_to_svg.
+"""Direct unit tests for pystrich.svg.
 
 The SVG is parsed via xml.etree.ElementTree so an ill-formed document
 fails fast at parse time and rect coordinates can be asserted as
@@ -7,9 +7,14 @@ NamedTuples rather than as substrings.
 
 import xml.etree.ElementTree as ET
 from typing import NamedTuple
+from urllib.parse import unquote
 
 import pytest
 
+from pystrich.code39 import Code39Encoder
+from pystrich.code128 import Code128Encoder
+from pystrich.ean13 import EAN13Encoder
+from pystrich.qrcode import QRCodeEncoder
 from pystrich.svg import matrix_to_svg
 
 SVG_NS = "http://www.w3.org/2000/svg"
@@ -117,3 +122,88 @@ def test_background_drawn_before_foreground():
     rect_idx = next(i for i, c in enumerate(children) if c.tag == f"{{{SVG_NS}}}rect")
     g_idx = next(i for i, c in enumerate(children) if c.tag == f"{{{SVG_NS}}}g")
     assert rect_idx < g_idx
+
+
+BAR_ENCODERS = [
+    pytest.param(lambda: EAN13Encoder("400638133393"), id="ean13"),
+    pytest.param(lambda: Code128Encoder("ABC-123"), id="code128"),
+    pytest.param(lambda: Code39Encoder("ABC-123"), id="code39"),
+]
+
+
+def ids_and_hrefs(svg: str) -> tuple[set[str], list[str]]:
+    root = ET.fromstring(svg)
+    ids = {i for e in root.iter() if (i := e.get("id")) is not None}
+    hrefs = [e.get("href", "") for e in root.iter(f"{{{SVG_NS}}}use")]
+    return ids, hrefs
+
+
+@pytest.mark.parametrize("make", BAR_ENCODERS)
+def test_prefix_applied_to_every_id_and_href(make):
+    ids, hrefs = ids_and_hrefs(make().get_svg(id_prefix="bc1-"))
+    assert ids
+    assert all(i.startswith("bc1-g_") for i in ids)
+    assert {h.removeprefix("#") for h in hrefs} == ids
+
+
+@pytest.mark.parametrize("make", BAR_ENCODERS)
+def test_prefix_changes_nothing_but_ids(make):
+    enc = make()
+    prefixed = enc.get_svg(id_prefix="bc1-")
+    assert prefixed.replace('"bc1-g_', '"g_').replace('"#bc1-g_', '"#g_') == enc.get_svg()
+
+
+def test_bar_svg_dataurl_and_save_svg_pass_prefix_through(tmp_path):
+    enc = EAN13Encoder("400638133393")
+    expected = enc.get_svg(id_prefix="bc1-")
+    assert unquote(enc.svg_dataurl(id_prefix="bc1-").split(",", 1)[1]) == expected
+    path = tmp_path / "ean13.svg"
+    enc.save_svg(path, id_prefix="bc1-")
+    assert path.read_text(encoding="utf-8") == expected
+
+
+def test_matrix_svg_accepts_prefix_but_has_no_ids(tmp_path):
+    enc = QRCodeEncoder("hello")
+    svg = enc.get_svg(id_prefix="qr1-")
+    assert svg == enc.get_svg()
+    assert ids_and_hrefs(svg) == (set(), [])
+    assert unquote(enc.svg_dataurl(id_prefix="qr1-").split(",", 1)[1]) == svg
+    path = tmp_path / "qr.svg"
+    enc.save_svg(path, id_prefix="qr1-")
+    assert path.read_text(encoding="utf-8") == svg
+
+
+@pytest.mark.parametrize("prefix", ["a", "_", "Barcode-1_", "x-"])
+def test_valid_prefixes_accepted(prefix):
+    EAN13Encoder("400638133393").get_svg(id_prefix=prefix)
+    QRCodeEncoder("hello").get_svg(id_prefix=prefix)
+
+
+@pytest.mark.parametrize(
+    "prefix",
+    [
+        pytest.param("1a", id="leading-digit"),
+        pytest.param("-a", id="leading-hyphen"),
+        pytest.param("a b", id="space"),
+        pytest.param('a"', id="quote"),
+        pytest.param("a<", id="angle-bracket"),
+        pytest.param("a.b", id="dot"),
+        pytest.param("a:b", id="colon"),
+        pytest.param("é", id="non-ascii"),
+    ],
+)
+@pytest.mark.parametrize(
+    "make",
+    [
+        pytest.param(lambda: EAN13Encoder("400638133393"), id="ean13"),
+        pytest.param(lambda: QRCodeEncoder("hello"), id="qrcode"),
+    ],
+)
+def test_invalid_prefixes_rejected(make, prefix):
+    with pytest.raises(ValueError, match="id_prefix"):
+        make().get_svg(id_prefix=prefix)
+
+
+def test_non_str_prefix_rejected():
+    with pytest.raises(TypeError):
+        EAN13Encoder("400638133393").get_svg(id_prefix=1)  # type: ignore[arg-type]

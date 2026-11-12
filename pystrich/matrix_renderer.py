@@ -210,6 +210,7 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         mark_shape: MarkShape,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        id_prefix: str = "",
     ) -> str:
         """Return the matrix as an SVG string."""
         check_cell_size(cellsize, name="cell size")
@@ -220,6 +221,7 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
             mark_shape=mark_shape,
             dark_hex=dark_hex,
             light_hex=light_hex,
+            id_prefix=id_prefix,
         )
 
     def write_svg_file(
@@ -231,6 +233,7 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
         mark_shape: MarkShape,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        id_prefix: str = "",
     ) -> None:
         """Write the matrix out to an SVG file."""
         with open(filename, "w", encoding="utf-8") as f:
@@ -241,6 +244,7 @@ class Matrix2DRenderer(ABC, Generic[CellT]):
                     mark_shape=mark_shape,
                     dark_hex=dark_hex,
                     light_hex=light_hex,
+                    id_prefix=id_prefix,
                 )
             )
 

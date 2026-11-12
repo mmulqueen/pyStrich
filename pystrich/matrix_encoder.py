@@ -176,6 +176,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        id_prefix: str = "",
     ) -> str:
         """Render the symbol and return SVG markup.
 
@@ -186,12 +187,16 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
             ``RGBA``. Defaults to black.
         :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
             ``RGBA``. Defaults to white.
+        :param id_prefix: Prepended to every ``id`` in the SVG; 2D output currently has none.
         :rtype: str
 
         .. versionadded:: 0.12
 
         .. versionchanged:: 0.16
             Added ``dark_hex`` and ``light_hex``.
+
+        .. versionchanged:: 0.22
+            Added ``id_prefix``.
         """
         return self.init_renderer().get_svg(
             cellsize,
@@ -199,6 +204,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
             mark_shape=mark_shape,
             dark_hex=dark_hex,
             light_hex=light_hex,
+            id_prefix=id_prefix,
         )
 
     def svg_dataurl(
@@ -209,6 +215,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        id_prefix: str = "",
     ) -> str:
         """Render the symbol and return an SVG ``data:`` URL string.
 
@@ -219,12 +226,16 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
             ``RGBA``. Defaults to black.
         :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
             ``RGBA``. Defaults to white.
+        :param id_prefix: Prepended to every ``id`` in the SVG; 2D output currently has none.
         :rtype: str
 
         .. versionadded:: 0.15
 
         .. versionchanged:: 0.16
             Added ``dark_hex`` and ``light_hex``.
+
+        .. versionchanged:: 0.22
+            Added ``id_prefix``.
         """
         return svg_to_data_url(
             self.get_svg(
@@ -233,6 +244,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
                 mark_shape=mark_shape,
                 dark_hex=dark_hex,
                 light_hex=light_hex,
+                id_prefix=id_prefix,
             )
         )
 
@@ -245,6 +257,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
         mark_shape: MarkShape = MarkShape.HORIZONTAL_RUNS,
         dark_hex: str | RGBA | None = None,
         light_hex: str | RGBA | None = None,
+        id_prefix: str = "",
     ) -> None:
         """Save the symbol as an SVG file. Pass a ``.svg`` filename.
 
@@ -256,11 +269,15 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
             ``RGBA``. Defaults to black.
         :param light_hex: Background colour as a 3-, 6- or 8-digit hex string or an
             ``RGBA``. Defaults to white.
+        :param id_prefix: Prepended to every ``id`` in the SVG; 2D output currently has none.
 
         .. versionadded:: 0.12
 
         .. versionchanged:: 0.16
             Added ``dark_hex`` and ``light_hex``.
+
+        .. versionchanged:: 0.22
+            Added ``id_prefix``.
         """
         self.init_renderer().write_svg_file(
             cellsize,
@@ -269,6 +286,7 @@ class Matrix2DEncoder(ABC, Generic[CellT]):
             mark_shape=mark_shape,
             dark_hex=dark_hex,
             light_hex=light_hex,
+            id_prefix=id_prefix,
         )
 
     def get_eps(
